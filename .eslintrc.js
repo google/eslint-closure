@@ -4,11 +4,14 @@ const ERROR = 2;
 
 module.exports = {
 
-  extends: 'eslint:recommended',
-
-  globals: {
-    goog: true,
+  env: {
+    node: true,
+    es6: true,
   },
+
+  extends: 'eslint',
+
+  globals: {},
 
   plugins: [],
 
@@ -55,10 +58,7 @@ module.exports = {
       requireReturn: false,
       // This should probably be enabled.
       requireReturnDescription: false,
-      prefer: {
-        // Use @return instead of @returns
-        returns: 'return'
-      }
+      prefer: {}
     }],
   }
 };
