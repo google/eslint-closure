@@ -7,8 +7,8 @@
 
 /**
  * Determines whether two adjacent tokens are on the same line.
- * @param {Object} left - The left token object.
- * @param {Object} right - The right token object.
+ * @param {!ASTNode} left The left token object.
+ * @param {!ASTNode} right The right token object.
  * @returns {boolean} Whether or not the tokens are on the same line.
  */
 function isTokenOnSameLine(left, right) {
