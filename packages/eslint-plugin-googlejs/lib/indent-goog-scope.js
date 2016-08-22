@@ -70,5 +70,9 @@ module.exports = {
               stmt.parent && stmt.parent.type === 'Program'
              );
     }
+
+    return {
+      'Function': isOuterIIFE,
+    };
   },
 };

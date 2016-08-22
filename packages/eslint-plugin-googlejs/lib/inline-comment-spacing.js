@@ -1,20 +1,26 @@
 /**
- * @fileoverview This option controls spacing before a line end comment.
+ * @fileoverview This option controls spacing before a inline comment.
  * @author Joe Schafer
  */
 
 'use strict';
 
-//------------------------------------------------------------------------------
-// Rule Definition
-//------------------------------------------------------------------------------
+/**
+ * Determines whether two adjacent tokens are on the same line.
+ * @param {Object} left - The left token object.
+ * @param {Object} right - The right token object.
+ * @returns {boolean} Whether or not the tokens are on the same line.
+ */
+function isTokenOnSameLine(left, right) {
+  return left.loc.end.line === right.loc.start.line;
+}
 
 const DEFAULT_PRECEDING_SPACES = 1;
 
 module.exports = {
   meta: {
     docs: {
-      description: 'enforce consistent spacing before the `//` at line-end',
+      description: 'enforce consistent spacing before the `//` at line end',
       category: 'Stylistic Issues',
       recommended: false,
     },
@@ -29,23 +35,10 @@ module.exports = {
   },
 
   create(context) {
-
-    // Intialize default of 1.
-
     // Check for null explicitily because 0 is a falsey value.
     const minPrecedingSpaces = context.options[0] == null
           ? DEFAULT_PRECEDING_SPACES : context.options[0];
 
-
-    /**
-     * Determines whether two adjacent tokens are on the same line.
-     * @param {Object} left - The left token object.
-     * @param {Object} right - The right token object.
-     * @returns {boolean} Whether or not the tokens are on the same line.
-     */
-    function isTokenOnSameLine(left, right) {
-      return left.loc.end.line === right.loc.start.line;
-    }
 
     /**
      * Reports a given comment if it's invalid.
@@ -55,9 +48,10 @@ module.exports = {
     function checkLineCommentForPrecedingSpace(commentNode) {
 
       const sourceCode = context.getSourceCode();
-      // Need to call getComment to attach comments to the AST
+      // Need to call getComments to attach comments to the AST.
       sourceCode.getComments(commentNode);
-      // TODO: I'm not sure why I can't just call getTokenBefore.
+      // TODO: I'm not sure why I can't just call getTokenBefore.  The tests
+      // fail if either of the two calls is missing.
       const previousToken = sourceCode.getTokenBefore(commentNode, 1)
             || sourceCode.getTokenOrCommentBefore(commentNode);
 
@@ -75,7 +69,7 @@ module.exports = {
         context.report({
           node: commentNode,
           message: 'Expected at least ' + minPrecedingSpaces + ' ' + spacesNoun
-            + ' before line comment.',
+            + ' before inline comment.',
 
           fix(fixer) {
             const numNeededSpaces = minPrecedingSpaces - whiteSpaceGap;

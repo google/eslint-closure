@@ -1,15 +1,15 @@
 /**
- * @fileoverview Test for line-end-spaced-comments
+ * @fileoverview Test for inline-comment-spacing.
  * @author Joe Schafer
  */
 'use strict';
 
-const rule = require('../../../lib/rules/line-end-spaced-comment');
+const rule = require('../lib/inline-comment-spacing');
 const RuleTester = require('eslint').RuleTester;
 
 const ruleTester = new RuleTester();
 
-ruleTester.run('spaced-comment', rule, {
+ruleTester.run('inline-comment-spacing', rule, {
 
   valid: [
     {
@@ -62,7 +62,7 @@ ruleTester.run('spaced-comment', rule, {
       code: 'var j;// An invalid comment with no space after the stmt',
       output: 'var j; // An invalid comment with no space after the stmt',
       errors: [{
-        message: 'Expected at least 1 space before line comment.',
+        message: 'Expected at least 1 space before inline comment.',
         type: 'Line',
       }],
       options: [1],
@@ -71,7 +71,7 @@ ruleTester.run('spaced-comment', rule, {
       code: 'var j; // An invalid comment with one space after the stmt',
       output: 'var j;  // An invalid comment with one space after the stmt',
       errors: [{
-        message: 'Expected at least 2 spaces before line comment.',
+        message: 'Expected at least 2 spaces before inline comment.',
         type: 'Line',
       }],
       options: [2],
@@ -80,7 +80,7 @@ ruleTester.run('spaced-comment', rule, {
       code: 'var j; // invalid',
       output: 'var j;    // invalid',
       errors: [{
-        message: 'Expected at least 4 spaces before line comment.',
+        message: 'Expected at least 4 spaces before inline comment.',
         type: 'Line',
       }],
       options: [4],

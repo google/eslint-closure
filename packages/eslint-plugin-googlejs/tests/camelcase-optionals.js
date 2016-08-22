@@ -3,11 +3,13 @@
  * @author Gregg Tavares (but it's just a modified version of camelcase by Nicholas C. Zakas)
  */
 
+'use strict';
+
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require('../../../lib/rules/camelcase-optionals');
+const rule = require('../lib/camelcase-optionals');
 const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester();
 

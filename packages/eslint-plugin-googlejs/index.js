@@ -2,7 +2,7 @@
 
 module.exports = {
   rules: {
-    'line-end-spaced-comment': require('./lib/rules/line-end-spaced-comment.js'),
-    'camelcase-optionals': require('./lib/rules/camelcase-optionals.js'),
+    'inline-comment-spacing': require('./lib/inline-comment-spacing'),
+    'camelcase-optionals': require('./lib/camelcase-optionals'),
   },
 };
