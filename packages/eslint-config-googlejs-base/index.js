@@ -88,7 +88,7 @@ const CLOSURE_JSDOC_TAGS = [
 
 // Possible Errors
 // These rules relate to possible syntax or logic errors in JavaScript code.
-const possibleErrorRules = {
+const POSSIBLE_ERROR_RULES = {
   // Disallow assignment operators in conditional expressions.  #eslint
   'no-cond-assign': ERROR,
 
@@ -185,7 +185,7 @@ const possibleErrorRules = {
 
 // Best Practices
 // These rules relate to better ways of doing things to help you avoid problems.
-const bestPracticeRules = {
+const BEST_PRACTICE_RULES = {
   // Enforce getter and setter pairs in objects.
   'accessor-pairs': OFF,
 
@@ -383,7 +383,7 @@ const bestPracticeRules = {
 
 // Strict Mode
 // These rules relate to strict mode directives.
-const strictModeRules = {
+const STRICT_MODE_RULES = {
   // Require or disallow strict mode directives.
   'strict': OFF,
 };
@@ -391,7 +391,7 @@ const strictModeRules = {
 
 // Variables
 // These rules relate to variable declarations.
-const variableDeclarationRules = {
+const VARIABLE_DECLARATION_RULES = {
   // Require or disallow initialization in var declarations.
   'init-declarations': OFF,
 
@@ -434,7 +434,7 @@ const variableDeclarationRules = {
 
 // Node.js and CommonJS
 // These rules relate to code running in Node.js, or in browsers with CommonJS.
-const nodejsRules = {
+const NODEJS_RULES = {
   // Require return statements after callbacks.
   'callback-return': OFF,
 
@@ -469,7 +469,7 @@ const nodejsRules = {
 
 // Stylistic Issues
 // These rules relate to style guidelines, and are therefore quite subjective.
-const stylisticRules = {
+const STYLISTIC_RULES = {
   // Enforce consistent spacing inside array brackets.
   'array-bracket-spacing': OFF,
 
@@ -710,7 +710,7 @@ const stylisticRules = {
 
 // ECMAScript 6
 // These rules relate to ES6, also known as ES2015.
-const ecmaScript6Rules = {
+const ES6_RULES = {
   // Require braces around arrow function bodies.
   'arrow-body-style': OFF,
 
@@ -806,24 +806,14 @@ const ecmaScript6Rules = {
 
 // Google Plugin Rules
 // These rules are specific to Google code.  See
-// https://github.com/jschaf/eslint-config-google
-const googlejsPluginRules = {
-
-  // Allow opt_ prefix and var_args in identifiers.  From
-  // https://git.io/vured#Naming
-  'googlejs/camelcase-optionals': WARNING,
-
-  // The JS style guide 'follows the C++ style guide in spirit'.  The C++ style
-  // guide mandates two spaces before line-end comments.  See the 'Line
-  // Comments' section under
-  // https://google.github.io/styleguide/cppguide.html#Implementation_Comments
-  'googlejs/line-end-spaced-comment': [ERROR, 2],
+// https://github.com/jschaf/googlejs/packages/eslint-plugin-googlejs
+const GOOGLE_PLUGIN_RULES = {
 };
 
 
 // JSDoc Plugin Rules
 // https://github.com/gajus/eslint-plugin-jsdoc
-const jsdocPluginRules = {
+const JSDOC_PLUGIN_RULES = {
   // Ensures that parameter names in JSDoc match those in the function
   // declaration.
   'jsdoc/check-param-names': ERROR,
@@ -894,17 +884,17 @@ const ESLINT_CONFIG = {
     {},
 
     // ESLint built-in rules.
-    possibleErrorRules,
-    bestPracticeRules,
-    strictModeRules,
-    variableDeclarationRules,
-    nodejsRules,
-    stylisticRules,
-    ecmaScript6Rules,
+    POSSIBLE_ERROR_RULES,
+    BEST_PRACTICE_RULES,
+    STRICT_MODE_RULES,
+    VARIABLE_DECLARATION_RULES,
+    NODEJS_RULES,
+    STYLISTIC_RULES,
+    ES6_RULES,
 
     // Custom plugin rules.
-    googlejsPluginRules,
-    jsdocPluginRules
+    GOOGLE_PLUGIN_RULES,
+    JSDOC_PLUGIN_RULES
   ),
 
   // ESLint supports adding shared settings into configuration file.  The
