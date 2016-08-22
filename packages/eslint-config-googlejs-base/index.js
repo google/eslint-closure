@@ -807,17 +807,17 @@ const ecmaScript6Rules = {
 // Google Plugin Rules
 // These rules are specific to Google code.  See
 // https://github.com/jschaf/eslint-config-google
-const googlePluginRules = {
+const googlejsPluginRules = {
 
   // Allow opt_ prefix and var_args in identifiers.  From
   // https://git.io/vured#Naming
-  'google/camelcase-optionals': WARNING,
+  'googlejs/camelcase-optionals': WARNING,
 
   // The JS style guide 'follows the C++ style guide in spirit'.  The C++ style
   // guide mandates two spaces before line-end comments.  See the 'Line
   // Comments' section under
   // https://google.github.io/styleguide/cppguide.html#Implementation_Comments
-  'google/line-end-spaced-comment': [ERROR, 2],
+  'googlejs/line-end-spaced-comment': [ERROR, 2],
 };
 
 
@@ -885,7 +885,7 @@ const ESLINT_CONFIG = {
     // https://github.com/gajus/eslint-plugin-jsdoc
     'jsdoc',
     // https://github.com/jschaf/eslint-config-google
-    'google',
+    'googlejs',
   ],
 
   // The list of rules and options are available at
@@ -903,7 +903,7 @@ const ESLINT_CONFIG = {
     ecmaScript6Rules,
 
     // Custom plugin rules.
-    googlePluginRules,
+    googlejsPluginRules,
     jsdocPluginRules
   ),
 

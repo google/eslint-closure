@@ -23,10 +23,12 @@
     "url": "https://github.com/jschaf/googlejs"
   },
   "homepage": "https://github.com/jschaf/googlejs",
-  "devDependencies": {
+  "dependencies": {
+    "eslint-plugin-jsdoc": "^2.3.1",
+    "eslint-plugin-googlejs": "^0.0.1"
   },
-  "peerDependencies": {
-  },
+  "devDependencies": {},
+  "peerDependencies": {},
   "engines": {
     "node": ">= 4"
   },
