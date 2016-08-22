@@ -34,6 +34,10 @@ module.exports = {
     ],
   },
 
+  /**
+   * @param {!RuleContext} context
+   * @return {number}
+   */
   create(context) {
     // Check for null explicitily because 0 is a falsey value.
     const minPrecedingSpaces = context.options[0] == null

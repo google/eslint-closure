@@ -20,6 +20,10 @@ module.exports = {
     schema: [],
   },
 
+  /**
+   * @param {!RuleContext} context The thing
+   * @return {number}
+   */
   create(context) {
     // Helpers
 
