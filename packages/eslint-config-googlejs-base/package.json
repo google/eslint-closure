@@ -1,0 +1,36 @@
+{
+  "name": "eslint-config-googlejs-base",
+  "version": "0.0.1",
+  "author": "Joe Schafer <joe@jschaf.com>",
+  "license": "Apache-2.0",
+  "description": "Google's base JS ESLint config, following our styleguide.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "keywords": [
+    "eslint",
+    "eslintconfig",
+    "config",
+    "google",
+    "javascript",
+    "styleguide",
+    "lint",
+    "linter"
+  ],
+  "bugs": {
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "homepage": "https://github.com/jschaf/googlejs",
+  "devDependencies": {
+  },
+  "peerDependencies": {
+  },
+  "engines": {
+    "node": ">= 4"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  }
+}

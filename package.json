@@ -1,29 +1,19 @@
 {
-  "name": "eslint-plugin-google",
-  "version": "0.0.0",
+  "name": "googlejs",
+  "version": "0.0.1",
+  "author": "Joe Schafer",
+  "license": "Apache-2.0",
   "description": "Linting Rules for the Google Style Guide",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jschaf/googlejs"
+  },
   "keywords": [
     "eslint",
-    "eslintplugin",
-    "eslint-plugin"
-  ],
-  "author": "Joe Schafer",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "mocha tests --recursive"
-  },
-  "dependencies": {
-    "eslint": "^3.3.1",
-    "mocha": "^3.0.2",
-    "requireindex": "~1.1.0"
-  },
-  "devDependencies": {
-    "eslint": "~2.6.0",
-    "eslint-config-eslint": "^3.0.0",
-    "mocha": "^2.4.5"
-  },
-  "engines": {
-    "node": ">=0.10.0"
-  },
-  "license": "ISC"
+    "style guide",
+    "lint",
+    "google",
+    "es6",
+    "es2015"
+  ]
 }

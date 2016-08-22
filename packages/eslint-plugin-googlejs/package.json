@@ -1,0 +1,40 @@
+{
+  "name": "eslint-plugin-googlejs",
+  "version": "0.0.1",
+  "author": "Joe Schafer <joe@jschaf.com>",
+  "license": "Apache-2.0",
+  "description": "An ESLint plugin for Google style guide rules.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "google",
+    "lint",
+    "linter"
+  ],
+  "files": [
+    "lib/*.js",
+    "index.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "bugs": {
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "homepage": "https://github.com/jschaf/googlejs",
+  "devDependencies": {
+    "eslint": "^3.3.1"
+  },
+  "peerDependencies": {
+  },
+  "engines": {
+    "node": ">= 4"
+  },
+  "scripts": {
+    "test": "eslint --ext .js && mocha tests"
+  }
+}
