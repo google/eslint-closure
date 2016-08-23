@@ -3,6 +3,16 @@
  * eslintrc files.
  * @record
  */
+
+
+/* eslint valid-jsdoc: ["error", {prefer: {return: "return"}}]*/
+
+
+/**
+ * Configuration object for the `verify` API. A JS representation of the
+ * eslintrc files.
+ * @record
+ */
 const ESLintConfig = function() {};
 
 /** @type {!Object} */
@@ -41,7 +51,8 @@ RuleContext.prototype.eslint;
 RuleContext.prototype.severity;
 
 /**
- * @type {!Array<!Object>} options The configuration information to be added to the rule.
+ * @type {!Array<!Object>} options The configuration information to be added to
+ *     the rule.
  */
 RuleContext.prototype.options;
 
@@ -65,7 +76,7 @@ RuleContext.prototype.meta;
 
 /**
  * Passthrough to eslint.getSourceCode().
- * @returns {SourceCode} The SourceCode object for the code.
+ * @return {SourceCode} The SourceCode object for the code.
  */
 RuleContext.prototype.getSourceCode = function() {};
 
@@ -78,7 +89,7 @@ RuleContext.prototype.getSourceCode = function() {};
  * @param {string} message The message to display to the user.
  * @param {Object=} opts Optional template data which produces a formatted
  *     message with symbols being replaced by this object's values.
- * @returns {void}
+ * @return {void}
  */
 RuleContext.prototype.report = function(nodeOrDescriptor, location, message,
                                         opts) {};
@@ -108,26 +119,26 @@ const SourceCode = function() {};
  * @param {ASTNode=} node The AST node to get the text for.
  * @param {number=} beforeCount The number of characters before the node to retrieve.
  * @param {number=} afterCount The number of characters after the node to retrieve.
- * @returns {string} The text representing the AST node.
+ * @return {string} The text representing the AST node.
  */
 SourceCode.prototype.getText = function(node, beforeCount, afterCount) {};
 
 /**
  * Gets the entire source text split into an array of lines.
- * @returns {Array} The source text as an array of lines.
+ * @return {Array} The source text as an array of lines.
  */
 SourceCode.prototype.getLines = function() {};
 
 /**
  * Retrieves an array containing all comments in the source code.
- * @returns {Array<ASTNode>} An array of comment nodes.
+ * @return {Array<ASTNode>} An array of comment nodes.
  */
 SourceCode.prototype.getAllComments = function() {};
 
 /**
  * Gets all comments for the given node.
  * @param {ASTNode} node The AST node to get the comments for.
- * @returns {Object} The list of comments indexed by their position.
+ * @return {Object} The list of comments indexed by their position.
  * @public
  */
 SourceCode.prototype.getComments = function(node) {};
@@ -135,7 +146,7 @@ SourceCode.prototype.getComments = function(node) {};
 /**
  * Retrieves the JSDoc comment for a given node.
  * @param {ASTNode} node The AST node to get the comment for.
- * @returns {ASTNode} The BlockComment node containing the JSDoc for the
+ * @return {ASTNode} The BlockComment node containing the JSDoc for the
  *      given node or null if not found.
  * @public
  */
@@ -144,7 +155,7 @@ SourceCode.prototype.getJSDocComment = function(node) {};
 /**
  * Gets the deepest node containing a range index.
  * @param {number} index Range index of the desired node.
- * @returns {ASTNode} The node if found or null if not found.
+ * @return {ASTNode} The node if found or null if not found.
  */
 SourceCode.prototype.getNodeByRangeIndex = function(index) {};
 
@@ -154,7 +165,7 @@ SourceCode.prototype.getNodeByRangeIndex = function(index) {};
  * determination, so comments count as zero-length substrings.
  * @param {Token} first The token to check after.
  * @param {Token} second The token to check before.
- * @returns {boolean} True if there is only space between tokens, false
+ * @return {boolean} True if there is only space between tokens, false
  *  if there is anything other than whitespace between tokens.
  */
 SourceCode.prototype.isSpaceBetweenTokens = function(first, second){};
@@ -165,7 +176,7 @@ SourceCode.prototype.isSpaceBetweenTokens = function(first, second){};
  * @param {(!ASTNode|!Token)} node The AST node or token.
  * @param {number=} beforeCount The number of tokens before the node or
  *     token to retrieve.
- * @returns {!Array<!Token>} Array of objects representing tokens.
+ * @return {!Array<!Token>} Array of objects representing tokens.
  */
 SourceCode.prototype.getTokensBefore = function(node, beforeCount) {};
 
@@ -174,7 +185,7 @@ SourceCode.prototype.getTokensBefore = function(node, beforeCount) {};
  * @param {(!ASTNode|!Token)} node The AST node or token.
  * @param {number=} skip A number of tokens to skip before the given node or
  *     token.
- * @returns {!Token} An object representing the token.
+ * @return {!Token} An object representing the token.
  */
 SourceCode.prototype.getTokenBefore = function(node, skip) {};
 
@@ -184,7 +195,7 @@ SourceCode.prototype.getTokenBefore = function(node, skip) {};
  * @param {(!ASTNode|!Token)} node The AST node or token.
  * @param {number=} afterCount The number of tokens after the node or token
  *     to retrieve.
- * @returns {!Array<!Token>} Array of objects representing tokens.
+ * @return {!Array<!Token>} Array of objects representing tokens.
  */
 SourceCode.prototype.getTokensAfter = function(node, afterCount) {};
 
@@ -193,7 +204,7 @@ SourceCode.prototype.getTokensAfter = function(node, afterCount) {};
  * @param {(!ASTNode|!Token)} node The AST node or token.
  * @param {number=} skip A number of tokens to skip after the given node or
  *     token.
- * @returns {!Token} An object representing the token.
+ * @return {!Token} An object representing the token.
  */
 SourceCode.prototype.getTokenAfter = function(node, skip) {};
 
@@ -202,7 +213,7 @@ SourceCode.prototype.getTokenAfter = function(node, skip) {};
  * @param {!ASTNode} node The AST node.
  * @param {number=} beforeCount The number of tokens before the node to retrieve.
  * @param {number=} afterCount The number of tokens after the node to retrieve.
- * @returns {!Array<!Token>} Array of objects representing tokens.
+ * @return {!Array<!Token>} Array of objects representing tokens.
  */
 SourceCode.prototype.getTokens = function(node, beforeCount, afterCount) {};
 
@@ -210,7 +221,7 @@ SourceCode.prototype.getTokens = function(node, beforeCount, afterCount) {};
  * Gets the first `count` tokens of the given node's token stream.
  * @param {!ASTNode} node The AST node.
  * @param {number=} count The number of tokens of the node to retrieve.
- * @returns {!Array<!Token>} Array of objects representing tokens.
+ * @return {!Array<!Token>} Array of objects representing tokens.
  */
 SourceCode.prototype.getFirstTokens = function(node, count) {};
 
@@ -218,7 +229,7 @@ SourceCode.prototype.getFirstTokens = function(node, count) {};
  * Gets the first token of the given node's token stream.
  * @param {!ASTNode} node The AST node.
  * @param {number=} skip A number of tokens to skip.
- * @returns {!Token} An object representing the token.
+ * @return {!Token} An object representing the token.
  */
 SourceCode.prototype.getFirstToken = function(node, skip) {};
 
@@ -226,7 +237,7 @@ SourceCode.prototype.getFirstToken = function(node, skip) {};
  * Gets the last `count` tokens of the given node.
  * @param {!ASTNode} node The AST node.
  * @param {number=} count The number of tokens of the node to retrieve.
- * @returns {!Array<!Token>} Array of objects representing tokens.
+ * @return {!Array<!Token>} Array of objects representing tokens.
  */
 SourceCode.prototype.getLastTokens = function(node, count) {};
 
@@ -234,7 +245,7 @@ SourceCode.prototype.getLastTokens = function(node, count) {};
  * Gets the last token of the given node's token stream.
  * @param {!ASTNode} node The AST node.
  * @param {number=} skip A number of tokens to skip.
- * @returns {!Token} An object representing the token.
+ * @return {!Token} An object representing the token.
  */
 SourceCode.prototype.getLastToken = function(node, skip) {};
 
@@ -243,14 +254,14 @@ SourceCode.prototype.getLastToken = function(node, skip) {};
  * @param {!ASTNode} left Node before the desired token range.
  * @param {!ASTNode} right Node after the desired token range.
  * @param {number=} padding Number of extra tokens on either side of center.
- * @returns {!Array<!Token>} Tokens between left and right plus padding.
+ * @return {!Array<!Token>} Tokens between left and right plus padding.
  */
 SourceCode.prototype.getTokensBetween = function(left, right, padding) {};
 
 /**
  * Gets the token starting at the specified index.
  * @param {number=} startIndex Index of the start of the token's range.
- * @returns {!Token} The token starting at index, or null if no such token.
+ * @return {!Token} The token starting at index, or null if no such token.
  */
 SourceCode.prototype.getTokenByRangeStart = function(startIndex) {}
 
