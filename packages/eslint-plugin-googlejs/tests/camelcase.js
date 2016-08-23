@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tests for camelcase-optionals rule.
+ * @fileoverview Tests for camelcase rule.
  * @author Gregg Tavares (but it's just a modified version of camelcase by Nicholas C. Zakas)
  */
 
@@ -9,7 +9,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require('../lib/camelcase-optionals');
+const rule = require('../lib/camelcase');
 const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester();
 
@@ -17,7 +17,7 @@ const ruleTester = new RuleTester();
 // Tests
 //------------------------------------------------------------------------------
 
-ruleTester.run('camelcase-optionals', rule, {
+ruleTester.run('camelcase', rule, {
   valid: [
     'firstName = "Nicholas"',
     'FIRST_NAME = "Nicholas"',

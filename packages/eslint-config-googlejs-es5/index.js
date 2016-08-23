@@ -54,7 +54,7 @@ const ES6_RULES = {};
 const GOOGLE_PLUGIN_RULES = {
   // Allow opt_ prefix and var_args in identifiers.  From
   // https://git.io/vured#Naming
-  'googlejs/camelcase-optionals': WARNING,
+  'googlejs/camelcase': WARNING,
 
   // The JS style guide 'follows the C++ style guide in spirit'.  The C++ style
   // guide mandates two spaces before line-end comments.  See the 'Line
