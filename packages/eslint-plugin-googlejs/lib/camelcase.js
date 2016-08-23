@@ -1,13 +1,6 @@
 /**
  * @fileoverview Rule to flag non-camelcased identifiers except for the "opt_" prefix
- * @author Gregg Tavares (but it's just a modified version of camelcase by Nicholas C. Zakas)
  */
-
-'use strict';
-
-//------------------------------------------------------------------------------
-// Rule Definition
-//------------------------------------------------------------------------------
 
 module.exports = {
 

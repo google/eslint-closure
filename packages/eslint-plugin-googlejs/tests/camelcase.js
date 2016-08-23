@@ -1,21 +1,12 @@
 /**
- * @fileoverview Tests for camelcase rule.
- * @author Gregg Tavares (but it's just a modified version of camelcase by Nicholas C. Zakas)
+ * @fileoverview Tests for camelcase rules.
  */
 
 'use strict';
 
-//------------------------------------------------------------------------------
-// Requirements
-//------------------------------------------------------------------------------
-
 const rule = require('../lib/camelcase');
 const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester();
-
-//------------------------------------------------------------------------------
-// Tests
-//------------------------------------------------------------------------------
 
 ruleTester.run('camelcase', rule, {
   valid: [
