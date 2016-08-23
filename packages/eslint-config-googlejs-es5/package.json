@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "author": "Joe Schafer <joe@jschaf.com>",
   "license": "Apache-2.0",
-  "description": "Google's base JS ESLint config for ES5, following our styleguide.",
+  "description": "Google's JS ESLint config for ES5, following our styleguide.",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/jschaf/googlejs",
   "dependencies": {
-    "eslint-config-googlejs-base": "^0.0.1"
+    "eslint-config-googlejs-base": "^0.0.1",
+    "eslint-plugin-googlejs": "^0.0.1"
   },
   "devDependencies": {
   },

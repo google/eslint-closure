@@ -6,6 +6,7 @@
  * Short link to the Google C++ Style Guide: https://git.io/v6Mp3
  */
 
+
 // Named constants for the numbers eslint uses to indicate lint severity.
 const OFF = 0;
 const WARNING = 1;
