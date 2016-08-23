@@ -1,0 +1,41 @@
+
+{
+  "name": "eslint-config-googlejs-es6",
+  "version": "0.0.1",
+  "author": "Joe Schafer <joe@jschaf.com>",
+  "license": "Apache-2.0",
+  "description": "Google's ES6 JS ESLint config, following our styleguide.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "keywords": [
+    "eslint",
+    "eslintconfig",
+    "config",
+    "google",
+    "javascript",
+    "styleguide",
+    "lint",
+    "linter"
+  ],
+  "bugs": {
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "homepage": "https://github.com/jschaf/googlejs",
+  "dependencies": {
+    "eslint-plugin-jsdoc": "^2.3.1",
+    "eslint-plugin-googlejs": "^0.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^3.0.2"
+  },
+  "peerDependencies": {},
+  "engines": {
+    "node": ">= 4"
+  },
+  "scripts": {
+    "test": "mocha tests"
+  }
+}
