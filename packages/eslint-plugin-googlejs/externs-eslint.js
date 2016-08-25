@@ -51,7 +51,7 @@ ESLint.VisitorMapping;
 ESLint.NodeVisitorMapping;
 
 /**
- * @typedef {!Object<(!Espree.CodePathEvent), function(...*)>}
+ * @typedef {!Object<(!ESLint.CodePathEvent), function(...*)>}
  */
 ESLint.CodePathMapping;
 
@@ -395,7 +395,7 @@ ESLint.MessageDescriptor;
 /** @typedef {{range: !Array<number>, text: string}} */
 ESLint.FixCommand;
 
-/** @typedef {function(!ESLint.Fixer)} */
+/** @typedef {function(!ESLint.Fixer):!ESLint.FixCommand} */
 ESLint.FixFunction;
 
 /** @record */

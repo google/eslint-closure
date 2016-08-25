@@ -78,6 +78,10 @@ module.exports = {
           message: 'Expected at least ' + minPrecedingSpaces + ' ' + spacesNoun
             + ' before inline comment.',
 
+          /**
+           * @param {!ESLint.Fixer} fixer
+           * @return {!ESLint.FixCommand}
+           */
           fix(fixer) {
             const numNeededSpaces = minPrecedingSpaces - whiteSpaceGap;
             const spaces = new Array(numNeededSpaces + 1).join(' ');
