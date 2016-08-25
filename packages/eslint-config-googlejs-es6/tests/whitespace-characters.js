@@ -2,19 +2,15 @@
  * @fileoverview Tests for whitespace characters.
  */
 
-const es6Config = {
-  parserOptions: {
-    ecmaVersion: 6,
-  },
-}
+const es6Config = require('../index.js');
 const emptyRule = require('../emptyRule');
 const RuleTester = require('eslint').RuleTester;
-const ruleTester = new RuleTester({
-  global: {test: true},
-  parserOptions: {ecmaVersion: 6},
-});
+const ruleTester = new RuleTester();
+RuleTester.setDefaultConfig(es6Config);
+
 ruleTester.run('whitespace-characters', emptyRule, {
   valid: [
+    'var foo = 2;',
     'let foo = 2;',
     'const bar = 3;',
   ],
