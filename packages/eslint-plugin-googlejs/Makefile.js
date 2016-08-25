@@ -1,6 +1,8 @@
 const closurePackage = require('google-closure-compiler');
 const ClosureCompiler = closurePackage.compiler;
 
+/* eslint-disable googlejs/camelcase */
+
 var compiler = new ClosureCompiler(
   {
     js: [
@@ -8,7 +10,8 @@ var compiler = new ClosureCompiler(
       './lib/*.js',
     ],
     externs: [
-      './externs.js',
+      './externs-eslint.js',
+      './externs-estree.js',
     ],
     language_in: 'ECMASCRIPT6_STRICT',
     warning_level: 'VERBOSE',
