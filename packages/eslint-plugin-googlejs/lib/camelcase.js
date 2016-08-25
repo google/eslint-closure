@@ -15,7 +15,7 @@ module.exports = {
 
   /**
    * @param {!RuleContext} context The thing
-   * @return {number}
+   * @return {!Object<ESTree.NodeType, function(ESTree.ASTNode)>}
    */
   create(context) {
     // Helpers
@@ -23,7 +23,7 @@ module.exports = {
     /**
      * Checks if a string contains an underscore and isn't all upper-case
      * @param {string} name The string to check.
-     * @returns {boolean} if the string is underscored
+     * @return {boolean} if the string is underscored
      * @private
      */
     function isUnderscored(name) {
@@ -39,8 +39,8 @@ module.exports = {
 
     /**
      * Reports an AST node as a rule violation.
-     * @param {!ASTNode} node The node to report.
-     * @returns {void}
+     * @param {!ESTree.Identifier} node The node to report.
+     * @return {void}
      * @private
      */
     function report(node) {
