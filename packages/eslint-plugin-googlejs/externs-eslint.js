@@ -39,8 +39,21 @@ ESLint.RuleDefinition = function() {};
 /** @type {ESLint.RuleMeta} */
 ESLint.RuleDefinition.prototype.meta;
 
-/** @type {function(!ESTree.ASTNode): !Object<(ESTree.NodeType|string), function(ESTree.NodeType)>} */
+/** @type {function(!ESTree.ASTNode): !ESLint.VisitorMapping} */
 ESLint.RuleDefinition.prototype.create;
+
+/** @typedef {(ESLint.NodeVisitorMapping|ESLint.CodePathMapping)}*/
+ESLint.VisitorMapping;
+
+/**
+ * @typedef {!Object<(ESTree.Node|ESLint.NodeExit), function(!ESTree.ASTNode)>}
+ */
+ESLint.NodeVisitorMapping;
+
+/**
+ * @typedef {!Object<(!ESTree.CodePathEvent), function(...*)>}
+ */
+ESLint.CodePathMapping;
 
 /**
  * The metadata for an ESLint rule.
@@ -381,3 +394,71 @@ ESLint.MessageDescriptorWithNode;
  * @typedef {(ESLint.MessageDescriptorWithLoc|ESLint.MessageDescriptorWithNode)}
  */
 ESLint.MessageDescriptor;
+
+
+/**
+ * Special Node type that ESLint will process when going back up the tree.
+ * @enum {string}
+ */
+ESLint.NodeExit = {
+  NODE_EXIT: 'Node:exit',
+  IDENTIFIER_EXIT: 'Identifier:exit',
+  LITERAL_EXIT: 'Literal:exit',
+  REG_EXP_LITERAL_EXIT: 'RegExpLiteral:exit',
+  PROGRAM_EXIT: 'Program:exit',
+  FUNCTION_EXIT: 'Function:exit',
+  STATEMENT_EXIT: 'Statement:exit',
+  EXPRESSION_STATEMENT_EXIT: 'ExpressionStatement:exit',
+  BLOCK_STATEMENT_EXIT: 'BlockStatement:exit',
+  EMPTY_STATEMENT_EXIT: 'EmptyStatement:exit',
+  DEBUGGER_STATEMENT_EXIT: 'DebuggerStatement:exit',
+  WITH_STATEMENT_EXIT: 'WithStatement:exit',
+  RETURN_STATEMENT_EXIT: 'ReturnStatement:exit',
+  LABELED_STATEMENT_EXIT: 'LabeledStatement:exit',
+  BREAK_STATEMENT_EXIT: 'BreakStatement:exit',
+  CONTINUE_STATEMENT_EXIT: 'ContinueStatement:exit',
+  IF_STATEMENT_EXIT: 'IfStatement:exit',
+  SWITCH_STATEMENT_EXIT: 'SwitchStatement:exit',
+  SWITCH_CASE_EXIT: 'SwitchCase:exit',
+  THROW_STATEMENT_EXIT: 'ThrowStatement:exit',
+  TRY_STATEMENT_EXIT: 'TryStatement:exit',
+  CATCH_CLAUSE_EXIT: 'CatchClause:exit',
+  WHILE_STATEMENT_EXIT: 'WhileStatement:exit',
+  DO_WHILE_STATEMENT_EXIT: 'DoWhileStatement:exit',
+  FOR_STATEMENT_EXIT: 'ForStatement:exit',
+  FOR_IN_STATEMENT_EXIT: 'ForInStatement:exit',
+  DECLARATION_EXIT: 'Declaration:exit',
+  FUNCTION_DECLARATION_EXIT: 'FunctionDeclaration:exit',
+  VARIABLE_DECLARATION_EXIT: 'VariableDeclaration:exit',
+  VARIABLE_DECLARATOR_EXIT: 'VariableDeclarator:exit',
+  EXPRESSION_EXIT: 'Expression:exit',
+  THIS_EXPRESSION_EXIT: 'ThisExpression:exit',
+  ARRAY_EXPRESSION_EXIT: 'ArrayExpression:exit',
+  OBJECT_EXPRESSION_EXIT: 'ObjectExpression:exit',
+  PROPERTY_EXIT: 'Property:exit',
+  FUNCTION_EXPRESSION_EXIT: 'FunctionExpression:exit',
+  UNARY_EXPRESSION_EXIT: 'UnaryExpression:exit',
+  UPDATE_EXPRESSION_EXIT: 'UpdateExpression:exit',
+  BINARY_EXPRESSION_EXIT: 'BinaryExpression:exit',
+  ASSIGNMENT_EXPRESSION_EXIT: 'AssignmentExpression:exit',
+  LOGICAL_EXPRESSION_EXIT: 'LogicalExpression:exit',
+  MEMBER_EXPRESSION_EXIT: 'MemberExpression:exit',
+  CONDITIONAL_EXPRESSION_EXIT: 'ConditionalExpression:exit',
+  CALL_EXPRESSION_EXIT: 'CallExpression:exit',
+  NEW_EXPRESSION_EXIT: 'NewExpression:exit',
+  SEQUENCE_EXPRESSION_EXIT: 'SequenceExpression:exit',
+  PATTERN_EXIT: 'Pattern:exit',
+};
+
+/**
+ * Code path events to control when a Rule.create function is run.
+ * @enum {string}
+ * @see http://eslint.org/docs/developer-guide/code-path-analysis/
+ */
+ESLint.CodePathEvent = {
+  ON_CODE_PATH_START: 'onCodePathStart',
+  ON_CODE_PATH_END: 'onCodePathEnd',
+  ON_CODE_PATH_SEGMENT_START: 'onCodePathSegmentStart',
+  ON_CODE_PATH_SEGMENT_END: 'onCodePathSegmentEnd',
+  ON_CODE_PATH_SEGMENT_LOOP: 'onCodePathSegmentLoop',
+}
