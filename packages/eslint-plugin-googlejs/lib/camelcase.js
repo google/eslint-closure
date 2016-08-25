@@ -39,7 +39,7 @@ module.exports = {
 
     /**
      * Reports an AST node as a rule violation.
-     * @param {!ESTree.Identifier} node The node to report.
+     * @param {!Espree.Identifier} node The node to report.
      * @return {void}
      * @private
      */

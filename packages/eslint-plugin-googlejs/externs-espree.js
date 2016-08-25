@@ -40,11 +40,14 @@ Espree.Position.prototype.column;
  */
 Espree.Token = function() {}
 
-/** @type {Espree.TokenType} */
+/** @type {!Espree.TokenType} */
 Espree.Token.prototype.type;
 
 /** @type {string} */
 Espree.Token.prototype.value;
+
+/** @type {!Espree.SourceLocation} */
+Espree.Token.prototype.loc;
 
 /**
  * Token types are re-used from Esprima.
@@ -74,25 +77,13 @@ Espree.TokenType = {
  */
 Espree.ASTNode = function() {};
 
-/** @type {!Espree.Node} */
+/** @type {!Espree.NodeType} */
 Espree.ASTNode.prototype.type;
 
 // This is technically nullable by the spec, but we trust Espree to return an
 // object to avoid tedious nullability checking everywhere.
 /** @type {!Espree.SourceLocation} */
 Espree.ASTNode.prototype.loc;
-
-/**
- * An identifier. Note that an identifier may be an expression or a
- * destructuring pattern.
- *
- * @record
- * @extends {Espree.ASTNode}
- */
-Espree.Identifier = function() {};
-
-/** @type {string} */
-Espree.Identifier.prototype.name;
 
 
 /**
@@ -180,81 +171,72 @@ Espree.NodeType = {
   YIELD_EXPRESSION: 'YieldExpression',
 };
 
-/** @typedef {Expression | SpreadElement;} */
+/** @typedef {!Espree.Expression | !Espree.SpreadElement} */
 Espree.ArgumentListElement;
 
-/** @typedef {Expression | SpreadElement;} */
+/** @typedef {!Espree.Expression | !Espree.SpreadElement} */
 Espree.ArrayExpressionElement;
 
-/** @typedef {AssignmentPattern | BindingIdentifier | BindingPattern | RestElement;} */
+/** @typedef {!Espree.AssignmentPattern | !Espree.BindingIdentifier | !Espree.BindingPattern | !Espree.RestElement} */
 Espree.ArrayPatternElement;
 
-/** @typedef {ArrayPattern | ObjectPattern;} */
+/** @typedef {!Espree.ArrayPattern | !Espree.ObjectPattern} */
 Espree.BindingPattern;
 
-/** @typedef {Identifier;} */
+/** @typedef {!Espree.Identifier} */
 Espree.BindingIdentifier;
 
-/** @typedef {ClassDeclaration | ExportDeclaration | FunctionDeclaration | ImportDeclaration | VariableDeclaration;} */
+/** @typedef {!Espree.ClassDeclaration | !Espree.ExportDeclaration | !Espree.FunctionDeclaration | !Espree.ImportDeclaration | !Espree.VariableDeclaration} */
 Espree.Declaration;
 
-/** @typedef {ExportAllDeclaration | ExportDefaultDeclaration | ExportNamedDeclaration;} */
+/** @typedef {!Espree.ExportAllDeclaration | !Espree.ExportDefaultDeclaration | !Espree.ExportNamedDeclaration} */
 Espree.ExportDeclaration;
 
-/** @typedef {ArrayExpression | ArrowFunctionExpression | AssignmentExpression | BinaryExpression | CallExpression | ClassExpression | ComputedMemberExpression | ConditionalExpression | Identifier | FunctionExpression | Literal | NewExpression | ObjectExpression | RegexLiteral | SequenceExpression | StaticMemberExpression | TaggedTemplateExpression | ThisExpression | UnaryExpression | UpdateExpression | YieldExpression;} */
+/** @typedef {!Espree.ArrayExpression | !Espree.ArrowFunctionExpression | !Espree.AssignmentExpression | !Espree.BinaryExpression | !Espree.CallExpression | !Espree.ClassExpression | !Espree.ComputedMemberExpression | !Espree.ConditionalExpression | !Espree.Identifier | !Espree.FunctionExpression | !Espree.Literal | !Espree.NewExpression | !Espree.ObjectExpression | !Espree.RegexLiteral | !Espree.SequenceExpression | !Espree.StaticMemberExpression | !Espree.TaggedTemplateExpression | !Espree.ThisExpression | !Espree.UnaryExpression | !Espree.UpdateExpression | !Espree.YieldExpression} */
 Espree.Expression;
 
-/** @typedef {AssignmentPattern | BindingIdentifier | BindingPattern;} */
+/** @typedef {!Espree.AssignmentPattern | !Espree.BindingIdentifier | !Espree.BindingPattern} */
 Espree.FunctionParameter;
 
-/** @typedef {ImportDefaultSpecifier | ImportNamespaceSpecifier | ImportSpecifier;} */
+/** @typedef {!Espree.ImportDefaultSpecifier | !Espree.ImportNamespaceSpecifier | !Espree.ImportSpecifier} */
 Espree.ImportDeclarationSpecifier;
 
-/** @typedef {BreakStatement | ContinueStatement | DebuggerStatement | DoWhileStatement | EmptyStatement | ExpressionStatement | Directive | ForStatement | ForInStatement | ForOfStatement | FunctionDeclaration | IfStatement | ReturnStatement | SwitchStatement | ThrowStatement | TryStatement | VariableDeclaration | WhileStatement | WithStatement;} */
+/** @typedef {!Espree.BreakStatement | !Espree.ContinueStatement | !Espree.DebuggerStatement | !Espree.DoWhileStatement | !Espree.EmptyStatement | !Espree.ExpressionStatement | !Espree.Directive | !Espree.ForStatement | !Espree.ForInStatement | !Espree.ForOfStatement | !Espree.FunctionDeclaration | !Espree.IfStatement | !Espree.ReturnStatement | !Espree.SwitchStatement | !Espree.ThrowStatement | !Espree.TryStatement | !Espree.VariableDeclaration | !Espree.WhileStatement | !Espree.WithStatement} */
 Espree.Statement;
 
-/** @typedef {Identifier | Literal;} */
+/** @typedef {!Espree.Identifier | !Espree.Literal} */
 Espree.PropertyKey;
 
-/** @typedef {AssignmentPattern | BindingIdentifier | BindingPattern | FunctionExpression;} */
+/** @typedef {!Espree.AssignmentPattern | !Espree.BindingIdentifier | !Espree.BindingPattern | !Espree.FunctionExpression} */
 Espree.PropertyValue;
 
-/** @typedef {Declaration | Statement;} */
+/** @typedef {!Espree.Declaration | !Espree.Statement} */
 Espree.StatementListItem;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ArrayExpression = function() {};
 
-/** @type {string} */
-Espree.ArrayExpression.prototype.type;
-
-/** @type {!Array<!ArrayExpressionElement} */
+/** @type {!Array<!Espree.ArrayExpressionElement>} */
 Espree.ArrayExpression.prototype.Elements;
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ArrayPattern = function() {};
 
-/** @type {string} */
-Espree.ArrayPattern.prototype.type;
-
-/** @type {!Array<!ArrayPatternElement>} */
+/** @type {!Array<!Espree.ArrayPatternElement>} */
 Espree.ArrayPattern.prototype.elements;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ArrowFunctionExpression = function() {};
 
-/** @type {string} */
-Espree.ArrowFunctionExpression.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ArrowFunctionExpression.prototype.id;
 
-/** @type {!Array<!FunctionParameter>} */
+/** @type {!Array<!Espree.FunctionParameter>} */
 Espree.ArrowFunctionExpression.prototype.params;
 
-/** @type {(!BlockStatement | !Expression)} */
+/** @type {(!Espree.BlockStatement | !Espree.Expression)} */
 Espree.ArrowFunctionExpression.prototype.body;
 
 /** @type {boolean} */
@@ -264,330 +246,268 @@ Espree.ArrowFunctionExpression.prototype.generator;
 Espree.ArrowFunctionExpression.prototype.expression;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.AssignmentExpression = function() {};
-
-/** @type {string} */
-Espree.AssignmentExpression.prototype.type;
 
 /** @type {string} */
 Espree.AssignmentExpression.prototype.operator;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.AssignmentExpression.prototype.left;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.AssignmentExpression.prototype.right;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.AssignmentPattern = function() {};
 
-/** @type {string} */
-Espree.AssignmentPattern.prototype.type;
-
-/** @type {(!BindingIdentifier | !BindingPattern)} */
+/** @type {(!Espree.BindingIdentifier | !Espree.BindingPattern)} */
 Espree.AssignmentPattern.prototype.left;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.AssignmentPattern.prototype.right;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.BinaryExpression = function() {};
-
-/** @type {string} */
-Espree.BinaryExpression.prototype.type;
 
 /** @type {string} */
 Espree.BinaryExpression.prototype.operator;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.BinaryExpression.prototype.left;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.BinaryExpression.prototype.right;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.BlockStatement = function() {};
 
-/** @type {string} */
-Espree.BlockStatement.prototype.type;
-
-/** @type {!Array<!Statement>} */
+/** @type {!Array<!Espree.Statement>} */
 Espree.BlockStatement.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.BreakStatement = function() {};
 
-/** @type {string} */
-Espree.BreakStatement.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.BreakStatement.prototype.label;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.CallExpression = function() {};
 
-/** @type {string} */
-Espree.CallExpression.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.CallExpression.prototype.callee;
 
-/** @type {!Array<!ArgumentListElement>} */
+/** @type {!Array<!Espree.ArgumentListElement>} */
 Espree.CallExpression.prototype.arguments;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.CatchClause = function() {};
 
-/** @type {string} */
-Espree.CatchClause.prototype.type;
-
-/** @type {(!BindingIdentifier | !BindingPattern)} */
+/** @type {(!Espree.BindingIdentifier | !Espree.BindingPattern)} */
 Espree.CatchClause.prototype.param;
 
-/** @type {!BlockStatement} */
+/** @type {!Espree.BlockStatement} */
 Espree.CatchClause.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ClassBody = function() {};
 
-/** @type {string} */
-Espree.ClassBody.prototype.type;
-
-/** @type {!Array<!Property>} */
+/** @type {!Array<!Espree.Property>} */
 Espree.ClassBody.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ClassDeclaration = function() {};
 
-/** @type {string} */
-Espree.ClassDeclaration.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ClassDeclaration.prototype.id;
 
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ClassDeclaration.prototype.superClass;
 
-/** @type {!ClassBody} */
+/** @type {!Espree.ClassBody} */
 Espree.ClassDeclaration.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ClassExpression = function() {};
 
-/** @type {string} */
-Espree.ClassExpression.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ClassExpression.prototype.id;
 
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ClassExpression.prototype.superClass;
 
-/** @type {!ClassBody} */
+/** @type {!Espree.ClassBody} */
 Espree.ClassExpression.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ComputedMemberExpression = function() {};
-
-/** @type {string} */
-Espree.ComputedMemberExpression.prototype.type;
 
 /** @type {boolean} */
 Espree.ComputedMemberExpression.prototype.computed;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ComputedMemberExpression.prototype.object;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ComputedMemberExpression.prototype.property;
 
 
-/** @record */
-Espree.ContinueStatement = function() {};
-/** @type {string} */
-Espree.ContinueStatement.prototype.type;
+/** @record @extends {Espree.ASTNode} */
+Espree.ConditionalExpression = function() {};
 
-/** @type {!Identifier} */
+/** @type {!Espree.Expression} */
+Espree.ConditionalExpression.prototype.test;
+
+/** @type {!Espree.Expression} */
+Espree.ConditionalExpression.prototype.consequent;
+
+/** @type {!Espree.Expression} */
+Espree.ConditionalExpression.prototype.alternate;
+
+
+/** @record @extends {Espree.ASTNode} */
+Espree.ContinueStatement = function() {};
+/** @type {!Espree.Identifier} */
 Espree.ContinueStatement.prototype.label;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.DebuggerStatement = function() {};
 
-/** @type {string} */
-Espree.DebuggerStatement.prototype.type;
 
-
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.Directive = function() {};
 
-/** @type {string} */
-Espree.Directive.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.Directive.prototype.expression;
 
 /** @type {string} */
 Espree.Directive.prototype.directive;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.DoWhileStatement = function() {};
 
-/** @type {string} */
-Espree.DoWhileStatement.prototype.type;
-
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.DoWhileStatement.prototype.body;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.DoWhileStatement.prototype.test;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.EmptyStatement = function() {};
 
-/** @type {string} */
-Espree.EmptyStatement.prototype.type;
 
-
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ExportAllDeclaration = function() {};
 
-/** @type {string} */
-Espree.ExportAllDeclaration.prototype.type;
-
-/** @type {!Literal} */
+/** @type {!Espree.Literal} */
 Espree.ExportAllDeclaration.prototype.source;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ExportDefaultDeclaration = function() {};
 
-/** @type {string} */
-Espree.ExportDefaultDeclaration.prototype.type;
-
-/** @type {(!BindingIdentifier | !BindingPattern | !ClassDeclaration | !Expression | !FunctionDeclaration)} */
+/** @type {(!Espree.BindingIdentifier | !Espree.BindingPattern | !Espree.ClassDeclaration | !Espree.Expression | !Espree.FunctionDeclaration)} */
 Espree.ExportDefaultDeclaration.prototype.declaration;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ExportNamedDeclaration = function() {};
 
-/** @type {string} */
-Espree.ExportNamedDeclaration.prototype.type;
-
-/** @type {(!ClassDeclaration | !Function | !VariableDeclaration)} */
+/** @type {(!Espree.ClassDeclaration | !Function | !Espree.VariableDeclaration)} */
 Espree.ExportNamedDeclaration.prototype.declaration;
 
-/** @type {!Array<!ExportSpecifier>} */
+/** @type {!Array<!Espree.ExportSpecifier>} */
 Espree.ExportNamedDeclaration.prototype.specifiers;
 
-/** @type {!Literal} */
+/** @type {!Espree.Literal} */
 Espree.ExportNamedDeclaration.prototype.source;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ExportSpecifier = function() {};
 
-/** @type {string} */
-Espree.ExportSpecifier.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ExportSpecifier.prototype.exported;
 
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ExportSpecifier.prototype.local;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ExpressionStatement = function() {};
 
-/** @type {string} */
-Espree.ExpressionStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ExpressionStatement.prototype.expression;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ForInStatement = function() {};
 
-/** @type {string} */
-Espree.ForInStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ForInStatement.prototype.left;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ForInStatement.prototype.right;
 
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.ForInStatement.prototype.body;
 
 /** @type {boolean} */
 Espree.ForInStatement.prototype.each;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ForOfStatement = function() {};
 
-/** @type {string} */
-Espree.ForOfStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ForOfStatement.prototype.left;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ForOfStatement.prototype.right;
 
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.ForOfStatement.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ForStatement = function() {};
 
-/** @type {string} */
-Espree.ForStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ForStatement.prototype.init;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ForStatement.prototype.test;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ForStatement.prototype.update;
 
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.ForStatement.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.FunctionDeclaration = function() {};
 
-/** @type {string} */
-Espree.FunctionDeclaration.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.FunctionDeclaration.prototype.id;
 
-/** @type {!Array<!FunctionParameter>} */
+/** @type {!Array<!Espree.FunctionParameter>} */
 Espree.FunctionDeclaration.prototype.params;
 
-/** @type {!BlockStatement} */
+/** @type {!Espree.BlockStatement} */
 Espree.FunctionDeclaration.prototype.body;
 
 /** @type {boolean} */
@@ -597,19 +517,16 @@ Espree.FunctionDeclaration.prototype.generator;
 Espree.FunctionDeclaration.prototype.expression;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.FunctionExpression = function() {};
 
-/** @type {string} */
-Espree.FunctionExpression.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.FunctionExpression.prototype.id;
 
-/** @type {!Array<!FunctionParameter>} */
+/** @type {!Array<!Espree.FunctionParameter>} */
 Espree.FunctionExpression.prototype.params;
 
-/** @type {!BlockStatement} */
+/** @type {!Espree.BlockStatement} */
 Espree.FunctionExpression.prototype.body;
 
 /** @type {boolean} */
@@ -619,96 +536,72 @@ Espree.FunctionExpression.prototype.generator;
 Espree.FunctionExpression.prototype.expression;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.Identifier = function() {};
-
-/** @type {string} */
-Espree.Identifier.prototype.type;
 
 /** @type {string} */
 Espree.Identifier.prototype.name;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.IfStatement = function() {};
 
-/** @type {string} */
-Espree.IfStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.IfStatement.prototype.test;
 
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.IfStatement.prototype.consequent;
 
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.IfStatement.prototype.alternate;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ImportDeclaration = function() {};
 
-/** @type {string} */
-Espree.ImportDeclaration.prototype.type;
-
-/** @type {!Array<!ImportDeclarationSpecifier>} */
+/** @type {!Array<!Espree.ImportDeclarationSpecifier>} */
 Espree.ImportDeclaration.prototype.specifiers;
 
-/** @type {!Literal} */
+/** @type {!Espree.Literal} */
 Espree.ImportDeclaration.prototype.source;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ImportDefaultSpecifier = function() {};
 
-/** @type {string} */
-Espree.ImportDefaultSpecifier.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ImportDefaultSpecifier.prototype.local;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ImportNamespaceSpecifier = function() {};
 
-/** @type {string} */
-Espree.ImportNamespaceSpecifier.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ImportNamespaceSpecifier.prototype.local;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ImportSpecifier = function() {};
 
-/** @type {string} */
-Espree.ImportSpecifier.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ImportSpecifier.prototype.local;
 
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.ImportSpecifier.prototype.imported;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.LabeledStatement = function() {};
 
-/** @type {string} */
-Espree.LabeledStatement.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.LabeledStatement.prototype.label;
 
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.LabeledStatement.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.Literal = function() {};
-
-/** @type {string} */
-Espree.Literal.prototype.type;
 
 /** @type {(boolean | number | string)} */
 Espree.Literal.prototype.value;
@@ -717,32 +610,26 @@ Espree.Literal.prototype.value;
 Espree.Literal.prototype.raw;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.MetaProperty = function() {};
 
-/** @type {string} */
-Espree.MetaProperty.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.MetaProperty.prototype.meta;
 
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.MetaProperty.prototype.property;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.MethodDefinition = function() {};
 
-/** @type {string} */
-Espree.MethodDefinition.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.MethodDefinition.prototype.key;
 
 /** @type {boolean} */
 Espree.MethodDefinition.prototype.computed;
 
-/** @type {!FunctionExpression} */
+/** @type {!Espree.FunctionExpression} */
 Espree.MethodDefinition.prototype.value;
 
 /** @type {string} */
@@ -752,65 +639,50 @@ Espree.MethodDefinition.prototype.kind;
 Espree.MethodDefinition.prototype.static;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.NewExpression = function() {};
 
-/** @type {string} */
-Espree.NewExpression.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.NewExpression.prototype.callee;
 
-/** @type {!Array<!ArgumentListElement>} */
+/** @type {!Array<!Espree.ArgumentListElement>} */
 Espree.NewExpression.prototype.arguments;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ObjectExpression = function() {};
 
-/** @type {string} */
-Espree.ObjectExpression.prototype.type;
-
-/** @type {!Array<!Property>} */
+/** @type {!Array<!Espree.Property>} */
 Espree.ObjectExpression.prototype.properties;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ObjectPattern = function() {};
 
-/** @type {string} */
-Espree.ObjectPattern.prototype.type;
-
-/** @type {!Array<!Property>} */
+/** @type {!Array<!Espree.Property>} */
 Espree.ObjectPattern.prototype.properties;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.Program = function() {};
 
-/** @type {string} */
-Espree.Program.prototype.type;
-
-/** @type {!Array<!StatementListItem>} */
+/** @type {!Array<!Espree.StatementListItem>} */
 Espree.Program.prototype.body;
 
 /** @type {string} */
 Espree.Program.prototype.sourceType;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.Property = function() {};
 
-/** @type {string} */
-Espree.Property.prototype.type;
-
-/** @type {!PropertyKey} */
+/** @type {!Espree.PropertyKey} */
 Espree.Property.prototype.key;
 
 /** @type {boolean} */
 Espree.Property.prototype.computed;
 
-/** @type {!PropertyValue} */
+/** @type {!Espree.PropertyValue} */
 Espree.Property.prototype.value;
 
 /** @type {string} */
@@ -822,129 +694,96 @@ Espree.Property.prototype.method;
 /** @type {boolean} */
 Espree.Property.prototype.shorthand;
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.RegexLiteral = function() {};
 
 /** @type {string} */
-Espree.Property.prototype.type;
+Espree.RegexLiteral.prototype.value;
 
 /** @type {string} */
-Espree.Property.prototype.value;
+Espree.RegexLiteral.prototype.raw;
 
-/** @type {string} */
-Espree.Property.prototype.raw;
-
-/** @type {any} */
-Espree.Property.prototype.regex;
+/** @type {*} */
+Espree.RegexLiteral.prototype.regex;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.RestElement = function() {};
 
-/** @type {string} */
-Espree.RestElement.prototype.type;
-
-/** @type {!Identifier} */
+/** @type {!Espree.Identifier} */
 Espree.RestElement.prototype.argument;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ReturnStatement = function() {};
 
-/** @type {string} */
-Espree.ReturnStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ReturnStatement.prototype.argument;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.SequenceExpression = function() {};
 
-/** @type {string} */
-Espree.SequenceExpression.prototype.type;
-
-/** @type {!Array<!Expression>} */
+/** @type {!Array<!Espree.Expression>} */
 Espree.SequenceExpression.prototype.expressions;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.SpreadElement = function() {};
 
-/** @type {string} */
-Espree.SpreadElement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.SpreadElement.prototype.argument;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.StaticMemberExpression = function() {};
-
-/** @type {string} */
-Espree.StaticMemberExpression.prototype.type;
 
 /** @type {boolean} */
 Espree.StaticMemberExpression.prototype.computed;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.StaticMemberExpression.prototype.object;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.StaticMemberExpression.prototype.property;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.Super = function() {};
 
-/** @type {string} */
-Espree.Super.prototype.type;
 
-
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.SwitchCase = function() {};
 
-/** @type {string} */
-Espree.SwitchCase.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.SwitchCase.prototype.test;
 
-/** @type {!Array<!Statement>} */
+/** @type {!Array<!Espree.Statement>} */
 Espree.SwitchCase.prototype.consequent;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.SwitchStatement = function() {};
 
-/** @type {string} */
-Espree.SwitchStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.SwitchStatement.prototype.discriminant;
 
-/** @type {!Array<!SwitchCase>} */
+/** @type {!Array<!Espree.SwitchCase>} */
 Espree.SwitchStatement.prototype.cases;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.TaggedTemplateExpression = function() {};
 
-/** @type {string} */
-Espree.TaggedTemplateExpression.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.TaggedTemplateExpression.prototype.tag;
 
-/** @type {!TemplateLiteral} */
+/** @type {!Espree.TemplateLiteral} */
 Espree.TaggedTemplateExpression.prototype.quasi;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.TemplateElement = function() {};
-
-/** @type {string} */
-Espree.TemplateElement.prototype.type;
 
 /** @type {{cooked: string, raw: string}} */
 Espree.TemplateElement.prototype.value;
@@ -953,143 +792,110 @@ Espree.TemplateElement.prototype.value;
 Espree.TemplateElement.prototype.tail;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.TemplateLiteral = function() {};
 
-/** @type {string} */
-Espree.TemplateLiteral.prototype.type;
-
-/** @type {!Array<!TemplateElement>} */
+/** @type {!Array<!Espree.TemplateElement>} */
 Espree.TemplateLiteral.prototype.quasis;
 
-/** @type {!Array<!Expression>} */
+/** @type {!Array<!Espree.Expression>} */
 Espree.TemplateLiteral.prototype.expressions;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ThisExpression = function() {};
 
-/** @type {string} */
-Espree.ThisExpression.prototype.type;
 
-
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.ThrowStatement = function() {};
 
-/** @type {string} */
-Espree.ThrowStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.ThrowStatement.prototype.argument;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.TryStatement = function() {};
 
-/** @type {string} */
-Espree.TryStatement.prototype.type;
-
-/** @type {!BlockStatement} */
+/** @type {!Espree.BlockStatement} */
 Espree.TryStatement.prototype.block;
 
-/** @type {!CatchClause} */
+/** @type {!Espree.CatchClause} */
 Espree.TryStatement.prototype.handler;
 
-/** @type {!BlockStatement} */
+/** @type {!Espree.BlockStatement} */
 Espree.TryStatement.prototype.finalizer;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.UnaryExpression = function() {};
-
-/** @type {string} */
-Espree.UnaryExpression.prototype.type;
 
 /** @type {string} */
 Espree.UnaryExpression.prototype.operator;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.UnaryExpression.prototype.argument;
 
 /** @type {boolean} */
 Espree.UnaryExpression.prototype.prefix;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.UpdateExpression = function() {};
-
-/** @type {string} */
-Espree.UpdateExpression.prototype.type;
 
 /** @type {string} */
 Espree.UpdateExpression.prototype.operator;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.UpdateExpression.prototype.argument;
 
 /** @type {boolean} */
 Espree.UpdateExpression.prototype.prefix;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.VariableDeclaration = function() {};
 
-/** @type {string} */
-Espree.VariableDeclaration.prototype.type;
-
-/** @type {!Array<!VariableDeclarator>} */
+/** @type {!Array<!Espree.VariableDeclarator>} */
 Espree.VariableDeclaration.prototype.declarations;
 
 /** @type {string} */
 Espree.VariableDeclaration.prototype.kind;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.VariableDeclarator = function() {};
 
-/** @type {string} */
-Espree.VariableDeclarator.prototype.type;
-
-/** @type {(!BindingIdentifier | !BindingPattern)} */
+/** @type {(!Espree.BindingIdentifier | !Espree.BindingPattern)} */
 Espree.VariableDeclarator.prototype.id;
 
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.VariableDeclarator.prototype.init;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.WhileStatement = function() {};
 
-/** @type {string} */
-Espree.WhileStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.WhileStatement.prototype.test;
 
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.WhileStatement.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.WithStatement = function() {};
 
-/** @type {string} */
-Espree.WithStatement.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.WithStatement.prototype.object;
 
-/** @type {!Statement} */
+/** @type {!Espree.Statement} */
 Espree.WithStatement.prototype.body;
 
 
-/** @record */
+/** @record @extends {Espree.ASTNode} */
 Espree.YieldExpression = function() {};
 
-/** @type {string} */
-Espree.YieldExpression.prototype.type;
-
-/** @type {!Expression} */
+/** @type {!Espree.Expression} */
 Espree.YieldExpression.prototype.argument;
 
 /** @type {boolean} */

@@ -7,8 +7,8 @@
 
 /**
  * Determines whether two adjacent tokens are on the same line.
- * @param {!ESTree.ASTNode} left The left token object.
- * @param {!ESTree.ASTNode} right The right token object.
+ * @param {(!Espree.ASTNode|!Espree.Token)} left The left token object.
+ * @param {(!Espree.ASTNode|!Espree.Token)} right The right token object.
  * @returns {boolean} Whether or not the tokens are on the same line.
  */
 function isTokenOnSameLine(left, right) {
@@ -47,8 +47,8 @@ module.exports = {
 
     /**
      * Reports a given comment if it's invalid.
-     * @param {!ESTree.ASTNode} commentNode - a comment node to check
-     * @returns {void}
+     * @param {!Espree.ASTNode} commentNode a comment node to check
+     * @return {void}
      */
     function checkLineCommentForPrecedingSpace(commentNode) {
 
