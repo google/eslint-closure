@@ -49,6 +49,12 @@ Espree.Token.prototype.value;
 /** @type {!Espree.SourceLocation} */
 Espree.Token.prototype.loc;
 
+/** @type {number} */
+Espree.Token.prototype.start;
+
+/** @type {number} */
+Espree.Token.prototype.end;
+
 /**
  * Token types are re-used from Esprima.
  * @enum {string}
@@ -85,6 +91,12 @@ Espree.ASTNode.prototype.type;
 /** @type {!Espree.SourceLocation} */
 Espree.ASTNode.prototype.loc;
 
+/** @type {number} */
+Espree.ASTNode.prototype.start;
+
+/** @type {number} */
+Espree.ASTNode.prototype.end;
+
 
 /**
  * @enum {string}
@@ -97,6 +109,7 @@ Espree.NodeType = {
   ASSIGNMENT_EXPRESSION: 'AssignmentExpression',
   ASSIGNMENT_PATTERN: 'AssignmentPattern',
   BINARY_EXPRESSION: 'BinaryExpression',
+  BLOCK_COMMENT: 'BlockComment',
   BLOCK_STATEMENT: 'BlockStatement',
   BREAK_STATEMENT: 'BreakStatement',
   CALL_EXPRESSION: 'CallExpression',
@@ -139,6 +152,7 @@ Espree.NodeType = {
   JSX_SPREAD_ATTRIBUTE: 'JSXSpreadAttribute',
   JSX_TEXT: 'JSXText',
   LABELED_STATEMENT: 'LabeledStatement',
+  LINE_COMMENT: 'LineComment',
   LITERAL: 'Literal',
   LOGICAL_EXPRESSION: 'LogicalExpression',
   MEMBER_EXPRESSION: 'MemberExpression',
@@ -288,6 +302,9 @@ Espree.BlockStatement = function() {};
 /** @type {!Array<!Espree.Statement>} */
 Espree.BlockStatement.prototype.body;
 
+
+/** @record @extends {Espree.ASTNode} */
+Espree.BlockComment = function() {};
 
 /** @record @extends {Espree.ASTNode} */
 Espree.BreakStatement = function() {};
@@ -598,6 +615,10 @@ Espree.LabeledStatement.prototype.label;
 
 /** @type {!Espree.Statement} */
 Espree.LabeledStatement.prototype.body;
+
+
+/** @record @extends {Espree.ASTNode} */
+Espree.LineComment = function() {};
 
 
 /** @record @extends {Espree.ASTNode} */

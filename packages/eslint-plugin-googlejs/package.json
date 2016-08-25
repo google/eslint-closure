@@ -36,7 +36,8 @@
     "node": ">= 4"
   },
   "scripts": {
-    "test": "eslint . --ext .js && mocha tests",
+    "lint": "eslint . --ext .js",
+    "test": " mocha tests",
     "check-types": "node Makefile.js"
   }
 }

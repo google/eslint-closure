@@ -15,6 +15,7 @@ function isTokenOnSameLine(left, right) {
   return left.loc.end.line === right.loc.start.line;
 }
 
+/** @const number */
 const DEFAULT_PRECEDING_SPACES = 1;
 
 module.exports = {
@@ -36,18 +37,19 @@ module.exports = {
 
   /**
    * @param {!ESLint.RuleContext} context
-   * @return {number}
+   * @return {!ESLint.VisitorMapping}
    */
   create(context) {
     // Check for null explicitily because 0 is a falsey value.
     /** @const {number} */
     const minPrecedingSpaces = context.options[0] == null
-          ? DEFAULT_PRECEDING_SPACES : context.options[0];
+          ? DEFAULT_PRECEDING_SPACES
+          : /** @type {number} */ (context.options[0]);
 
 
     /**
      * Reports a given comment if it's invalid.
-     * @param {!Espree.ASTNode} commentNode a comment node to check
+     * @param {!Espree.LineComment} commentNode a comment node to check
      * @return {void}
      */
     function checkLineCommentForPrecedingSpace(commentNode) {
