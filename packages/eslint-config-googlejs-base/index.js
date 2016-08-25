@@ -824,8 +824,9 @@ const JSDOC_PLUGIN_RULES = {
   // Disallows object wrapper types.
   'jsdoc/check-types': ERROR,
 
-  // Enforces a consistent padding of the block description.
-  'jsdoc/newline-after-description': ERROR,
+  // Enforces a consistent padding of the block description.  Not required by
+  // the style guide.
+  'jsdoc/newline-after-description': OFF,
 
   // Requires that block description and tag description are written in complete
   // sentences.
