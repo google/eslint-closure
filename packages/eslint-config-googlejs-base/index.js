@@ -832,8 +832,9 @@ const JSDOC_PLUGIN_RULES = {
   // sentences.
   'jsdoc/require-description-complete-sentence': ERROR,
 
-  // Requires a hyphen before the @param description.
-  'jsdoc/require-hyphen-before-param-description': ERROR,
+  // Requires a hyphen before the @param description.  This doesn't match Google
+  // style.
+  'jsdoc/require-hyphen-before-param-description': OFF,
 
   // Requires that all function parameters are documented.
   'jsdoc/require-param': ERROR,
