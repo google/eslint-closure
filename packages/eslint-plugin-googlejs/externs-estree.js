@@ -3,46 +3,58 @@
  * @externs
  */
 
+
+const ESTree = {};
+
+/**
+ * @enum {string}
+ */
+ESTree.NodeType = {
+  Identifier: 'Identifier',
+};
+
 /**
  * The main AST Node.
  * @record
  * @see https://github.com/estree/estree/blob/master/es5.md#node-objects
  */
-const ASTNode = function() {};
+ESTree.ASTNode = function() {};
 
-/** @type {!Node} */
-ASTNode.prototype.type;
+/** @type {!ESTree.NodeType} */
+ESTree.ASTNode.prototype.type;
 
-/** @type {?SourceLocation} */
-ASTNode.prototype.loc;
+// This is technically nullable by the spec, but we trust Espree to return an
+// object to avoid tedious nullability checking everywhere.
+/** @type {!ESTree.SourceLocation} */
+ESTree.ASTNode.prototype.loc;
 
 /**
  * The source location information of a node.
  * @record
  */
-const SourceLocation = function() {};
+ESTree.SourceLocation = function() {};
 
 /** @type {(string|null)} */
-SourceLocation.prototype.source;
+ESTree.SourceLocation.prototype.source;
 
-/** @type {!Position} */
-SourceLocation.prototype.start;
+/** @type {!ESTree.Position} */
+ESTree.SourceLocation.prototype.start;
 
-/** @type {!Position} */
-SourceLocation.prototype.end;
+/** @type {!ESTree.Position} */
+ESTree.SourceLocation.prototype.end;
 
 /**
  * Each Position object consists of a line number (1-indexed) and a column
  * number (0-indexed).
  * @record
  */
-const Position = function() {};
+ESTree.Position = function() {};
 
 /** @type {number} */
-Position.prototype.line;
+ESTree.Position.prototype.line;
 
 /** @type {number} */
-Position.prototype.column;
+ESTree.Position.prototype.column;
 
 
 /**
@@ -50,10 +62,10 @@ Position.prototype.column;
  * destructuring pattern.
  *
  * @record
- * @extends {ASTNode}
+ * @extends {ESTree.ASTNode}
  */
-const Identifier = function() {};
+ESTree.Identifier = function() {};
 
 /** @type {string} */
-Identifier.prototype.name;
+ESTree.Identifier.prototype.name;
 
