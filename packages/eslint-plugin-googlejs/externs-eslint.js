@@ -1,3 +1,7 @@
+/** @fileoverview An extern file for ESLint at https://github.com/eslint/eslint.
+ * @externs
+ */
+
 /**
  * Configuration object for the `verify` API. A JS representation of the
  * eslintrc files.
@@ -80,21 +84,18 @@ RuleContext.prototype.meta;
  */
 RuleContext.prototype.getSourceCode = function() {};
 
+// This rule is intentionally limited to a MessageDescriptor.  There's an old
+// version that supports positional arguments.
 /**
  * Passthrough to eslint.report() that automatically assigns the rule ID and
  * severity.
- * @param {!ASTNode|!MessageDescriptor} nodeOrDescriptor The AST node related to
- *      the message or a message descriptor.
- * @param {!Object} location The location of the error.
- * @param {string} message The message to display to the user.
- * @param {Object=} opts Optional template data which produces a formatted
- *     message with symbols being replaced by this object's values.
+ * @param {!MessageDescriptor} descriptor The AST node related to the message or
+ *      a message descriptor.
  * @return {void}
  */
-RuleContext.prototype.report = function(nodeOrDescriptor, location, message,
-                                        opts) {};
+RuleContext.prototype.report = function(descriptor) {};
 
-// TODO: add theset to Rule context
+// TODO: add these to Rule context
 // "getAncestors",
 // "getDeclaredVariables",
 // "getFilename",
@@ -272,47 +273,45 @@ SourceCode.prototype.getTokenByRangeStart = function(startIndex) {}
  */
 const Token = function() {};
 
+
+
+/**
+ * An error message description with at least a loc object.
+ * @typedef {{
+ *   node: (!ASTNode|undefined),
+ *   loc: !Location,
+ *   message: (string|undefined),
+ *   data: (!Object|undefined),
+ *   fix: (function()|undefined),
+ * }}
+ */
+let MessageDescriptorWithLoc;
+
+
+/**
+ * An error message description with at least a node object.
+ * @typedef {{
+ *   node: !ASTNode,
+ *   loc: (!Location|undefined),
+ *   message: (string|undefined),
+ *   data: (!Object|undefined),
+ *   fix: (function()|undefined),
+ * }}
+ */
+let MessageDescriptorWithNode;
+
 /**
  * An error message description.
- * @record
+ * @typedef {(MessageDescriptorWithLoc|MessageDescriptorWithNode)}
  */
-const MessageDescriptor = function() {};
+let MessageDescriptor;
 
-/**
- * The type of node.
- * @type {string}
- */
-MessageDescriptor.prototype.nodeType;
 
-/**
- * The location of the problem.
- * @type {!Location}
- */
-MessageDescriptor.prototype.loc;
-
-/**
- * The problem message.
- * @type {string}
- */
-MessageDescriptor.prototype.message;
-
-/**
- * Optional data to use to fill in placeholders in the message.
- * @type {Object}
- */
-MessageDescriptor.prototype.data;
-
-/**
- * The function to call that creates a fix command.
- * @return {void}
- */
-MessageDescriptor.prototype.fix = function() {};
-
-/**
- * Acts as an abstraction layer between rules and the main eslint object.
- * @record
- */
-const ASTNode = function() {};
+// result.type === "TryStatement"
+// result.range
+// result.loc.{start,end}.column
+// result.generator
+// result.value
 
 
 /**
