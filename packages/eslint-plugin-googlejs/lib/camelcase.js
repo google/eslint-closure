@@ -10,7 +10,7 @@ module.exports = {
       category: 'Stylistic Issues',
       recommended: true,
     },
-    schema: [],
+    schema: []
   },
 
   /**
@@ -44,8 +44,10 @@ module.exports = {
      * @private
      */
     function report(node) {
-      context.report(node, "Identifier '{{name}}' is not in camel case.",
-                     {name: node.name});
+      context.report({
+        node,
+        message: `Identifier '${node.name}' is not in camel case.`,
+      });
     }
 
     return {
