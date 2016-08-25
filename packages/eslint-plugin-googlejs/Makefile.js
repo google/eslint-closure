@@ -11,7 +11,7 @@ var compiler = new ClosureCompiler(
     ],
     externs: [
       './externs-eslint.js',
-      './externs-estree.js',
+      './externs-espree.js',
     ],
     language_in: 'ECMASCRIPT6_STRICT',
     warning_level: 'VERBOSE',
