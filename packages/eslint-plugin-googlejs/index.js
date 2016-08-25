@@ -1,7 +1,8 @@
 'use strict';
 
+/** @const {ESLint.Config} */
 module.exports = {
-  /** @type {ESLintRule} */
+  /** @const {Object<string,ESLint.RuleDefinition>}*/
   rules: {
     'inline-comment-spacing': require('./lib/inline-comment-spacing'),
     'camelcase': require('./lib/camelcase'),

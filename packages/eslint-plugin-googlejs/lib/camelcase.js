@@ -14,7 +14,7 @@ module.exports = {
   },
 
   /**
-   * @param {!RuleContext} context The thing
+   * @param {!ESLint.RuleContext} context The thing
    * @return {!Object<ESTree.NodeType, function(ESTree.ASTNode)>}
    */
   create(context) {

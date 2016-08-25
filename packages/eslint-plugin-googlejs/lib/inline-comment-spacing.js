@@ -35,11 +35,12 @@ module.exports = {
   },
 
   /**
-   * @param {!RuleContext} context
+   * @param {!ESLint.RuleContext} context
    * @return {number}
    */
   create(context) {
     // Check for null explicitily because 0 is a falsey value.
+    /** @const {number} */
     const minPrecedingSpaces = context.options[0] == null
           ? DEFAULT_PRECEDING_SPACES : context.options[0];
 
