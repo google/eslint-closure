@@ -5,8 +5,8 @@
 const es6Config = require('../index.js');
 const emptyRule = require('../emptyRule');
 const RuleTester = require('eslint').RuleTester;
-const ruleTester = new RuleTester();
 RuleTester.setDefaultConfig(es6Config);
+const ruleTester = new RuleTester();
 
 ruleTester.run('whitespace-characters', emptyRule, {
   valid: [
@@ -18,7 +18,7 @@ ruleTester.run('whitespace-characters', emptyRule, {
   invalid: [
     {
       code: '\tlet foo = 2;',
-      errors: [{message: 'Whitespapce yo', type: 'Identifier'}],
+      errors: 1,
 
     },
   ],

@@ -11,5 +11,7 @@ module.exports = {
   /**
    * @param {!RuleContext} context Context object.
    */
-  create(context) {},
+  create(context) {
+    return {};
+  },
 };

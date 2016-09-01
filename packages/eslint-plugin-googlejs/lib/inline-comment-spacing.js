@@ -50,7 +50,7 @@ module.exports = {
     /**
      * Reports a given comment if it's invalid.
      * @param {!Espree.LineComment} commentNode a comment node to check
-     * @return {void}
+     * @return {undefined}
      */
     function checkLineCommentForPrecedingSpace(commentNode) {
 

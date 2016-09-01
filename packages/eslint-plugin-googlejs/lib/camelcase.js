@@ -10,7 +10,7 @@ module.exports = {
       category: 'Stylistic Issues',
       recommended: true,
     },
-    schema: []
+    schema: [],
   },
 
   /**
