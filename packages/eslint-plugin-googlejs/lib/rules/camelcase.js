@@ -3,6 +3,17 @@
  */
 
 /**
+ * Valid options for the camelcase rule
+ * @typedef {{
+ *   allowVarArgs: boolean,
+ *   allowOptPrefix: boolean,
+ *   allowLeadingUnderscore: boolean,
+ *   allowTrailingUnderscore: boolean,
+ * }}
+ */
+let CamelCaseRuleOptions;
+
+/**
  * An object to describe an underscored identifier.
  * @typedef {{
  *   node: !Espree.Identifier,
@@ -10,134 +21,130 @@
  *   hasError: boolean,
  * }}
  */
-var UnderscoreReport;
+let UnderscoreReport;
 
 /** @const {!UnderscoreReport} */
-const validIdentifier = {
+const validReport = {
   node,
   message: '',
   hasError: false,
 };
 
 /** @const {!UnderscoreReport} */
-const invalidIdentifier = {
+const invalidReport = {
   node,
   message: '',
   hasError: true
 }
 
-/**
- * Create an new message for an incorrectly underscored node.
- * @param {string} message The message to use for the UnderscoreMesage.
- * @return {!UnderscoreReport} The new underscore message.
- */
-function makeInvalidUnderscoreReport(message) {
-  return Object.assign(invalidIdentifier, {message});
+/** @const {!CamelCaseRuleOptions} */
+const DEFAULT_CAMELCASE_OPTIONS = {
+  allowVarArgs: false,
+  allowOptPrefix: false,
+  allowLeadingUnderscore: true,
+  allowTrailingUnderscore: true,
+  checkObjectProperties: true,
 }
 
 /**
  * Flags identifiers that have incorrect underscores.
  * @param {!Espree.Identifier} node The node to check.
- * @param {!ESLint.RuleContext} context The ESLint rule context.
+ * @param {!CamelCaseRuleOptions} options The ESLint camelcase rule options.
  * @return {!UnderscoreReport} Message describing the underscore identifier.
  *     If incorrectly underscored, the `message` field describes the error and
  *     `hasError` is set to True.  If the identifier is correct, `message` is
  *     the empty string and `hasError` is set to false.
  * @private
  */
-function describeIncorrectUnderscores_(node, context) {
-  let name;
-  let message;
+function describeIncorrectUnderscores_(node, options) {
+  /**
+   * @param {string} message
+   * @return {!UnderscoreReport}
+   */
+  function makeReport(message) {
+    return Object.assign(invalidReport, {message});
+  }
 
-  
   /**
    * @param {string} effectiveName
    * @param {string} message
    * @return {!UnderscoreReport}
    */
   function checkAndReport(effectiveName, message) {
-    message = isCorrectlyUnderscored_(effectiveName, node);
-    if (message == null) {
-      return validIdentifier;
+    if (isCorrectlyUnderscored_(effectiveName, node)) {
+      return validReport;
     } else {
-      return makeInvalidUnderscoreReport(message);
+      return makeReport(message);
     }
   }
 
   switch (categorizeUnderscoredIdentifier(node)) {
     case UnderscoreForm.CONSTANT:
-    return validIdentifier;
-    break;
+      return validReport;
 
     case UnderscoreForm.LEADING:
-      name = node.name.replace(/^_+/g, '');
-      checkAndReport(`Identifier ${node.name} is not in camel case after the` +
-    ' leading underscore.');
-      
-      break;
-
+      if (options.allowLeadingUnderscore) {
+        return checkAndReport(
+            node.name.replace(/^_+/g, ''),
+            `Identifier ${node.name} is not in camel case after the leading `
+            + `underscore.`
+        );
+      } else {
+        return makeReport('Leading underscores are not allowed.');
+      }
     case UnderscoreForm.NO_UNDERSCORE:
-    return validIdentifier;
-    break;
+      return validReport;
 
     case UnderscoreForm.OTHER:
-    message = isCorrectlyUnderscored_(name, node);
-    if (message == null) {
-      return validIdentifier;
-    } else {
-      return makeInvalidUnderscoreReport(
-        `Identifier ${node.name} is not in camel case.`
+      return checkAndReport(
+          node.name,
+          `Identifier ${node.name} is not in camel case.`
       );
-    }
-    break;
 
     case UnderscoreForm.OPT_PREFIX:
-    // TODO: check if opt is allowed
-    name = node.name.replace(/^opt_/g, '');
-    message = isCorrectlyUnderscored_(name, node);
-    if (message == null) {
-      return validIdentifier;
-    } else {
-      return makeInvalidUnderscoreReport(
-        `Identifier ${node.name} is not in camel case after the opt_ prefix.`
-      );
-    }
-    break;
+      if (options.allowOptPrefix) {
+        return checkAndReport(
+            node.name.replace(/^opt_/g, ''),
+            `Identifier ${node.name} is not in camel case after the opt_ `
+            + `prefix.`
+        );
+      } else {
+        return makeReport(`The opt_ prefix is not allowed in ${node.name}`);
+      }
 
     case UnderscoreForm.TRAILING:
-    name = node.name.replace(/_+$/g, '');
-    message = isCorrectlyUnderscored_(name, node);
-    if (message == null) {
-      return validIdentifier;
-    } else {
-      return makeInvalidUnderscoreReport(
-        `Identifier ${node.name} is not in camel case before the trailing`
-          + ` underscore.`
-      );
-    }
-    break;
+      if (options.allowTrailingUnderscore) {
+        return checkAndReport(
+          node.name.replace(/_+$/g, ''),
+            `Identifier ${node.name} is not in camel case before the trailing`
+            + ` underscore.`
+        );
+      } else {
+        return makeReport('Trailing underscores are not allowed.');
+      }
 
     case UnderscoreForm.VAR_ARGS:
-    // TODO: check if var_args is allowed
-    return validIdentifier;
-    break;
+      if (options.allowVarArgs) {
+        return validReport;
+      } else {
+        return makeReport('The var_args identifier is not allowed.');
+      }
 
     default:
       throw new Error('Unknown undercore form: ' + node.name);
   }
 }
 
-
-
 /**
  * Report names that have incorrect underscores.
  * @param {string} effectiveNodeName The node name with valid underscores
  *     removed.
  * @param {!Espree.Identifier} node The node to check.
+ * @param {!CamelCaseRuleOptions} options The ESLint camelcase rule options.
  * @return {boolean} If the node is correctly underscored.
  * @private
  */
-function isCorrectlyUnderscored_(effectiveNodeName, node) {
+function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
   /** @const {!ESLint.ASTNode} */
   const parent = node.parent;
   const isCorrect = true;
@@ -147,20 +154,22 @@ function isCorrectlyUnderscored_(effectiveNodeName, node) {
     return isCorrect;
   }
 
-  // MemberExpressions get special rules
+  // A MemberExpression is foo['baz'] or foo.baz.
   if (node.parent.type === "MemberExpression") {
 
-    // Never check properties, i.e. baz.foo_bar.
+    // Never check properties of a MemberExpression, i.e. baz.foo_bar.
     if (properties === "never") {
       return isCorrect;
     }
 
-    // Always report underscored object names, i.e. foo_bar.baz.
-    if (node.parent.object.type === "Identifier"
-        && node.parent.object.name === node.name) {
+    // Always report underscored object names of a MemberExpression,
+    // i.e. foo_bar.baz.
+    if (parent.object.type === "Identifier"
+        && parent.object.name === node.name) {
       return isWrong;
 
-      // Report AssignmentExpressions only if they are the left side of the assignment
+      // Report AssignmentExpressions only if they are the left side of the
+      // assignment, e.g. foo_bar = baz but not foo = baz_bar.
     } else if (parent.type === "AssignmentExpression" &&
                (parent.right.type !== "MemberExpression" ||
                 parent.left.type === "MemberExpression" &&
@@ -168,16 +177,16 @@ function isCorrectlyUnderscored_(effectiveNodeName, node) {
       return isWrong;
     }
 
-    // Properties have their own rules
+  // Properties have their own rules.  Properties are just defined in object
+  // literals.
   } else if (parent.type === "Property") {
-
-    // "never" check properties
-    if (properties === "never") {
+  
+    if (!options.checkObjectProperties) {
       return isCorrect;
     }
 
-    if (parent.parent && parent.type === "ObjectPattern" &&
-        parent.key === node && parent.value !== node) {
+    if (parent.parent && parent.type === "ObjectPattern" && parent.key === node
+        && parent.value !== node) {
       return isCorrect;
     }
 
@@ -186,7 +195,8 @@ function isCorrectlyUnderscored_(effectiveNodeName, node) {
     }
 
     // Check if it's an import specifier
-  } else if (["ImportSpecifier", "ImportNamespaceSpecifier", "ImportDefaultSpecifier"].indexOf(node.parent.type) >= 0) {
+  } else if (["ImportSpecifier", "ImportNamespaceSpecifier",
+              "ImportDefaultSpecifier"].indexOf(node.parent.type) >= 0) {
 
     // Report only if the local imported identifier is underscored
     if (node.parent.local && node.parent.local.name === node.name) {
@@ -203,14 +213,33 @@ function isCorrectlyUnderscored_(effectiveNodeName, node) {
 
 /** @const {!ESLint.RuleDefinition} */
 const CAMELCASE_RULE = {
-
   meta: {
     docs: {
-      description: 'allow opt_ prefix and var_args variable identifiers',
+      description: 'check identifiers for camel case with options for opt_ '
+          + 'prefix and var_args identifiers',
       category: 'Stylistic Issues',
-      recommended: true,
+        recommended: true,
     },
-    schema: [],
+    schema: [
+      {
+        type: "object",
+        properties: {
+          allowVarArgs: {
+            type: "boolean",
+          },
+          allowOptPrefix: {
+            type: "boolean",
+          },
+          allowLeadingUnderscore: {
+            type: "boolean",
+          },
+          allowTrailingUnderscore: {
+            type: "boolean",
+          }
+        },
+        additionalProperties: false
+      }
+    ],
   },
 
   /**
@@ -224,7 +253,9 @@ const CAMELCASE_RULE = {
      * @param {!Espree.Identifier} node The node to check.
      */
     function reportIncorrectUnderscores(node) {
-      const underscoreMessage = describeIncorrectUnderscores_(node);
+      const userOptions = context.options[0] || {};
+      const options = Object.assign(DEFAULT_CAMELCASE_OPTIONS, userOptions);
+      const underscoreMessage = describeIncorrectUnderscores_(node, options);
       if (underscoreMessage.hasError) {
         context.report({
           node: underscoreMessage.node,
