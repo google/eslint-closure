@@ -38,9 +38,7 @@
 const lodash = require('lodash');
 const assert = require('assert');
 const util = require('util');
-const eslint = require('../eslint');
-const rules = require('../rules');
-const SourceCodeFixer = require('../util/source-code-fixer');
+const linter = require('eslint').linter;
 
 /*
  * List every parameters possible on a test case that are not related to eslint
@@ -121,34 +119,11 @@ function runRuleForItem_(ruleName, item, config) {
     config.rules[ruleName] = 1;
   }
 
-  eslint.defineRule(ruleName, rule);
+  linter.defineRule(ruleName, rule);
 
-  // Freezes rule-context properties.
-  const originalGet = rules.get;
-
-  try {
-    rules.get = function(ruleId) {
-      const rule = originalGet(ruleId);
-
-      return {
-        meta: rule.meta,
-        create(context) {
-          Object.freeze(context);
-          freezeDeeply(context.options);
-          freezeDeeply(context.settings);
-          freezeDeeply(context.parserOptions);
-
-          return rule.create(context);
-        },
-      };
-    };
-
-    return {
-      messages: eslint.verify(code, config, filename, true),
-    };
-  } finally {
-    rules.get = originalGet;
-  }
+  return {
+    messages: linter.verify(code, config, filename, true),
+  };
 }
 
 
@@ -253,13 +228,6 @@ function testInvalidTemplate(ruleName, item, config) {
                     'Error should be a string or object.');
       }
     }
-
-    if (item.hasOwnProperty('output')) {
-      const fixResult = SourceCodeFixer.applyFixes(eslint.getSourceCode(),
-                                                   messages);
-
-      assert.equal(fixResult.output, item.output, 'Output is incorrect.');
-    }
   }
 }
 
@@ -299,7 +267,7 @@ ConfigTester.prototype = {
    * @return {void}
    */
   defineRule(name, rule) {
-    eslint.defineRule(name, rule);
+    linter.defineRule(name, rule);
   },
 
   /**
