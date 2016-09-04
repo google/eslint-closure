@@ -76,9 +76,23 @@ Espree.TokenType = {
   JSX_TEXT: 'JSXText',
 };
 
+
+/**
+ * Mixins that ESLint provides.  We define this here instead of in ESLint
+ * because we don't want to subclass every Espree ASTNode to add these
+ * properties.
+ * @record
+ * @see https://github.com/estree/estree/blob/master/es5.md#node-objects
+ */
+Espree.ASTNodeESLintMixins = function() {};
+
+/** @type {!Espree.ASTNode} */
+Espree.ASTNodeESLintMixins.prototype.parent;
+
 /**
  * The main AST Node.
  * @record
+ * @extends {Espree.ASTNodeESLintMixins}
  * @see https://github.com/estree/estree/blob/master/es5.md#node-objects
  */
 Espree.ASTNode = function() {};

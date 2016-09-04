@@ -38,9 +38,6 @@ ESLint.Config.prototype.global;
  */
 ESLint.ASTNode = function() {};
 
-/** @type {!ESLint.ASTNode} */
-ESLint.ASTNode.prototype.parent;
-
 /**
  * An ESLint rule.
  * @record
