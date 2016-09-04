@@ -30,7 +30,7 @@ module.exports = {
 
     /**
      * Check to see if the node is a file level IIFE
-     * @param {ASTNode} node The function node to check.
+     * @param {!ESLint.ASTNode} node The function node to check.
      * @returns {boolean} True if the node is the outer IIFE
      */
     function isOuterIIFE(node) {

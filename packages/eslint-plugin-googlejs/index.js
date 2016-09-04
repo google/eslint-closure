@@ -1,6 +1,6 @@
 'use strict';
 
-/** @type {ESLint.Config} */
+/** @type {!ESLint.Config} */
 module.exports = {
   rules: {
     'inline-comment-spacing': require('./lib/rules/inline-comment-spacing'),

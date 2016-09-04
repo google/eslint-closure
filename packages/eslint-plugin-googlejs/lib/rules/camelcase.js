@@ -15,7 +15,7 @@ module.exports = {
 
   /**
    * @param {!ESLint.RuleContext} context The thing
-   * @return {!Object<Espree.NodeType, function(Espree.ASTNode)>}
+   * @return {!Object<Espree.NodeType, function(!ESLint.ASTNode)>}
    */
   create(context) {
     // Helpers
