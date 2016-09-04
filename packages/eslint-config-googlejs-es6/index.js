@@ -164,7 +164,10 @@ const GOOGLE_PLUGIN_RULES = {
 
 // JSDoc Plugin Rules
 // https://github.com/gajus/eslint-plugin-jsdoc
-const JSDOC_PLUGIN_RULES = {};
+const JSDOC_PLUGIN_RULES = {
+  'jsdoc/check-param-names': WARNING,
+
+};
 
 const ECMA_FEATURES = {
   // Enable arrow functions.
@@ -242,9 +245,14 @@ const GOOGLE_ES6_RULES = {
   parserOptions: {
     ecmaVersion: 6,
     sourceType: 'script',
+    ecmaFeatures: ECMA_FEATURES,
   },
 
-  ecmaFeatures: ECMA_FEATURES,
+  plugins: [
+    'googlejs',
+    'jsdoc',
+  ],
+
 
   // The list of rules and options are available at
   // http://eslint.org/docs/rules/.
