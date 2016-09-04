@@ -18,6 +18,7 @@ function isTokenOnSameLine(left, right) {
 /** @const number */
 const DEFAULT_PRECEDING_SPACES = 1;
 
+/** @type {!ESLint.RuleDefinition} */
 module.exports = {
   meta: {
     docs: {

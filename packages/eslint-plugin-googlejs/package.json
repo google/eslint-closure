@@ -39,5 +39,11 @@
     "lint": "eslint . --ext .js",
     "test": " mocha tests",
     "check-types": "node Makefile.js"
+  },
+  "dependencies": {
+    "assert": "^1.4.1",
+    "eslint": "^3.4.0",
+    "lodash": "^4.15.0",
+    "util": "^0.10.3"
   }
 }
