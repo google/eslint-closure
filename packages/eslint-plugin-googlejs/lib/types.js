@@ -1,6 +1,7 @@
 /**
  * The type of underscore in an identifier.
  * @enum {string}
+ * @const
  */
 const UnderscoreForm = {
   CONSTANT: 'constant',
@@ -10,4 +11,9 @@ const UnderscoreForm = {
   OPT_PREFIX: 'opt_prefix',
   TRAILING: 'trailing',
   VAR_ARGS: 'var_args',
+}
+
+module.exports = {
+  /** @const {UnderscoreForm} */
+  UnderscoreForm,
 }

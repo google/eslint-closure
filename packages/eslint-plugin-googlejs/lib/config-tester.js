@@ -35,10 +35,10 @@
 /* global describe, it */
 'use strict';
 
-const lodash = require('lodash');
-const assert = require('assert');
-const util = require('util');
-const linter = require('eslint').linter;
+// const lodash = require('lodash');
+// const assert = require('assert');
+// const util = require('util');
+// const linter = require('eslint').linter;
 
 /*
  * List every parameters possible on a test case that are not related to eslint
@@ -239,7 +239,7 @@ function ConfigTester(config) {
  */
 ConfigTester.prototype.defineRule = function(name, rule) {
   linter.defineRule(name, rule);
-},
+};
 
 /**
  * Adds a new rule test to execute.

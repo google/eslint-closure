@@ -7,12 +7,12 @@ var compiler = new ClosureCompiler(
   {
     js: [
       'index.js',
-      "'./lib/**/*.js'",
+      "'./lib/**.js'",
     ],
     externs: [
       './externs/externs-eslint.js',
       './externs/externs-espree.js',
-      './externs/externs-commonjs.js',
+      // './externs/externs-commonjs.js',
     ],
     language_in: 'ECMASCRIPT6_STRICT',
     warning_level: 'VERBOSE',
@@ -20,19 +20,21 @@ var compiler = new ClosureCompiler(
     // We use null for options that don't have a value.  Otherwise, it errors
     // out.  The existence of 'checks-only' is enough for it to be included as
     // an option.
-    checks_only: true,
+    // checks_only: null,
     // Don't process commonjs modules.  Use an externs to stub them out.  We
     // rely on externs for typechecking.  Including node_modules is expensive
     // and we'd have to ignore errors or use externs for all libraries.
-    // process_common_js_modules: null,
-    new_type_inf: true,
+    process_common_js_modules: null,
+    new_type_inf: null,
     // We need LOOSE because we're ignoring commonjs modules.  If we used
     // STRICT, closure would ignore all files it couldn't reach from the
     // entry_point.  Since we stub out all require calls, that would mean only
     // the entry_point is checked.
     dependency_mode: 'LOOSE',
     entry_point: './index.js',
-    debug: true,
+    // js_module_root: '.',
+    // output_manifest: 'manifest.MF',
+    // debug: null,
   },
   // Java options.
   [

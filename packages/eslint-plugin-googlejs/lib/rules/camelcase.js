@@ -2,7 +2,8 @@
  * @fileoverview Rule to flag non-camelcased identifiers except for the "opt_" prefix
  */
 
-var {categorizeUnderscoredIdentifier, isUnderscored, UnderscoreForm} = require('../util.js');
+var {categorizeUnderscoredIdentifier, isUnderscored} = require('../util');
+var {UnderscoreForm} = require('../types');
 
 /**
  * Valid options for the camelcase rule
