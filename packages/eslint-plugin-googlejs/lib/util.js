@@ -33,23 +33,23 @@ function isUnderscored(name) {
  */
 function categorizeUnderscoredIdentifier(name) {
   if (name == "") {
-    return UnderscoreForm.NO_UNDERSCORE;
+    return 'no_underscore';
   } else if (name.toUpperCase() == name) {
-    return UnderscoreForm.CONSTANT;
+    return 'constant';
   } else if (name.indexOf('_') == -1) {
     // This check must come after the constant check otherwise we wrongly
     // categorize identifiers like ALLCAPS.
-    return UnderscoreForm.NO_UNDERSCORE;
+    return 'no_underscore';
   } else if (name === 'var_args') {
-    return UnderscoreForm.VAR_ARGS;
+    return 'var_args';
   } else if (name.substring(0, 4) === 'opt_') {
-    return UnderscoreForm.OPT_PREFIX;
+    return 'opt_prefix';
   } else if (name[0] == '_') {
-    return UnderscoreForm.LEADING;
+    return 'leading';
   } else if (name[name.length - 1] == '_') {
-    return UnderscoreForm.TRAILING;
+    return 'trailing;'
   } else {
-    return UnderscoreForm.OTHER;
+    return 'other';
   }
 }
 
