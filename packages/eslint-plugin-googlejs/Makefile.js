@@ -32,9 +32,9 @@ var compiler = new ClosureCompiler(
     // the entry_point is checked.
     dependency_mode: 'LOOSE',
     entry_point: './index.js',
-    // js_module_root: '.',
+    js_module_root: '.',
     // output_manifest: 'manifest.MF',
-    // debug: null,
+    debug: null,
   },
   // Java options.
   [

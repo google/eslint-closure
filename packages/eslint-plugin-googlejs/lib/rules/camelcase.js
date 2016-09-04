@@ -261,9 +261,10 @@ const CAMELCASE_RULE = {
      * @param {!Espree.Identifier} node The node to check.
      */
     function reportIncorrectUnderscores(node) {
-      /** @const {!Object} */
-      const userOptions = context.options[0] || {};
-      const options = Object.assign(DEFAULT_CAMELCASE_OPTIONS, userOptions);
+      
+      const userOptions = /** @const {!Object} */ (context.options[0]) || {};
+      const options = /** @type {!CamelCaseRuleOptions}*/
+            (Object.assign(DEFAULT_CAMELCASE_OPTIONS, userOptions));
       const underscoreMessage = describeIncorrectUnderscores_(node, options);
       if (underscoreMessage.hasError) {
         context.report({

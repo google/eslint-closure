@@ -5,17 +5,9 @@
 
 'use strict';
 
-/**
- * Determines whether two adjacent tokens are on the same line.
- * @param {(!ESLint.ASTNode|!Espree.Token)} left The left token object.
- * @param {(!ESLint.ASTNode|!Espree.Token)} right The right token object.
- * @returns {boolean} Whether or not the tokens are on the same line.
- */
-function isTokenOnSameLine(left, right) {
-  return left.loc.end.line === right.loc.start.line;
-}
+const {isTokenOnSameLine} = require('../util');
 
-/** @const number */
+/** @const {number} */
 const DEFAULT_PRECEDING_SPACES = 1;
 
 /** @type {!ESLint.RuleDefinition} */
