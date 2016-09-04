@@ -35,13 +35,12 @@
 /* global describe, it */
 'use strict';
 
-const lodash = require('lodash'),
-      assert = require('assert'),
-      util = require('util'),
-      eslint = require('../eslint'),
-      rules = require('../rules'),
-      metaSchema = require('../../conf/json-schema-schema.json'),
-      SourceCodeFixer = require('../util/source-code-fixer');
+const lodash = require('lodash');
+const assert = require('assert');
+const util = require('util');
+const eslint = require('../eslint');
+const rules = require('../rules');
+const SourceCodeFixer = require('../util/source-code-fixer');
 
 /*
  * List every parameters possible on a test case that are not related to eslint
@@ -75,6 +74,192 @@ function freezeDeeply(x) {
       }
     }
     Object.freeze(x);
+  }
+}
+
+/**
+ * Run the rule for the given item
+ * @param {string} ruleName name of the rule
+ * @param {string|Object} item Item to run the rule against
+ * @param {!ESLint.Config} config config to use for the rule
+ * @return {Object} Eslint run result
+ * @private
+ */
+function runRuleForItem_(ruleName, item, config) {
+  /** @type {!ESLint.config} */
+  let config = lodash.cloneDeep(config);
+  let code;
+  let filename;
+
+  if (typeof item === 'string') {
+    code = item;
+  } else {
+    code = item.code;
+
+    // Assumes everything on the item is a config except for the
+    // parameters used by this tester
+    const itemConfig = lodash.omit(item, RuleTesterParameters);
+
+    // Create the config object from the tester config and this item
+    // specific configurations.
+    config = lodash.merge(
+      config,
+      itemConfig
+    );
+  }
+
+  if (item.filename) {
+    filename = item.filename;
+  }
+
+  if (item.options) {
+    const options = item.options.concat();
+
+    options.unshift(1);
+    config.rules[ruleName] = options;
+  } else {
+    config.rules[ruleName] = 1;
+  }
+
+  eslint.defineRule(ruleName, rule);
+
+  // Freezes rule-context properties.
+  const originalGet = rules.get;
+
+  try {
+    rules.get = function(ruleId) {
+      const rule = originalGet(ruleId);
+
+      return {
+        meta: rule.meta,
+        create(context) {
+          Object.freeze(context);
+          freezeDeeply(context.options);
+          freezeDeeply(context.settings);
+          freezeDeeply(context.parserOptions);
+
+          return rule.create(context);
+        },
+      };
+    };
+
+    return {
+      messages: eslint.verify(code, config, filename, true),
+    };
+  } finally {
+    rules.get = originalGet;
+  }
+}
+
+
+/**
+ * Check if the template is valid or not
+ * all valid cases go through this
+ * @param {string} ruleName name of the rule
+ * @param {string|Object} item Item to run the rule against
+ * @param {!ESLint.Config} config config to use for the rule
+ * @return {void}
+ * @private
+ */
+function testValidTemplate(ruleName, item, config) {
+  const runResult = runRuleForItem_(ruleName, item, config);
+  const messages = runResult.messages;
+
+  assert.equal(messages.length, 0,
+               util.format('Should have no errors but had %d: %s',
+                           messages.length, util.inspect(messages)));
+}
+
+/**
+ * Check if the template is invalid or not
+ * all invalid cases go through this.
+ * @param {string} ruleName name of the rule
+ * @param {string|Object} item Item to run the rule against
+ * @param {!ESLint.Config} config config to use for the rule
+ * @return {void}
+ * @private
+ */
+function testInvalidTemplate(ruleName, item, config) {
+  assert.ok(item.errors || item.errors === 0,
+            'Did not specify errors for an invalid test of ' + ruleName);
+
+  const runResult = runRuleForItem_(ruleName, item, config);
+  const messages = runResult.messages;
+
+  if (typeof item.errors === 'number') {
+    assert.equal(messages.length,
+                 item.errors,
+                 util.format('Should have %d error%s but had %d: %s',
+                             item.errors,
+                             item.errors === 1 ? '' : 's',
+                             messages.length,
+                             util.inspect(messages)));
+  } else {
+    assert.equal(messages.length, item.errors.length,
+                 util.format('Should have %d error%s but had %d: %s',
+                             item.errors.length,
+                             item.errors.length === 1 ? '' : 's',
+                             messages.length,
+                             util.inspect(messages)));
+
+    for (let i = 0, l = item.errors.length; i < l; i++) {
+      assert.ok(!('fatal' in messages[i]),
+                'A fatal parsing error occurred: ' + messages[i].message);
+      assert.equal(messages[i].ruleId, ruleName,
+                   'Error rule name should be the same as the name of the'
+                   + ' rule being tested');
+
+      if (typeof item.errors[i] === 'string') {
+        // Just an error message.
+        assert.equal(messages[i].message, item.errors[i]);
+      } else if (typeof item.errors[i] === 'object') {
+        /*
+         * Error object.
+         * This may have a message, node type, line, and/or
+         * column.
+         */
+        if (item.errors[i].message) {
+          assert.equal(messages[i].message, item.errors[i].message);
+        }
+
+        if (item.errors[i].type) {
+          assert.equal(messages[i].nodeType, item.errors[i].type,
+                       'Error type should be ' + item.errors[i].type);
+        }
+
+        if (item.errors[i].hasOwnProperty('line')) {
+          assert.equal(messages[i].line, item.errors[i].line,
+                       'Error line should be ' + item.errors[i].line);
+        }
+
+        if (item.errors[i].hasOwnProperty('column')) {
+          assert.equal(messages[i].column, item.errors[i].column,
+                       'Error column should be ' + item.errors[i].column);
+        }
+
+        if (item.errors[i].hasOwnProperty('endLine')) {
+          assert.equal(messages[i].endLine, item.errors[i].endLine,
+                       'Error endLine should be ' + item.errors[i].endLine);
+        }
+
+        if (item.errors[i].hasOwnProperty('endColumn')) {
+          assert.equal(messages[i].endColumn, item.errors[i].endColumn,
+                       'Error endColumn should be '
+                       + item.errors[i].endColumn);
+        }
+      } else {
+        // Only string or object errors are valid.
+        assert.fail(messages[i], null,
+                    'Error should be a string or object.');
+      }
+    }
+
+    if (item.hasOwnProperty('output')) {
+      const fixResult = SourceCodeFixer.applyFixes(eslint.getSourceCode(),
+                                                   messages);
+
+      assert.equal(fixResult.output, item.output, 'Output is incorrect.');
+    }
   }
 }
 
@@ -126,192 +311,8 @@ ConfigTester.prototype = {
    */
   run(ruleName, rule, test) {
 
-    const testerConfig = this.testerConfig,
-          result = {};
+    const result = {};
 
-    /* eslint-disable no-shadow */
-
-    /**
-     * Run the rule for the given item
-     * @param {string} ruleName name of the rule
-     * @param {string|Object} item Item to run the rule against
-     * @return {Object} Eslint run result
-     * @private
-     */
-    function runRuleForItem(ruleName, item) {
-      let config = lodash.cloneDeep(testerConfig),
-          code, filename, beforeAST, afterAST;
-
-      if (typeof item === 'string') {
-        code = item;
-      } else {
-        code = item.code;
-
-        // Assumes everything on the item is a config except for the
-        // parameters used by this tester
-        const itemConfig = lodash.omit(item, RuleTesterParameters);
-
-        // Create the config object from the tester config and this item
-        // specific configurations.
-        config = lodash.merge(
-          config,
-          itemConfig
-        );
-      }
-
-      if (item.filename) {
-        filename = item.filename;
-      }
-
-      if (item.options) {
-        const options = item.options.concat();
-
-        options.unshift(1);
-        config.rules[ruleName] = options;
-      } else {
-        config.rules[ruleName] = 1;
-      }
-
-      eslint.defineRule(ruleName, rule);
-
-      // Freezes rule-context properties.
-      const originalGet = rules.get;
-
-      try {
-        rules.get = function(ruleId) {
-          const rule = originalGet(ruleId);
-
-          if (typeof rule === 'function') {
-            return function(context) {
-              Object.freeze(context);
-              freezeDeeply(context.options);
-              freezeDeeply(context.settings);
-              freezeDeeply(context.parserOptions);
-
-              return rule(context);
-            };
-          } else {
-            return {
-              meta: rule.meta,
-              create(context) {
-                Object.freeze(context);
-                freezeDeeply(context.options);
-                freezeDeeply(context.settings);
-                freezeDeeply(context.parserOptions);
-
-                return rule.create(context);
-              },
-            };
-          }
-        };
-
-        return {
-          messages: eslint.verify(code, config, filename, true),
-          beforeAST,
-          afterAST,
-        };
-      } finally {
-        rules.get = originalGet;
-      }
-    }
-
-
-    /**
-     * Check if the template is valid or not
-     * all valid cases go through this
-     * @param {string} ruleName name of the rule
-     * @param {string|Object} item Item to run the rule against
-     * @return {void}
-     * @private
-     */
-    function testValidTemplate(ruleName, item) {
-      const result = runRuleForItem(ruleName, item);
-      const messages = result.messages;
-
-      assert.equal(messages.length, 0,
-                   util.format('Should have no errors but had %d: %s',
-                               messages.length, util.inspect(messages)));
-
-      assertASTDidntChange(result.beforeAST, result.afterAST);
-    }
-
-    /**
-     * Check if the template is invalid or not
-     * all invalid cases go through this.
-     * @param {string} ruleName name of the rule
-     * @param {string|Object} item Item to run the rule against
-     * @return {void}
-     * @private
-     */
-    function testInvalidTemplate(ruleName, item) {
-      assert.ok(item.errors || item.errors === 0,
-                'Did not specify errors for an invalid test of ' + ruleName);
-
-      const result = runRuleForItem(ruleName, item);
-      const messages = result.messages;
-
-
-
-      if (typeof item.errors === 'number') {
-        assert.equal(messages.length, item.errors, util.format('Should have %d error%s but had %d: %s',
-                                                               item.errors, item.errors === 1 ? '' : 's', messages.length, util.inspect(messages)));
-      } else {
-        assert.equal(messages.length, item.errors.length,
-                     util.format('Should have %d error%s but had %d: %s',
-                                 item.errors.length, item.errors.length === 1 ? '' : 's', messages.length, util.inspect(messages)));
-
-        for (let i = 0, l = item.errors.length; i < l; i++) {
-          assert.ok(!('fatal' in messages[i]), 'A fatal parsing error occurred: ' + messages[i].message);
-          assert.equal(messages[i].ruleId, ruleName, 'Error rule name should be the same as the name of the rule being tested');
-
-          if (typeof item.errors[i] === 'string') {
-
-            // Just an error message.
-            assert.equal(messages[i].message, item.errors[i]);
-          } else if (typeof item.errors[i] === 'object') {
-
-            /*
-             * Error object.
-             * This may have a message, node type, line, and/or
-             * column.
-             */
-            if (item.errors[i].message) {
-              assert.equal(messages[i].message, item.errors[i].message);
-            }
-
-            if (item.errors[i].type) {
-              assert.equal(messages[i].nodeType, item.errors[i].type, 'Error type should be ' + item.errors[i].type);
-            }
-
-            if (item.errors[i].hasOwnProperty('line')) {
-              assert.equal(messages[i].line, item.errors[i].line, 'Error line should be ' + item.errors[i].line);
-            }
-
-            if (item.errors[i].hasOwnProperty('column')) {
-              assert.equal(messages[i].column, item.errors[i].column, 'Error column should be ' + item.errors[i].column);
-            }
-
-            if (item.errors[i].hasOwnProperty('endLine')) {
-              assert.equal(messages[i].endLine, item.errors[i].endLine, 'Error endLine should be ' + item.errors[i].endLine);
-            }
-
-            if (item.errors[i].hasOwnProperty('endColumn')) {
-              assert.equal(messages[i].endColumn, item.errors[i].endColumn, 'Error endColumn should be ' + item.errors[i].endColumn);
-            }
-          } else {
-
-            // Only string or object errors are valid.
-            assert.fail(messages[i], null, 'Error should be a string or object.');
-          }
-        }
-
-        if (item.hasOwnProperty('output')) {
-          const fixResult = SourceCodeFixer.applyFixes(eslint.getSourceCode(), messages);
-
-          assert.equal(fixResult.output, item.output, 'Output is incorrect.');
-        }
-      }
-    }
 
     /*
      * This creates a mocha test suite and pipes all supplied info through
@@ -321,7 +322,7 @@ ConfigTester.prototype = {
       ConfigTester.describe('valid', function() {
         test.valid.forEach(function(valid) {
           ConfigTester.it(valid.code || valid, function() {
-            testValidTemplate(ruleName, valid);
+            testValidTemplate(ruleName, valid, this.testerConfig);
           });
         });
       });
@@ -329,7 +330,7 @@ ConfigTester.prototype = {
       ConfigTester.describe('invalid', function() {
         test.invalid.forEach(function(invalid) {
           ConfigTester.it(invalid.code, function() {
-            testInvalidTemplate(ruleName, invalid);
+            testInvalidTemplate(ruleName, invalid, this.testerConfig);
           });
         });
       });
