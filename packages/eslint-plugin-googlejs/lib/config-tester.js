@@ -44,7 +44,7 @@ const linter = require('eslint').linter;
  * List every parameters possible on a test case that are not related to eslint
  * configuration
  */
-const RuleTesterParameters = [
+const ConfigTesterParameters = [
   'code',
   'filename',
   'options',
@@ -52,31 +52,8 @@ const RuleTesterParameters = [
   'errors',
 ];
 
-const hasOwnProperty = Function.call.bind(Object.hasOwnProperty);
-
 /**
- * Freezes a given value deeply.
- *
- * @param {any} x - A value to freeze.
- * @return {void}
- */
-function freezeDeeply(x) {
-  if (typeof x === 'object' && x !== null) {
-    if (Array.isArray(x)) {
-      x.forEach(freezeDeeply);
-    } else {
-      for (const key in x) {
-        if (key !== 'parent' && hasOwnProperty(x, key)) {
-          freezeDeeply(x[key]);
-        }
-      }
-    }
-    Object.freeze(x);
-  }
-}
-
-/**
- * Run the rule for the given item
+ * Runs the rule for the given item.
  * @param {string} ruleName name of the rule
  * @param {string|Object} item Item to run the rule against
  * @param {!ESLint.Config} config config to use for the rule
@@ -84,8 +61,6 @@ function freezeDeeply(x) {
  * @private
  */
 function runRuleForItem_(ruleName, item, config) {
-  /** @type {!ESLint.config} */
-  let config = lodash.cloneDeep(config);
   let code;
   let filename;
 
@@ -96,7 +71,7 @@ function runRuleForItem_(ruleName, item, config) {
 
     // Assumes everything on the item is a config except for the
     // parameters used by this tester
-    const itemConfig = lodash.omit(item, RuleTesterParameters);
+    const itemConfig = lodash.omit(item, ConfigTesterParameters);
 
     // Create the config object from the tester config and this item
     // specific configurations.
@@ -128,12 +103,11 @@ function runRuleForItem_(ruleName, item, config) {
 
 
 /**
- * Check if the template is valid or not
- * all valid cases go through this
+ * Check if the template is valid or not.
  * @param {string} ruleName name of the rule
  * @param {string|Object} item Item to run the rule against
  * @param {!ESLint.Config} config config to use for the rule
- * @return {void}
+ * @return {undefined}
  * @private
  */
 function testValidTemplate(ruleName, item, config) {
@@ -146,12 +120,11 @@ function testValidTemplate(ruleName, item, config) {
 }
 
 /**
- * Check if the template is invalid or not
- * all invalid cases go through this.
+ * Check if the template is invalid or not.
  * @param {string} ruleName name of the rule
  * @param {string|Object} item Item to run the rule against
  * @param {!ESLint.Config} config config to use for the rule
- * @return {void}
+ * @return {undefined}
  * @private
  */
 function testInvalidTemplate(ruleName, item, config) {
@@ -231,6 +204,19 @@ function testInvalidTemplate(ruleName, item, config) {
   }
 }
 
+// Default separators for testing.
+ConfigTester.describe = (typeof describe === 'function')
+  ? describe
+  : function(text, method) {
+    return method.apply(this);
+  };
+
+ConfigTester.it = (typeof it === 'function')
+  ? it
+  : function(text, method) {
+    return method.apply(this);
+  };
+
 /**
  * Creates a new instance of ConfigTester.
  * @param {!ESLint.Config} config Complete ESLint config to test.
@@ -245,67 +231,45 @@ function ConfigTester(config) {
   this.testerConfig = config;
 }
 
-// Default separators for testing.
-ConfigTester.describe = (typeof describe === 'function')
-  ? describe
-  : function(text, method) {
-    return method.apply(this);
-  };
+/**
+ * Define a rule for one particular run of tests.
+ * @param {string} name The name of the rule to define.
+ * @param {!ESLint.RuleDefinition} rule The rule definition.
+ * @return {undefined}
+ */
+ConfigTester.prototype.defineRule = function(name, rule) {
+  linter.defineRule(name, rule);
+},
 
-ConfigTester.it = (typeof it === 'function')
-  ? it
-  : function(text, method) {
-    return method.apply(this);
-  };
-
-ConfigTester.prototype = {
-
-  /**
-   * Define a rule for one particular run of tests.
-   * @param {string} name The name of the rule to define.
-   * @param {!ESLint.RuleDefinition} rule The rule definition.
-   * @return {void}
+/**
+ * Adds a new rule test to execute.
+ * @param {string} ruleName The name of the rule to run.
+ * @param {Function} rule The rule to test.
+ * @param {Object} test The collection of tests to run.
+ * @return {undefined}
+ */
+ConfigTester.prototype.run = function(ruleName, rule, test) {
+  /*
+   * This creates a mocha test suite and pipes all supplied info through
+   * one of the templates above.
    */
-  defineRule(name, rule) {
-    linter.defineRule(name, rule);
-  },
-
-  /**
-   * Adds a new rule test to execute.
-   * @param {string} ruleName The name of the rule to run.
-   * @param {Function} rule The rule to test.
-   * @param {Object} test The collection of tests to run.
-   * @return {void}
-   */
-  run(ruleName, rule, test) {
-
-    const result = {};
-
-
-    /*
-     * This creates a mocha test suite and pipes all supplied info through
-     * one of the templates above.
-     */
-    ConfigTester.describe(ruleName, function() {
-      ConfigTester.describe('valid', function() {
-        test.valid.forEach(function(valid) {
-          ConfigTester.it(valid.code || valid, function() {
-            testValidTemplate(ruleName, valid, this.testerConfig);
-          });
-        });
-      });
-
-      ConfigTester.describe('invalid', function() {
-        test.invalid.forEach(function(invalid) {
-          ConfigTester.it(invalid.code, function() {
-            testInvalidTemplate(ruleName, invalid, this.testerConfig);
-          });
+  ConfigTester.describe(ruleName, function() {
+    ConfigTester.describe('valid', function() {
+      test.valid.forEach(function(valid) {
+        ConfigTester.it(valid.code || valid, function() {
+          testValidTemplate(ruleName, valid, this.testerConfig);
         });
       });
     });
 
-    return result.suite;
-  },
+    ConfigTester.describe('invalid', function() {
+      test.invalid.forEach(function(invalid) {
+        ConfigTester.it(invalid.code, function() {
+          testInvalidTemplate(ruleName, invalid, this.testerConfig);
+        });
+      });
+    });
+  });
 };
 
 
