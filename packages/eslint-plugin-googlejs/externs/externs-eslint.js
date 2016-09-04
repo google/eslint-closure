@@ -116,6 +116,12 @@ ESLint.FixableRuleType = {
   WHITESPACE: 'whitespace',
 }
 
+/**
+ * Options for an ESLint Rule.
+ * @typedef {!Array<*>}
+ */
+ESLint.RuleOptions;
+
 
 /**
  * Acts as an abstraction layer between rules and the main eslint object.
@@ -133,7 +139,7 @@ ESLint.RuleContext.prototype.eslint;
 ESLint.RuleContext.prototype.severity;
 
 /**
- * @type {!Array<*>} options The configuration information to be added to
+ * @type {!ESLint.RuleOptions} options The configuration information to be added to
  *     the rule.
  */
 ESLint.RuleContext.prototype.options;
