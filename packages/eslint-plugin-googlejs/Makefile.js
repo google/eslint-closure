@@ -10,8 +10,8 @@ var compiler = new ClosureCompiler(
       './lib/*.js',
     ],
     externs: [
-      './externs-eslint.js',
-      './externs-espree.js',
+      './externs/externs-eslint.js',
+      './externs/externs-espree.js',
     ],
     language_in: 'ECMASCRIPT6_STRICT',
     warning_level: 'VERBOSE',
