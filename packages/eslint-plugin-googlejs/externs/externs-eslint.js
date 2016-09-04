@@ -39,7 +39,7 @@ ESLint.Config.prototype.global;
 ESLint.ASTNode = function() {};
 
 /** @type {!ESLint.ASTNode} */
-ESLint.ASTNode.parent;
+ESLint.ASTNode.prototype.parent;
 
 /**
  * An ESLint rule.
@@ -538,25 +538,25 @@ ESLint.CodePathEvent = {
 /**
  * The options to configure a CLI engine with.
  * @typedef {{
- *   allowInlineConfig: (boolean|undefined)
- *   baseConfig: (boolean|!Object<string, *>|undefined)
- *   cache: (boolean|undefined)
- *   cacheLocation: (string|undefined)
- *   configFile: (string|undefined)
- *   cwd: (string|undefined)
- *   envs: (!Array<string>|undefined)
- *   extensions: (!Array<string>|undefined)
- *   fix: (boolean|undefined)
- *   globals: (!Array<string>|undefined)
- *   ignore: (boolean|undefined)
- *   ignorePath: (string|undefined)
- *   ignorePattern: (string|undefined)
- *   useEslintrc: (boolean|undefined)
- *   parser: (string|undefined)
- *   parserOptions: (Object|undefined)
- *   plugins: (!Array<string>|undefined)
- *   rules: (!Object<string,*>|undefined)
- *   rulePaths: (!Array<string>|undefined)
+ *   allowInlineConfig: (boolean|undefined),
+ *   baseConfig: (boolean|!Object<string, *>|undefined),
+ *   cache: (boolean|undefined),
+ *   cacheLocation: (string|undefined),
+ *   configFile: (string|undefined),
+ *   cwd: (string|undefined),
+ *   envs: (!Array<string>|undefined),
+ *   extensions: (!Array<string>|undefined),
+ *   fix: (boolean|undefined),
+ *   globals: (!Array<string>|undefined),
+ *   ignore: (boolean|undefined),
+ *   ignorePath: (string|undefined),
+ *   ignorePattern: (string|undefined),
+ *   useEslintrc: (boolean|undefined),
+ *   parser: (string|undefined),
+ *   parserOptions: (Object|undefined),
+ *   plugins: (!Array<string>|undefined),
+ *   rules: (!Object<string,*>|undefined),
+ *   rulePaths: (!Array<string>|undefined),
  * }}
  */
 ESLint.CLIEngineOptions;
@@ -580,7 +580,7 @@ ESLint.LintMessage;
  * A linting result.
  * @typedef {{
  *   filePath: string,
- *   messages: !Array<!LintMessage>,
+ *   messages: !Array<!ESLint.LintMessage>,
  *   errorCount: number,
  *   warningCount: number,
  * }}
@@ -589,7 +589,7 @@ ESLint.LintResult;
 
 /**
  * An ESLint formatting function, e.g. stylish, or unix.
- * @param {!Array<!ESLint.LintResult>}
+ * @param {!Array<!ESLint.LintResult>} results
  * @return {string}
  */
 ESLint.ResultsFormatter = function(results) {};
