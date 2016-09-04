@@ -2,6 +2,8 @@
  * @fileoverview Rule to flag non-camelcased identifiers except for the "opt_" prefix
  */
 
+var {categorizeUnderscoredIdentifier, isUnderscored, UnderscoreForm} = require('../util.js');
+
 /**
  * Valid options for the camelcase rule
  * @typedef {{
@@ -23,20 +25,6 @@ let CamelCaseRuleOptions;
  */
 let UnderscoreReport;
 
-/** @const {!UnderscoreReport} */
-const validReport = {
-  node,
-  message: '',
-  hasError: false,
-};
-
-/** @const {!UnderscoreReport} */
-const invalidReport = {
-  node,
-  message: '',
-  hasError: true
-}
-
 /** @const {!CamelCaseRuleOptions} */
 const DEFAULT_CAMELCASE_OPTIONS = {
   allowVarArgs: false,
@@ -57,12 +45,28 @@ const DEFAULT_CAMELCASE_OPTIONS = {
  * @private
  */
 function describeIncorrectUnderscores_(node, options) {
+
+  /** @const {!UnderscoreReport} */
+  const validReport = {
+    node,
+    message: '',
+    hasError: false,
+  };
+
+  /** @const {!UnderscoreReport} */
+  const invalidReport = {
+    node,
+    message: '',
+    hasError: true
+  }
+
   /**
    * @param {string} message
    * @return {!UnderscoreReport}
    */
   function makeReport(message) {
-    return Object.assign(invalidReport, {message});
+    return /** @type {UnderscoreReport} */ (Object.assign(invalidReport,
+                                                          {message}));
   }
 
   /**
@@ -71,7 +75,7 @@ function describeIncorrectUnderscores_(node, options) {
    * @return {!UnderscoreReport}
    */
   function checkAndReport(effectiveName, message) {
-    if (isCorrectlyUnderscored_(effectiveName, node)) {
+    if (isCorrectlyUnderscored_(effectiveName, node, options)) {
       return validReport;
     } else {
       return makeReport(message);
@@ -150,7 +154,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
   const isCorrect = true;
   const isWrong = false;
 
-  if (!isUnderscored(effectiveNodeName) {
+  if (!isUnderscored(effectiveNodeName)) {
     return isCorrect;
   }
 
@@ -158,7 +162,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
   if (node.parent.type === "MemberExpression") {
 
     // Never check properties of a MemberExpression, i.e. baz.foo_bar.
-    if (properties === "never") {
+    if (!options.checkObjectProperties) {
       return isCorrect;
     }
 
@@ -207,7 +211,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
   } else if (parent.type !== "CallExpression") {
     return isWrong;
   }
-
+  return isCorrect;
 }
 
 
@@ -217,8 +221,8 @@ const CAMELCASE_RULE = {
     docs: {
       description: 'check identifiers for camel case with options for opt_ '
           + 'prefix and var_args identifiers',
-      category: 'Stylistic Issues',
-        recommended: true,
+      category:  'Stylistic Issues',
+      recommended: true,
     },
     schema: [
       {
@@ -235,6 +239,9 @@ const CAMELCASE_RULE = {
           },
           allowTrailingUnderscore: {
             type: "boolean",
+          },
+          checkObjectProperties: {
+            type: "boolean",
           }
         },
         additionalProperties: false
@@ -243,8 +250,8 @@ const CAMELCASE_RULE = {
   },
 
   /**
-   * @param {!ESLint.RuleContext} context The thing
-   * @return {!Object<Espree.NodeType, function(!ESLint.ASTNode)>}
+   * @param {!ESLint.RuleContext} context
+   * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
    */
   create(context) {
 
@@ -253,6 +260,7 @@ const CAMELCASE_RULE = {
      * @param {!Espree.Identifier} node The node to check.
      */
     function reportIncorrectUnderscores(node) {
+      /** @const {!Object} */
       const userOptions = context.options[0] || {};
       const options = Object.assign(DEFAULT_CAMELCASE_OPTIONS, userOptions);
       const underscoreMessage = describeIncorrectUnderscores_(node, options);

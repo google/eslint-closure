@@ -44,10 +44,10 @@ ESLint.ASTNode = function() {};
  */
 ESLint.RuleDefinition = function() {};
 
-/** @type {ESLint.RuleMeta} */
+/** @type {!ESLint.RuleMeta} */
 ESLint.RuleDefinition.prototype.meta;
 
-/** @type {function(!ESLint.ASTNode): !ESLint.VisitorMapping} */
+/** @type {function(!ESLint.RuleContext): !ESLint.VisitorMapping} */
 ESLint.RuleDefinition.prototype.create;
 
 /** @typedef {(ESLint.NodeVisitorMapping|ESLint.CodePathMapping)}*/
@@ -69,16 +69,13 @@ ESLint.CodePathMapping;
  */
 ESLint.RuleMeta = function() {};
 
-/** @type {ESLint.RuleDocs} */
-ESLint.RuleMeta.docs;
+/** @type {!ESLint.RuleDocs} */
+ESLint.RuleMeta.prototype.docs;
 
-/** @type {ESLint.FixableRuleType} */
+/** @type {(!ESLint.FixableRuleType|undefined)} */
 ESLint.RuleMeta.prototype.fixable;
 
-/** @type {string} */
-ESLint.RuleMeta.prototype.category;
-
-/** @type {Array<Object<?,?>>} */
+/** @type {!Array<!Object<?,?>>} */
 ESLint.RuleMeta.prototype.schema;
 
 /**
@@ -90,7 +87,9 @@ ESLint.RuleDocs = function() {};
 /** @type {string} */
 ESLint.RuleDocs.prototype.description;
 
-/** @type {ESLint.RuleCategory} */
+// TODO: why can't we use string literals in the code and have jscompiler figure
+// out that it maps to the enum below.
+/** @type {string} */
 ESLint.RuleDocs.prototype.category;
 
 /** @type {boolean} */
