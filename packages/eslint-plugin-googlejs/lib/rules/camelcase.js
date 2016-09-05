@@ -159,8 +159,9 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
     return isCorrect;
   }
 
-  // A MemberExpression is foo['baz'] or foo.baz.
-  if (node.parent.type === "MemberExpression") {
+  switch (parent.type) {
+    case 'MemberExpression':
+    /** @type {!Espree.MemberExpression} */ (parent);
 
     // Never check properties of a MemberExpression, i.e. baz.foo_bar.
     if (!options.checkObjectProperties) {
@@ -168,51 +169,68 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
     }
 
     // Always report underscored object names of a MemberExpression,
-    // i.e. foo_bar.baz.
+    // e.g. foo_bar.baz.
     if (parent.object.type === "Identifier"
         && parent.object.name === node.name) {
       return isWrong;
 
-      // Report AssignmentExpressions only if they are the left side of the
-      // assignment, e.g. foo_bar = baz but not foo = baz_bar.
+    // Report AssignmentExpressions only if they are the left side of the
+    // assignment, e.g. foo_bar = baz but not foo = baz_bar.
     } else if (parent.type === "AssignmentExpression" &&
                (parent.right.type !== "MemberExpression" ||
                 parent.left.type === "MemberExpression" &&
                 parent.left.property.name === node.name)) {
       return isWrong;
     }
+    break;
 
-  // Properties have their own rules.  Properties are just defined in object
-  // literals.
-  } else if (parent.type === "Property") {
-  
-    if (!options.checkObjectProperties) {
-      return isCorrect;
-    }
+    case 'Property':
+      /** @type {!Espree.Property} */ (parent);
 
-    if (parent.parent && parent.type === "ObjectPattern" && parent.key === node
-        && parent.value !== node) {
-      return isCorrect;
-    }
+      // Properties have their own rules.  Properties are just defined in object
+      // literals.
+      if (!options.checkObjectProperties) {
+        return isCorrect;
+      }
 
-    if (parent.type !== "CallExpression") {
+      // An ObjectPattern is a destructuring pattern, e.g.
+      //var {a, b} = require('module');
+      if (parent.parent && parent.parent.type === "ObjectPattern") {
+        /** @type {!Espree.ObjectPattern} */ (parent);
+        // If we're assigning to a new variable name with destructuring then
+        // don't check the original name because we don't control that
+        // name.  For example, we wouldn't want to check original_name below.
+        // var {original_name: newName} = require('module);
+        if (parent.key === node && parent.value !== node) {
+          return isCorrect;
+        } 
+      }
+
       return isWrong;
-    }
+      break;
 
-    // Check if it's an import specifier
-  } else if (["ImportSpecifier", "ImportNamespaceSpecifier",
-              "ImportDefaultSpecifier"].indexOf(node.parent.type) >= 0) {
+    case 'ImportSpecifier':
+      // fall through
+    case 'ImportNamespaceSpecifier':
+      // fall through
+    case 'ImportDefaultSpecifier':
+      /** @type {!Espree.ImportDeclarationSpecifier} */ (parent);
+      // Report only if the local imported identifier is underscored, e.g.
+      // import foo_bar from 'baz';
+      if (parent.local.name === node.name) {
+        return isWrong;
+      }
+      break;
 
-    // Report only if the local imported identifier is underscored
-    if (node.parent.local && node.parent.local.name === node.name) {
+    case 'CallExpression':
+      // Ignore method or function calls.
+      return isCorrect;
+      break;
+
+    default:
       return isWrong;
-    }
-
-    // Report anything that is underscored that isn't a CallExpression
-  } else if (parent.type !== "CallExpression") {
-    return isWrong;
   }
-  return isCorrect;
+  return isWrong;
 }
 
 
