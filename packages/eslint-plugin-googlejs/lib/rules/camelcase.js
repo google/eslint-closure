@@ -167,21 +167,6 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
     if (!options.checkObjectProperties) {
       return isCorrect;
     }
-
-    // Always report underscored object names of a MemberExpression,
-    // e.g. foo_bar.baz.
-    if (parent.object.type === "Identifier"
-        && parent.object.name === node.name) {
-      return isWrong;
-
-    // Report AssignmentExpressions only if they are the left side of the
-    // assignment, e.g. foo_bar = baz but not foo = baz_bar.
-    } else if (parent.type === "AssignmentExpression" &&
-               (parent.right.type !== "MemberExpression" ||
-                parent.left.type === "MemberExpression" &&
-                parent.left.property.name === node.name)) {
-      return isWrong;
-    }
     break;
 
     case 'Property':
@@ -204,21 +189,6 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
         if (parent.key === node && parent.value !== node) {
           return isCorrect;
         } 
-      }
-
-      return isWrong;
-      break;
-
-    case 'ImportSpecifier':
-      // fall through
-    case 'ImportNamespaceSpecifier':
-      // fall through
-    case 'ImportDefaultSpecifier':
-      /** @type {!Espree.ImportDeclarationSpecifier} */ (parent);
-      // Report only if the local imported identifier is underscored, e.g.
-      // import foo_bar from 'baz';
-      if (parent.local.name === node.name) {
-        return isWrong;
       }
       break;
 
