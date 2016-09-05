@@ -26,7 +26,7 @@ describe('isUnderscored', () => {
 
 describe('categorizeUnderscoredIdentifier', () => {
 
-  const categorize = (s) => utils.categorizeUnderscoredIdentifier(s);
+  const categorize = utils.categorizeUnderscoredIdentifier;
   it('should correctly categorize strings with no underscores', () => {
     expect(categorize('')).to.equal(UnderscoreForm.NO_UNDERSCORE);
     expect(categorize('a')).to.equal(UnderscoreForm.NO_UNDERSCORE);
