@@ -163,9 +163,24 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
     case 'MemberExpression':
       parent = /** @type {!Espree.MemberExpression} */ (node.parent);
 
-      // Never check properties of a MemberExpression, i.e. baz.foo_bar.
       if (!options.checkObjectProperties) {
         return isCorrect;
+      }
+
+      // Using a camelcased identifier on an object is okay since we don't
+      // control the name, e.g. `foo.bar_baz`.
+      if (parent.property === node) {
+        // But it's not okay if we're defining a new variable, e.g.
+        // `foo.bar_baz = 2`;
+        if (parent.parent && parent.parent.type === 'AssignmentExpression') {
+          let grandParent =
+              /** @type {!Espree.AssignmentExpression} */ (parent.parent);
+          // But it's okay if the identifier is on the right side.  If it's on
+          // the left, it's wrong.
+          return grandParent.right === parent;
+        } else {
+          return isCorrect;
+        }
       }
       break;
 
