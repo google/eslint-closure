@@ -20,7 +20,7 @@ var compiler = new ClosureCompiler(
     // We use null for options that don't have a value.  Otherwise, it errors
     // out.  The existence of 'checks-only' is enough for it to be included as
     // an option.
-    // checks_only: null,
+    checks_only: null,
     // Don't process commonjs modules.  Use an externs to stub them out.  We
     // rely on externs for typechecking.  Including node_modules is expensive
     // and we'd have to ignore errors or use externs for all libraries.
@@ -34,7 +34,7 @@ var compiler = new ClosureCompiler(
     entry_point: './index.js',
     js_module_root: '.',
     // output_manifest: 'manifest.MF',
-    debug: null,
+    // debug: null,
   },
   // Java options.
   [
