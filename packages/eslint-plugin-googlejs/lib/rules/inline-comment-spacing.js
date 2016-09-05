@@ -5,7 +5,7 @@
 
 'use strict';
 
-const util = require('../utils');
+const utils = require('../utils');
 
 /** @const {number} */
 const DEFAULT_PRECEDING_SPACES = 1;

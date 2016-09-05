@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var util = require('../utils');
+var utils = require('../utils');
 var types = require('../types');
 
 /**
