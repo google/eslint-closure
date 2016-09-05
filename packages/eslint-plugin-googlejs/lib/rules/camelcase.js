@@ -150,8 +150,7 @@ function describeIncorrectUnderscores_(node, options) {
  * @private
  */
 function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
-  /** @const {!ESLint.ASTNode} */
-  const parent = node.parent;
+  let parent = node.parent;
   const isCorrect = true;
   const isWrong = false;
 
@@ -161,16 +160,16 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
 
   switch (parent.type) {
     case 'MemberExpression':
-    /** @type {!Espree.MemberExpression} */ (parent);
+      parent = /** @type {!Espree.MemberExpression} */ (node.parent);
 
-    // Never check properties of a MemberExpression, i.e. baz.foo_bar.
-    if (!options.checkObjectProperties) {
-      return isCorrect;
-    }
-    break;
+      // Never check properties of a MemberExpression, i.e. baz.foo_bar.
+      if (!options.checkObjectProperties) {
+        return isCorrect;
+      }
+      break;
 
     case 'Property':
-      /** @type {!Espree.Property} */ (parent);
+      parent = /** @type {!Espree.Property} */ (node.parent);
 
       // Properties have their own rules.  Properties are just defined in object
       // literals.
@@ -179,9 +178,8 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
       }
 
       // An ObjectPattern is a destructuring pattern, e.g.
-      //var {a, b} = require('module');
+      // var {a, b} = require('module');
       if (parent.parent && parent.parent.type === "ObjectPattern") {
-        /** @type {!Espree.ObjectPattern} */ (parent);
         // If we're assigning to a new variable name with destructuring then
         // don't check the original name because we don't control that
         // name.  For example, we wouldn't want to check original_name below.
@@ -195,7 +193,6 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
     case 'CallExpression':
       // Ignore method or function calls.
       return isCorrect;
-      break;
 
     default:
       return isWrong;
