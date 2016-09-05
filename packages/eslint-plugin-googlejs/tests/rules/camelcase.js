@@ -4,7 +4,7 @@
 
 'use strict';
 
-const rule = require('../lib/rules/camelcase');
+const rule = require('../../lib/rules/camelcase');
 const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester();
 
@@ -44,7 +44,8 @@ ruleTester.run('camelcase', rule, {
       code: '__private_first_name = "Patrick"',
       errors: [
         {
-          message: "Identifier '__private_first_name' is not in camel case.",
+          message: "Identifier '__private_first_name' is not in camel case "
+            + 'after the leading underscore.',
           type: 'Identifier',
         },
       ],
