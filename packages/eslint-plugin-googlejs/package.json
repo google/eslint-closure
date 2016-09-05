@@ -30,7 +30,8 @@
     "chai": "^3.5.0",
     "google-closure-compiler": "^20160713.2.0",
     "mocha": "^3.0.2",
-    "shelljs": "^0.7.4"
+    "shelljs": "^0.7.4",
+    "shelljs-nodecli": "^0.1.1"
   },
   "peerDependencies": {},
   "engines": {

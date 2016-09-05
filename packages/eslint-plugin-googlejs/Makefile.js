@@ -2,7 +2,7 @@
  * @fileoverview Build file for the googlejs ESLint plugin.
  */
 
-/* global cat, cd, cp, echo, exec, exit, find, ls, mkdir, pwd, rm, target, test*/
+/* global echo, exec, exit, find, ls, target, test*/
 /* eslint no-use-before-define: "off", no-console: "off" */
 'use strict';
 
@@ -10,14 +10,12 @@ require("shelljs/make");
 
 const closurePackage = require('google-closure-compiler');
 const ClosureCompiler = closurePackage.compiler;
+const nodeCLI = require("shelljs-nodecli");
 
 /* eslint-disable googlejs/camelcase */
 
 
-const NODE = "node ", // intentional extra space
-    NODE_MODULES = "./node_modules/",
-    TEMP_DIR = "./tmp/",
-    BUILD_DIR = "./build/",
+const NODE_MODULES = "./node_modules/",
 
     // Utilities - intentional extra space at the end of each string.
     MOCHA = NODE_MODULES + "mocha/bin/_mocha ",

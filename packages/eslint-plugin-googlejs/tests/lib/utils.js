@@ -2,7 +2,7 @@
  * @fileoverview Tests for utils.
  */
 
-/* global describe it expect */
+/* global describe it */
 const utils = require('../../lib/utils');
 const UnderscoreForm = require('../../lib/types').UnderscoreForm;
 const expect = require('chai').expect

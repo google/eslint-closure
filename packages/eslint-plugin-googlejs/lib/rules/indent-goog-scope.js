@@ -29,9 +29,9 @@ module.exports = {
     // Helpers
 
     /**
-     * Check to see if the node is a file level IIFE
+     * Check to see if the node is a file level IIFE.
      * @param {!ESLint.ASTNode} node The function node to check.
-     * @returns {boolean} True if the node is the outer IIFE
+     * @return {boolean} True if the node is the outer IIFE
      */
     function isOuterIIFE(node) {
       const parent = node.parent;

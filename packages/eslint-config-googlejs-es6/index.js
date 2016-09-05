@@ -165,7 +165,18 @@ const GOOGLE_PLUGIN_RULES = {
 // JSDoc Plugin Rules
 // https://github.com/gajus/eslint-plugin-jsdoc
 const JSDOC_PLUGIN_RULES = {
-  'jsdoc/check-param-names': WARNING,
+  'jsdoc/check-param-names': ERROR,
+  'jsdoc/check-tag-names': OFF,
+  'jsdoc/check-types': WARNING,
+  'jsdoc/newline-after-description': OFF,
+  'jsdoc/require-description-complete-sentence': WARNING,
+  'jsdoc/require-hyphen-before-param-description': OFF,
+  'jsdoc/require-param': ERROR,
+  // Not required if obvious.
+  'jsdoc/require-param-description': OFF,
+  'jsdoc/require-param-type': ERROR,
+  'jsdoc/require-returns-description': OFF,
+  'jsdoc/require-returns-type': ERROR,
 
 };
 
