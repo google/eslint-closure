@@ -42,7 +42,7 @@ function categorizeUnderscoredIdentifier(name) {
     return 'no_underscore';
   } else if (name === 'var_args') {
     return 'var_args';
-  } else if (name.substring(0, 4) === 'opt_') {
+  } else if (name.substring(0, 4) === 'opt_' && name != 'opt_') {
     return 'opt_prefix';
   } else if (name[0] === '_') {
     return 'leading';

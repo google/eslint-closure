@@ -257,15 +257,14 @@ const CAMELCASE_RULE = {
    */
   create(context) {
 
+    const userOptions = /** @const {!Object} */ (context.options[0]) || {};
+    const options = /** @type {!CamelCaseRuleOptions}*/
+          (Object.assign({}, DEFAULT_CAMELCASE_OPTIONS, userOptions));
     /**
      * Reports incorrectly underscored identifiers.
      * @param {!Espree.Identifier} node The node to check.
      */
     function reportIncorrectUnderscores(node) {
-      
-      const userOptions = /** @const {!Object} */ (context.options[0]) || {};
-      const options = /** @type {!CamelCaseRuleOptions}*/
-            (Object.assign(DEFAULT_CAMELCASE_OPTIONS, userOptions));
       const underscoreMessage = describeIncorrectUnderscores_(node, options);
       if (underscoreMessage.hasError) {
         context.report({

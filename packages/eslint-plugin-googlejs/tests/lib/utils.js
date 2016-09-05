@@ -70,14 +70,17 @@ describe('categorizeUnderscoredIdentifier', () => {
   });
 
   it('should correctly categorize strings that have an opt_ prefix', () => {
-    expect(categorize('opt_')).to.equal(UnderscoreForm.OPT_PREFIX);
     expect(categorize('opt__')).to.equal(UnderscoreForm.OPT_PREFIX);
     expect(categorize('opt_a')).to.equal(UnderscoreForm.OPT_PREFIX);
     expect(categorize('opt_bcd')).to.equal(UnderscoreForm.OPT_PREFIX);
+    expect(categorize('opt_b_cd')).to.equal(UnderscoreForm.OPT_PREFIX);
+    expect(categorize('opt_b_c_d')).to.equal(UnderscoreForm.OPT_PREFIX);
 
     expect(categorize('opt')).to.not.equal(UnderscoreForm.OPT_PREFIX);
     expect(categorize('pt_')).to.not.equal(UnderscoreForm.OPT_PREFIX);
     expect(categorize('aopt_')).to.not.equal(UnderscoreForm.OPT_PREFIX);
+    expect(categorize('_opt_')).to.not.equal(UnderscoreForm.OPT_PREFIX);
+    expect(categorize('opt_')).to.not.equal(UnderscoreForm.OPT_PREFIX);
   });
 
   it('should correctly categorize strings with a trailing underscore', () => {

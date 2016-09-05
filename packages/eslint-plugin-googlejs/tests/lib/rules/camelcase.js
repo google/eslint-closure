@@ -27,8 +27,18 @@ ruleTester.run('camelcase', rule, {
     'var arr = [foo.bar_baz.qux];',
     '[foo.bar_baz.nesting]',
     'if (foo.bar_baz === boom.bam_pow) { [foo.baz_boom] }',
-    'var a = opt_test;',
-    'var args = var_args;',
+    {
+      code: 'var a = opt_test;',
+      options: [{allowOptPrefix: true}]
+    },
+    {
+      code: 'function foo(opt_test) {};',
+      options: [{allowOptPrefix: true}]
+    },
+    {
+      code: 'var args = var_args;',
+      options: [{allowVarArgs: true}]
+    },
   ],
   invalid: [
     {
@@ -118,6 +128,16 @@ ruleTester.run('camelcase', rule, {
       errors: [
         {
           message: "Identifier 'boom_pow' is not in camel case.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: 'opt_foo_bar = { bar: boom.bam_pow }',
+      errors: [
+        {
+          message: "Identifier 'opt_foo_bar' is not in camel case after the"
+              + " opt_ prefix.",
           type: 'Identifier',
         },
       ],
