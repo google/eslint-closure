@@ -32,11 +32,11 @@ function isUnderscored(name) {
  * @return {!types.UnderscoreForm} the type of underscored identifier.
  */
 function categorizeUnderscoredIdentifier(name) {
-  if (name == "") {
+  if (name === "" || name.length === 0) {
     return 'no_underscore';
-  } else if (name.toUpperCase() == name) {
+  } else if (name.toUpperCase() === name) {
     return 'constant';
-  } else if (name.indexOf('_') == -1) {
+  } else if (name.indexOf('_') === -1) {
     // This check must come after the constant check otherwise we wrongly
     // categorize identifiers like ALLCAPS.
     return 'no_underscore';
@@ -44,9 +44,9 @@ function categorizeUnderscoredIdentifier(name) {
     return 'var_args';
   } else if (name.substring(0, 4) === 'opt_') {
     return 'opt_prefix';
-  } else if (name[0] == '_') {
+  } else if (name[0] === '_') {
     return 'leading';
-  } else if (name[name.length - 1] == '_') {
+  } else if (name[name.length - 1] === '_') {
     return 'trailing;'
   } else {
     return 'other';

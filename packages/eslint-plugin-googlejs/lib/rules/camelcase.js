@@ -92,7 +92,7 @@ function describeIncorrectUnderscores_(node, options) {
       if (options.allowLeadingUnderscore) {
         return checkAndReport(
             node.name.replace(/^_+/g, ''),
-            `Identifier ${node.name} is not in camel case after the leading `
+            `Identifier '${node.name}' is not in camel case after the leading `
             + `underscore.`
         );
       } else {
@@ -104,25 +104,25 @@ function describeIncorrectUnderscores_(node, options) {
     case types.UnderscoreForm.OTHER:
       return checkAndReport(
           node.name,
-          `Identifier ${node.name} is not in camel case.`
+          `Identifier '${node.name}' is not in camel case.`
       );
 
     case types.UnderscoreForm.OPT_PREFIX:
       if (options.allowOptPrefix) {
         return checkAndReport(
             node.name.replace(/^opt_/g, ''),
-            `Identifier ${node.name} is not in camel case after the opt_ `
+            `Identifier '${node.name}' is not in camel case after the opt_ `
             + `prefix.`
         );
       } else {
-        return makeReport(`The opt_ prefix is not allowed in ${node.name}`);
+        return makeReport(`The opt_ prefix is not allowed in '${node.name}'`);
       }
 
     case types.UnderscoreForm.TRAILING:
       if (options.allowTrailingUnderscore) {
         return checkAndReport(
           node.name.replace(/_+$/g, ''),
-            `Identifier ${node.name} is not in camel case before the trailing`
+            `Identifier '${node.name}' is not in camel case before the trailing`
             + ` underscore.`
         );
       } else {
