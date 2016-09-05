@@ -220,7 +220,9 @@ Espree.Declaration;
 /** @typedef {!Espree.ExportAllDeclaration | !Espree.ExportDefaultDeclaration | !Espree.ExportNamedDeclaration} */
 Espree.ExportDeclaration;
 
-/** @typedef {!Espree.ArrayExpression | !Espree.ArrowFunctionExpression | !Espree.AssignmentExpression | !Espree.BinaryExpression | !Espree.CallExpression | !Espree.ClassExpression | !Espree.ComputedMemberExpression | !Espree.ConditionalExpression | !Espree.Identifier | !Espree.FunctionExpression | !Espree.Literal | !Espree.NewExpression | !Espree.ObjectExpression | !Espree.RegexLiteral | !Espree.SequenceExpression | !Espree.StaticMemberExpression | !Espree.TaggedTemplateExpression | !Espree.ThisExpression | !Espree.UnaryExpression | !Espree.UpdateExpression | !Espree.YieldExpression} */
+/**
+ * @typedef {!Espree.ArrayExpression | !Espree.ArrowFunctionExpression | !Espree.AssignmentExpression | !Espree.BinaryExpression | !Espree.CallExpression | !Espree.ClassExpression | !Espree.ComputedMemberExpression | !Espree.ConditionalExpression | !Espree.Identifier | !Espree.FunctionExpression | !Espree.Literal | !Espree.MemberExpression | !Espree.NewExpression | !Espree.ObjectExpression | !Espree.RegexLiteral | !Espree.SequenceExpression | !Espree.StaticMemberExpression | !Espree.TaggedTemplateExpression | !Espree.ThisExpression | !Espree.UnaryExpression | !Espree.UpdateExpression | !Espree.YieldExpression }
+ */
 Espree.Expression;
 
 /** @typedef {!Espree.AssignmentPattern | !Espree.BindingIdentifier | !Espree.BindingPattern} */
@@ -644,6 +646,18 @@ Espree.Literal.prototype.value;
 /** @type {string} */
 Espree.Literal.prototype.raw;
 
+/** @record @extends {Espree.ASTNode} */
+Espree.MemberExpression = function() {};
+
+/** @type {boolean} */
+Espree.MemberExpression.prototype.computed;
+
+/** @type {!Espree.Expression} */
+Espree.MemberExpression.prototype.object;
+
+/** @type {!Espree.Expression} */
+Espree.MemberExpression.prototype.property;
+
 
 /** @record @extends {Espree.ASTNode} */
 Espree.MetaProperty = function() {};
@@ -935,4 +949,3 @@ Espree.YieldExpression.prototype.argument;
 
 /** @type {boolean} */
 Espree.YieldExpression.prototype.delegate;
-
