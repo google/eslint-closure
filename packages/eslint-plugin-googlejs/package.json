@@ -27,9 +27,10 @@
   },
   "homepage": "https://github.com/jschaf/googlejs",
   "devDependencies": {
-    "eslint": "^3.3.1",
+    "chai": "^3.5.0",
     "google-closure-compiler": "^20160713.2.0",
-    "mocha": "^3.0.2"
+    "mocha": "^3.0.2",
+    "shelljs": "^0.7.4"
   },
   "peerDependencies": {},
   "engines": {
@@ -41,10 +42,7 @@
     "check-types": "node Makefile.js"
   },
   "dependencies": {
-    "assert": "^1.4.1",
     "eslint": "^3.4.0",
-    "lodash": "^4.15.0",
-    "shelljs": "^0.7.4",
-    "util": "^0.10.3"
+    "lodash": "^4.15.0"
   }
 }

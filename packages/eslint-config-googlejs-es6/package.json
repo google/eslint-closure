@@ -25,11 +25,10 @@
   },
   "homepage": "https://github.com/jschaf/googlejs",
   "dependencies": {
-    "eslint-plugin-jsdoc": "^2.3.1",
+    "eslint-config-googlejs-base": "^0.0.1",
     "eslint-plugin-googlejs": "^0.0.1"
   },
   "devDependencies": {
-    "mocha": "^3.0.2"
   },
   "peerDependencies": {},
   "engines": {
