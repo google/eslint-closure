@@ -36,7 +36,7 @@
     "node": ">= 4"
   },
   "scripts": {
-    "lint": "eslint . --ext .js",
+    "lint": "node Makefile.js lint",
     "test": " mocha tests",
     "check-types": "node Makefile.js"
   },
@@ -44,6 +44,7 @@
     "assert": "^1.4.1",
     "eslint": "^3.4.0",
     "lodash": "^4.15.0",
+    "shelljs": "^0.7.4",
     "util": "^0.10.3"
   }
 }
