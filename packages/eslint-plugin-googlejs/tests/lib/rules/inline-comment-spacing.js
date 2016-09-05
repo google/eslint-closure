@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const rule = require('../../lib/rules/inline-comment-spacing');
+const rule = require('../../../lib/rules/inline-comment-spacing');
 const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester();
 
