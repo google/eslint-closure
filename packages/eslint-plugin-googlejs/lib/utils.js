@@ -47,9 +47,9 @@ function categorizeUnderscoredIdentifier(name) {
   } else if (name[0] === '_') {
     return 'leading';
   } else if (name[name.length - 1] === '_') {
-    return 'trailing;'
+    return 'trailing';
   } else {
-    return 'other';
+    return 'middle';
   }
 }
 

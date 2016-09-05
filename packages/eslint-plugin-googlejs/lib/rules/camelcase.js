@@ -101,7 +101,7 @@ function describeIncorrectUnderscores_(node, options) {
     case types.UnderscoreForm.NO_UNDERSCORE:
       return validReport;
 
-    case types.UnderscoreForm.OTHER:
+    case types.UnderscoreForm.MIDDLE:
       return checkAndReport(
           node.name,
           `Identifier '${node.name}' is not in camel case.`
