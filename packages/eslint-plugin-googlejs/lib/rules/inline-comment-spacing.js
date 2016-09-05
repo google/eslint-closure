@@ -5,7 +5,7 @@
 
 'use strict';
 
-const {isTokenOnSameLine} = require('../util');
+const util = require('../util');
 
 /** @const {number} */
 const DEFAULT_PRECEDING_SPACES = 1;
@@ -58,7 +58,7 @@ module.exports = {
       // Return early if there's no tokens before commentNode or there's only
       // whitespace.
       if (previousToken == null
-          || !isTokenOnSameLine(commentNode, previousToken)) {
+          || !util.isTokenOnSameLine(commentNode, previousToken)) {
         return;
       }
 

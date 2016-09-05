@@ -4,7 +4,7 @@
 
 'use strict';
 
-const {UnderscoreForm} = require('./types');
+const util = require('./types');
 
 /**
  * Determines whether two adjacent tokens are on the same line.
@@ -29,7 +29,7 @@ function isUnderscored(name) {
 /**
  * Determine the type of underscore that an indentifer contains.
  * @param {string} name The string to check.
- * @return {!UnderscoreForm} the type of underscored identifier.
+ * @return {!types.UnderscoreForm} the type of underscored identifier.
  */
 function categorizeUnderscoredIdentifier(name) {
   if (name == "") {

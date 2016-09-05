@@ -1,9 +1,10 @@
 /**
  * @fileoverview Rule to flag non-camelcased identifiers except for the "opt_" prefix
  */
+'use strict';
 
-var {categorizeUnderscoredIdentifier, isUnderscored} = require('../util');
-var {UnderscoreForm} = require('../types');
+var util = require('../util');
+var types = require('../types');
 
 /**
  * Valid options for the camelcase rule
@@ -83,11 +84,11 @@ function describeIncorrectUnderscores_(node, options) {
     }
   }
 
-  switch (categorizeUnderscoredIdentifier(node)) {
-    case UnderscoreForm.CONSTANT:
+  switch (util.categorizeUnderscoredIdentifier(node.name)) {
+    case types.UnderscoreForm.CONSTANT:
       return validReport;
 
-    case UnderscoreForm.LEADING:
+    case types.UnderscoreForm.LEADING:
       if (options.allowLeadingUnderscore) {
         return checkAndReport(
             node.name.replace(/^_+/g, ''),
@@ -97,16 +98,16 @@ function describeIncorrectUnderscores_(node, options) {
       } else {
         return makeReport('Leading underscores are not allowed.');
       }
-    case UnderscoreForm.NO_UNDERSCORE:
+    case types.UnderscoreForm.NO_UNDERSCORE:
       return validReport;
 
-    case UnderscoreForm.OTHER:
+    case types.UnderscoreForm.OTHER:
       return checkAndReport(
           node.name,
           `Identifier ${node.name} is not in camel case.`
       );
 
-    case UnderscoreForm.OPT_PREFIX:
+    case types.UnderscoreForm.OPT_PREFIX:
       if (options.allowOptPrefix) {
         return checkAndReport(
             node.name.replace(/^opt_/g, ''),
@@ -117,7 +118,7 @@ function describeIncorrectUnderscores_(node, options) {
         return makeReport(`The opt_ prefix is not allowed in ${node.name}`);
       }
 
-    case UnderscoreForm.TRAILING:
+    case types.UnderscoreForm.TRAILING:
       if (options.allowTrailingUnderscore) {
         return checkAndReport(
           node.name.replace(/_+$/g, ''),
@@ -128,7 +129,7 @@ function describeIncorrectUnderscores_(node, options) {
         return makeReport('Trailing underscores are not allowed.');
       }
 
-    case UnderscoreForm.VAR_ARGS:
+    case types.UnderscoreForm.VAR_ARGS:
       if (options.allowVarArgs) {
         return validReport;
       } else {
@@ -154,7 +155,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
   const isCorrect = true;
   const isWrong = false;
 
-  if (!isUnderscored(effectiveNodeName)) {
+  if (!util.isUnderscored(effectiveNodeName)) {
     return isCorrect;
   }
 
