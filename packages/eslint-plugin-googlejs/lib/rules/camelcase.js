@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var util = require('../util');
+var util = require('../utils');
 var types = require('../types');
 
 /**
@@ -84,7 +84,7 @@ function describeIncorrectUnderscores_(node, options) {
     }
   }
 
-  switch (util.categorizeUnderscoredIdentifier(node.name)) {
+  switch (utils.categorizeUnderscoredIdentifier(node.name)) {
     case types.UnderscoreForm.CONSTANT:
       return validReport;
 
@@ -155,7 +155,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
   const isCorrect = true;
   const isWrong = false;
 
-  if (!util.isUnderscored(effectiveNodeName)) {
+  if (!utils.isUnderscored(effectiveNodeName)) {
     return isCorrect;
   }
 

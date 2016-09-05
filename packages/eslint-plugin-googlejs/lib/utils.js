@@ -1,10 +1,10 @@
 /**
- * @fileoverview Utilities for working with ESLint syntax tree.
+ * @fileoverview Utilities for working with ESLint AST nodes and tokens.
  */
 
 'use strict';
 
-const util = require('./types');
+const types = require('./types');
 
 /**
  * Determines whether two adjacent tokens are on the same line.
