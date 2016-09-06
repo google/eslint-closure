@@ -2,7 +2,7 @@
  * @fileoverview Build file for the googlejs ESLint plugin.
  */
 
-/* global echo, exec, exit, find, ls, target, test*/
+/* global echo, exec, exit, find, target */
 /* eslint no-use-before-define: "off", no-console: "off" */
 'use strict';
 
@@ -19,7 +19,6 @@ const NODE_MODULES = "./node_modules/",
 
     // Utilities - intentional extra space at the end of each string.
     MOCHA = NODE_MODULES + "mocha/bin/_mocha ",
-    KARMA = NODE_MODULES + "karma/bin/karma ",
     ESLINT = "eslint ",
 
     // Files

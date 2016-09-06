@@ -31,15 +31,28 @@ ruleTester.run('camelcase', rule, {
     'if (foo.bar_baz === boom.bam_pow) { [foo.baz_boom] }',
     {
       code: 'var a = opt_test;',
-      options: [{allowOptPrefix: true}]
+      options: [{allowOptPrefix: true}],
     },
     {
       code: 'function foo(opt_test) {};',
-      options: [{allowOptPrefix: true}]
+      options: [{allowOptPrefix: true}],
     },
     {
       code: 'var args = var_args;',
-      options: [{allowVarArgs: true}]
+      options: [{allowVarArgs: true}],
+    },
+    {
+      code: 'foo.bar_baz = 2',
+      options: [{checkObjectProperties: false}],
+    },
+    {
+      code: 'var { bar_baz: foo} = require()',
+      parserOptions: {ecmaVersion: 6},
+    },
+    {
+      code: 'var { bar_baz: foo} = require()',
+      options: [{checkObjectProperties: false}],
+      parserOptions: {ecmaVersion: 6},
     },
   ],
   invalid: [
@@ -208,6 +221,30 @@ ruleTester.run('camelcase', rule, {
       errors: [
         {
           message: "Trailing underscores are not allowed in 'fooBar_'.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: 'var {foo_bar} = require()',
+      parserOptions: {ecmaVersion: 6},
+      errors: [
+        {
+          message: "Identifier 'foo_bar' is not in camel case.",
+          type: 'Identifier',
+        },
+        {
+          message: "Identifier 'foo_bar' is not in camel case.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: 'var {foo_bar: bar_baz} = require()',
+      parserOptions: {ecmaVersion: 6},
+      errors: [
+        {
+          message: "Identifier 'bar_baz' is not in camel case.",
           type: 'Identifier',
         },
       ],

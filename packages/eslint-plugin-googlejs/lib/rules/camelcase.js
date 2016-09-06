@@ -199,6 +199,13 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
       // An ObjectPattern is a destructuring pattern, e.g.
       // var {a, b} = require('module');
       if (parent.parent && parent.parent.type === "ObjectPattern") {
+        // TODO: this block will error twice on code like: var {foo_bar} =
+        // require(); because it's checking foo_bar twice.  Once as a key and
+        // once as a value.  The node for key and value is the same node, so
+        // there's now way to figure out which node we're supposed to be in this
+        // code.  To reduce the error count to 1 would involve processing the
+        // messages outside this function.
+
         // If we're assigning to a new variable name with destructuring then
         // don't check the original name because we don't control that
         // name.  For example, we wouldn't want to check original_name below.
