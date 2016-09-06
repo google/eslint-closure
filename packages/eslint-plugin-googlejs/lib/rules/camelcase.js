@@ -205,7 +205,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
         // var {original_name: newName} = require('module);
         if (parent.key === node && parent.value !== node) {
           return isCorrect;
-        } 
+        }
       }
       break;
 
