@@ -268,11 +268,11 @@ const CAMELCASE_RULE = {
      * @param {!Espree.Identifier} node The node to check.
      */
     function reportIncorrectUnderscores(node) {
-      const underscoreMessage = describeIncorrectUnderscores_(node, options);
-      if (underscoreMessage.hasError) {
+      const underscoreReport = describeIncorrectUnderscores_(node, options);
+      if (underscoreReport.hasError) {
         context.report({
-          node: underscoreMessage.node,
-          message: underscoreMessage.message,
+          node: underscoreReport.node,
+          message: underscoreReport.message,
         });
       }
     }
