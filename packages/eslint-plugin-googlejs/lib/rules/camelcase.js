@@ -1,5 +1,6 @@
 /**
- * @fileoverview Rule to flag non-camelcased identifiers except for the "opt_" prefix
+ * @fileoverview Rule to flag non-camelcased identifiers except for the "opt_"
+ * prefix
  */
 'use strict';
 
@@ -139,6 +140,7 @@ function describeIncorrectUnderscores_(node, options) {
         return makeReport('The var_args identifier is not allowed.');
       }
 
+    // istanbul ignore next
     default:
       throw new Error('Unknown undercore form: ' + node.name);
   }
