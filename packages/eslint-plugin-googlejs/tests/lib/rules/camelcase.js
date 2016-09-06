@@ -14,6 +14,8 @@ ruleTester.run('camelcase', rule, {
     'FIRST_NAME = "Nicholas"',
     '__myPrivateVariable = "Patrick"',
     'myPrivateVariable_ = "Patrick"',
+    'myPrivateVariable__ = "Patrick"',
+    '__myPrivateVariable__ = "Patrick"',
     'function doSomething(){}',
     'do_something()',
     'foo.do_something()',
@@ -133,11 +135,79 @@ ruleTester.run('camelcase', rule, {
       ],
     },
     {
+      code: 'function bar(opt_foo) {}',
+      errors: [
+        {
+          message: "The opt_ prefix is not allowed in 'opt_foo'.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
       code: 'opt_foo_bar = { bar: boom.bam_pow }',
+      errors: [
+        {
+          message: "The opt_ prefix is not allowed in 'opt_foo_bar'.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: 'opt_foo_bar = { bar: boom.bam_pow }',
+      options: [{allowOptPrefix: true}],
       errors: [
         {
           message: "Identifier 'opt_foo_bar' is not in camel case after the"
               + " opt_ prefix.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: 'var_args = { bar: boom.bam_pow }',
+      errors: [
+        {
+          message: "The var_args identifier is not allowed.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: '_foo_bar = 2',
+      errors: [
+        {
+          message: "Identifier '_foo_bar' is not in camel case after the "
+              + "leading underscore.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: 'foo_bar_ = 3',
+      errors: [
+        {
+          message: "Identifier 'foo_bar_' is not in camel case before the "
+            + "trailing underscore.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: '_fooBar = 4',
+      options: [{allowLeadingUnderscore: false}],
+      errors: [
+        {
+          message: "Leading underscores are not allowed in '_fooBar'.",
+          type: 'Identifier',
+        },
+      ],
+    },
+    {
+      code: 'fooBar_ = 5',
+      options: [{allowTrailingUnderscore: false}],
+      errors: [
+        {
+          message: "Trailing underscores are not allowed in 'fooBar_'.",
           type: 'Identifier',
         },
       ],

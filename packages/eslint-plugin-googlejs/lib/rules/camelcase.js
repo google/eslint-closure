@@ -7,7 +7,7 @@ var utils = require('../utils');
 var types = require('../types');
 
 /**
- * Valid options for the camelcase rule
+ * Valid options for the camelcase rule.
  * @typedef {{
  *   allowVarArgs: boolean,
  *   allowOptPrefix: boolean,
@@ -91,13 +91,15 @@ function describeIncorrectUnderscores_(node, options) {
     case types.UnderscoreForm.LEADING:
       if (options.allowLeadingUnderscore) {
         return checkAndReport(
-            node.name.replace(/^_+/g, ''),
+          node.name.replace(/^_+/g, '').replace(/_+$/g, ''),
             `Identifier '${node.name}' is not in camel case after the leading `
             + `underscore.`
         );
       } else {
-        return makeReport('Leading underscores are not allowed.');
+        return makeReport('Leading underscores are not allowed in '
+                          + `'${node.name}'.`);
       }
+
     case types.UnderscoreForm.NO_UNDERSCORE:
       return validReport;
 
@@ -115,18 +117,19 @@ function describeIncorrectUnderscores_(node, options) {
             + `prefix.`
         );
       } else {
-        return makeReport(`The opt_ prefix is not allowed in '${node.name}'`);
+        return makeReport(`The opt_ prefix is not allowed in '${node.name}'.`);
       }
 
     case types.UnderscoreForm.TRAILING:
       if (options.allowTrailingUnderscore) {
         return checkAndReport(
-          node.name.replace(/_+$/g, ''),
+          node.name.replace(/^_+/g, '').replace(/_+$/g, ''),
             `Identifier '${node.name}' is not in camel case before the trailing`
             + ` underscore.`
         );
       } else {
-        return makeReport('Trailing underscores are not allowed.');
+        return makeReport('Trailing underscores are not allowed in '
+                          + `'${node.name}'.`);
       }
 
     case types.UnderscoreForm.VAR_ARGS:
@@ -176,7 +179,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
           let grandParent =
               /** @type {!Espree.AssignmentExpression} */ (parent.parent);
           // But it's okay if the identifier is on the right side.  If it's on
-          // the left, it's wrong.
+          // the left, it's wrong because we're probably defining it.
           return grandParent.right === parent;
         } else {
           return isCorrect;
