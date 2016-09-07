@@ -35,10 +35,16 @@
 /* global describe, it */
 'use strict';
 
-// const lodash = require('lodash');
-// const assert = require('assert');
-// const util = require('utils');
-// const linter = require('eslint').linter;
+// Hide node_module requires from closure.  Yes, I know it's awful but a bare
+// `require` didn't work and there's no other way to have the code runnable by
+// Node.js and Closure.  See
+// https://gist.github.com/ChadKillingsworth/b86a4cffaa71571b5d01
+const externalRequire = /** @type {function(string)} */ (eval('require'));
+
+const lodash = externalRequire('lodash');
+const assert = externalRequire('assert');
+const util = externalRequire('utils');
+const linter = externalRequire('eslint').linter;
 
 /*
  * List every parameters possible on a test case that are not related to eslint
@@ -93,8 +99,6 @@ function runRuleForItem_(ruleName, item, config) {
   } else {
     config.rules[ruleName] = 1;
   }
-
-  linter.defineRule(ruleName, rule);
 
   return {
     messages: linter.verify(code, config, filename, true),

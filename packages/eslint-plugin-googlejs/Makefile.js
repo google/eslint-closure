@@ -147,5 +147,5 @@ target.test = function() {
     exit(1);
   }
 
-  target.checkLicenses();
+  // target.checkLicenses();
 };
