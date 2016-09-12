@@ -34,6 +34,7 @@ const closureCompiler = new ClosureCompiler(
     js: [
       'index.js',
       "'./lib/**.js'",
+      // "'./tests/**.js'",
     ],
     externs: [
       './externs/externs-eslint.js',
@@ -47,17 +48,14 @@ const closureCompiler = new ClosureCompiler(
     // out.  The existence of 'checks-only' is enough for it to be included as
     // an option.
     checks_only: null,
-    // Don't process commonjs modules.  Use an externs to stub them out.  We
-    // rely on externs for typechecking.  Including node_modules is expensive
-    // and we'd have to ignore errors or use externs for all libraries.
     process_common_js_modules: null,
     new_type_inf: null,
+    assume_function_wrapper: null,
     // We need LOOSE because we might as well type check all files.  If we used
     // STRICT, closure would ignore all files it couldn't reach from the
     // entry_point.
-    dependency_mode: 'LOOSE',
     entry_point: './index.js',
-    js_module_root: '.',
+    dependency_mode: 'STRICT',
     // output_manifest: 'manifest.MF',
     // debug: null,
   },
