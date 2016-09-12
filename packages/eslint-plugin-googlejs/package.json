@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "eslint": "^3.4.0",
+    "google-closure-library": "^20160822.0.0",
     "lodash": "^4.15.0"
   }
 }
