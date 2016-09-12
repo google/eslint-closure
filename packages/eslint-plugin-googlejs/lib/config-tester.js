@@ -35,10 +35,14 @@
 /* global describe, it */
 'use strict';
 
+const types = require('./types');
+
 // Hide node_module requires from closure.  Yes, I know it's awful but a bare
-// `require` didn't work and there's no other way to have the code runnable by
-// Node.js and Closure.  See
-// https://gist.github.com/ChadKillingsworth/b86a4cffaa71571b5d01
+// `require` didn't work and neither did simply aliasing require to
+// externalRequire.  There's no other way to have the code runnable by Node.js
+// and Closure.  See//
+// https://gist.github.com/ChadKillingsworth/b86a4cffaa71571b5d01 for possible
+// solutions in the distant future.
 const externalRequire = /** @type {function(string)} */ (eval('require'));
 
 const lodash = externalRequire('lodash');
@@ -60,9 +64,9 @@ const ConfigTesterParameters = [
 
 /**
  * Runs the rule for the given item.
- * @param {string} ruleName name of the rule
- * @param {string|Object} item Item to run the rule against
- * @param {!ESLint.Config} config config to use for the rule
+ * @param {string} ruleName Name of the rule.
+ * @param {string|Object} item Item to run the rule against.
+ * @param {!ESLint.Config2} config Config to use for the rule.
  * @return {Object} Eslint run result
  * @private
  */
@@ -107,10 +111,10 @@ function runRuleForItem_(ruleName, item, config) {
 
 
 /**
- * Check if the template is valid or not.
- * @param {string} ruleName name of the rule
- * @param {string|Object} item Item to run the rule against
- * @param {!ESLint.Config} config config to use for the rule
+ * Checks if the template is valid or not.
+ * @param {string} ruleName Name of the rule.
+ * @param {string|Object} item Item to run the rule against.
+ * @param {!ESLint.Config} config Config to use for the rule.
  * @return {undefined}
  * @private
  */
@@ -124,10 +128,10 @@ function testValidTemplate(ruleName, item, config) {
 }
 
 /**
- * Check if the template is invalid or not.
- * @param {string} ruleName name of the rule
- * @param {string|Object} item Item to run the rule against
- * @param {!ESLint.Config} config config to use for the rule
+ * Checks if the template is invalid or not.
+ * @param {string} ruleName Name of the rule.
+ * @param {string|Object} item Item to run the rule against.
+ * @param {!ESLint.Config} config Config to use for the rule.
  * @return {undefined}
  * @private
  */
