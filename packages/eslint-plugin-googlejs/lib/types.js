@@ -1,3 +1,5 @@
+goog.module('googlejs.plugin.types');
+
 /**
  * The type of underscore in an identifier.
  * @enum {string}
@@ -13,7 +15,7 @@ const UnderscoreForm = {
   VAR_ARGS: 'var_args',
 }
 
-module.exports = {
+exports = {
   /** @const {UnderscoreForm} */
   UnderscoreForm,
 }

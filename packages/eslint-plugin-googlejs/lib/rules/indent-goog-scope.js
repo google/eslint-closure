@@ -3,13 +3,13 @@
  * @author Joe Schafer
  */
 
-'use strict';
+goog.module('googlejs.plugin.rules.indent-goog-scope');
 
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
 
-module.exports = {
+exports = {
   meta: {
     docs: {
       description: 'enforce consistent indentation within goog.scope',

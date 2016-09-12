@@ -35,20 +35,22 @@
 /* global describe, it */
 'use strict';
 
-const types = require('./types');
+goog.module('googlejs.plugin.config-tester');
+
+const types = goog.require('googlejs.plugin.types');
 
 // Hide node_module requires from closure.  Yes, I know it's awful but a bare
 // `require` didn't work and neither did simply aliasing require to
-// externalRequire.  There's no other way to have the code runnable by Node.js
+// require.  There's no other way to have the code runnable by Node.js
 // and Closure.  See//
 // https://gist.github.com/ChadKillingsworth/b86a4cffaa71571b5d01 for possible
 // solutions in the distant future.
 const externalRequire = /** @type {function(string)} */ (eval('require'));
 
-const lodash = externalRequire('lodash');
-const assert = externalRequire('assert');
-const util = externalRequire('utils');
-const linter = externalRequire('eslint').linter;
+const lodash = require('lodash');
+const assert = require('assert');
+const util = require('utils');
+const linter = require('eslint').linter;
 
 /*
  * List every parameters possible on a test case that are not related to eslint
@@ -281,4 +283,4 @@ ConfigTester.prototype.run = function(ruleName, rule, test) {
 };
 
 
-module.exports = ConfigTester;
+exports = ConfigTester;

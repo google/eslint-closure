@@ -3,15 +3,15 @@
  * @author Joe Schafer
  */
 
-'use strict';
+goog.module('googlejs.plugin.rules.inline-comment-spacing');
 
-const utils = require('../utils');
+const utils = goog.require('googlejs.plugin.utils');
 
 /** @const {number} */
 const DEFAULT_PRECEDING_SPACES = 1;
 
-/** @type {!ESLint.RuleDefinition} */
-module.exports = {
+/** @const {!ESLint.RuleDefinition} */
+exports = {
   meta: {
     docs: {
       description: 'enforce consistent spacing before the `//` at line end',

@@ -1,10 +1,9 @@
 /**
  * @fileoverview Utilities for working with ESLint AST nodes and tokens.
  */
+goog.module('googlejs.plugin.utils');
 
-'use strict';
-
-const types = require('./types');
+const types = goog.require('googlejs.plugin.types');
 
 /**
  * Determines whether two adjacent tokens are on the same line.
@@ -54,7 +53,7 @@ function categorizeUnderscoredIdentifier(name) {
 }
 
 
-module.exports = {
+exports = {
   categorizeUnderscoredIdentifier,
   isTokenOnSameLine,
   isUnderscored,
