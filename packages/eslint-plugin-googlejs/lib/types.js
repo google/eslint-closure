@@ -13,9 +13,9 @@ const UnderscoreForm = {
   OPT_PREFIX: 'opt_prefix',
   TRAILING: 'trailing',
   VAR_ARGS: 'var_args',
-}
+};
 
 exports = {
   /** @const {UnderscoreForm} */
   UnderscoreForm,
-}
+};

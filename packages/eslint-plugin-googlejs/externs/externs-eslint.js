@@ -15,19 +15,19 @@ ESLint.Config = function() {};
 /** @type {!Object} */
 ESLint.Config.prototype.rules;
 
-/** @type {string} */
+/** @type {(string|undefined)} */
 ESLint.Config.prototype.parser;
 
-/** @type {Object} */
+/** @type {(!Object|undefined)} */
 ESLint.Config.prototype.parserOptions;
 
-/** @type {Object} */
+/** @type {(!Object|undefined)} */
 ESLint.Config.prototype.settings;
 
-/** @type {Object} */
+/** @type {(!Object|undefined)} */
 ESLint.Config.prototype.env;
 
-/** @type {Object} */
+/** @type {(!Object|undefined)} */
 ESLint.Config.prototype.global;
 
 
@@ -72,7 +72,7 @@ ESLint.RuleMeta = function() {};
 /** @type {!ESLint.RuleDocs} */
 ESLint.RuleMeta.prototype.docs;
 
-/** @type {(!ESLint.FixableRuleType|undefined)} */
+/** @type {(!ESLint.FixableRuleType|string|undefined)} */
 ESLint.RuleMeta.prototype.fixable;
 
 /** @type {!Array<!Object<?,?>>} */

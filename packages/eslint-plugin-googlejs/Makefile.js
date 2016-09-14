@@ -48,14 +48,14 @@ const closureCompiler = new ClosureCompiler(
     // out.  The existence of 'checks-only' is enough for it to be included as
     // an option.
     checks_only: null,
-    process_common_js_modules: null,
+    // process_common_js_modules: null,
     new_type_inf: null,
     assume_function_wrapper: null,
     // We need LOOSE because we might as well type check all files.  If we used
     // STRICT, closure would ignore all files it couldn't reach from the
     // entry_point.
-    entry_point: './index.js',
     dependency_mode: 'STRICT',
+    entry_point: 'googlejs.plugin.config',
     // output_manifest: 'manifest.MF',
     // debug: null,
   },

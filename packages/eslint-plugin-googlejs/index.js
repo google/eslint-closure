@@ -1,11 +1,15 @@
-'use strict';
+goog.module('googlejs.plugin.config');
+
+const inlineCommentSpacing = goog.require('googlejs.plugin.rules.inline-comment-spacing');
+const camelcase = goog.require('googlejs.plugin.rules.camelcase');
 
 /** @const {!ESLint.Config} */
-exports = {
-  /** @const {Object} */
+const PLUGIN_ESLINT_CONFIG = {
   rules: {
-    'inline-comment-spacing': require('./lib/rules/inline-comment-spacing'),
-    'camelcase': require('./lib/rules/camelcase'),
+    'inline-comment-spacing': inlineCommentSpacing,
+    'camelcase': camelcase,
   },
   configs: {},
 };
+
+exports = PLUGIN_ESLINT_CONFIG;

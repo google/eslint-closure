@@ -7,9 +7,6 @@ goog.module('googlejs.plugin.rules.camelcase');
 const types = goog.require('googlejs.plugin.types');
 const utils = goog.require('googlejs.plugin.utils');
 
-// var utils = require('../utils');
-// var types = require('../types');
-
 /**
  * Valid options for the camelcase rule.
  * @typedef {{
@@ -38,7 +35,7 @@ const DEFAULT_CAMELCASE_OPTIONS = {
   allowLeadingUnderscore: true,
   allowTrailingUnderscore: true,
   checkObjectProperties: true,
-}
+};
 
 /**
  * Flags identifiers that have incorrect underscores.
@@ -64,7 +61,7 @@ function describeIncorrectUnderscores_(node, options) {
     node,
     message: '',
     hasError: true
-  }
+  };
 
   /**
    * @param {string} message
