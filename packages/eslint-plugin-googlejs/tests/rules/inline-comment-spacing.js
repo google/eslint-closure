@@ -1,13 +1,16 @@
 /**
  * @fileoverview Test for inline-comment-spacing.
  */
-'use strict';
 
-const rule = require('../../../lib/rules/inline-comment-spacing');
+goog.module('googlejs.tests.rules.inline-comment-spacing');
+goog.setTestOnly('googlejs.tests.rules.inline-comment-spacing');
+
+const inlineCommentSpacing = goog.require('googlejs.rules.inline-comment-spacing');
+
 const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester();
 
-ruleTester.run('inline-comment-spacing', rule, {
+ruleTester.run('inline-comment-spacing', inlineCommentSpacing, {
 
   valid: [
     {

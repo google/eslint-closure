@@ -2,14 +2,14 @@
  * @fileoverview Tests for camelcase rules.
  */
 
-'use strict';
-goog.module('googlejs.tests.rules.camelcase')
+goog.module('googlejs.tests.rules.camelcase');
+goog.setTestOnly('googlejs.tests.rules.camelcase');
 
 const camelCaseRule = goog.require('googlejs.rules.camelcase');
 const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester();
 
-ruleTester.run('camelcase', rule, {
+ruleTester.run('camelcase', camelCaseRule, {
   valid: [
     'firstName = "Nicholas"',
     'FIRST_NAME = "Nicholas"',

@@ -3,8 +3,12 @@
  */
 
 /* global describe it */
-const utils = require('../../lib/utils');
-const UnderscoreForm = require('../../lib/types').UnderscoreForm;
+goog.module('googlejs.tests.utils');
+goog.setTestOnly('googlejs.tests.utils');
+
+const utils = goog.require('googlejs.utils');
+const {UnderscoreForm} = goog.require('googlejs.types')
+
 const expect = require('chai').expect
 
 describe('isUnderscored', () => {
