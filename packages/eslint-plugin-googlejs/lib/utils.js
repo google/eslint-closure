@@ -24,7 +24,6 @@ function isUnderscored(name) {
   return name.indexOf("_") > -1;
 }
 
-
 /**
  * Determine the type of underscore that an indentifer contains.
  * @param {string} name The string to check.
@@ -33,20 +32,27 @@ function isUnderscored(name) {
 function categorizeUnderscoredIdentifier(name) {
   if (name === "" || name.length === 0) {
     return types.UnderscoreForm.NO_UNDERSCORE;
+
   } else if (name.toUpperCase() === name) {
     return types.UnderscoreForm.CONSTANT;
+
   } else if (name.indexOf('_') === -1) {
     // This check must come after the constant check otherwise we wrongly
     // categorize identifiers like ALLCAPS.
     return types.UnderscoreForm.NO_UNDERSCORE;
+
   } else if (name === 'var_args') {
     return types.UnderscoreForm.VAR_ARGS;
+
   } else if (name.substring(0, 4) === 'opt_' && name != 'opt_') {
     return types.UnderscoreForm.OPT_PREFIX;
+
   } else if (name[0] === '_') {
     return types.UnderscoreForm.LEADING;
+
   } else if (name[name.length - 1] === '_') {
     return types.UnderscoreForm.TRAILING;
+
   } else {
     return types.UnderscoreForm.MIDDLE;
   }
