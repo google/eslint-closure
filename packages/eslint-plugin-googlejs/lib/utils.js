@@ -18,7 +18,7 @@ function isTokenOnSameLine(left, right) {
 /**
  * Checks if a string contains an underscore.
  * @param {string} name The string to check.
- * @returns {boolean} if the string is underscored
+ * @returns {boolean} If the string is underscored.
  */
 function isUnderscored(name) {
   return name.indexOf("_") > -1;
@@ -27,7 +27,7 @@ function isUnderscored(name) {
 /**
  * Determine the type of underscore that an indentifer contains.
  * @param {string} name The string to check.
- * @return {!types.UnderscoreForm} the type of underscored identifier.
+ * @return {!types.UnderscoreForm} The type of underscored identifier.
  */
 function categorizeUnderscoredIdentifier(name) {
   if (name === "" || name.length === 0) {
