@@ -55,7 +55,7 @@ const closureCompiler = new ClosureCompiler(
     // STRICT, closure would ignore all files it couldn't reach from the
     // entry_point.
     dependency_mode: 'STRICT',
-    entry_point: 'googlejs.plugin.config',
+    entry_point: 'googlejs.config',
     // output_manifest: 'manifest.MF',
     // debug: null,
   },

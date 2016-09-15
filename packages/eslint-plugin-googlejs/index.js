@@ -1,7 +1,7 @@
-goog.module('googlejs.plugin.config');
+goog.module('googlejs.config');
 
-const inlineCommentSpacing = goog.require('googlejs.plugin.rules.inline-comment-spacing');
-const camelcase = goog.require('googlejs.plugin.rules.camelcase');
+const inlineCommentSpacing = goog.require('googlejs.rules.inline-comment-spacing');
+const camelcase = goog.require('googlejs.rules.camelcase');
 
 /** @const {!ESLint.Config} */
 const PLUGIN_ESLINT_CONFIG = {

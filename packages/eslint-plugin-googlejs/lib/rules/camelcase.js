@@ -2,10 +2,10 @@
  * @fileoverview Rule to flag non-camelcased identifiers except for the "opt_"
  * prefix
  */
-goog.module('googlejs.plugin.rules.camelcase');
+goog.module('googlejs.rules.camelcase');
 
-const types = goog.require('googlejs.plugin.types');
-const utils = goog.require('googlejs.plugin.utils');
+const types = goog.require('googlejs.types');
+const utils = goog.require('googlejs.utils');
 
 /**
  * Valid options for the camelcase rule.

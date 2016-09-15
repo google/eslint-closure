@@ -3,8 +3,9 @@
  */
 
 'use strict';
+goog.module('googlejs.tests.lib.rules.camelcase')
 
-const rule = require('../../../lib/rules/camelcase');
+const camelCaseRule = goog.require('googlejs.rules.camelcase');
 const RuleTester = require('eslint').RuleTester;
 const ruleTester = new RuleTester();
 

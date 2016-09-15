@@ -1,9 +1,9 @@
 /**
  * @fileoverview Utilities for working with ESLint AST nodes and tokens.
  */
-goog.module('googlejs.plugin.utils');
+goog.module('googlejs.utils');
 
-const types = goog.require('googlejs.plugin.types');
+const types = goog.require('googlejs.types');
 
 /**
  * Determines whether two adjacent tokens are on the same line.

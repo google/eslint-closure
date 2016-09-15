@@ -3,7 +3,7 @@
  * @author Joe Schafer
  */
 
-goog.module('googlejs.plugin.rules.indent-goog-scope');
+goog.module('googlejs.rules.indent-goog-scope');
 
 //------------------------------------------------------------------------------
 // Rule Definition
