@@ -42,6 +42,8 @@
     "node": ">= 4"
   },
   "scripts": {
+    "build": "node Makefile.js buildSimple",
+    "buildAdvanced": "node Makefile.js buildAdvanced",
     "lint": "node Makefile.js lint",
     "test": "node Makefile.js test",
     "checkTypes": "node Makefile.js checkTypes"
