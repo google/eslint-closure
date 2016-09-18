@@ -9,7 +9,7 @@ module.exports = {
     es6: true,
   },
 
-  extends: './packages/eslint-config-googlejs-es6/index.js',
+  // extends: './packages/eslint-config-googlejs-es6/index.js',
 
   globals: {},
 
