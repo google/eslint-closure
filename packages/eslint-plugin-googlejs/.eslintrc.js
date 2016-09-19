@@ -14,7 +14,7 @@ const ERROR = 2;
 const ESLINT_CONFIG = {
 
   extends: [
-    require.resolve('eslint-config-googlejs-es6'),
+    'eslint-config-googlejs-es6',
   ],
 
   parserOptions: {
