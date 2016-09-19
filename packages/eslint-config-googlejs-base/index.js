@@ -552,8 +552,15 @@ const STYLISTIC_RULES = {
   'max-depth': OFF,
 
   // Enforce a maximum line length.
-  'max-len': OFF,
-
+  // Google ES6 Section 4.4, implied in ES5 guide.
+  'max-len': [ERROR, {
+    code: 80,
+    comments: 80,
+    ignorePattern: 'goog\\.(require|module)\\(',
+    ignoreComments: false,
+    ignoreUrls: true,
+  }],
+ 
   // Enforce a maximum number of lines per file.
   'max-lines': OFF,
 
