@@ -60,7 +60,7 @@ function describeIncorrectUnderscores_(node, options) {
   const invalidReport = {
     node,
     message: '',
-    hasError: true
+    hasError: true,
   };
 
   /**
@@ -200,7 +200,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
 
       // An ObjectPattern is a destructuring pattern, e.g.
       // var {a, b} = require('module');
-      if (parent.parent && parent.parent.type === "ObjectPattern") {
+      if (parent.parent && parent.parent.type === 'ObjectPattern') {
         // TODO: this block will error twice on code like: var {foo_bar} =
         // require(); because it's checking foo_bar twice.  Once as a key and
         // once as a value.  The node for key and value is the same node, so
@@ -240,26 +240,26 @@ const CAMELCASE_RULE = {
     },
     schema: [
       {
-        type: "object",
+        type: 'object',
         properties: {
           allowVarArgs: {
-            type: "boolean",
+            type: 'boolean',
           },
           allowOptPrefix: {
-            type: "boolean",
+            type: 'boolean',
           },
           allowLeadingUnderscore: {
-            type: "boolean",
+            type: 'boolean',
           },
           allowTrailingUnderscore: {
-            type: "boolean",
+            type: 'boolean',
           },
           checkObjectProperties: {
-            type: "boolean",
-          }
+            type: 'boolean',
+          },
         },
-        additionalProperties: false
-      }
+        additionalProperties: false,
+      },
     ],
   },
 
