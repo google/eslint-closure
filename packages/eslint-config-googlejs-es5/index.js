@@ -40,7 +40,9 @@ const NODEJS_RULES = {};
 
 // Stylistic Issues
 // These rules relate to style guidelines, and are therefore quite subjective.
-const STYLISTIC_RULES = {};
+const STYLISTIC_RULES = {
+
+};
 
 
 // ECMAScript 6

@@ -150,15 +150,14 @@ const ES6_RULES = {
 // These rules are specific to Google code.  See
 // https://github.com/jschaf/googlejs/packages/eslint-plugin-googlejs
 const GOOGLE_PLUGIN_RULES = {
-  // Allow opt_ prefix and var_args in identifiers.  From
-  // https://git.io/vured#Naming
-  'googlejs/camelcase': WARNING,
-
-  // The JS style guide 'follows the C++ style guide in spirit'.  The C++ style
-  // guide mandates two spaces before line-end comments.  See the 'Line
-  // Comments' section under
-  // https://git.io/v6Mp3#Implementation_Comments
-  'googlejs/inline-comment-spacing': [ERROR, 2],
+  // Disallow opt_ prefix and var_args as identifiers.
+  'googlejs/camelcase': [ERROR, {
+    allowVarArgs: false,
+    allowOptPrefix: false,
+    allowLeadingUnderscore: true,
+    allowTrailingUnderscore: true,
+    checkObjectProperties: true,
+  }],
 };
 
 

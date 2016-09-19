@@ -135,6 +135,7 @@ const POSSIBLE_ERROR_RULES = {
   'no-func-assign': ERROR,
 
   // Disallow function or var declarations in nested blocks.  #eslint
+  // Disallowed by https://git.io/vured#Nested_functions.
   'no-inner-declarations': ERROR,
 
   // Disallow invalid regular expression strings in RegExp constructors.
@@ -208,7 +209,9 @@ const BEST_PRACTICE_RULES = {
   'default-case': OFF,
 
   // Enforce consistent newlines before and after dots.
-  'dot-location': OFF,
+  // Google: https://git.io/vured#Code_formatting, under Binary & Ternary
+  // Operators.
+  'dot-location': [ERROR, 'property'],
 
   // Enforce dot notation whenever possible.
   'dot-notation': OFF,
@@ -248,7 +251,8 @@ const BEST_PRACTICE_RULES = {
   'no-eval': OFF,
 
   // Disallow extending native types.
-  'no-extend-native': OFF,
+  // Google:  https://git.io/vured#Modifying_prototypes_of_builtin_objects
+  'no-extend-native': ERROR,
 
   // Disallow unnecessary calls to .bind().
   'no-extra-bind': OFF,
@@ -296,13 +300,15 @@ const BEST_PRACTICE_RULES = {
   'no-multi-spaces': OFF,
 
   // Disallow multiline strings.
-  'no-multi-str': OFF,
+  // Google rule: https://git.io/vured#Multiline_string_literals.
+  'no-multi-str': ERROR,
 
   // Disallow new operators with the Function object.
   'no-new-func': OFF,
 
   // Disallow new operators with the String, Number, and Boolean objects.
-  'no-new-wrappers': OFF,
+  // Disallowed by https://git.io/vured#Wrapper_objects_for_primitive_types.
+  'no-new-wrappers': ERROR,
 
   // Disallow new operators outside of assignments or comparisons.
   'no-new': OFF,
@@ -384,7 +390,8 @@ const BEST_PRACTICE_RULES = {
 // Strict Mode
 // These rules relate to strict mode directives.
 const STRICT_MODE_RULES = {
-  // Require or disallow strict mode directives.
+  // Require or disallow strict mode directives.  The style guide does not
+  // mandate the use of 'use strict'.
   'strict': OFF,
 };
 
@@ -471,7 +478,8 @@ const NODEJS_RULES = {
 // These rules relate to style guidelines, and are therefore quite subjective.
 const STYLISTIC_RULES = {
   // Enforce consistent spacing inside array brackets.
-  'array-bracket-spacing': OFF,
+  // Google: https://git.io/vured#Code_formatting
+  'array-bracket-spacing': [ERROR, 'never'],
 
   // Enforce consistent spacing inside single-line blocks.
   'block-spacing': OFF,
@@ -568,7 +576,7 @@ const STYLISTIC_RULES = {
   'new-cap': OFF,
 
   // Require parentheses when invoking a constructor with no arguments.
-  'new-parens': OFF,
+  'new-parens': ERROR,
 
   // Require or disallow an empty line after var declarations.
   'newline-after-var': OFF,
@@ -580,7 +588,8 @@ const STYLISTIC_RULES = {
   'newline-per-chained-call': OFF,
 
   // Disallow Array constructors.
-  'no-array-constructor': OFF,
+  // Google: https://git.io/vured#Array_and_Object_literals
+  'no-array-constructor': ERROR,
 
   // Disallow bitwise operators.
   'no-bitwise': OFF,
@@ -640,7 +649,8 @@ const STYLISTIC_RULES = {
   'object-curly-newline': OFF,
 
   // Enforce consistent spacing inside braces.
-  'object-curly-spacing': OFF,
+  // Google: https://git.io/vured#Code_formatting
+  'object-curly-spacing': [ERROR, 'never'],
 
   // Enforce placing object properties on separate lines.
   'object-property-newline': OFF,
@@ -665,7 +675,11 @@ const STYLISTIC_RULES = {
   'quote-props': OFF,
 
   // Enforce the consistent use of either backticks, double, or single quotes.
-  'quotes': OFF,
+  // Google: https://git.io/vured#Strings
+  'quotes': [ERROR, 'single', {
+    avoidEscape: true,
+    allowTemplateLiterals: true,
+  }],
 
   // Require JSDoc comments.
   'require-jsdoc': OFF,
@@ -673,8 +687,9 @@ const STYLISTIC_RULES = {
   // Enforce consistent spacing before and after semicolons.
   'semi-spacing': OFF,
 
-  // Require or disallow semicolons instead of ASI.
-  'semi': OFF,
+  // Require or disallow semicolons instead of ASI.  Semicolons are always
+  // required.
+  'semi': [ERROR, 'always'],
 
   // Requires object keys to be sorted.
   'sort-keys': OFF,
