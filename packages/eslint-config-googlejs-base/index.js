@@ -227,6 +227,7 @@ const BEST_PRACTICE_RULES = {
   'dot-notation': OFF,
 
   // Require the use of === and !==.
+  // The style guide says nothing about the great == vs === debate.
   'eqeqeq': OFF,
 
   // Require for-in loops to include an if statement.
@@ -449,6 +450,7 @@ const VARIABLE_DECLARATION_RULES = {
 
   // Disallow the use of undeclared variables unless mentioned in /*global */
   // comments.  #eslint
+  // TODO(jschaf): Disable until we recoginize goog.provide and goog.require.
   'no-undef': ERROR,
 
   // Disallow the use of undefined as an identifier.
@@ -513,6 +515,7 @@ const STYLISTIC_RULES = {
   'brace-style': [ERROR, '1tbs'],
 
   // Enforce camelcase naming convention.
+  // Google plugin has more applicable rules.
   'camelcase': OFF,
 
   // Require or disallow trailing commas.
@@ -523,7 +526,8 @@ const STYLISTIC_RULES = {
   'comma-spacing': ERROR,
 
   // Enforce consistent comma style.
-  'comma-style': OFF,
+  // Google ES6 Section 4.5.1
+  'comma-style': [ERROR, 'last'],
 
   // Enforce consistent spacing inside computed property brackets.
   'computed-property-spacing': OFF,
@@ -536,7 +540,8 @@ const STYLISTIC_RULES = {
 
   // Require or disallow spacing between function identifiers and their
   // invocations.
-  'func-call-spacing': OFF,
+  // Google ES6 Section 4.6.2
+  'func-call-spacing': [ERROR, 'never'],
 
   // Require or disallow named function expressions.
   'func-names': OFF,
@@ -554,7 +559,9 @@ const STYLISTIC_RULES = {
   'id-match': OFF,
 
   // Enforce consistent indentation.
-  'indent': OFF,
+  // TODO: https://github.com/eslint/eslint/issues/6690
+  // Disabled because ESLint doesn't intepret goog.scope as an IIFE.
+  'indent': [OFF, 2, {SwitchCase: 1, MemberExpression: 2, outerIIFEBody: 0}],
 
   // Enforce the consistent use of either double or single quotes in JSX
   // attributes.
@@ -562,7 +569,12 @@ const STYLISTIC_RULES = {
 
   // Enforce consistent spacing between keys and values in object literal
   // properties.
-  'key-spacing': OFF,
+  // Google ES6 Section 4.6.2
+  'key-spacing': [WARNING, {
+    beforeColon: false,
+    afterColon: true,
+    mode: 'strict', // Enforces exactly 1 space.
+  }],
 
   // Enforce consistent spacing before and after keywords.
   // Google ES6 Section 4.6.2
@@ -712,7 +724,8 @@ const STYLISTIC_RULES = {
   'operator-assignment': OFF,
 
   // Enforce consistent linebreak style for operators.
-  'operator-linebreak': OFF,
+  // Google ES6 Section 4.5.1
+  'operator-linebreak': [ERROR, 'after'],
 
   // Require or disallow padding within blocks.
   'padded-blocks': OFF,
@@ -751,7 +764,8 @@ const STYLISTIC_RULES = {
   'space-before-blocks': [ERROR, 'always'],
 
   // Enforce consistent spacing before function definition opening parenthesis.
-  'space-before-function-paren': OFF,
+  // Google ES6 Section 4.6.2
+  'space-before-function-paren': [ERROR, 'never'],
 
   // Enforce consistent spacing inside parentheses.
   // Google ES6 Section 4.6.2
@@ -762,10 +776,14 @@ const STYLISTIC_RULES = {
   'space-infix-ops': [ERROR, {int32Hint: true}],
 
   // Enforce consistent spacing before or after unary operators.
-  'space-unary-ops': OFF,
+  // Google ES6 Section 4.6.2
+  'space-unary-ops': [ERROR, {
+    words: true,
+    nonwords: false,
+  }],
 
   // Enforce consistent spacing after the // or /* in a comment.
-   // Google ES6 Section 4.3.2
+  // Google ES6 Section 4.3.2
   'spaced-comment': [ERROR, 'always', {
     block: {
       balanced: true,
@@ -980,7 +998,7 @@ const ESLINT_CONFIG = {
         customTags: GOOGLE_CUSTOM_JSDOC_TAGS.concat(CLOSURE_JSDOC_TAGS),
       },
       tagNamePreference: {
-        returns: "return",
+        returns: 'return',
       },
     },
   },
