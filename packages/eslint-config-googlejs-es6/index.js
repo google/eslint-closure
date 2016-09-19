@@ -40,6 +40,9 @@ const NODEJS_RULES = {};
 // Stylistic Issues
 // These rules relate to style guidelines, and are therefore quite subjective.
 const STYLISTIC_RULES = {
+  // Require or disallow trailing commas.
+  // Google ES6 Section 5.2.1
+  'comma-dangle': [WARNING, 'always-multiline'],
 
 
   // Disallow irregular whitespace outside of strings and comments.  Required by
