@@ -42,11 +42,11 @@
     "node": ">= 4"
   },
   "scripts": {
-    "build": "node Makefile.js buildSimple",
-    "buildAdvanced": "node Makefile.js buildAdvanced",
-    "lint": "node Makefile.js lint",
-    "test": "node Makefile.js test",
-    "checkTypes": "node Makefile.js checkTypes"
+    "build": "node scripts/Makefile.js buildSimple",
+    "buildAdvanced": "node scripts/Makefile.js buildAdvanced",
+    "lint": "node scripts/Makefile.js lint",
+    "test": "node scripts/Makefile.js test",
+    "checkTypes": "node scripts/Makefile.js checkTypes"
   },
   "dependencies": {
     "eslint": "^3.4.0",
