@@ -270,7 +270,7 @@ const CAMELCASE_RULE = {
   create(context) {
 
     const userOptions = /** @const {!Object} */ (context.options[0]) || {};
-    const options = /** @type {!CamelCaseRuleOptions}*/
+    const options = /** @type {!CamelCaseRuleOptions} */
           (Object.assign({}, DEFAULT_CAMELCASE_OPTIONS, userOptions));
     /**
      * Reports incorrectly underscored identifiers.

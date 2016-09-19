@@ -21,7 +21,7 @@ function isTokenOnSameLine(left, right) {
  * @returns {boolean} If the string is underscored.
  */
 function isUnderscored(name) {
-  return name.indexOf("_") > -1;
+  return name.indexOf('_') > -1;
 }
 
 /**
@@ -30,7 +30,7 @@ function isUnderscored(name) {
  * @return {!types.UnderscoreForm} The type of underscored identifier.
  */
 function categorizeUnderscoredIdentifier(name) {
-  if (name === "" || name.length === 0) {
+  if (name === '' || name.length === 0) {
     return types.UnderscoreForm.NO_UNDERSCORE;
 
   } else if (name.toUpperCase() === name) {
