@@ -117,6 +117,7 @@ const POSSIBLE_ERROR_RULES = {
   'no-empty-character-class': ERROR,
 
   // Disallow empty block statements.  #eslint
+  // Google ES6 Section 5.8.2.1
   'no-empty': ERROR,
 
   // Disallow reassigning exceptions in catch clauses.  #eslint
@@ -135,7 +136,7 @@ const POSSIBLE_ERROR_RULES = {
   'no-func-assign': ERROR,
 
   // Disallow function or var declarations in nested blocks.  #eslint
-  // Disallowed by https://git.io/vured#Nested_functions.
+  // Google ES5 https://git.io/vured#Nested_functions.
   'no-inner-declarations': ERROR,
 
   // Disallow invalid regular expression strings in RegExp constructors.
@@ -203,14 +204,23 @@ const BEST_PRACTICE_RULES = {
   'consistent-return': ERROR,
 
   // Enforce consistent brace style for all control statements.
-  'curly': OFF,
+
+  // TODO(jschaf): This doesn't quite match Google style guide because it allows
+  // a single statement on the line after a block statement:
+  //
+  // if (foo)
+  //   bar();  // Bad, google style only allows it on the same line like:
+  //
+  // if (foo) bar(); // Good.
+  'curly': [ERROR, 'multi-line'],
 
   // Require default cases in switch statements.
-  'default-case': OFF,
+  // Google ES6 Section 5.8.3.2
+  'default-case': ERROR,
 
   // Enforce consistent newlines before and after dots.
-  // Google: https://git.io/vured#Code_formatting, under Binary & Ternary
-  // Operators.
+  // Google ES5 https://git.io/vured#Code_formatting
+  // Google ES6 Section 4.5.1
   'dot-location': [ERROR, 'property'],
 
   // Enforce dot notation whenever possible.
@@ -220,7 +230,8 @@ const BEST_PRACTICE_RULES = {
   'eqeqeq': OFF,
 
   // Require for-in loops to include an if statement.
-  'guard-for-in': OFF,
+  // Google ES6 Section 5.8.1
+  'guard-for-in': ERROR,
 
   // Disallow the use of alert, confirm, and prompt.
   'no-alert': OFF,
@@ -248,20 +259,27 @@ const BEST_PRACTICE_RULES = {
   'no-eq-null': OFF,
 
   // Disallow the use of eval().
-  'no-eval': OFF,
+  // Google ES6 Section 5.10.2
+  'no-eval': ERROR,
 
   // Disallow extending native types.
-  // Google:  https://git.io/vured#Modifying_prototypes_of_builtin_objects
+  // Google ES5  https://git.io/vured#Modifying_prototypes_of_builtin_objects
+  // Google ES6 Section 5.10.6
   'no-extend-native': ERROR,
 
   // Disallow unnecessary calls to .bind().
-  'no-extra-bind': OFF,
+  // Google ES6 Section 5.5.3.  Loosely hinted at, but not specifically
+  // required.
+  'no-extra-bind': WARNING,
 
   // Disallow unnecessary labels.
   'no-extra-label': OFF,
 
   // Disallow fallthrough of case statements.  #eslint
-  'no-fallthrough': ERROR,
+  // Google ES6 Section 5.8.3.1
+  'no-fallthrough': [ERROR, {
+    commentPattern: '[fF]alls?\\s?[tT]hrough',
+  }],
 
   // Disallow leading or trailing decimal points in numeric literals.
   'no-floating-decimal': OFF,
@@ -297,17 +315,20 @@ const BEST_PRACTICE_RULES = {
   'no-magic-numbers': OFF,
 
   // Disallow multiple spaces.
-  'no-multi-spaces': OFF,
+  // Google ES6 Section 4.6.2
+  'no-multi-spaces': ERROR,
 
   // Disallow multiline strings.
-  // Google rule: https://git.io/vured#Multiline_string_literals.
+  // Google ES5 https://git.io/vured#Multiline_string_literals.
   'no-multi-str': ERROR,
 
   // Disallow new operators with the Function object.
-  'no-new-func': OFF,
+  // Google ES6 Section 5.10.2
+  'no-new-func': ERROR,
 
   // Disallow new operators with the String, Number, and Boolean objects.
-  // Disallowed by https://git.io/vured#Wrapper_objects_for_primitive_types.
+  // Google ES5 https://git.io/vured#Wrapper_objects_for_primitive_types.
+  // Google ES6 Section 5.10.5
   'no-new-wrappers': ERROR,
 
   // Disallow new operators outside of assignments or comparisons.
@@ -317,6 +338,7 @@ const BEST_PRACTICE_RULES = {
   'no-octal-escape': OFF,
 
   // Disallow octal literals.  #eslint
+  // Google ES6 Section 5.7
   'no-octal': ERROR,
 
   // Disallow reassigning function parameters.
@@ -371,6 +393,7 @@ const BEST_PRACTICE_RULES = {
   'no-warning-comments': OFF,
 
   // Disallow with statements.
+  // Google ES6 Section 5.10.1
   'no-with': ERROR,
 
   // Enforce the consistent use of the radix argument when using parseInt().
@@ -478,14 +501,15 @@ const NODEJS_RULES = {
 // These rules relate to style guidelines, and are therefore quite subjective.
 const STYLISTIC_RULES = {
   // Enforce consistent spacing inside array brackets.
-  // Google: https://git.io/vured#Code_formatting
+  // Google ES5 https://git.io/vured#Code_formatting
   'array-bracket-spacing': [ERROR, 'never'],
 
   // Enforce consistent spacing inside single-line blocks.
   'block-spacing': OFF,
 
-  // Enforce consistent brace style for blocks.  The one, true brace style is
-  // mandated in 'Curly Braces' at https://git.io/vured#Code_formatting
+  // Enforce consistent brace style for blocks.
+  // Google ES5 https://git.io/vured#Code_formatting
+  // Google ES6 Section 4.1.2
   'brace-style': [ERROR, '1tbs'],
 
   // Enforce camelcase naming convention.
@@ -495,7 +519,8 @@ const STYLISTIC_RULES = {
   'comma-dangle': OFF,
 
   // Enforce consistent spacing before and after commas.
-  'comma-spacing': OFF,
+  // Google ES6 Section 4.6.2
+  'comma-spacing': ERROR,
 
   // Enforce consistent comma style.
   'comma-style': OFF,
@@ -507,7 +532,7 @@ const STYLISTIC_RULES = {
   'consistent-this': OFF,
 
   // Enforce at least one newline at the end of files.
-  'eol-last': OFF,
+  'eol-last': [ERROR, 'unix'],
 
   // Require or disallow spacing between function identifiers and their
   // invocations.
@@ -540,7 +565,8 @@ const STYLISTIC_RULES = {
   'key-spacing': OFF,
 
   // Enforce consistent spacing before and after keywords.
-  'keyword-spacing': OFF,
+  // Google ES6 Section 4.6.2
+  'keyword-spacing': ERROR,
 
   // Enforce consistent linebreak style.
   'linebreak-style': OFF,
@@ -571,7 +597,8 @@ const STYLISTIC_RULES = {
   'max-params': OFF,
 
   // Enforce a maximum number of statements allowed per line.
-  'max-statements-per-line': OFF,
+  // Google ES6 Section 4.3.1
+  'max-statements-per-line': [ERROR, {max: 1}],
 
   // Enforce a maximum number of statements allowed in function blocks.
   'max-statements': OFF,
@@ -595,7 +622,8 @@ const STYLISTIC_RULES = {
   'newline-per-chained-call': OFF,
 
   // Disallow Array constructors.
-  // Google: https://git.io/vured#Array_and_Object_literals
+  // Google ES5 https://git.io/vured#Array_and_Object_literals
+  // Google ES6 Section 5.2.2
   'no-array-constructor': ERROR,
 
   // Disallow bitwise operators.
@@ -617,6 +645,7 @@ const STYLISTIC_RULES = {
   'no-mixed-spaces-and-tabs': ERROR,
 
   // Disallow multiple empty lines.
+  // Google ES6 Section 4.6.1. Allowed.
   'no-multiple-empty-lines': OFF,
 
   // Disallow negated conditions.
@@ -626,7 +655,8 @@ const STYLISTIC_RULES = {
   'no-nested-ternary': OFF,
 
   // Disallow Object constructors.
-  'no-new-object': OFF,
+  // Google ES6 Section 5.3.2
+  'no-new-object': [ERROR],
 
   // Disallow the unary operators ++ and --.
   'no-plusplus': OFF,
@@ -641,7 +671,8 @@ const STYLISTIC_RULES = {
   'no-ternary': OFF,
 
   // Disallow trailing whitespace at the end of lines.
-  'no-trailing-spaces': OFF,
+  // Google ES6 Section 4.6.2
+  'no-trailing-spaces': ERROR,
 
   // Disallow dangling underscores in identifiers.
   'no-underscore-dangle': OFF,
@@ -650,13 +681,15 @@ const STYLISTIC_RULES = {
   'no-unneeded-ternary': OFF,
 
   // Disallow whitespace before properties.
-  'no-whitespace-before-property': OFF,
+  // Google ES6 Section 4.3.2
+  'no-whitespace-before-property': ERROR,
 
   // Enforce consistent line breaks inside braces.
   'object-curly-newline': OFF,
 
   // Enforce consistent spacing inside braces.
-  // Google: https://git.io/vured#Code_formatting
+  // Google ES5 https://git.io/vured#Code_formatting
+  // Google ES6 Section 4.2.2
   'object-curly-spacing': [ERROR, 'never'],
 
   // Enforce placing object properties on separate lines.
@@ -667,7 +700,13 @@ const STYLISTIC_RULES = {
 
   // Enforce variables to be declared either together or separately in
   // functions.
-  'one-var': OFF,
+  // Google ES5 assumed to follow ES6
+  // Google ES6 Section 5.1.2
+  'one-var': [ERROR, {
+    'const': 'never',
+    'var': 'never',
+    'let': 'never',
+  }],
 
   // Require or disallow assignment operator shorthand where possible.
   'operator-assignment': OFF,
@@ -679,10 +718,12 @@ const STYLISTIC_RULES = {
   'padded-blocks': OFF,
 
   // Require quotes around object literal property names.
-  'quote-props': OFF,
+  // Google ES6 Section 5.3.3
+  'quote-props': [WARNING, 'consistent-as-needed'],
 
   // Enforce the consistent use of either backticks, double, or single quotes.
-  // Google: https://git.io/vured#Strings
+  // Google ES5 https://git.io/vured#Strings
+  // Google ES6 Section 5.6.1, 5.6.2
   'quotes': [ERROR, 'single', {
     avoidEscape: true,
     allowTemplateLiterals: true,
@@ -692,10 +733,11 @@ const STYLISTIC_RULES = {
   'require-jsdoc': OFF,
 
   // Enforce consistent spacing before and after semicolons.
-  'semi-spacing': OFF,
+  'semi-spacing': ERROR,
 
-  // Require or disallow semicolons instead of ASI.  Semicolons are always
-  // required.
+  // Require or disallow semicolons instead of ASI.
+  // Google ES5 https://git.io/vured#Strings#Semicolons
+  // Google ES6 Section 4.3.2
   'semi': [ERROR, 'always'],
 
   // Requires object keys to be sorted.
@@ -705,22 +747,30 @@ const STYLISTIC_RULES = {
   'sort-vars': OFF,
 
   // Enforce consistent spacing before blocks.
-  'space-before-blocks': OFF,
+  // Google ES6 Section 4.6.2
+  'space-before-blocks': [ERROR, 'always'],
 
   // Enforce consistent spacing before function definition opening parenthesis.
   'space-before-function-paren': OFF,
 
   // Enforce consistent spacing inside parentheses.
-  'space-in-parens': OFF,
+  // Google ES6 Section 4.6.2
+  'space-in-parens': [ERROR, 'never'],
 
   // Require spacing around operators.
-  'space-infix-ops': OFF,
+  // Google ES6 Section 5.5.5.1
+  'space-infix-ops': [ERROR, {int32Hint: true}],
 
   // Enforce consistent spacing before or after unary operators.
   'space-unary-ops': OFF,
 
   // Enforce consistent spacing after the // or /* in a comment.
-  'spaced-comment': OFF,
+   // Google ES6 Section 4.3.2
+  'spaced-comment': [ERROR, 'always', {
+    block: {
+      balanced: true,
+    },
+  }],
 
   // Require or disallow Unicode byte order mark (BOM).
   'unicode-bom': OFF,
@@ -773,7 +823,8 @@ const ES6_RULES = {
   'no-this-before-super': ERROR,
 
   // Disallow unnecessary computed property keys in object literals.
-  'no-useless-computed-key': OFF,
+  // Google ES6 Section 5.3.4
+  'no-useless-computed-key': ERROR,
 
   // Disallow unnecessary constructors.
   'no-useless-constructor': OFF,

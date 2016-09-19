@@ -41,15 +41,15 @@ const NODEJS_RULES = {};
 // These rules relate to style guidelines, and are therefore quite subjective.
 const STYLISTIC_RULES = {
   // Require or disallow trailing commas.
-  // Google ES6 Section 5.2.1
+  // Google ES6 Section 5.2.1, 5.3.1
   'comma-dangle': [WARNING, 'always-multiline'],
 
-
-  // Disallow irregular whitespace outside of strings and comments.  Required by
-  // Section 2.3.1 - Whitespace characters.
+  // Disallow irregular whitespace outside of strings and comments.
+  // Google ES6 Section 2.3.1
   'no-irregular-whitespace': ERROR,
 
-  // Disallow tabs in file.  Required by Section 2.3.1 - Whitespace characters.
+  // Disallow tabs in file.
+  // Google ES6 Section 2.3.1
   'no-tabs': ERROR,
 };
 
@@ -67,6 +67,7 @@ const ES6_RULES = {
   'arrow-spacing': OFF,
 
   // Require super() calls in constructors.  #eslint
+  // Google ES6 Section 5.4.1
   'constructor-super': ERROR,
 
   // Enforce consistent spacing around * operators in generator functions.
@@ -94,6 +95,7 @@ const ES6_RULES = {
   'no-restricted-imports': OFF,
 
   // Disallow this/super before calling super() in constructors.  #eslint
+  // Google ES6 Section 5.4.1
   'no-this-before-super': ERROR,
 
   // Disallow unnecessary computed property keys in object literals.
@@ -107,11 +109,13 @@ const ES6_RULES = {
   'no-useless-rename': OFF,
 
   // Require let or const instead of var.
-  'no-var': OFF,
+  // Google ES6 Section 5.1.1
+  'no-var': ERROR,
 
   // Require or disallow method and property shorthand syntax for object
   // literals.
-  'object-shorthand': OFF,
+  // Google ES6 Section 5.3.5
+  'object-shorthand': [ERROR, 'methods'],
 
   // Require arrow functions as callbacks.
   'prefer-arrow-callback': OFF,
@@ -127,7 +131,8 @@ const ES6_RULES = {
   'prefer-rest-params': OFF,
 
   // Require spread operators instead of .apply().
-  'prefer-spread': OFF,
+  // Google ES6 Section 5.5.8
+  'prefer-spread': WARNING,
 
   // Require template literals instead of string concatenation.
   'prefer-template': OFF,
@@ -146,7 +151,8 @@ const ES6_RULES = {
   'template-curly-spacing': OFF,
 
   // Require or disallow spacing around the * in yield* expressions.
-  'yield-star-spacing': OFF,
+  // Google ES6 Section 5.5.4
+  'yield-star-spacing': [WARNING, 'after'],
 };
 
 // Google Plugin Rules
