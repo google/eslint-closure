@@ -7,9 +7,9 @@ goog.module('googlejs.tests.utils');
 goog.setTestOnly('googlejs.tests.utils');
 
 const utils = goog.require('googlejs.utils');
-const {UnderscoreForm} = goog.require('googlejs.types')
+const {UnderscoreForm} = goog.require('googlejs.types');
 
-const expect = require('chai').expect
+const expect = require('chai').expect;
 
 describe('isUnderscored', () => {
   it('should correctly determine underscored strings', () => {
@@ -25,7 +25,7 @@ describe('isUnderscored', () => {
     expect(utils.isUnderscored(' _')).to.be.true;
     expect(utils.isUnderscored('abc _')).to.be.true;
     expect(utils.isUnderscored('_abc')).to.be.true;
-  })
+  });
 });
 
 describe('categorizeUnderscoredIdentifier', () => {

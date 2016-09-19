@@ -172,7 +172,7 @@ ruleTester.run('camelcase', camelCaseRule, {
       errors: [
         {
           message: "Identifier 'opt_foo_bar' is not in camel case after the"
-              + " opt_ prefix.",
+              + ' opt_ prefix.',
           type: 'Identifier',
         },
       ],
@@ -181,7 +181,7 @@ ruleTester.run('camelcase', camelCaseRule, {
       code: 'var_args = { bar: boom.bam_pow }',
       errors: [
         {
-          message: "The var_args identifier is not allowed.",
+          message: 'The var_args identifier is not allowed.',
           type: 'Identifier',
         },
       ],
@@ -191,7 +191,7 @@ ruleTester.run('camelcase', camelCaseRule, {
       errors: [
         {
           message: "Identifier '_foo_bar' is not in camel case after the "
-              + "leading underscore.",
+              + 'leading underscore.',
           type: 'Identifier',
         },
       ],
@@ -201,7 +201,7 @@ ruleTester.run('camelcase', camelCaseRule, {
       errors: [
         {
           message: "Identifier 'foo_bar_' is not in camel case before the "
-            + "trailing underscore.",
+            + 'trailing underscore.',
           type: 'Identifier',
         },
       ],
