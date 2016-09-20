@@ -11,19 +11,19 @@ goog.module('googlejs.rules.indent');
 
 
 /**
- * Information about the indentation preceeding a LocatableNode.
+ * Information about the indentation preceeding a Node.
  * @record
  */
 const IndentInfo = function() {};
 
 /**
- * The number of spaces preceding a LocatableNode.
+ * The number of spaces preceding a Node.
  * @type {number}
  */
 IndentInfo.prototype.space;
 
 /**
- * The number of tabs preceding a LocatableNode.
+ * The number of tabs preceding a Node.
  * @type {number}
  */
 IndentInfo.prototype.tab;
@@ -161,7 +161,7 @@ function create(context) {
 
   /**
    * Reports a given indent violation.
-   * @param {!Espree.LocatableNode} node Node violating the indent rule.
+   * @param {!Espree.Node} node Node violating the indent rule.
    * @param {number} needed Expected indentation character count.
    * @param {number} gottenSpaces Indentation space count in the actual
    *     node/code.
@@ -191,7 +191,7 @@ function create(context) {
 
   /**
    * Gets the actual indent of the node.
-   * @param {!Espree.LocatableNode} node Node to examine.
+   * @param {!Espree.Node} node Node to examine.
    * @param {boolean=} opt_byLastLine Get indent of node's last line.
    * @return {!IndentInfo} The node's indent. Contains keys `space` and `tab`,
    *     representing the indent of each character. Also contains keys
@@ -222,7 +222,7 @@ function create(context) {
   /**
    * Checks node is the first in its own start line. By default it looks by
    * start line.
-   * @param {!Espree.LocatableNode} node The node to check.
+   * @param {!Espree.Node} node The node to check.
    * @param {boolean=} opt_byEndLocation Lookup based on start position or
    *     end.
    * @return {boolean} true if it's the first in it's start line.

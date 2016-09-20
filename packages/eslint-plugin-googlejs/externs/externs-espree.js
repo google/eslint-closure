@@ -36,38 +36,61 @@ Espree.Position.prototype.line;
 Espree.Position.prototype.column;
 
 /**
- * Represents a Node or Token with a range attribute.  We need this because you
- * can pass Tokens the SourceCode methods and it works even though ESLint says
- * it needs ASTNodes.
+ * Represents a Node for Espree.
  * @record
  */
-Espree.LocatableNode = function() {};
+Espree.Node = function() {};
+
+/** @type {!Espree.NodeType} */
+Espree.Node.prototype.type;
 
 /** @type {!Array<number>} */
-Espree.LocatableNode.prototype.range;
+Espree.Node.prototype.range;
 
 /** @type {!Espree.SourceLocation} */
-Espree.LocatableNode.prototype.loc;
+Espree.Node.prototype.loc;
 
 /** @type {number} */
-Espree.LocatableNode.prototype.start;
+Espree.Node.prototype.start;
 
 /** @type {number} */
-Espree.LocatableNode.prototype.end;
+Espree.Node.prototype.end;
 
 
 /**
+ * A JavaScript token such as a keyword or comma.
  * @record
- * @extends {Espree.LocatableNode}
+ * @extends {Espree.Node}
  */
 Espree.Token = function() {};
-
-/** @type {!Espree.TokenType} */
-Espree.Token.prototype.type;
 
 /** @type {string} */
 Espree.Token.prototype.value;
 
+/**
+ * A JavaScript token such as a keyword or comma.  This needs to be separate
+ * from token, because otherwise we get a cycle.
+ * @record
+ */
+Espree.CommentToken = function() {};
+
+/** @type {!Espree.NodeType} */
+Espree.CommentToken.prototype.type;
+
+/** @type {!Array<number>} */
+Espree.CommentToken.prototype.range;
+
+/** @type {!Espree.SourceLocation} */
+Espree.CommentToken.prototype.loc;
+
+/** @type {number} */
+Espree.CommentToken.prototype.start;
+
+/** @type {number} */
+Espree.CommentToken.prototype.end;
+
+/** @type {string} */
+Espree.CommentToken.prototype.value;
 /**
  * Token types are re-used from Esprima.
  * @enum {string}
@@ -91,33 +114,24 @@ Espree.TokenType = {
 
 
 /**
- * Mixins that ESLint provides.  We define this here instead of in ESLint
- * because we don't want to subclass every Espree ASTNode to add these
- * properties.
+ * The main AST Node.  This really belongs to ESLint, but all the ASTNodes below
+ * need these properties and it's easier to just define it here.
  * @record
- * @see https://github.com/estree/estree/blob/master/es5.md#node-objects
- */
-Espree.ASTNodeESLintMixins = function() {};
-
-/** @type {!Espree.ASTNode} */
-Espree.ASTNodeESLintMixins.prototype.parent;
-
-/**
- * The main AST Node.
- * @record
- * @extends {Espree.LocatableNode}
- * @extends {Espree.ASTNodeESLintMixins}
+ * @extends {Espree.Node}
  * @see https://github.com/estree/estree/blob/master/es5.md#node-objects
  */
 Espree.ASTNode = function() {};
 
-/** @type {!Espree.NodeType} */
-Espree.ASTNode.prototype.type;
+/**
+ * Provided by ESLint.
+ * @type {!Espree.ASTNode}
+ */
+Espree.ASTNode.prototype.parent;
 
-/** @type {(!Array<(!Espree.LineComment|!Espree.BlockComment)>|undefined)} */
+/** @type {(!Array<!Espree.CommentToken>|undefined)} */
 Espree.ASTNode.prototype.leadingComments;
 
-/** @type {(!Array<(!Espree.LineComment|!Espree.BlockComment)>|undefined)} */
+/** @type {(!Array<!Espree.CommentToken>|undefined)} */
 Espree.ASTNode.prototype.trailingComments;
 /**
  * @enum {string}
@@ -326,8 +340,9 @@ Espree.BlockStatement = function() {};
 Espree.BlockStatement.prototype.body;
 
 
-/** @record @extends {Espree.ASTNode} */
+/** @record @extends {Espree.CommentToken} */
 Espree.BlockComment = function() {};
+
 
 /** @record @extends {Espree.ASTNode} */
 Espree.BreakStatement = function() {};
@@ -640,9 +655,8 @@ Espree.LabeledStatement.prototype.label;
 Espree.LabeledStatement.prototype.body;
 
 
-/** @record @extends {Espree.ASTNode} */
+/** @record @extends {Espree.CommentToken} */
 Espree.LineComment = function() {};
-
 
 /** @record @extends {Espree.ASTNode} */
 Espree.Literal = function() {};
