@@ -36,24 +36,37 @@ Espree.Position.prototype.line;
 Espree.Position.prototype.column;
 
 /**
+ * Represents a Node or Token with a range attribute.  We need this because you
+ * can pass Tokens the SourceCode methods and it works even though ESLint says
+ * it needs ASTNodes.
  * @record
  */
-Espree.Token = function() {}
+Espree.LocatableNode = function() {};
+
+/** @type {!Array<number>} */
+Espree.LocatableNode.prototype.range;
+
+/** @type {!Espree.SourceLocation} */
+Espree.LocatableNode.prototype.loc;
+
+/** @type {number} */
+Espree.LocatableNode.prototype.start;
+
+/** @type {number} */
+Espree.LocatableNode.prototype.end;
+
+
+/**
+ * @record
+ * @extends {Espree.LocatableNode}
+ */
+Espree.Token = function() {};
 
 /** @type {!Espree.TokenType} */
 Espree.Token.prototype.type;
 
 /** @type {string} */
 Espree.Token.prototype.value;
-
-/** @type {!Espree.SourceLocation} */
-Espree.Token.prototype.loc;
-
-/** @type {number} */
-Espree.Token.prototype.start;
-
-/** @type {number} */
-Espree.Token.prototype.end;
 
 /**
  * Token types are re-used from Esprima.
@@ -92,6 +105,7 @@ Espree.ASTNodeESLintMixins.prototype.parent;
 /**
  * The main AST Node.
  * @record
+ * @extends {Espree.LocatableNode}
  * @extends {Espree.ASTNodeESLintMixins}
  * @see https://github.com/estree/estree/blob/master/es5.md#node-objects
  */
@@ -100,18 +114,11 @@ Espree.ASTNode = function() {};
 /** @type {!Espree.NodeType} */
 Espree.ASTNode.prototype.type;
 
-// This is technically nullable by the spec, but we trust Espree to return an
-// object to avoid tedious nullability checking everywhere.
-/** @type {!Espree.SourceLocation} */
-Espree.ASTNode.prototype.loc;
+/** @type {(!Array<(!Espree.LineComment|!Espree.BlockComment)>|undefined)} */
+Espree.ASTNode.prototype.leadingComments;
 
-/** @type {number} */
-Espree.ASTNode.prototype.start;
-
-/** @type {number} */
-Espree.ASTNode.prototype.end;
-
-
+/** @type {(!Array<(!Espree.LineComment|!Espree.BlockComment)>|undefined)} */
+Espree.ASTNode.prototype.trailingComments;
 /**
  * @enum {string}
  * @see https://github.com/eslint/espree/blob/master/lib/visitor-keys.js
@@ -920,6 +927,8 @@ Espree.VariableDeclarator.prototype.id;
 /** @type {!Espree.Expression} */
 Espree.VariableDeclarator.prototype.init;
 
+/** @type {!Espree.VariableDeclaration} */
+Espree.VariableDeclarator.prototype.parent;
 
 /** @record @extends {Espree.ASTNode} */
 Espree.WhileStatement = function() {};

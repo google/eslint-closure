@@ -233,9 +233,9 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
 const CAMELCASE_RULE = {
   meta: {
     docs: {
-      description: 'check identifiers for camel case with options for opt_ '
-          + 'prefix and var_args identifiers',
-      category:  'Stylistic Issues',
+      description: 'check identifiers for camel case with options for opt_ ' +
+          'prefix and var_args identifiers',
+      category: 'Stylistic Issues',
       recommended: true,
     },
     schema: [
