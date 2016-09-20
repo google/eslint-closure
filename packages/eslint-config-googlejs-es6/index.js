@@ -56,6 +56,10 @@ const STYLISTIC_RULES = {
 
 // ECMAScript 6
 // These rules relate to ES6, also known as ES2015.
+//
+// Most of these rules are applied in the base config to allow code bases to
+// slowly migrate to ES6.  The only rules specified here and not in the base
+// config, are those that would conflict with the ES5 style guide.
 const ES6_RULES = {
   // Require braces around arrow function bodies.
   'arrow-body-style': OFF,
@@ -64,42 +68,49 @@ const ES6_RULES = {
   'arrow-parens': OFF,
 
   // Enforce consistent spacing before and after the arrow in arrow functions.
-  'arrow-spacing': OFF,
+  // SKIP, included in base.
+  // 'arrow-spacing': OFF,
 
   // Require super() calls in constructors.  #eslint
-  // Google ES6 Section 5.4.1
-  'constructor-super': ERROR,
+  // SKIP, included in base.
+  // 'constructor-super': ERROR,
 
   // Enforce consistent spacing around * operators in generator functions.
-  'generator-star-spacing': OFF,
+  // SKIP, included in base.
+  // 'generator-star-spacing': OFF,
 
   // Disallow reassigning class members.  #eslint
-  'no-class-assign': ERROR,
+  // SKIP, included in base.
+  // 'no-class-assign': ERROR,
 
   // Disallow arrow functions where they could be confused with comparisons.
   'no-confusing-arrow': OFF,
 
   // Disallow reassigning const variables.  #eslint
-  'no-const-assign': ERROR,
+  // SKIP, included in base.
+  // 'no-const-assign': ERROR,
 
   // Disallow duplicate class members.  #eslint
-  'no-dupe-class-members': ERROR,
+  // SKIP, included in base.
+  // 'no-dupe-class-members': ERROR,
 
   // Disallow duplicate module imports.
   'no-duplicate-imports': OFF,
 
   // Disallow new operators with the Symbol object.  #eslint
-  'no-new-symbol': ERROR,
+  // SKIP, included in base.
+  // 'no-new-symbol': ERROR,
 
   // Disallow specified modules when loaded by import.
   'no-restricted-imports': OFF,
 
   // Disallow this/super before calling super() in constructors.  #eslint
-  // Google ES6 Section 5.4.1
-  'no-this-before-super': ERROR,
+  // SKIP, included in base.
+  // 'no-this-before-super': ERROR,
 
   // Disallow unnecessary computed property keys in object literals.
-  'no-useless-computed-key': OFF,
+  // SKIP, included in base.
+  // 'no-useless-computed-key': ERROR,
 
   // Disallow unnecessary constructors.
   'no-useless-constructor': OFF,
@@ -109,20 +120,21 @@ const ES6_RULES = {
   'no-useless-rename': OFF,
 
   // Require let or const instead of var.
-  // Google ES6 Section 5.1.1
-  'no-var': ERROR,
+  // SKIP, included in base.
+  // 'no-var': ERROR,
 
   // Require or disallow method and property shorthand syntax for object
   // literals.
-  // Google ES6 Section 5.3.5
-  'object-shorthand': [ERROR, 'methods'],
+  // SKIP, included in base.
+  // 'object-shorthand': [ERROR, 'methods'],
 
   // Require arrow functions as callbacks.
   'prefer-arrow-callback': OFF,
 
   // Require const declarations for variables that are never reassigned after
   // declared.
-  'prefer-const': OFF,
+  // Google ES6 Section 5.1.1
+  'prefer-const': WARNING,
 
   // Require Reflect methods where applicable.
   'prefer-reflect': OFF,
@@ -131,17 +143,20 @@ const ES6_RULES = {
   'prefer-rest-params': OFF,
 
   // Require spread operators instead of .apply().
-  // Google ES6 Section 5.5.8
-  'prefer-spread': WARNING,
+  // SKIP, included in base.
+  // 'prefer-spread': WARNING,
 
   // Require template literals instead of string concatenation.
-  'prefer-template': OFF,
+  // Google ES6 Section 5.6.2
+  'prefer-template': [WARNING],
 
   // Require generator functions to contain yield.  #eslint
-  'require-yield': ERROR,
+  // SKIP, included in base.
+  // 'require-yield': ERROR,
 
   // Enforce spacing between rest and spread operators and their expressions.
-  'rest-spread-spacing': OFF,
+  // SKIP, included in base.
+  // 'rest-spread-spacing': [ERROR, 'never'],
 
   // Enforce sorted import declarations within modules.
   'sort-imports': OFF,
@@ -151,8 +166,8 @@ const ES6_RULES = {
   'template-curly-spacing': OFF,
 
   // Require or disallow spacing around the * in yield* expressions.
-  // Google ES6 Section 5.5.4
-  'yield-star-spacing': [WARNING, 'after'],
+  // SKIP, included in base.
+  // 'yield-star-spacing': [WARNING, 'after'],
 };
 
 // Google Plugin Rules

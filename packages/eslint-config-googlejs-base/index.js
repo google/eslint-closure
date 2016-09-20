@@ -800,6 +800,10 @@ const STYLISTIC_RULES = {
 
 // ECMAScript 6
 // These rules relate to ES6, also known as ES2015.
+//
+// We apply ES6 rules to the base config to allow code bases to slowly migrate
+// to ES6.  The only rules specified here are those that are legal in both the
+// ES5 and ES6 style guides.
 const ES6_RULES = {
   // Require braces around arrow function bodies.
   'arrow-body-style': OFF,
@@ -808,13 +812,19 @@ const ES6_RULES = {
   'arrow-parens': OFF,
 
   // Enforce consistent spacing before and after the arrow in arrow functions.
-  'arrow-spacing': OFF,
+  // Google ES6 Section ?
+  'arrow-spacing': [WARNING, {
+    before: true,
+    after: true,
+  }],
 
   // Require super() calls in constructors.  #eslint
+  // Google ES6 Section 5.4.1
   'constructor-super': ERROR,
 
   // Enforce consistent spacing around * operators in generator functions.
-  'generator-star-spacing': OFF,
+  // Google ES6 Section 5.5.4
+  'generator-star-spacing': [WARNING, 'after'],
 
   // Disallow reassigning class members.  #eslint
   'no-class-assign': ERROR,
@@ -852,11 +862,13 @@ const ES6_RULES = {
   'no-useless-rename': OFF,
 
   // Require let or const instead of var.
-  'no-var': OFF,
+  // Google ES6 Section 5.1.1
+  'no-var': ERROR,
 
   // Require or disallow method and property shorthand syntax for object
   // literals.
-  'object-shorthand': OFF,
+  // Google ES6 Section 5.3.5
+  'object-shorthand': [ERROR, 'methods'],
 
   // Require arrow functions as callbacks.
   'prefer-arrow-callback': OFF,
@@ -872,7 +884,8 @@ const ES6_RULES = {
   'prefer-rest-params': OFF,
 
   // Require spread operators instead of .apply().
-  'prefer-spread': OFF,
+  // Google ES6 Section 5.5.8
+  'prefer-spread': WARNING,
 
   // Require template literals instead of string concatenation.
   'prefer-template': OFF,
@@ -881,7 +894,8 @@ const ES6_RULES = {
   'require-yield': ERROR,
 
   // Enforce spacing between rest and spread operators and their expressions.
-  'rest-spread-spacing': OFF,
+  // Google ES6 Section 5.2.5
+  'rest-spread-spacing': [ERROR, 'never'],
 
   // Enforce sorted import declarations within modules.
   'sort-imports': OFF,
@@ -891,7 +905,8 @@ const ES6_RULES = {
   'template-curly-spacing': OFF,
 
   // Require or disallow spacing around the * in yield* expressions.
-  'yield-star-spacing': OFF,
+  // Google ES6 Section 5.5.4
+  'yield-star-spacing': [WARNING, 'after'],
 };
 
 
