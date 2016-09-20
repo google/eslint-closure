@@ -924,7 +924,8 @@ const JSDOC_PLUGIN_RULES = {
   'jsdoc/check-param-names': ERROR,
 
   // Reports invalid block tag names.
-  'jsdoc/check-tag-names': ERROR,
+  // Disabled because it doesn't support custom tags.
+  'jsdoc/check-tag-names': OFF,
 
   // Disallows object wrapper types.
   'jsdoc/check-types': ERROR,
@@ -935,7 +936,8 @@ const JSDOC_PLUGIN_RULES = {
 
   // Requires that block description and tag description are written in complete
   // sentences.
-  'jsdoc/require-description-complete-sentence': ERROR,
+  // TODO(jschaf): too many spurious warnings.  It doesn't detect HTML tags.
+  'jsdoc/require-description-complete-sentence': OFF,
 
   // Requires a hyphen before the @param description.  This doesn't match Google
   // style.
@@ -945,12 +947,15 @@ const JSDOC_PLUGIN_RULES = {
   'jsdoc/require-param': ERROR,
 
   // Requires that @param tag has description value.
-  'jsdoc/require-param-description': ERROR,
+  // Google ES6 Section 7.8 - descriptions may be omitted.
+  'jsdoc/require-param-description': OFF,
 
   // Requires that @param tag has type value.
+  // Google ES6 Section 7.8 - types must be included.
   'jsdoc/require-param-type': ERROR,
 
   // Requires that @returns tag has description value.
+  // Google ES6 Section 7.8 - descriptions may be omitted.
   'jsdoc/require-returns-description': OFF,
 
   // Requires that @returns tag has type value.
