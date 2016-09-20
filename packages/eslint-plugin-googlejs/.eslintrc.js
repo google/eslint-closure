@@ -31,11 +31,23 @@ const ESLINT_CONFIG = {
   },
 
   plugins: [
+    'googlejs',
   ],
 
   // The list of rules and options are available at
   // http://eslint.org/docs/rules/.
   rules: {
+    // Disallow opt_ prefix and var_args as identifiers.
+    'googlejs/camelcase': [ERROR, {
+      allowVarArgs: false,
+      // TODO: disallow opt_ prefix once closure compiler stops warning about
+      // it.
+      allowOptPrefix: true,
+      allowLeadingUnderscore: true,
+      allowTrailingUnderscore: true,
+      checkObjectProperties: true,
+    }],
+
   },
 
   // ESLint supports adding shared settings into configuration file.  The
