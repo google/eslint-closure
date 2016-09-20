@@ -93,12 +93,12 @@ function describeIncorrectUnderscores_(node, options) {
       if (options.allowLeadingUnderscore) {
         return checkAndReport(
           node.name.replace(/^_+/g, '').replace(/_+$/g, ''),
-            `Identifier '${node.name}' is not in camel case after the leading `
-            + `underscore.`
+            `Identifier '${node.name}' is not in camel case after the` +
+            ` leading underscore.`
         );
       } else {
-        return makeReport('Leading underscores are not allowed in '
-                          + `'${node.name}'.`);
+        return makeReport(
+          `Leading underscores are not allowed in '${node.name}'.`);
       }
 
     case types.UnderscoreForm.NO_UNDERSCORE:
@@ -114,8 +114,8 @@ function describeIncorrectUnderscores_(node, options) {
       if (options.allowOptPrefix) {
         return checkAndReport(
             node.name.replace(/^opt_/g, ''),
-            `Identifier '${node.name}' is not in camel case after the opt_ `
-            + `prefix.`
+            `Identifier '${node.name}' is not in camel case after the opt_ ` +
+            `prefix.`
         );
       } else {
         return makeReport(`The opt_ prefix is not allowed in '${node.name}'.`);
@@ -125,12 +125,12 @@ function describeIncorrectUnderscores_(node, options) {
       if (options.allowTrailingUnderscore) {
         return checkAndReport(
           node.name.replace(/^_+/g, '').replace(/_+$/g, ''),
-            `Identifier '${node.name}' is not in camel case before the trailing`
-            + ` underscore.`
+            `Identifier '${node.name}' is not in camel case before the ` +
+            `trailing underscore.`
         );
       } else {
-        return makeReport('Trailing underscores are not allowed in '
-                          + `'${node.name}'.`);
+        return makeReport(
+          `Trailing underscores are not allowed in '${node.name}'.`);
       }
 
     case types.UnderscoreForm.VAR_ARGS:
@@ -142,7 +142,7 @@ function describeIncorrectUnderscores_(node, options) {
 
     // istanbul ignore next
     default:
-      throw new Error('Unknown undercore form: ' + node.name);
+      throw new Error(`Unknown undercore form: ${node.name}`);
   }
 }
 
@@ -178,7 +178,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
         // But it's not okay if we're defining a new variable, e.g.
         // `foo.bar_baz = 2`;
         if (parent.parent && parent.parent.type === 'AssignmentExpression') {
-          let grandParent =
+          const grandParent =
               /** @type {!Espree.AssignmentExpression} */ (parent.parent);
           // But it's okay if the identifier is on the right side.  If it's on
           // the left, it's wrong because we're probably defining it.

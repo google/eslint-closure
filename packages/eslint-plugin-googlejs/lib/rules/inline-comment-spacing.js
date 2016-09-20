@@ -35,10 +35,9 @@ const INLINE_COMMENT_SPACING_RULE = {
   create(context) {
     // Check for null explicitily because 0 is a falsey value.
     /** @const {number} */
-    const minPrecedingSpaces = context.options[0] == null
-          ? DEFAULT_PRECEDING_SPACES
-          : /** @type {number} */ (context.options[0]);
-
+    const minPrecedingSpaces = context.options[0] == null ?
+          DEFAULT_PRECEDING_SPACES :
+          /** @type {number} */ (context.options[0]);
 
     /**
      * Reports a given comment if it's invalid..
@@ -52,13 +51,13 @@ const INLINE_COMMENT_SPACING_RULE = {
       sourceCode.getComments(commentNode);
       // TODO: I'm not sure why I can't just call getTokenBefore.  The tests
       // fail if either of the two calls is missing.
-      const previousToken = sourceCode.getTokenBefore(commentNode, 1)
-            || sourceCode.getTokenOrCommentBefore(commentNode);
+      const previousToken = sourceCode.getTokenBefore(commentNode, 1) ||
+            sourceCode.getTokenOrCommentBefore(commentNode);
 
       // Return early if there's no tokens before commentNode or there's only
       // whitespace.
-      if (previousToken == null
-          || !utils.isTokenOnSameLine(commentNode, previousToken)) {
+      if (previousToken == null ||
+          !utils.isTokenOnSameLine(commentNode, previousToken)) {
         return;
       }
 
@@ -68,8 +67,8 @@ const INLINE_COMMENT_SPACING_RULE = {
         const spacesNoun = minPrecedingSpaces === 1 ? 'space' : 'spaces';
         context.report({
           node: commentNode,
-          message: 'Expected at least ' + minPrecedingSpaces + ' ' + spacesNoun
-            + ' before inline comment.',
+          message: `Expected at least ${minPrecedingSpaces} ${spacesNoun} ` +
+              `before inline comment.`,
 
           /**
            * @param {!ESLint.Fixer} fixer
@@ -83,7 +82,6 @@ const INLINE_COMMENT_SPACING_RULE = {
         });
       }
     }
-
 
     return {
       LineComment: checkLineCommentForPrecedingSpace,
