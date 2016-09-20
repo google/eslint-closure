@@ -862,8 +862,7 @@ const ES6_RULES = {
   'no-useless-rename': OFF,
 
   // Require let or const instead of var.
-  // Google ES6 Section 5.1.1
-  'no-var': ERROR,
+  'no-var': OFF,
 
   // Require or disallow method and property shorthand syntax for object
   // literals.
