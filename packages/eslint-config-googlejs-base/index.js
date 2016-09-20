@@ -866,8 +866,7 @@ const ES6_RULES = {
 
   // Require or disallow method and property shorthand syntax for object
   // literals.
-  // Google ES6 Section 5.3.5
-  'object-shorthand': [ERROR, 'methods'],
+  'object-shorthand': OFF,
 
   // Require arrow functions as callbacks.
   'prefer-arrow-callback': OFF,
