@@ -6,7 +6,8 @@ goog.module('googlejs.tests.rules.camelcase');
 goog.setTestOnly('googlejs.tests.rules.camelcase');
 
 const camelCaseRule = goog.require('googlejs.rules.camelcase');
-const RuleTester = require('eslint').RuleTester;
+const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
+const RuleTester = eslint.RuleTester;
 const ruleTester = new RuleTester();
 
 ruleTester.run('camelcase', camelCaseRule, {

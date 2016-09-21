@@ -6,6 +6,50 @@
 const ESLint = {};
 
 /**
+ * The overall ESLint module.
+ * @record
+ */
+ESLint.Module = function() {};
+
+/** @type {!Object} */
+ESLint.Module.prototype.linter;
+
+/** @type {!Object} */
+ESLint.Module.prototype.CLIEngine;
+
+/**
+ * @return {!ESLint.RuleTester}
+ */
+ESLint.Module.prototype.RuleTester = function() {};
+
+/** @type {!ESLint.SourceCode} */
+ESLint.Module.prototype.SourceCode;
+
+
+/**
+ * The ESLint RuleTester.
+ * @final @struct @constructor
+ */
+ESLint.RuleTester = function() {};
+
+/**
+ * Define a rule for one particular run of tests.
+ * @param {string} name The name of the rule to define.
+ * @param {!ESLint.RuleDefinition} rule The rule definition.
+ * @returns {void}
+ */
+ESLint.RuleTester.prototype.defineRule = function(name, rule) {};
+
+/**
+ * Adds a new rule test to execute.
+ * @param {string} ruleName The name of the rule to run.
+ * @param {!ESLint.RuleDefinition} rule The rule to test.
+ * @param {Object} test The collection of tests to run.
+ * @returns {void}
+ */
+ESLint.RuleTester.prototype.run = function(ruleName, rule, test) {};
+
+/**
  * Configuration object for the `verify` API. A JS representation of the
  * eslintrc files.
  * @record
