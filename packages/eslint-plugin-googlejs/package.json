@@ -44,6 +44,7 @@
   "scripts": {
     "build": "node scripts/Makefile.js buildSimple",
     "buildAdvanced": "node scripts/Makefile.js buildAdvanced",
+    "make": "node scripts/Makefile.js",
     "lint": "node scripts/Makefile.js lint",
     "test": "node scripts/Makefile.js test",
     "checkTypes": "node scripts/Makefile.js checkTypes"
