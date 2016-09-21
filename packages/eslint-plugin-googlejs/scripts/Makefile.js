@@ -105,13 +105,18 @@ target.buildTest = function() {
       js: [
         CLOSURE_BASE_JS,
         "'./lib/**.js'",
-        "'./tests/**.js'",
+        "'./tests/utils.js'",
       ],
-      js_output_file: './dist/tests/camelcase-test.js',
+      // js_output_file: './dist/tests/camelcase-test.js',
+      module: [
+        'lib:auto',
+        'util-tests:1:lib',
+      ],
+      module_output_path_prefix: './dist/tests/',
       compilation_level: 'SIMPLE',
       assume_function_wrapper: null,
       formatting: 'PRETTY_PRINT',
-      entry_point: 'googlejs.tests.rules.camelcase',
+      entry_point: 'googlejs.tests.utils',
       rewrite_polyfills: false,
     }),
     closureJavaOptions
