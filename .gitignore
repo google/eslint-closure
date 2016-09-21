@@ -2,3 +2,4 @@ node_modules/
 .projectile
 .cache/
 coverage/
+/packages/eslint-plugin-googlejs/dist/tests/
