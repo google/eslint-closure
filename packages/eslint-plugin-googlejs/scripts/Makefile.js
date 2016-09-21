@@ -47,12 +47,17 @@ const commonClosureCompilerSettings = {
   // out.  The existence of 'checks-only' is enough for it to be included as
   // an option.
   new_type_inf: null,
-  // assume_function_wrapper: null,
+  assume_function_wrapper: null,
+  process_closure_primitives: null,
+  hide_warnings_for: 'google-closure-library',
   dependency_mode: 'STRICT',
   entry_point: 'googlejs.config',
 };
 
 const closureJavaOptions = [];
+
+const CLOSURE_BASE_JS =
+      './node_modules/google-closure-library/closure/goog/base.js';
 
 target.all = function() {
   target.test();
@@ -98,14 +103,15 @@ target.buildTest = function() {
   const closureCompilerBuild = new ClosureCompiler(
     Object.assign(commonClosureCompilerSettings, {
       js: [
-        'index.js',
+        CLOSURE_BASE_JS,
         "'./lib/**.js'",
         "'./tests/**.js'",
       ],
-      js_output_file: './dist/googlejs-eslint-plugin.js',
+      js_output_file: './dist/tests/camelcase-test.js',
       compilation_level: 'SIMPLE',
       assume_function_wrapper: null,
       formatting: 'PRETTY_PRINT',
+      entry_point: 'googlejs.tests.rules.camelcase',
       rewrite_polyfills: false,
     }),
     closureJavaOptions
