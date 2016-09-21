@@ -15,19 +15,19 @@ const nodeCLI = require('shelljs-nodecli');
 /* eslint-disable googlejs/camelcase */
 
 
-const NODE_MODULES = './node_modules/',
+const NODE_MODULES = './node_modules/';
 
     // Utilities - intentional extra space at the end of each string.
-  MOCHA = NODE_MODULES + 'mocha/bin/_mocha ',
-  ESLINT = 'eslint ',
+const MOCHA = `${NODE_MODULES} mocha/bin/_mocha `;
+const ESLINT = 'eslint ';
 
-    // Files
-  MAKEFILE = './Makefile.js',
-  JS_FILES = 'lib/**/*.js',
-  TEST_FILES = 'tests/lib/rules/**/*.js tests/lib/*.js',
+// Files
+const MAKEFILE = './Makefile.js';
+const JS_FILES = 'lib/**/*.js';
+const TEST_FILES = 'tests/lib/rules/**/*.js tests/lib/*.js';
 
-    // Settings
-  MOCHA_TIMEOUT = 10000;
+// Settings
+const MOCHA_TIMEOUT = 10000;
 
 const commonClosureCompilerSettings = {
   js: [
@@ -93,6 +93,29 @@ target.buildSimple = function() {
   });
 };
 
+target.buildTest = function() {
+  console.log('Building the googlejs plugin library for testing ');
+  const closureCompilerBuild = new ClosureCompiler(
+    Object.assign(commonClosureCompilerSettings, {
+      js: [
+        'index.js',
+        "'./lib/**.js'",
+        "'./tests/**.js'",
+      ],
+      js_output_file: './dist/googlejs-eslint-plugin.js',
+      compilation_level: 'SIMPLE',
+      assume_function_wrapper: null,
+      formatting: 'PRETTY_PRINT',
+      rewrite_polyfills: false,
+    }),
+    closureJavaOptions
+  );
+
+  closureCompilerBuild.run(function(exitCode, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+  });
+};
 
 target.buildAdvanced = function() {
   console.log('Building the googlejs plugin library with ADVANCED ' +
@@ -114,11 +137,11 @@ target.buildAdvanced = function() {
 };
 
 target.lint = function() {
-  let errors = 0,
-    makeFileCache = ' ',
-    jsCache = ' ',
-    testCache = ' ',
-    lastReturn;
+  let errors = 0;
+  let makeFileCache = ' ';
+  let jsCache = ' ';
+  let testCache = ' ';
+  let lastReturn;
 
     // using the cache locally to speed up linting process
   if (!process.env.TRAVIS) {
@@ -154,17 +177,20 @@ target.lint = function() {
 target.test = function() {
   // target.lint();
   // target.checkRuleFiles();
-  let errors = 0,
-    lastReturn;
+  let errors = 0;
+  let lastReturn;
 
   // exec(ISTANBUL + " cover " + MOCHA + "-- -c " + TEST_FILES);
-  lastReturn = nodeCLI.exec('istanbul', 'cover', MOCHA, '-- -R progress -t ' + MOCHA_TIMEOUT, '-c', TEST_FILES);
+  lastReturn = nodeCLI.exec('istanbul', 'cover', MOCHA,
+                            `-- -R progress -t  ${MOCHA_TIMEOUT}`,
+                            '-c', TEST_FILES);
   if (lastReturn.code !== 0) {
     errors++;
   }
 
-  // exec(ISTANBUL + "check-coverage --statement 99 --branch 98 --function 99 --lines 99");
-  lastReturn = nodeCLI.exec('istanbul', 'check-coverage', '--statement 99 --branch 98 --function 99 --lines 99');
+  lastReturn = nodeCLI.exec(
+      'istanbul', 'check-coverage',
+      '--statement 99 --branch 98 --function 99 --lines 99');
   if (lastReturn.code !== 0) {
     errors++;
   }
