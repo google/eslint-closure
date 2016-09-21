@@ -17,10 +17,8 @@ ESLint.Module.prototype.linter;
 /** @type {!Object} */
 ESLint.Module.prototype.CLIEngine;
 
-/**
- * @return {!ESLint.RuleTester}
- */
-ESLint.Module.prototype.RuleTester = function() {};
+/** @type {function(new:ESLint.RuleTester)} */
+ESLint.Module.prototype.RuleTester;
 
 /** @type {!ESLint.SourceCode} */
 ESLint.Module.prototype.SourceCode;
