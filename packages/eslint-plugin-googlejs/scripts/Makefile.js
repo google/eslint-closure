@@ -35,14 +35,16 @@ const commonClosureCompilerSettings = {
     "'./lib/**.js'",
   ],
   externs: [
+    './externs/externs-chai.js',
     './externs/externs-commonjs.js',
     './externs/externs-eslint.js',
     './externs/externs-espree.js',
+    './externs/externs-mocha.js',
   ],
   language_in: 'ECMASCRIPT6_STRICT',
   language_out: 'ECMASCRIPT5_STRICT',
-  warning_level: 'VERBOSE',
-  jscomp_error: "'*'",
+  // warning_level: 'VERBOSE',
+  // jscomp_error: "'*'",
   // We use null for options that don't have a value.  Otherwise, it errors
   // out.  The existence of 'checks-only' is enough for it to be included as
   // an option.
@@ -105,18 +107,18 @@ target.buildTest = function() {
       js: [
         CLOSURE_BASE_JS,
         "'./lib/**.js'",
-        "'./tests/rules/camelcase.js'",
+        "'./tests/utils.js'",
       ],
-      js_output_file: './dist/tests/camelcase-test.js',
+      js_output_file: './dist/tests/utils-test.js',
       // module: [
       //   'lib:auto',
       //   // 'util-tests:1:lib',
       // ],
-      module_output_path_prefix: './dist/tests/',
+      // module_output_path_prefix: './dist/tests/',
       compilation_level: 'SIMPLE',
       assume_function_wrapper: null,
       formatting: 'PRETTY_PRINT',
-      entry_point: 'googlejs.tests.rules.camelcase',
+      entry_point: 'googlejs.tests.utils',
       rewrite_polyfills: false,
     }),
     closureJavaOptions
