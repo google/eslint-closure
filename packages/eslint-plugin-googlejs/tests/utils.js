@@ -9,7 +9,8 @@ goog.setTestOnly('googlejs.tests.utils');
 const utils = goog.require('googlejs.utils');
 const {UnderscoreForm} = goog.require('googlejs.types');
 
-const expect = require('chai').expect;
+const chai = /** @type {!Chai.Module} */ (require('chai'));
+const expect = chai.expect;
 
 describe('isUnderscored', () => {
   it('should correctly determine underscored strings', () => {
