@@ -109,12 +109,12 @@ target.buildTest = function() {
         "'./lib/**.js'",
         "'./tests/utils.js'",
       ],
-      js_output_file: './dist/tests/utils-test.js',
-      // module: [
-      //   'lib:auto',
-      //   // 'util-tests:1:lib',
-      // ],
-      // module_output_path_prefix: './dist/tests/',
+      // js_output_file: './dist/tests/utils-test.js',
+      module: [
+        'lib:auto',
+        'util-tests:1:lib',
+      ],
+      module_output_path_prefix: './dist/tests/',
       compilation_level: 'SIMPLE',
       assume_function_wrapper: null,
       formatting: 'PRETTY_PRINT',
