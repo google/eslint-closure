@@ -71,8 +71,8 @@ ruleTester.run('camelcase', camelCaseRule, {
       code: '__private_first_name = "Patrick"',
       errors: [
         {
-          message: "Identifier '__private_first_name' is not in camel case "
-            + 'after the leading underscore.',
+          message: "Identifier '__private_first_name' is not in camel case " +
+              'after the leading underscore.',
           type: 'Identifier',
         },
       ],
@@ -172,8 +172,8 @@ ruleTester.run('camelcase', camelCaseRule, {
       options: [{allowOptPrefix: true}],
       errors: [
         {
-          message: "Identifier 'opt_foo_bar' is not in camel case after the"
-              + ' opt_ prefix.',
+          message: "Identifier 'opt_foo_bar' is not in camel case after the" +
+              ' opt_ prefix.',
           type: 'Identifier',
         },
       ],
@@ -191,8 +191,8 @@ ruleTester.run('camelcase', camelCaseRule, {
       code: '_foo_bar = 2',
       errors: [
         {
-          message: "Identifier '_foo_bar' is not in camel case after the "
-              + 'leading underscore.',
+          message: "Identifier '_foo_bar' is not in camel case after the " +
+              'leading underscore.',
           type: 'Identifier',
         },
       ],
@@ -201,8 +201,8 @@ ruleTester.run('camelcase', camelCaseRule, {
       code: 'foo_bar_ = 3',
       errors: [
         {
-          message: "Identifier 'foo_bar_' is not in camel case before the "
-            + 'trailing underscore.',
+          message: "Identifier 'foo_bar_' is not in camel case before the " +
+              'trailing underscore.',
           type: 'Identifier',
         },
       ],

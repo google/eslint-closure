@@ -60,7 +60,7 @@ function m(a, d, c) {
   }
   return !1;
 }
-;module.exports = {rules:{"inline-comment-spacing":{meta:{docs:{description:"enforce consistent spacing before the `//` at line end", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{type:"integer", minimum:0, maximum:5}]}, create:function(a) {
+;module.exports = {rules:{"inlineCommentSpacing":{meta:{docs:{description:"enforce consistent spacing before the `//` at line end", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{type:"integer", minimum:0, maximum:5}]}, create:function(a) {
   var d = null == a.options[0] ? 1 : a.options[0];
   return {LineComment:function(c) {
     var b = a.getSourceCode();

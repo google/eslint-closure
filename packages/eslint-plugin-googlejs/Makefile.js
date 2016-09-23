@@ -100,34 +100,62 @@ target.buildSimple = function() {
   });
 };
 
-target.buildTest = function() {
-  console.log('Building the googlejs plugin library for testing ');
-  const closureCompilerBuild = new ClosureCompiler(
-    Object.assign(commonClosureCompilerSettings, {
-      js: [
-        CLOSURE_BASE_JS,
-        "'./lib/**.js'",
-        "'./tests/utils.js'",
-      ],
-      // js_output_file: './dist/tests/utils-test.js',
-      module: [
-        'lib:auto',
-        'util-tests:1:lib',
-      ],
-      module_output_path_prefix: './dist/tests/',
-      compilation_level: 'SIMPLE',
-      assume_function_wrapper: null,
-      formatting: 'PRETTY_PRINT',
-      entry_point: 'googlejs.tests.utils',
-      rewrite_polyfills: false,
-    }),
-    closureJavaOptions
-  );
 
-  closureCompilerBuild.run(function(exitCode, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-  });
+/**
+  * Translate a file name into a module name.
+  * @param {string} testFile
+  * @return {string} The module name.
+  */
+function getModuleFromFile(testFile) {
+  return testFile.replace(/^\.\//, '')
+      .replace(/\.js$/, '')
+      .replace(/\//g, '.')
+      .replace(/^/, 'googlejs.');
+}
+
+/**
+  * @param {string} testFile
+  * @param {string} entryPoint
+  * @return {!Object} The closure compiler.
+  */
+function buildTestCompiler(testFile, entryPoint) {
+  const compiler = new ClosureCompiler(
+      Object.assign(commonClosureCompilerSettings, {
+        js: [
+          CLOSURE_BASE_JS,
+          "'./lib/**.js'",
+          testFile,
+        ],
+        js_output_file: `./dist/${testFile}`,
+        module_output_path_prefix: './dist/',
+        compilation_level: 'WHITESPACE_ONLY',
+        assume_function_wrapper: null,
+        formatting: 'PRETTY_PRINT',
+        entry_point: entryPoint,
+        rewrite_polyfills: false,
+      }),
+      closureJavaOptions
+  );
+  return compiler;
+}
+
+target.buildTest = function() {
+  console.log('Building the googlejs plugin library for testing.');
+
+  const testFiles = [
+    './tests/utils.js',
+    './tests/rules/camelcase.js',
+    './tests/rules/inlineCommentSpacing.js',
+  ];
+
+  for (const testFile of testFiles) {
+    const entryPoint = getModuleFromFile(testFile);
+    const compiler = buildTestCompiler(testFile, entryPoint);
+    compiler.run(function(exitCode, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+    });
+  }
 };
 
 target.buildAdvanced = function() {

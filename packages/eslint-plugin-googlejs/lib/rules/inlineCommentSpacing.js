@@ -3,7 +3,7 @@
  * @author Joe Schafer
  */
 
-goog.module('googlejs.rules.inline-comment-spacing');
+goog.module('googlejs.rules.inlineCommentSpacing');
 
 const utils = goog.require('googlejs.utils');
 
