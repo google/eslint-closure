@@ -19,7 +19,7 @@ function l(a, d) {
     case e.UnderscoreForm.CONSTANT:
       return f;
     case e.UnderscoreForm.LEADING:
-      return d.allowLeadingUnderscore ? b(a.name.replace(/^_+/g, "").replace(/_+$/g, ""), "Identifier '" + a.name + "' is not in camel case after the leading underscore.") : c("Leading underscores are not allowed in " + ("'" + a.name + "'."));
+      return d.allowLeadingUnderscore ? b(a.name.replace(/^_+/g, "").replace(/_+$/g, ""), "Identifier '" + a.name + "' is not in camel case after the leading underscore.") : c("Leading underscores are not allowed in '" + a.name + "'.");
     case e.UnderscoreForm.NO_UNDERSCORE:
       return f;
     case e.UnderscoreForm.MIDDLE:
@@ -27,7 +27,7 @@ function l(a, d) {
     case e.UnderscoreForm.OPT_PREFIX:
       return d.allowOptPrefix ? b(a.name.replace(/^opt_/g, ""), "Identifier '" + a.name + "' is not in camel case after the opt_ prefix.") : c("The opt_ prefix is not allowed in '" + a.name + "'.");
     case e.UnderscoreForm.TRAILING:
-      return d.allowTrailingUnderscore ? b(a.name.replace(/^_+/g, "").replace(/_+$/g, ""), "Identifier '" + a.name + "' is not in camel case before the trailing underscore.") : c("Trailing underscores are not allowed in " + ("'" + a.name + "'."));
+      return d.allowTrailingUnderscore ? b(a.name.replace(/^_+/g, "").replace(/_+$/g, ""), "Identifier '" + a.name + "' is not in camel case before the trailing underscore.") : c("Trailing underscores are not allowed in '" + a.name + "'.");
     case e.UnderscoreForm.VAR_ARGS:
       return d.allowVarArgs ? f : c("The var_args identifier is not allowed.");
     default:
@@ -60,7 +60,13 @@ function m(a, d, c) {
   }
   return !1;
 }
-;module.exports = {rules:{"inlineCommentSpacing":{meta:{docs:{description:"enforce consistent spacing before the `//` at line end", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{type:"integer", minimum:0, maximum:5}]}, create:function(a) {
+;module.exports = {rules:{camelcase:{meta:{docs:{description:"check identifiers for camel case with options for opt_ prefix and var_args identifiers", category:"Stylistic Issues", recommended:!0}, schema:[{type:"object", properties:{allowVarArgs:{type:"boolean"}, allowOptPrefix:{type:"boolean"}, allowLeadingUnderscore:{type:"boolean"}, allowTrailingUnderscore:{type:"boolean"}, checkObjectProperties:{type:"boolean"}}, additionalProperties:!1}]}, create:function(a) {
+  var d = Object.assign({}, k, a.options[0] || {});
+  return {Identifier:function(c) {
+    c = l(c, d);
+    c.hasError && a.report({node:c.node, message:c.message});
+  }};
+}}, inlineCommentSpacing:{meta:{docs:{description:"enforce consistent spacing before the `//` at line end", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{type:"integer", minimum:0, maximum:5}]}, create:function(a) {
   var d = null == a.options[0] ? 1 : a.options[0];
   return {LineComment:function(c) {
     var b = a.getSourceCode();
@@ -74,11 +80,5 @@ function m(a, d, c) {
       }});
     }
   }};
-}}, camelcase:{meta:{docs:{description:"check identifiers for camel case with options for opt_ prefix and var_args identifiers", category:"Stylistic Issues", recommended:!0}, schema:[{type:"object", properties:{allowVarArgs:{type:"boolean"}, allowOptPrefix:{type:"boolean"}, allowLeadingUnderscore:{type:"boolean"}, allowTrailingUnderscore:{type:"boolean"}, checkObjectProperties:{type:"boolean"}}, additionalProperties:!1}]}, create:function(a) {
-  var d = Object.assign({}, k, a.options[0] || {});
-  return {Identifier:function(c) {
-    c = l(c, d);
-    c.hasError && a.report({node:c.node, message:c.message});
-  }};
-}}}, configs:{}};
+}}}};
 
