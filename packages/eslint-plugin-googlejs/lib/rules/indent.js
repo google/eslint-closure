@@ -678,7 +678,7 @@ function create(context) {
 
   /**
    * Checks indentation for blocks.
-   * @param {!ESLint.ASTNode} node Node to check.
+   * @param {!Espree.BlockStatement} node Node to check.
    * @return {void}
    */
   function blockIndentationCheck(node) {
@@ -774,7 +774,7 @@ function create(context) {
   /**
    * Check and decide whether to check for indentation for blockless nodes.
    * Scenarios are for or while statements without braces around them.
-   * @param {!ESLint.ASTNode} node The node to examine.
+   * @param {!Espree.BlockStatement} node The node to examine.
    * @return {void}
    */
   function blockLessNodes(node) {
@@ -790,7 +790,8 @@ function create(context) {
    * @return {number} The indent size.
    */
   function expectedCaseIndent(node, opt_switchIndent) {
-    const switchNode = (node.type === 'SwitchStatement') ? node : node.parent;
+    const switchNode = /** @type {!Espree.SwitchStatement} */
+        ((node.type === 'SwitchStatement') ? node : node.parent);
     let caseIndent;
 
     if (caseIndentStore[switchNode.loc.start.line]) {
@@ -813,6 +814,9 @@ function create(context) {
   }
 
   return {
+    /**
+     * @param {!Espree.Program} node
+     */
     Program(node) {
       if (node.body.length > 0) {
 
@@ -836,6 +840,9 @@ function create(context) {
 
     DoWhileStatement: blockLessNodes,
 
+    /**
+     * @param {!Espree.IfStatement} node
+     */
     IfStatement(node) {
       if (node.consequent.type !== 'BlockStatement' &&
           node.consequent.loc.start.line > node.loc.start.line) {
@@ -843,6 +850,9 @@ function create(context) {
       }
     },
 
+    /**
+     * @param {!Espree.VariableDeclaration} node
+     */
     VariableDeclaration(node) {
       if (node.declarations[node.declarations.length - 1].loc.start.line >
           node.declarations[0].loc.start.line) {
@@ -850,14 +860,23 @@ function create(context) {
       }
     },
 
+    /**
+     * @param {!Espree.ObjectExpression} node
+     */
     ObjectExpression(node) {
       checkIndentInArrayOrObjectBlock(node);
     },
 
+    /**
+     * @param {!Espree.ArrayExpression} node
+     */
     ArrayExpression(node) {
       checkIndentInArrayOrObjectBlock(node);
     },
 
+    /**
+     * @param {!Espree.MemberExpression} node
+     */
     MemberExpression(node) {
       if (typeof options.MemberExpression === 'undefined') {
         return;
@@ -894,6 +913,9 @@ function create(context) {
       checkNodesIndent(checkNodes, propertyIndent);
     },
 
+    /**
+     * @param {!Espree.SwitchStatement} node
+     */
     SwitchStatement(node) {
 
       // Switch is not a 'BlockStatement'
@@ -907,6 +929,9 @@ function create(context) {
       checkLastNodeLineIndent(node, switchIndent);
     },
 
+    /**
+     * @param {!Espree.SwitchCase} node
+     */
     SwitchCase(node) {
 
       // Skip inline cases
@@ -918,6 +943,9 @@ function create(context) {
       checkNodesIndent(node.consequent, caseIndent + indentSize);
     },
 
+    /**
+     * @param {!Espree.FunctionDeclaration} node
+     */
     FunctionDeclaration(node) {
       if (isSingleLineNode_(node, sourceCode)) {
         return;
@@ -932,6 +960,9 @@ function create(context) {
       }
     },
 
+    /**
+     * @param {!Espree.FunctionExpression} node
+     */
     FunctionExpression(node) {
       if (isSingleLineNode_(node, sourceCode)) {
         return;
