@@ -71,6 +71,27 @@ function getNodeIndent_(node, sourceCode, indentType, opt_byLastLine) {
   };
 }
 
+/**
+ * Checks node is the first in its own start line. By default it looks by
+ * start line.
+ * @param {!Espree.Node} node The node to check.
+ * @param {!ESLint.SourceCode} sourceCode
+ * @param {boolean=} opt_byEndLocation Lookup based on start position or
+ *     end.
+ * @return {boolean} true if it's the first in it's start line.
+ * @private
+ */
+function isNodeFirstInLine_(node, sourceCode, opt_byEndLocation) {
+  const firstToken = opt_byEndLocation === true ?
+        sourceCode.getLastToken(node, 1) :
+        sourceCode.getTokenBefore(node);
+  const startLine = opt_byEndLocation === true ?
+        node.loc.end.line :
+        node.loc.start.line;
+  const endLine = firstToken ? firstToken.loc.end.line : -1;
+  return startLine !== endLine;
+}
+
 
 function create(context) {
   const DEFAULT_VARIABLE_INDENT = 1;
@@ -220,25 +241,6 @@ function create(context) {
   }
 
   /**
-   * Checks node is the first in its own start line. By default it looks by
-   * start line.
-   * @param {!Espree.Node} node The node to check.
-   * @param {boolean=} opt_byEndLocation Lookup based on start position or
-   *     end.
-   * @return {boolean} true if it's the first in it's start line.
-   */
-  function isNodeFirstInLine(node, opt_byEndLocation) {
-    const firstToken = opt_byEndLocation === true ?
-          sourceCode.getLastToken(node, 1) :
-          sourceCode.getTokenBefore(node);
-    const startLine = opt_byEndLocation === true ?
-          node.loc.end.line :
-          node.loc.start.line;
-    const endLine = firstToken ? firstToken.loc.end.line : -1;
-    return startLine !== endLine;
-  }
-
-  /**
    * Checks indent for node.
    * @param {(!ESLint.ASTNode|!Espree.Token)} node Node to check.
    * @param {number} neededIndent The needed indent.
@@ -251,7 +253,7 @@ function create(context) {
         node.type !== 'ObjectExpression' &&
         (actualIndent.goodChar !== neededIndent ||
          actualIndent.badChar !== 0) &&
-        isNodeFirstInLine(node)
+        isNodeFirstInLine_(node, sourceCode)
        ) {
       report(node, neededIndent, actualIndent.space, actualIndent.tab);
     }
@@ -261,7 +263,7 @@ function create(context) {
 
       checkNodeIndent(elseToken, neededIndent);
 
-      if (!isNodeFirstInLine(node.alternate)) {
+      if (!isNodeFirstInLine_(node.alternate, sourceCode)) {
         checkNodeIndent(node.alternate, neededIndent);
       }
     }
@@ -289,7 +291,7 @@ function create(context) {
     const endIndent = getNodeIndent_(lastToken, sourceCode, indentType, true);
 
     if ((endIndent.goodChar !== lastLineIndent || endIndent.badChar !== 0) &&
-        isNodeFirstInLine(node, true)) {
+        isNodeFirstInLine_(node, sourceCode, true)) {
       report(
         node,
         lastLineIndent,
@@ -312,7 +314,7 @@ function create(context) {
 
     if ((startIndent.goodChar !== firstLineIndent ||
          startIndent.badChar !== 0) &&
-        isNodeFirstInLine(node)) {
+        isNodeFirstInLine_(node, sourceCode)) {
       report(
         node,
         firstLineIndent,
@@ -474,7 +476,7 @@ function create(context) {
         if (isArgBeforeCalleeNodeMultiline(calleeNode) &&
             calleeParent.callee.loc.start.line ==
             calleeParent.callee.loc.end.line &&
-            !isNodeFirstInLine(calleeNode)) {
+            !isNodeFirstInLine_(calleeNode, sourceCode)) {
           indent = getNodeIndent_(calleeParent, sourceCode, indentType)
               .goodChar;
         }
@@ -573,12 +575,12 @@ function create(context) {
     const parentVarNode = getVariableDeclaratorNode(node);
 
     // TODO - come up with a better strategy in future
-    if (isNodeFirstInLine(node)) {
+    if (isNodeFirstInLine_(node, sourceCode)) {
       const parent = node.parent;
       let effectiveParent = parent;
 
       if (parent.type === 'MemberExpression') {
-        if (isNodeFirstInLine(parent)) {
+        if (isNodeFirstInLine_(parent, sourceCode)) {
           effectiveParent = parent.parent.parent;
         } else {
           effectiveParent = parent.parent;
