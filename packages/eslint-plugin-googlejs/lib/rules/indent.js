@@ -9,7 +9,6 @@
 
 goog.module('googlejs.rules.indent');
 
-
 /**
  * Information about the indentation preceeding a Node.
  * @record
@@ -368,11 +367,9 @@ function create(context) {
    * @return {boolean} True if all the above condition are satisfied.
    */
   function isNodeInVarOnTop(node, varNode) {
-    /** @type {!Espree.VariableDeclaration} */
-    const varDeclaration = varNode.parent;
     return varNode &&
-      varDeclaration.loc.start.line === node.loc.start.line &&
-      varDeclaration.declarations.length > 1;
+      varNode.parent.loc.start.line === node.loc.start.line &&
+      varNode.parent.declarations.length > 1;
   }
 
   /**
