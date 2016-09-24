@@ -9,6 +9,7 @@
 
 goog.module('googlejs.rules.indent');
 
+const {getNodeAncestorOfType} = goog.require('googlejs.utils');
 /**
  * Information about the indentation preceeding a Node.
  * @record
@@ -91,7 +92,6 @@ function isNodeFirstInLine_(node, sourceCode, opt_byEndLocation) {
   const endLine = firstToken ? firstToken.loc.end.line : -1;
   return startLine !== endLine;
 }
-
 
 function create(context) {
   const DEFAULT_VARIABLE_INDENT = 1;
@@ -326,29 +326,13 @@ function create(context) {
   }
 
   /**
-   * Returns a parent node of given node based on a specified type.
-   * If node is not present then return null.
-   * @param {!ESLint.ASTNode} node Node to examine.
-   * @param {string} type The type that is being looked for.
-   * @return {(!ESLint.ASTNode|null)} If found then node otherwise null.
-   */
-  function getParentNodeByType(node, type) {
-    let parent = node.parent;
-
-    while (parent.type !== type && parent.type !== 'Program') {
-      parent = parent.parent;
-    }
-    return parent.type === type ? parent : null;
-  }
-
-  /**
    * Returns the VariableDeclarator based on the current node.
    * If node is nnot present then return null.
    * @param {!ESLint.ASTNode} node Node to examine.
    * @return {(!ESLint.ASTNode|null)} If found then node otherwise null.
    */
   function getVariableDeclaratorNode(node) {
-    return getParentNodeByType(node, 'VariableDeclarator');
+    return getNodeAncestorOfType(node, 'VariableDeclarator');
   }
 
   /**
@@ -358,7 +342,7 @@ function create(context) {
    * @return {(!ESLint.ASTNode|null)} If found then node otherwise null.
    */
   function getAssignmentExpressionNode(node) {
-    return getParentNodeByType(node, 'AssignmentExpression');
+    return getNodeAncestorOfType(node, 'AssignmentExpression');
   }
 
   /**

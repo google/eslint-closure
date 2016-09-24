@@ -58,9 +58,26 @@ function categorizeUnderscoredIdentifier(name) {
   }
 }
 
+/**
+ * Returns an ancestor node of the given node that has the specified type.  If
+ * there is no ancestor node with the specified type, then return null.
+ * @param {!ESLint.ASTNode} node Node to examine.
+ * @param {!Espree.NodeType} type The type that is being looked for.
+ * @return {(!ESLint.ASTNode|null)} If found then node otherwise null.
+ */
+function getNodeAncestorOfType(node, type) {
+  let parent = node.parent;
+
+  while (parent.type !== type && parent.type !== 'Program') {
+    parent = parent.parent;
+  }
+  return parent.type === type ? parent : null;
+}
+
 
 exports = {
   categorizeUnderscoredIdentifier,
+  getNodeAncestorOfType,
   isTokenOnSameLine,
   isUnderscored,
 };
