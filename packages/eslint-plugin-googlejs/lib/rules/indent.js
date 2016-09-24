@@ -93,6 +93,137 @@ function isNodeFirstInLine_(node, sourceCode, opt_byEndLocation) {
   return startLine !== endLine;
 }
 
+/**
+ * Checks if the given node starts and ends on the same line.
+ * @param {!ESLint.ASTNode} node The node to check.
+ * @param {!ESLint.SourceCode} sourceCode
+ * @return {boolean} Whether or not the block starts and ends on the same
+ *     line.
+ * @private
+ */
+function isSingleLineNode_(node, sourceCode) {
+  const lastToken = sourceCode.getLastToken(node);
+  const startLine = node.loc.start.line;
+  const endLine = lastToken.loc.end.line;
+  return startLine == endLine;
+}
+
+/**
+ * Check to see if the node is part of the multi-line variable declaration.
+ * Also if its on the same line as the varNode.
+ * @param {!ESLint.ASTNode} node Node to check.
+ * @param {!Espree.VariableDeclarator} varNode Variable declaration node to
+ *     check against.
+ * @return {boolean} True if all the above condition are satisfied.
+ */
+function isNodeInVarOnTop(node, varNode) {
+  return varNode &&
+    varNode.parent.loc.start.line === node.loc.start.line &&
+    varNode.parent.declarations.length > 1;
+}
+
+/**
+ * Checks to see if the argument before the callee node is multi-line and
+ * there should only be 1 argument before the callee node.
+ * @param {!Espree.Expression} node Node to check.
+ * @return {boolean} True if arguments are multi-line.
+ * @private
+ */
+function isArgBeforeCalleeNodeMultiline_(node) {
+  const parent = /** @type {!Espree.CallExpression} */ (node.parent);
+  if (parent.arguments.length >= 2 && parent.arguments[1] === node) {
+    return parent.arguments[0].loc.end.line >
+      parent.arguments[0].loc.start.line;
+  }
+  return false;
+}
+
+/**
+  * Checks to see if the node is a file level IIFE.
+  * @param {!ESLint.ASTNode} node The function node to check.
+  * @return {boolean} True if the node is the outer IIFE.
+  * @private
+  */
+function isOuterIIFE_(node) {
+  const parent = node.parent;
+  let stmt = parent.parent;
+
+  // Verify that the node is an IIFE.
+  if (parent.type !== 'CallExpression' || parent.callee !== node) {
+    return false;
+  }
+
+  // Navigate legal ancestors to determine whether this IIEF is outer.
+  while (
+    stmt.type === 'UnaryExpression' && (
+      stmt.operator === '!' ||
+        stmt.operator === '~' ||
+        stmt.operator === '+' ||
+        stmt.operator === '-') ||
+      stmt.type === 'AssignmentExpression' ||
+      stmt.type === 'LogicalExpression' ||
+      stmt.type === 'SequenceExpression' ||
+      stmt.type === 'VariableDeclarator') {
+
+    stmt = stmt.parent;
+  }
+
+  return ((stmt.type === 'ExpressionStatement' ||
+            stmt.type === 'VariableDeclaration') &&
+          stmt.parent && stmt.parent.type === 'Program');
+}
+
+/**
+ * Check to see if the first element inside an array is an object and on the
+ * same line as the node.  If the node is not an array then it will return
+ * false.
+ * @param {!ESLint.ASTNode} node Node to check.
+ * @return {boolean} Success or failure.
+ * @private
+ */
+function isFirstArrayElementOnSameLine_(node) {
+  if (node.type === 'ArrayExpression' && node.elements[0]) {
+    return node.elements[0].loc.start.line === node.loc.start.line &&
+      node.elements[0].type === 'ObjectExpression';
+  } else {
+    return false;
+  }
+}
+
+/**
+ * Checks if the node or node body is a BlockStatement or not.
+ * @param {!ESLint.ASTNode} node Node to test.
+ * @return {boolean} True if it or its body is a block statement.
+ * @private
+*/
+function isNodeBodyBlock_(node) {
+  return node.type === 'BlockStatement' || node.type === 'ClassBody' ||
+    (node.body && node.body.type === 'BlockStatement') ||
+    (node.consequent && node.consequent.type === 'BlockStatement');
+}
+
+/**
+ * Filters out the elements which are on the same line of each other or the
+ * node.  Basically have only 1 elements from each line except the variable
+ * declaration line.
+ *
+ * @param {!ESLint.ASTNode} node Variable declaration node.
+ * @return {!Array<!ESLint.ASTNode>} Filtered elements
+ * @private
+ */
+function filterOutSameLineVars_(node) {
+  return node.declarations.reduce(function(finalCollection, elem) {
+    const lastElem = finalCollection[finalCollection.length - 1];
+
+    if ((elem.loc.start.line !== node.loc.start.line && !lastElem) ||
+        (lastElem && lastElem.loc.start.line !== elem.loc.start.line)) {
+      finalCollection.push(elem);
+    }
+
+    return finalCollection;
+  }, []);
+}
+
 function create(context) {
   const DEFAULT_VARIABLE_INDENT = 1;
   // For backwards compatibility, don't check parameter indentation unless
@@ -326,70 +457,6 @@ function create(context) {
   }
 
   /**
-   * Check to see if the node is part of the multi-line variable declaration.
-   * Also if its on the same line as the varNode.
-   * @param {!ESLint.ASTNode} node Node to check.
-   * @param {!Espree.VariableDeclarator} varNode Variable declaration node to
-   *     check against.
-   * @return {boolean} True if all the above condition are satisfied.
-   */
-  function isNodeInVarOnTop(node, varNode) {
-    return varNode &&
-      varNode.parent.loc.start.line === node.loc.start.line &&
-      varNode.parent.declarations.length > 1;
-  }
-
-  /**
-   * Checks to see if the argument before the callee node is multi-line and
-   * there should only be 1 argument before the callee node.
-   * @param {!Espree.Expression} node Node to check.
-   * @return {boolean} True if arguments are multi-line.
-   */
-  function isArgBeforeCalleeNodeMultiline(node) {
-    const parent = /** @type {!Espree.CallExpression} */ (node.parent);
-
-    if (parent.arguments.length >= 2 && parent.arguments[1] === node) {
-      return parent.arguments[0].loc.end.line >
-        parent.arguments[0].loc.start.line;
-    }
-    return false;
-  }
-
-  /**
-   * Checks to see if the node is a file level IIFE.
-   * @param {!ESLint.ASTNode} node The function node to check.
-   * @return {boolean} True if the node is the outer IIFE.
-   */
-  function isOuterIIFE(node) {
-    const parent = node.parent;
-    let stmt = parent.parent;
-
-    // Verify that the node is an IIFE.
-    if (parent.type !== 'CallExpression' || parent.callee !== node) {
-      return false;
-    }
-
-    // Navigate legal ancestors to determine whether this IIEF is outer.
-    while (
-      stmt.type === 'UnaryExpression' && (
-        stmt.operator === '!' ||
-          stmt.operator === '~' ||
-          stmt.operator === '+' ||
-          stmt.operator === '-') ||
-        stmt.type === 'AssignmentExpression' ||
-        stmt.type === 'LogicalExpression' ||
-        stmt.type === 'SequenceExpression' ||
-        stmt.type === 'VariableDeclarator') {
-
-      stmt = stmt.parent;
-    }
-
-    return ((stmt.type === 'ExpressionStatement' ||
-             stmt.type === 'VariableDeclaration') &&
-            stmt.parent && stmt.parent.type === 'Program');
-  }
-
-  /**
    * Checks indent for function block content.
    * @param {!ESLint.ASTNode} node A BlockStatement node that is inside of a
    *     function.
@@ -437,7 +504,7 @@ function create(context) {
               .goodChar;
         }
       } else {
-        if (isArgBeforeCalleeNodeMultiline(calleeNode) &&
+        if (isArgBeforeCalleeNodeMultiline_(calleeNode) &&
             calleeParent.callee.loc.start.line ==
             calleeParent.callee.loc.end.line &&
             !isNodeFirstInLine_(calleeNode, sourceCode)) {
@@ -452,7 +519,7 @@ function create(context) {
     // corresponding options are enabled.
     let functionOffset = indentSize;
 
-    if (options.outerIIFEBody !== null && isOuterIIFE(calleeNode)) {
+    if (options.outerIIFEBody !== null && isOuterIIFE_(calleeNode)) {
       functionOffset = options.outerIIFEBody * indentSize;
     } else if (calleeNode.type === 'FunctionExpression') {
       functionOffset = options.FunctionExpression.body * indentSize;
@@ -476,36 +543,6 @@ function create(context) {
     checkLastNodeLineIndent(node, indent - functionOffset);
   }
 
-
-  /**
-   * Checks if the given node starts and ends on the same line.
-   * @param {!ESLint.ASTNode} node The node to check.
-   * @return {boolean} Whether or not the block starts and ends on the same
-   *     line.
-   */
-  function isSingleLineNode(node) {
-    const lastToken = sourceCode.getLastToken(node);
-    const startLine = node.loc.start.line;
-    const endLine = lastToken.loc.end.line;
-    return startLine == endLine;
-  }
-
-  /**
-   * Check to see if the first element inside an array is an object and on the
-   * same line as the node.  If the node is not an array then it will return
-   * false.
-   * @param {!ESLint.ASTNode} node Node to check.
-   * @return {boolean} Success or failure.
-   */
-  function isFirstArrayElementOnSameLine(node) {
-    if (node.type === 'ArrayExpression' && node.elements[0]) {
-      return node.elements[0].loc.start.line === node.loc.start.line &&
-        node.elements[0].type === 'ObjectExpression';
-    } else {
-      return false;
-    }
-  }
-
   /**
    * Checks indent for array block content or object block content.
    * @param {!ESLint.ASTNode} node Node to examine.
@@ -514,7 +551,7 @@ function create(context) {
   function checkIndentInArrayOrObjectBlock(node) {
 
     // Skip inline
-    if (isSingleLineNode(node)) {
+    if (isSingleLineNode_(node, sourceCode)) {
       return;
     }
 
@@ -573,7 +610,7 @@ function create(context) {
             nodeIndent = nodeIndent + indentSize;
           }
         }
-      } else if (!parentVarNode && !isFirstArrayElementOnSameLine(parent) &&
+      } else if (!parentVarNode && !isFirstArrayElementOnSameLine_(parent) &&
                  effectiveParent.type !== 'MemberExpression' &&
                  effectiveParent.type !== 'ExpressionStatement' &&
                  effectiveParent.type !== 'AssignmentExpression' &&
@@ -612,17 +649,6 @@ function create(context) {
   }
 
   /**
-   * Checks if the node or node body is a BlockStatement or not.
-   * @param {!ESLint.ASTNode} node Node to test.
-   * @return {boolean} True if it or its body is a block statement.
-   */
-  function isNodeBodyBlock(node) {
-    return node.type === 'BlockStatement' || node.type === 'ClassBody' ||
-      (node.body && node.body.type === 'BlockStatement') ||
-      (node.consequent && node.consequent.type === 'BlockStatement');
-  }
-
-  /**
    * Checks indentation for blocks.
    * @param {!ESLint.ASTNode} node Node to check.
    * @return {void}
@@ -630,7 +656,7 @@ function create(context) {
   function blockIndentationCheck(node) {
 
     // Skip inline blocks
-    if (isSingleLineNode(node)) {
+    if (isSingleLineNode_(node, sourceCode)) {
       return;
     }
 
@@ -657,7 +683,7 @@ function create(context) {
 
     if (node.parent &&
         statementsWithProperties.indexOf(node.parent.type) !== -1 &&
-        isNodeBodyBlock(node)) {
+        isNodeBodyBlock_(node)) {
       indent = getNodeIndent_(node.parent, sourceCode, indentType).goodChar;
     } else {
       indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
@@ -682,33 +708,12 @@ function create(context) {
   }
 
   /**
-   * Filters out the elements which are on the same line of each other or the
-   * node.  Basically have only 1 elements from each line except the variable
-   * declaration line.
-   *
-   * @param {!ESLint.ASTNode} node Variable declaration node.
-   * @return {!Array<!ESLint.ASTNode>} Filtered elements
-   */
-  function filterOutSameLineVars(node) {
-    return node.declarations.reduce(function(finalCollection, elem) {
-      const lastElem = finalCollection[finalCollection.length - 1];
-
-      if ((elem.loc.start.line !== node.loc.start.line && !lastElem) ||
-          (lastElem && lastElem.loc.start.line !== elem.loc.start.line)) {
-        finalCollection.push(elem);
-      }
-
-      return finalCollection;
-    }, []);
-  }
-
-  /**
    * Check indentation for variable declarations.
    * @param {!ESLint.ASTNode} node The node to examine.
    * @return {void}
    */
   function checkIndentInVariableDeclarations(node) {
-    const elements = filterOutSameLineVars(node);
+    const elements = filterOutSameLineVars_(node);
     const nodeIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
     const lastElement = elements[elements.length - 1];
 
@@ -830,7 +835,7 @@ function create(context) {
         return;
       }
 
-      if (isSingleLineNode(node)) {
+      if (isSingleLineNode_(node, sourceCode)) {
         return;
       }
 
@@ -877,7 +882,7 @@ function create(context) {
     SwitchCase(node) {
 
       // Skip inline cases
-      if (isSingleLineNode(node)) {
+      if (isSingleLineNode_(node, sourceCode)) {
         return;
       }
       const caseIndent = expectedCaseIndent(node);
@@ -886,7 +891,7 @@ function create(context) {
     },
 
     FunctionDeclaration(node) {
-      if (isSingleLineNode(node)) {
+      if (isSingleLineNode_(node, sourceCode)) {
         return;
       }
       if (options.FunctionDeclaration.parameters === 'first' &&
@@ -900,7 +905,7 @@ function create(context) {
     },
 
     FunctionExpression(node) {
-      if (isSingleLineNode(node)) {
+      if (isSingleLineNode_(node, sourceCode)) {
         return;
       }
       if (options.FunctionExpression.parameters == 'first' &&
