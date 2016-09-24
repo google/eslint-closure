@@ -145,6 +145,7 @@ target.buildTest = function() {
   const testFiles = [
     './tests/utils.js',
     './tests/rules/camelcase.js',
+    './tests/rules/indent.js',
     './tests/rules/inlineCommentSpacing.js',
   ];
 
