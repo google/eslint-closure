@@ -1,7 +1,7 @@
 goog.module('googlejs.config');
 
 const camelcase = goog.require('googlejs.rules.camelcase');
-// const indent = goog.require('googlejs.rules.indent');
+const indent = goog.require('googlejs.rules.indent');
 const inlineCommentSpacing = goog.require('googlejs.rules.inlineCommentSpacing');
 
 /**
@@ -9,9 +9,9 @@ const inlineCommentSpacing = goog.require('googlejs.rules.inlineCommentSpacing')
  */
 const PLUGIN_ESLINT_CONFIG = {
   rules: {
-    'camelcase': camelcase,
-    // 'indent': indent,
-    'inlineCommentSpacing': inlineCommentSpacing,
+    camelcase: camelcase,
+    indent: indent,
+    inlineCommentSpacing: inlineCommentSpacing,
   },
 };
 
