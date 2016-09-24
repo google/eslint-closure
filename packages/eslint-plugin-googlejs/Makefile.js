@@ -15,16 +15,16 @@ const nodeCLI = require('shelljs-nodecli');
 /* eslint-disable googlejs/camelcase */
 
 
-const NODE_MODULES = './node_modules/';
+const NODE_MODULES = './node_modules';
 
-    // Utilities - intentional extra space at the end of each string.
-const MOCHA = `${NODE_MODULES} mocha/bin/_mocha `;
+// Utilities - intentional extra space at the end of each string.
+const MOCHA = `${NODE_MODULES}/mocha/bin/_mocha `;
 const ESLINT = 'eslint ';
 
 // Files
 const MAKEFILE = './Makefile.js';
 const JS_FILES = 'lib/**/*.js';
-const TEST_FILES = 'tests/lib/rules/**/*.js tests/lib/*.js';
+const TEST_FILES = 'dist/tests/rules/**/*.js dist/tests/*.js';
 
 // Settings
 const MOCHA_TIMEOUT = 10000;
