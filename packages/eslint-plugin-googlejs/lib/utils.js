@@ -74,16 +74,6 @@ function getNodeAncestorOfType(node, type) {
   return parent.type === type ? parent : null;
 }
 
-/**
- * Returns an ancestor the given node that is a VariableDeclarator.  If node has
- * no VariableDeclarator ancestors, then return null.
- * @param {!ESLint.ASTNode} node Node to examine.
- * @return {(!ESLint.ASTNode|null)} If found then node otherwise null.
- */
-function getNodeAncestorOfVariableDeclarator(node) {
-  return getNodeAncestorOfType(node, 'VariableDeclarator');
-}
-
 exports = {
   categorizeUnderscoredIdentifier,
   getNodeAncestorOfType,
