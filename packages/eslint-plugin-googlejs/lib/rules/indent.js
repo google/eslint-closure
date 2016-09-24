@@ -326,16 +326,6 @@ function create(context) {
   }
 
   /**
-   * Returns the VariableDeclarator based on the current node.
-   * If node is nnot present then return null.
-   * @param {!ESLint.ASTNode} node Node to examine.
-   * @return {(!ESLint.ASTNode|null)} If found then node otherwise null.
-   */
-  function getVariableDeclaratorNode(node) {
-    return getNodeAncestorOfType(node, 'VariableDeclarator');
-  }
-
-  /**
    * Returns the ExpressionStatement based on the current node.
    * If node is not present then return null.
    * @param {!ESLint.ASTNode} node Node to examine.
@@ -482,7 +472,7 @@ function create(context) {
     indent += functionOffset;
 
     // check if the node is inside a variable
-    const parentVarNode = getVariableDeclaratorNode(node);
+    const parentVarNode = getNodeAncestorOfVariableDeclarator(node);
 
     if (parentVarNode && isNodeInVarOnTop(node, parentVarNode)) {
       indent += indentSize *
@@ -556,7 +546,7 @@ function create(context) {
 
     let nodeIndent;
     let elementsIndent;
-    const parentVarNode = getVariableDeclaratorNode(node);
+    const parentVarNode = getNodeAncestorOfVariableDeclarator(node);
 
     // TODO - come up with a better strategy in future
     if (isNodeFirstInLine_(node, sourceCode)) {
@@ -858,7 +848,7 @@ function create(context) {
       // alter the expectation of correct indentation. Skip them.
       // TODO: Add appropriate configuration options for variable
       // declarations and assignments.
-      if (getVariableDeclaratorNode(node)) {
+      if (getNodeAncestorOfVariableDeclarator(node)) {
         return;
       }
 
