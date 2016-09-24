@@ -41,6 +41,37 @@ IndentInfo.prototype.goodChar;
  */
 IndentInfo.prototype.badChar;
 
+
+/**
+  * Gets the actual indent of the node.
+  * @param {!Espree.Node} node Node to examine.
+  * @param {!ESLint.SourceCode} sourceCode
+  * @param {string} indentType
+  * @param {boolean=} opt_byLastLine Get indent of node's last line.
+  * @return {!IndentInfo} The node's indent information.
+  * @private
+  */
+function getNodeIndent_(node, sourceCode, indentType, opt_byLastLine) {
+  const token = opt_byLastLine ?
+        sourceCode.getLastToken(node) :
+        sourceCode.getFirstToken(node);
+  const srcCharsBeforeNode = sourceCode.getText(
+    token, token.loc.start.column).split('');
+  const indentChars = srcCharsBeforeNode.slice(
+    0,
+    srcCharsBeforeNode.findIndex(char => char !== ' ' && char !== '\t'));
+  const spaces = indentChars.filter(char => char === ' ').length;
+  const tabs = indentChars.filter(char => char === '\t').length;
+
+  return {
+    space: spaces,
+    tab: tabs,
+    goodChar: indentType === 'space' ? spaces : tabs,
+    badChar: indentType === 'space' ? tabs : spaces,
+  };
+}
+
+
 function create(context) {
   const DEFAULT_VARIABLE_INDENT = 1;
   // For backwards compatibility, don't check parameter indentation unless
@@ -189,36 +220,6 @@ function create(context) {
   }
 
   /**
-   * Gets the actual indent of the node.
-   * @param {!Espree.Node} node Node to examine.
-   * @param {boolean=} opt_byLastLine Get indent of node's last line.
-   * @return {!IndentInfo} The node's indent. Contains keys `space` and `tab`,
-   *     representing the indent of each character. Also contains keys
-   *     `goodChar` and `badChar`, where `goodChar` is the amount of the
-   *     user's desired indentation character, and `badChar` is the amount of
-   *     the other indentation character.
-   */
-  function getNodeIndent(node, opt_byLastLine) {
-    const token = opt_byLastLine ?
-          sourceCode.getLastToken(node) :
-          sourceCode.getFirstToken(node);
-    const srcCharsBeforeNode = sourceCode.getText(
-      token, token.loc.start.column).split('');
-    const indentChars = srcCharsBeforeNode.slice(
-      0,
-      srcCharsBeforeNode.findIndex(char => char !== ' ' && char !== '\t'));
-    const spaces = indentChars.filter(char => char === ' ').length;
-    const tabs = indentChars.filter(char => char === '\t').length;
-
-    return {
-      space: spaces,
-      tab: tabs,
-      goodChar: indentType === 'space' ? spaces : tabs,
-      badChar: indentType === 'space' ? tabs : spaces,
-    };
-  }
-
-  /**
    * Checks node is the first in its own start line. By default it looks by
    * start line.
    * @param {!Espree.Node} node The node to check.
@@ -244,7 +245,7 @@ function create(context) {
    * @return {void}
    */
   function checkNodeIndent(node, neededIndent) {
-    const actualIndent = getNodeIndent(node, false);
+    const actualIndent = getNodeIndent_(node, sourceCode, indentType, false);
 
     if (node.type !== 'ArrayExpression' &&
         node.type !== 'ObjectExpression' &&
@@ -285,7 +286,7 @@ function create(context) {
    */
   function checkLastNodeLineIndent(node, lastLineIndent) {
     const lastToken = sourceCode.getLastToken(node);
-    const endIndent = getNodeIndent(lastToken, true);
+    const endIndent = getNodeIndent_(lastToken, sourceCode, indentType, true);
 
     if ((endIndent.goodChar !== lastLineIndent || endIndent.badChar !== 0) &&
         isNodeFirstInLine(node, true)) {
@@ -307,7 +308,7 @@ function create(context) {
    * @return {void}
    */
   function checkFirstNodeLineIndent(node, firstLineIndent) {
-    const startIndent = getNodeIndent(node, false);
+    const startIndent = getNodeIndent_(node, sourceCode, indentType, false);
 
     if ((startIndent.goodChar !== firstLineIndent ||
          startIndent.badChar !== 0) &&
@@ -451,11 +452,12 @@ function create(context) {
          calleeNode.parent.type === 'ArrayExpression')) {
 
       // If function is part of array or object, comma can be put at left
-      indent = getNodeIndent(calleeNode, false).goodChar;
+      indent = getNodeIndent_(calleeNode, sourceCode, indentType,
+          false).goodChar;
     } else {
 
       // If function is standalone, simple calculate indent
-      indent = getNodeIndent(calleeNode).goodChar;
+      indent = getNodeIndent_(calleeNode, sourceCode, indentType).goodChar;
     }
 
     if (calleeNode.parent.type === 'CallExpression') {
@@ -465,14 +467,16 @@ function create(context) {
           calleeNode.type !== 'ArrowFunctionExpression') {
         if (calleeParent && calleeParent.loc.start.line <
             node.loc.start.line) {
-          indent = getNodeIndent(calleeParent).goodChar;
+          indent = getNodeIndent_(calleeParent, sourceCode, indentType)
+              .goodChar;
         }
       } else {
         if (isArgBeforeCalleeNodeMultiline(calleeNode) &&
             calleeParent.callee.loc.start.line ==
             calleeParent.callee.loc.end.line &&
             !isNodeFirstInLine(calleeNode)) {
-          indent = getNodeIndent(calleeParent).goodChar;
+          indent = getNodeIndent_(calleeParent, sourceCode, indentType)
+              .goodChar;
         }
       }
     }
@@ -580,7 +584,8 @@ function create(context) {
           effectiveParent = parent.parent;
         }
       }
-      nodeIndent = getNodeIndent(effectiveParent).goodChar;
+      nodeIndent = getNodeIndent_(effectiveParent, sourceCode, indentType)
+          .goodChar;
       if (parentVarNode && parentVarNode.loc.start.line !=
           node.loc.start.line) {
         if (parent.type !== 'VariableDeclarator' ||
@@ -614,7 +619,7 @@ function create(context) {
 
       checkFirstNodeLineIndent(node, nodeIndent);
     } else {
-      nodeIndent = getNodeIndent(node).goodChar;
+      nodeIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
       elementsIndent = nodeIndent + indentSize;
     }
 
@@ -687,9 +692,9 @@ function create(context) {
     if (node.parent &&
         statementsWithProperties.indexOf(node.parent.type) !== -1 &&
         isNodeBodyBlock(node)) {
-      indent = getNodeIndent(node.parent).goodChar;
+      indent = getNodeIndent_(node.parent, sourceCode, indentType).goodChar;
     } else {
-      indent = getNodeIndent(node).goodChar;
+      indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
     }
 
     if (node.type === 'IfStatement' &&
@@ -738,7 +743,7 @@ function create(context) {
    */
   function checkIndentInVariableDeclarations(node) {
     const elements = filterOutSameLineVars(node);
-    const nodeIndent = getNodeIndent(node).goodChar;
+    const nodeIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
     const lastElement = elements[elements.length - 1];
 
     const elementsIndent = nodeIndent +
@@ -757,8 +762,11 @@ function create(context) {
     if (tokenBeforeLastElement.value === ',') {
 
       // Special case for comma-first syntax where the semicolon is indented.
-      checkLastNodeLineIndent(node,
-                              getNodeIndent(tokenBeforeLastElement).goodChar);
+      checkLastNodeLineIndent(
+          node,
+          getNodeIndent_(tokenBeforeLastElement, sourceCode, indentType)
+              .goodChar
+      );
     } else {
       checkLastNodeLineIndent(node, elementsIndent - indentSize);
     }
@@ -790,7 +798,8 @@ function create(context) {
       return caseIndentStore[switchNode.loc.start.line];
     } else {
       if (typeof opt_switchIndent === 'undefined') {
-        opt_switchIndent = getNodeIndent(switchNode).goodChar;
+        opt_switchIndent = getNodeIndent_(switchNode, sourceCode, indentType)
+            .goodChar;
       }
 
       if (switchNode.cases.length > 0 && options.SwitchCase === 0) {
@@ -809,7 +818,8 @@ function create(context) {
       if (node.body.length > 0) {
 
         // Root nodes should have no indent
-        checkNodesIndent(node.body, getNodeIndent(node).goodChar);
+        checkNodesIndent(
+            node.body, getNodeIndent_(node, sourceCode, indentType).goodChar);
       }
     },
 
@@ -870,7 +880,8 @@ function create(context) {
         return;
       }
 
-      const propertyIndent = getNodeIndent(node).goodChar +
+      const propertyIndent =
+            getNodeIndent_(node, sourceCode, indentType).goodChar +
             indentSize * options.MemberExpression;
 
       const checkNodes = [node.property];
@@ -887,7 +898,8 @@ function create(context) {
     SwitchStatement(node) {
 
       // Switch is not a 'BlockStatement'
-      const switchIndent = getNodeIndent(node).goodChar;
+      const switchIndent = getNodeIndent_(
+          node, sourceCode, indentType).goodChar;
       const caseIndent = expectedCaseIndent(node, switchIndent);
 
       checkNodesIndent(node.cases, caseIndent);
