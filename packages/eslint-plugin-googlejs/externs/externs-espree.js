@@ -269,7 +269,7 @@ Espree.StatementListItem;
 Espree.ArrayExpression = function() {};
 
 /** @type {!Array<!Espree.ArrayExpressionElement>} */
-Espree.ArrayExpression.prototype.Elements;
+Espree.ArrayExpression.prototype.elements;
 
 /** @record @extends {Espree.ASTNode} */
 Espree.ArrayPattern = function() {};

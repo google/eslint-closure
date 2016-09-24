@@ -149,23 +149,35 @@ function isOuterIIFE_(node) {
   let stmt = parent.parent;
 
   // Verify that the node is an IIFE.
-  if (parent.type !== 'CallExpression' || parent.callee !== node) {
+  if (parent.type !== 'CallExpression') {
     return false;
   }
 
-  // Navigate legal ancestors to determine whether this IIEF is outer.
-  while (
-    stmt.type === 'UnaryExpression' && (
-      stmt.operator === '!' ||
-        stmt.operator === '~' ||
-        stmt.operator === '+' ||
-        stmt.operator === '-') ||
-      stmt.type === 'AssignmentExpression' ||
-      stmt.type === 'LogicalExpression' ||
-      stmt.type === 'SequenceExpression' ||
-      stmt.type === 'VariableDeclarator') {
+  // Parent must be a CallExpression.
+  if (/** @type {!Espree.CallExpression} */ (parent).callee !== node) {
+    return false;
+  }
 
-    stmt = stmt.parent;
+  // Navigate legal ancestors to determine whether this IIFE is outer.
+  while (stmt.type === 'UnaryExpression' ||
+         stmt.type === 'AssignmentExpression' ||
+         stmt.type === 'LogicalExpression' ||
+         stmt.type === 'SequenceExpression' ||
+         stmt.type === 'VariableDeclarator') {
+    // Check for valid unary expressions.
+    if (stmt.type === 'UnaryExpression') {
+      const unaryStmt = /** @type {!Espree.UnaryExpression} */ (stmt);
+      if (unaryStmt.operator === '!' ||
+          unaryStmt.operator === '~' ||
+          unaryStmt.operator === '+' ||
+          unaryStmt.operator === '-') {
+        stmt = stmt.parent;
+      } else {
+        break;
+      }
+    } else {
+      stmt = stmt.parent;
+    }
   }
 
   return ((stmt.type === 'ExpressionStatement' ||
@@ -182,9 +194,15 @@ function isOuterIIFE_(node) {
  * @private
  */
 function isFirstArrayElementOnSameLine_(node) {
-  if (node.type === 'ArrayExpression' && node.elements[0]) {
-    return node.elements[0].loc.start.line === node.loc.start.line &&
-      node.elements[0].type === 'ObjectExpression';
+  if (node.type != 'ArrayExpression') {
+    return false;
+  }
+  const arrayExpression = /** @type {!Espree.ArrayExpression} */ (node);
+
+  if (arrayExpression.elements[0]) {
+    return arrayExpression.elements[0].loc.start.line ===
+        arrayExpression.loc.start.line &&
+        arrayExpression.elements[0].type === 'ObjectExpression';
   } else {
     return false;
   }
@@ -207,15 +225,16 @@ function isNodeBodyBlock_(node) {
  * node.  Basically have only 1 elements from each line except the variable
  * declaration line.
  *
- * @param {!ESLint.ASTNode} node Variable declaration node.
+ * @param {!Espree.VariableDeclaration} varDeclaration Variable declaration
+ *     node.
  * @return {!Array<!ESLint.ASTNode>} Filtered elements
  * @private
  */
-function filterOutSameLineVars_(node) {
-  return node.declarations.reduce(function(finalCollection, elem) {
+function filterOutSameLineVars_(varDeclaration) {
+  return varDeclaration.declarations.reduce(function(finalCollection, elem) {
     const lastElem = finalCollection[finalCollection.length - 1];
 
-    if ((elem.loc.start.line !== node.loc.start.line && !lastElem) ||
+    if ((elem.loc.start.line !== varDeclaration.loc.start.line && !lastElem) ||
         (lastElem && lastElem.loc.start.line !== elem.loc.start.line)) {
       finalCollection.push(elem);
     }
@@ -240,7 +259,7 @@ function create(context) {
       let: DEFAULT_VARIABLE_INDENT,
       const: DEFAULT_VARIABLE_INDENT,
     },
-    outerIIFEBody: null,
+    outerIIFEBody: -1,
     FunctionDeclaration: {
       parameters: DEFAULT_PARAMETER_INDENT,
       body: DEFAULT_FUNCTION_BODY_INDENT,
@@ -458,7 +477,7 @@ function create(context) {
 
   /**
    * Checks indent for function block content.
-   * @param {!ESLint.ASTNode} node A BlockStatement node that is inside of a
+   * @param {!Espree.BlockStatement} node A BlockStatement node that is inside of a
    *     function.
    * @return {void}
    */
@@ -494,7 +513,8 @@ function create(context) {
     }
 
     if (calleeNode.parent.type === 'CallExpression') {
-      const calleeParent = calleeNode.parent;
+      const calleeParent =
+           /** @type {!Espree.CallExpression} */ (calleeNode.parent);
 
       if (calleeNode.type !== 'FunctionExpression' &&
           calleeNode.type !== 'ArrowFunctionExpression') {
@@ -519,7 +539,7 @@ function create(context) {
     // corresponding options are enabled.
     let functionOffset = indentSize;
 
-    if (options.outerIIFEBody !== null && isOuterIIFE_(calleeNode)) {
+    if (options.outerIIFEBody !== -1 && isOuterIIFE_(calleeNode)) {
       functionOffset = options.outerIIFEBody * indentSize;
     } else if (calleeNode.type === 'FunctionExpression') {
       functionOffset = options.FunctionExpression.body * indentSize;
@@ -528,8 +548,9 @@ function create(context) {
     }
     indent += functionOffset;
 
-    // check if the node is inside a variable
-    const parentVarNode = getNodeAncestorOfType(node, 'VariableDeclarator');
+    // Check if the node is inside a variable.
+    const parentVarNode = /** @type {!Espree.VariableDeclarator} */
+        (getNodeAncestorOfType(node, 'VariableDeclarator'));
 
     if (parentVarNode && isNodeInVarOnTop(node, parentVarNode)) {
       indent += indentSize *
@@ -545,10 +566,17 @@ function create(context) {
 
   /**
    * Checks indent for array block content or object block content.
-   * @param {!ESLint.ASTNode} node Node to examine.
+   * @param {(!Espree.ArrayExpression|!Espree.ObjectExpression)} node Node to
+   *     examine.
    * @return {void}
    */
   function checkIndentInArrayOrObjectBlock(node) {
+
+    if (!(node.type === 'ArrayExpression' ||
+            node.type === 'ObjectExpression')) {
+      throw new Error(
+        `Expected an ArrayExpression or ObjectExpression, got ${node.type}`);
+    }
 
     // Skip inline
     if (isSingleLineNode_(node, sourceCode)) {
