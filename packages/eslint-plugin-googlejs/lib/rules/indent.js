@@ -42,6 +42,37 @@ IndentInfo.prototype.goodChar;
  */
 IndentInfo.prototype.badChar;
 
+/**
+ * Nodes that may have a body with curly braces or might just have a single body
+ * node.
+ * @typedef {(!Espree.WhileStatement|!Espree.ForStatement|
+ *     !Espree.ForInStatement|!Espree.ForOfStatement|!Espree.DoWhileStatement)
+ * }
+ */
+let OptionallyBodiedNode;
+
+/**
+ * Nodes that have a body property.
+ * @typedef {(
+*      !Espree.ArrowFunctionExpression|
+*      !Espree.BlockStatement|
+*      !Espree.CatchClause|
+*      !Espree.ClassBody|
+*      !Espree.ClassDeclaration|
+*      !Espree.ClassExpression|
+*      !Espree.DoWhileStatement|
+*      !Espree.ForInStatement|
+*      !Espree.ForOfStatement|
+*      !Espree.ForStatement|
+*      !Espree.FunctionDeclaration|
+*      !Espree.FunctionExpression|
+*      !Espree.LabeledStatement|
+*      !Espree.Program|
+*      !Espree.WhileStatement|
+*      !Espree.WithStatement
+ * )}
+ */
+let BodiedNode;
 
 /**
   * Gets the actual indent of the node.
@@ -112,12 +143,12 @@ function isSingleLineNode_(node, sourceCode) {
  * Check to see if the node is part of the multi-line variable declaration.
  * Also if its on the same line as the varNode.
  * @param {!ESLint.ASTNode} node Node to check.
- * @param {!Espree.VariableDeclarator} varNode Variable declaration node to
+ * @param {?Espree.VariableDeclarator} varNode Variable declaration node to
  *     check against.
  * @return {boolean} True if all the above condition are satisfied.
  */
 function isNodeInVarOnTop(node, varNode) {
-  return varNode &&
+  return !!varNode &&
     varNode.parent.loc.start.line === node.loc.start.line &&
     varNode.parent.declarations.length > 1;
 }
@@ -477,7 +508,7 @@ function create(context) {
 
   /**
    * Checks indent for function block content.
-   * @param {!Espree.BlockStatement} node A BlockStatement node that is inside of a
+   * @param {!BodiedNode} node A BlockStatement node that is inside of a
    *     function.
    * @return {void}
    */
@@ -601,7 +632,8 @@ function create(context) {
 
     let nodeIndent;
     let elementsIndent;
-    const parentVarNode = getNodeAncestorOfType(node, 'VariableDeclarator');
+    const parentVarNode = /** @type {?Espree.VariableDeclarator} */
+         (getNodeAncestorOfType(node, 'VariableDeclarator'));
 
     // TODO - come up with a better strategy in future
     if (isNodeFirstInLine_(node, sourceCode)) {
@@ -677,7 +709,7 @@ function create(context) {
 
   /**
    * Checks indentation for blocks.
-   * @param {!Espree.BlockStatement} node Node to check.
+   * @param {!ESLint.ASTNode} node Node to check.
    * @return {void}
    */
   function blockIndentationCheck(node) {
@@ -688,11 +720,11 @@ function create(context) {
     }
 
     if (node.parent && (
-      node.parent.type === 'FunctionExpression' ||
+        node.parent.type === 'FunctionExpression' ||
         node.parent.type === 'FunctionDeclaration' ||
         node.parent.type === 'ArrowFunctionExpression'
     )) {
-      checkIndentInFunctionBlock(node);
+      checkIndentInFunctionBlock(/** @type {!BodiedNode} */ (node));
       return;
     }
 
@@ -715,8 +747,9 @@ function create(context) {
     }
 
     if (node.type === 'IfStatement' &&
-        node.consequent.type !== 'BlockStatement') {
-      nodesToCheck = [node.consequent];
+        /** @type {!Espree.IfStatement} */
+        (node).consequent.type !== 'BlockStatement') {
+      nodesToCheck = [/** @type {!Espree.IfStatement} */(node).consequent];
     } else if (Array.isArray(node.body)) {
       nodesToCheck = node.body;
     } else {
@@ -734,7 +767,7 @@ function create(context) {
 
   /**
    * Check indentation for variable declarations.
-   * @param {!ESLint.ASTNode} node The node to examine.
+   * @param {!Espree.VariableDeclaration} node The node to examine.
    * @return {void}
    */
   function checkIndentInVariableDeclarations(node) {
@@ -771,7 +804,7 @@ function create(context) {
   /**
    * Check and decide whether to check for indentation for blockless nodes.
    * Scenarios are for or while statements without braces around them.
-   * @param {!Espree.BlockStatement} node The node to examine.
+   * @param {!OptionallyBodiedNode} node The node to examine.
    * @return {void}
    */
   function blockLessNodes(node) {
