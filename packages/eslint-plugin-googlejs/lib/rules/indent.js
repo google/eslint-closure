@@ -515,7 +515,7 @@ function create(context) {
    *     function.
    * @return {void}
    */
-  function checkIndentInFunctionBlock(node) {
+  function checkFunctionIndent(node) {
 
     /*
      * Search first caller in chain.
@@ -715,7 +715,7 @@ function create(context) {
    * @param {!BodiedNode} node Node to check.
    * @return {void}
    */
-  function checkBlockIndentation(node) {
+  function checkBlockStatementIndent(node) {
 
     // Skip inline blocks
     if (isSingleLineNode_(node, sourceCode)) {
@@ -727,7 +727,7 @@ function create(context) {
         node.parent.type === 'FunctionDeclaration' ||
         node.parent.type === 'ArrowFunctionExpression'
     )) {
-      checkIndentInFunctionBlock(node);
+      checkFunctionIndent(node);
       return;
     }
 
@@ -811,14 +811,20 @@ function create(context) {
   }
 
   /**
-   * Checks indentation for nodes that may have a single element body, e.g. a
-   * short `IfStatement`.
+   * Checks indentation for nodes that may have a single element body without
+   * curly braces, e.g. a short `IfStatement`.
    * @param {!OptionallyBodiedNode} node The node to examine.
    * @return {void}
    */
   function checkOptionallyBodiedIndent(node) {
-    if (node.body.type !== 'BlockStatement') {
-      checkBlockIndentation(node);
+    if (node.body.type === 'BlockStatement') {
+      return;
+    } else {
+      const indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
+      const nodesToCheck = [node.body];
+      if (nodesToCheck.length > 0) {
+        checkNodesIndent(nodesToCheck, indent + indentSize);
+      }
     }
   }
 
@@ -883,9 +889,9 @@ function create(context) {
         }
       },
 
-    ClassBody: checkBlockIndentation,
+    ClassBody: checkBlockStatementIndent,
 
-    BlockStatement: checkBlockIndentation,
+    BlockStatement: checkBlockStatementIndent,
 
     WhileStatement: checkOptionallyBodiedIndent,
 
