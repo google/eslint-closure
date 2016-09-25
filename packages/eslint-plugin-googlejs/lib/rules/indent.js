@@ -746,11 +746,7 @@ function create(context) {
       indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
     }
 
-    if (node.type === 'IfStatement' &&
-        /** @type {!Espree.IfStatement} */
-        (node).consequent.type !== 'BlockStatement') {
-      nodesToCheck = [/** @type {!Espree.IfStatement} */(node).consequent];
-    } else if (Array.isArray(node.body)) {
+    if (Array.isArray(node.body)) {
       nodesToCheck = node.body;
     } else {
       nodesToCheck = [node.body];
@@ -765,6 +761,16 @@ function create(context) {
     }
   }
 
+  /**
+   * @param {!Espree.IfStatement} node
+   * @returns {void}
+   */
+  function checkIfStatementIndent(node) {
+    // assert(node.consequent.type !== 'BlockStatement');
+    const indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
+    const nodesToCheck = [node.consequent];
+    checkNodesIndent(nodesToCheck, indent + indentSize);
+  }
   /**
    * Check indentation for variable declarations.
    * @param {!Espree.VariableDeclaration} node The node to examine.
@@ -876,7 +882,7 @@ function create(context) {
     IfStatement(node) {
       if (node.consequent.type !== 'BlockStatement' &&
           node.consequent.loc.start.line > node.loc.start.line) {
-        checkBlockIndentation(node);
+        checkIfStatementIndent(node);
       }
     },
 
