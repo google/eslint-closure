@@ -48,14 +48,6 @@ function expectedErrors(indentType, errors) {
 
 const ruleTester = new eslint.RuleTester();
 
-/**
- * 
- * @param {} indent
- * @param {} indentRule
- * @param {} getAppVersion
- * @param {} test23
- * @param {} responseData
- */
 ruleTester.run("indent", indentRule, {
   valid: [
     {
