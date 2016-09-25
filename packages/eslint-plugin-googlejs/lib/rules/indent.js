@@ -709,10 +709,10 @@ function create(context) {
 
   /**
    * Checks indentation for blocks.
-   * @param {!ESLint.ASTNode} node Node to check.
+   * @param {!BodiedNode} node Node to check.
    * @return {void}
    */
-  function blockIndentationCheck(node) {
+  function checkBlockIndentation(node) {
 
     // Skip inline blocks
     if (isSingleLineNode_(node, sourceCode)) {
@@ -724,7 +724,7 @@ function create(context) {
         node.parent.type === 'FunctionDeclaration' ||
         node.parent.type === 'ArrowFunctionExpression'
     )) {
-      checkIndentInFunctionBlock(/** @type {!BodiedNode} */ (node));
+      checkIndentInFunctionBlock(node);
       return;
     }
 
@@ -802,14 +802,14 @@ function create(context) {
   }
 
   /**
-   * Check and decide whether to check for indentation for blockless nodes.
-   * Scenarios are for or while statements without braces around them.
+   * Checks indentation for nodes that have a single element body, e.g. a short
+   * `IfStatement`.
    * @param {!OptionallyBodiedNode} node The node to examine.
    * @return {void}
    */
-  function blockLessNodes(node) {
+  function checkSingleBodiedNode(node) {
     if (node.body.type !== 'BlockStatement') {
-      blockIndentationCheck(node);
+      checkBlockIndentation(node);
     }
   }
 
@@ -856,19 +856,19 @@ function create(context) {
       }
     },
 
-    ClassBody: blockIndentationCheck,
+    ClassBody: checkBlockIndentation,
 
-    BlockStatement: blockIndentationCheck,
+    BlockStatement: checkBlockIndentation,
 
-    WhileStatement: blockLessNodes,
+    WhileStatement: checkSingleBodiedNode,
 
-    ForStatement: blockLessNodes,
+    ForStatement: checkSingleBodiedNode,
 
-    ForInStatement: blockLessNodes,
+    ForInStatement: checkSingleBodiedNode,
 
-    ForOfStatement: blockLessNodes,
+    ForOfStatement: checkSingleBodiedNode,
 
-    DoWhileStatement: blockLessNodes,
+    DoWhileStatement: checkSingleBodiedNode,
 
     /**
      * @param {!Espree.IfStatement} node
@@ -876,7 +876,7 @@ function create(context) {
     IfStatement(node) {
       if (node.consequent.type !== 'BlockStatement' &&
           node.consequent.loc.start.line > node.loc.start.line) {
-        blockIndentationCheck(node);
+        checkBlockIndentation(node);
       }
     },
 
