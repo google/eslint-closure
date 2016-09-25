@@ -61,6 +61,8 @@ const closureJavaOptions = [];
 const CLOSURE_BASE_JS =
       './node_modules/google-closure-library/closure/goog/base.js';
 
+const CLOSURE_LIB_JS =
+      './node_modules/google-closure-library/closure/goog/**.js';
 target.all = function() {
   target.test();
 };
@@ -123,13 +125,12 @@ function buildTestCompiler(testFile, entryPoint) {
       Object.assign(commonClosureCompilerSettings, {
         js: [
           CLOSURE_BASE_JS,
+          // CLOSURE_LIB_JS,
           "'./lib/**.js'",
           testFile,
         ],
         js_output_file: `./dist/${testFile}`,
-        module_output_path_prefix: './dist/',
         compilation_level: 'WHITESPACE_ONLY',
-        assume_function_wrapper: null,
         formatting: 'PRETTY_PRINT',
         entry_point: entryPoint,
         rewrite_polyfills: false,

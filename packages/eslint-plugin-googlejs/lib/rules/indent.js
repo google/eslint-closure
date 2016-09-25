@@ -9,6 +9,9 @@
 
 goog.module('googlejs.rules.indent');
 
+// TODO(jschaf): Why won't this build?
+// const {assert} = goog.require('goog.asserts');
+
 const {getNodeAncestorOfType, tokensStartOnSameLine} = goog.require('googlejs.utils');
 /**
  * Information about the indentation preceeding a Node.
