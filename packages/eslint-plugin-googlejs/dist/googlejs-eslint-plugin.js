@@ -1,7 +1,7 @@
 'use strict';var e = {UnderscoreForm:{CONSTANT:"constant", LEADING:"leading", NO_UNDERSCORE:"no_underscore", MIDDLE:"middle", OPT_PREFIX:"opt_prefix", TRAILING:"trailing", VAR_ARGS:"var_args"}};
 var g = {categorizeUnderscoredIdentifier:function(a) {
   return "" === a || 0 === a.length ? e.UnderscoreForm.NO_UNDERSCORE : a.toUpperCase() === a ? e.UnderscoreForm.CONSTANT : -1 === a.indexOf("_") ? e.UnderscoreForm.NO_UNDERSCORE : "var_args" === a ? e.UnderscoreForm.VAR_ARGS : "opt_" === a.substring(0, 4) && "opt_" != a ? e.UnderscoreForm.OPT_PREFIX : "_" === a[0] ? e.UnderscoreForm.LEADING : "_" === a[a.length - 1] ? e.UnderscoreForm.TRAILING : e.UnderscoreForm.MIDDLE;
-}, isTokenOnSameLine:function(a, d) {
+}, tokensOnSameLine:function(a, d) {
   return a.loc.end.line === d.loc.start.line;
 }, isUnderscored:function(a) {
   return -1 < a.indexOf("_");
@@ -72,7 +72,7 @@ function m(a, d, c) {
     var b = a.getSourceCode();
     b.getComments(c);
     b = b.getTokenBefore(c, 1) || b.getTokenOrCommentBefore(c);
-    if (null != b && g.isTokenOnSameLine(c, b)) {
+    if (null != b && g.tokensOnSameLine(c, b)) {
       var f = c.start - b.end;
       f < d && a.report({node:c, message:"Expected at least " + d + " " + (1 === d ? "space" : "spaces") + " before inline comment.", fix:function(a) {
         var b = Array(d - f + 1).join(" ");

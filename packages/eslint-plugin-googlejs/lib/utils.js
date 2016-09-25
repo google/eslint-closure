@@ -6,13 +6,24 @@ goog.module('googlejs.utils');
 const types = goog.require('googlejs.types');
 
 /**
- * Determines whether two adjacent tokens are on the same line.
- * @param {(!ESLint.ASTNode|!Espree.Token)} left The left token object.
- * @param {(!ESLint.ASTNode|!Espree.Token)} right The right token object.
- * @returns {boolean} Whether or not the tokens are on the same line.
+ * Returns true iff the end of the left node is the same as the start of the
+ * right node.
+ * @param {!Espree.Node} left The left token object.
+ * @param {!Espree.Node} right The right token object.
+ * @return {boolean} Whether or not the tokens are on the same line.
  */
-function isTokenOnSameLine(left, right) {
+function tokensOnSameLine(left, right) {
   return left.loc.end.line === right.loc.start.line;
+}
+
+/**
+ * Returns true iff both tokens start on the same line.
+ * @param {!Espree.Node} node1
+ * @param {!Espree.Node} node2
+ * @return {boolean}
+ */
+function tokensStartOnSameLine(node1, node2) {
+  return node1.loc.start.line === node2.loc.start.line;
 }
 
 /**
@@ -77,6 +88,7 @@ function getNodeAncestorOfType(node, type) {
 exports = {
   categorizeUnderscoredIdentifier,
   getNodeAncestorOfType,
-  isTokenOnSameLine,
   isUnderscored,
+  tokensOnSameLine,
+  tokensStartOnSameLine,
 };

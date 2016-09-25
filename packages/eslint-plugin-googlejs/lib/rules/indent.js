@@ -9,7 +9,7 @@
 
 goog.module('googlejs.rules.indent');
 
-const {getNodeAncestorOfType} = goog.require('googlejs.utils');
+const {getNodeAncestorOfType, tokensStartOnSameLine} = goog.require('googlejs.utils');
 /**
  * Information about the indentation preceeding a Node.
  * @record
@@ -430,7 +430,7 @@ function create(context) {
   }
 
   /**
-   * Checks taht last node line indent this detects, that block closed
+   * Checks that last node line indent this detects, that block closed
    * correctly.
    * @param {!ESLint.ASTNode} node Node to examine.
    * @param {number} lastLineIndent Needed indent.
@@ -617,13 +617,12 @@ function create(context) {
       }
       nodeIndent = getNodeIndent_(effectiveParent, sourceCode, indentType)
           .goodChar;
-      if (parentVarNode && parentVarNode.loc.start.line !=
-          node.loc.start.line) {
+
+      if (parentVarNode && !tokensStartOnSameLine(parentVarNode, node)) {
         if (parent.type !== 'VariableDeclarator' ||
             parentVarNode === parentVarNode.parent.declarations[0]) {
           if (parent.type === 'VariableDeclarator' &&
-              parentVarNode.loc.start.line ===
-              effectiveParent.loc.start.line) {
+              parentVarNode.loc.start.line === effectiveParent.loc.start.line) {
             nodeIndent = nodeIndent +
               (indentSize *
                options.VariableDeclarator[parentVarNode.parent.kind]);
@@ -700,10 +699,8 @@ function create(context) {
     let indent;
     let nodesToCheck = [];
 
-    /*
-     * For this statements we should check indent from statement beginning,
-     * not from the beginning of the block.
-     */
+    // For these statements we should check indent from statement beginning, not
+    // from the beginning of the block.
     const statementsWithProperties = [
       'IfStatement', 'WhileStatement', 'ForStatement', 'ForInStatement',
       'ForOfStatement', 'DoWhileStatement', 'ClassDeclaration',
