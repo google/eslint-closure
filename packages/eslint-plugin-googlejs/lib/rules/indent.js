@@ -247,7 +247,7 @@ function create(context) {
   const DEFAULT_VARIABLE_INDENT = 1;
   // For backwards compatibility, don't check parameter indentation unless
   // specified in the config
-  const DEFAULT_PARAMETER_INDENT = null;
+  const DEFAULT_PARAMETER_INDENT = -1;
   const DEFAULT_FUNCTION_BODY_INDENT = 1;
 
   let indentType = 'space';
@@ -951,7 +951,7 @@ function create(context) {
           node.params.length) {
         checkNodesIndent(
           node.params.slice(1), node.params[0].loc.start.column);
-      } else if (options.FunctionDeclaration.parameters !== null) {
+      } else if (options.FunctionDeclaration.parameters !== -1) {
         checkNodesIndent(
           node.params, indentSize * options.FunctionDeclaration.parameters);
       }
@@ -968,7 +968,7 @@ function create(context) {
           node.params.length) {
         checkNodesIndent(
           node.params.slice(1), node.params[0].loc.start.column);
-      } else if (options.FunctionExpression.parameters !== null) {
+      } else if (options.FunctionExpression.parameters !== -1) {
         checkNodesIndent(
           node.params, indentSize * options.FunctionExpression.parameters);
       }
