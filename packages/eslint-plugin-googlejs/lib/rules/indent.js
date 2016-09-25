@@ -811,14 +811,32 @@ function create(context) {
   }
 
   /**
-   * Checks indentation for nodes that have a single element body, e.g. a short
-   * `IfStatement`.
+   * Checks indentation for nodes that may have a single element body, e.g. a
+   * short `IfStatement`.
    * @param {!OptionallyBodiedNode} node The node to examine.
    * @return {void}
    */
-  function checkSingleBodiedNode(node) {
+  function checkOptionallyBodiedIndent(node) {
     if (node.body.type !== 'BlockStatement') {
       checkBlockIndentation(node);
+    }
+  }
+
+  /**
+   * Checks indentation of function params.
+   * @param {(!Espree.FunctionExpression|!Espree.FunctionDeclaration)} node
+   * @param {number} indentSize The base indent width. 
+   * @param {(number|string)} indentMultiple The ident multiple of `indentSize`.
+   */
+  function checkFunctionParamsIndent(node, indentSize, indentMultiple) {
+    if (indentMultiple === 'first' && node.params.length) {
+      checkNodesIndent(
+        node.params.slice(1), node.params[0].loc.start.column);
+    } else {
+      // indentMultiple must be a number because only 'first' and numbers are
+      // allowed by the schema.
+      checkNodesIndent(
+        node.params, indentSize * /** @type {number} */ (indentMultiple));
     }
   }
 
@@ -862,22 +880,22 @@ function create(context) {
         // Root nodes should have no indent
         checkNodesIndent(
             node.body, getNodeIndent_(node, sourceCode, indentType).goodChar);
-      }
-    },
+        }
+      },
 
     ClassBody: checkBlockIndentation,
 
     BlockStatement: checkBlockIndentation,
 
-    WhileStatement: checkSingleBodiedNode,
+    WhileStatement: checkOptionallyBodiedIndent,
 
-    ForStatement: checkSingleBodiedNode,
+    ForStatement: checkOptionallyBodiedIndent,
 
-    ForInStatement: checkSingleBodiedNode,
+    ForInStatement: checkOptionallyBodiedIndent,
 
-    ForOfStatement: checkSingleBodiedNode,
+    ForOfStatement: checkOptionallyBodiedIndent,
 
-    DoWhileStatement: checkSingleBodiedNode,
+    DoWhileStatement: checkOptionallyBodiedIndent,
 
     /**
      * @param {!Espree.IfStatement} node
@@ -989,13 +1007,9 @@ function create(context) {
       if (isSingleLineNode_(node, sourceCode)) {
         return;
       }
-      if (options.FunctionDeclaration.parameters === 'first' &&
-          node.params.length) {
-        checkNodesIndent(
-          node.params.slice(1), node.params[0].loc.start.column);
-      } else if (options.FunctionDeclaration.parameters !== -1) {
-        checkNodesIndent(
-          node.params, indentSize * options.FunctionDeclaration.parameters);
+      if (options.FunctionDeclaration.parameters !== -1) {
+        checkFunctionParamsIndent(
+            node, indentSize, options.FunctionDeclaration.parameters);
       }
     },
 
@@ -1006,13 +1020,9 @@ function create(context) {
       if (isSingleLineNode_(node, sourceCode)) {
         return;
       }
-      if (options.FunctionExpression.parameters == 'first' &&
-          node.params.length) {
-        checkNodesIndent(
-          node.params.slice(1), node.params[0].loc.start.column);
-      } else if (options.FunctionExpression.parameters !== -1) {
-        checkNodesIndent(
-          node.params, indentSize * options.FunctionExpression.parameters);
+      if (options.FunctionExpression.parameters !== -1) {
+        checkFunctionParamsIndent(
+          node, indentSize, options.FunctionExpression.parameters);
       }
     },
   };
