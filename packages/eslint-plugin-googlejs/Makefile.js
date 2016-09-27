@@ -160,6 +160,28 @@ target.buildTest = function() {
   }
 };
 
+target.testIndent = function() {
+  console.log('Testing the googlejs plugin indent functionality.');
+
+  const testFileOld = './tests/rules/indent.js';
+  const testFileNew = './tests/rules/indent-new.js';
+  const compilerOldIndentTest = buildTestCompiler(
+    testFileOld, 'googlejs.tests.rules.indent');
+  const compilerNewIndentTest = buildTestCompiler(
+    testFileNew, 'googlejs.tests.rules.indentNew');
+
+  compilerOldIndentTest.run(function(exitCode, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+  });
+
+  compilerNewIndentTest.run(function(exitCode, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+  });
+
+};
+
 target.buildAdvanced = function() {
   console.log('Building the googlejs plugin library with ADVANCED ' +
               'optimizations.');
