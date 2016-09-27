@@ -47,7 +47,9 @@ IndentInfo.prototype.badChar;
 
 /**
  * Nodes that may have a body with curly braces or might just have a single body
- * node.
+ * node.  For example:
+ *     `if (condition) return;`
+ *     `if (condition) {return;}`
  * @typedef {(!Espree.WhileStatement|!Espree.ForStatement|
  *     !Espree.ForInStatement|!Espree.ForOfStatement|!Espree.DoWhileStatement)
  * }
@@ -57,25 +59,40 @@ let OptionallyBodiedNode;
 /**
  * Nodes that have a body property.
  * @typedef {(
-*      !Espree.ArrowFunctionExpression|
-*      !Espree.BlockStatement|
-*      !Espree.CatchClause|
-*      !Espree.ClassBody|
-*      !Espree.ClassDeclaration|
-*      !Espree.ClassExpression|
-*      !Espree.DoWhileStatement|
-*      !Espree.ForInStatement|
-*      !Espree.ForOfStatement|
-*      !Espree.ForStatement|
-*      !Espree.FunctionDeclaration|
-*      !Espree.FunctionExpression|
-*      !Espree.LabeledStatement|
-*      !Espree.Program|
-*      !Espree.WhileStatement|
-*      !Espree.WithStatement
+ *     !Espree.ArrowFunctionExpression|
+ *     !Espree.BlockStatement|
+ *     !Espree.CatchClause|
+ *     !Espree.ClassBody|
+ *     !Espree.ClassDeclaration|
+ *     !Espree.ClassExpression|
+ *     !Espree.DoWhileStatement|
+ *     !Espree.ForInStatement|
+ *     !Espree.ForOfStatement|
+ *     !Espree.ForStatement|
+ *     !Espree.FunctionDeclaration|
+ *     !Espree.FunctionExpression|
+ *     !Espree.LabeledStatement|
+ *     !Espree.Program|
+ *     !Espree.WhileStatement|
+ *     !Espree.WithStatement
  * )}
  */
 let BodiedNode;
+
+/**
+ * Nodes whose body indent is based on the parents indent.
+ * @typedef {(
+ *     !Espree.ClassDeclaration|
+ *     !Espree.DoWhileStatement|
+ *     !Espree.ForInStatement|
+ *     !Espree.ForOfStatement|
+ *     !Espree.ForStatement|
+ *     !Espree.FunctionDeclaration|
+ *     !Espree.WhileStatement|
+ *     !Espree.WithStatement
+ * )}
+ */
+let StandaloneStatement;
 
 /**
   * Gets the actual indent of the node.
@@ -752,6 +769,8 @@ function create(context) {
     if (Array.isArray(node.body)) {
       nodesToCheck = node.body;
     } else {
+      // This should only come from optionally bodied nodes, so I don't think we
+      // need this.
       nodesToCheck = [node.body];
     }
 
