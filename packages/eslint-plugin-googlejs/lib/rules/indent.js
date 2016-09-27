@@ -739,6 +739,9 @@ function create(context) {
       return;
     }
 
+    // TODO(jschaf): remove these once all nodes check their own indents.
+    if (node.parent.type === 'IfStatement') return;
+
     if (node.parent && (
         node.parent.type === 'FunctionExpression' ||
         node.parent.type === 'FunctionDeclaration' ||
@@ -784,15 +787,48 @@ function create(context) {
   }
 
   /**
+   * Checks indents of nodes that are not nested in other statement,
+   * e.g. `IfStatement`, `WhileStatment`.
+   * @param {!StandaloneStatement} node
+   */
+  function checkStandloneStatementIndent(node) {
+    if (isSingleLineNode_(node, sourceCode)) return;
+    // TODO: assert node body or classBody is a blockstatment.
+    const indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
+    const nodesToCheck = node.body;
+    if (nodesToCheck.length > 0) {
+      checkNodesIndent(nodesToCheck, 0);
+    }
+  }
+
+  /**
    * @param {!Espree.IfStatement} node
    * @returns {void}
    */
   function checkIfStatementIndent(node) {
-    // assert(node.consequent.type !== 'BlockStatement');
-    const indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
-    const nodesToCheck = [node.consequent];
-    checkNodesIndent(nodesToCheck, indent + indentSize);
+    const baseIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
+    const expectedIndent = baseIndent + indentSize;
+
+    if (node.consequent.type !== 'BlockStatement') {
+        if (!tokensStartOnSameLine(node, node.consequent)) {
+          checkNodeIndent(node.consequent, expectedIndent);
+        }
+    } else {
+      checkNodesIndent(node.consequent.body, expectedIndent);
+    }
+
+    if (node.alternate) {
+      if (node.alternate.type !== 'BlockStatement') {
+        const elseKeyword = sourceCode.getTokenBefore(node.alternate);
+        if (!tokensStartOnSameLine(node.consequent, elseKeyword)) {
+          checkNodeIndent(node.alternate, expectedIndent);
+        }
+      } else {
+        checkNodesIndent(node.consequent.body, expectedIndent);
+      }
+    }
   }
+
   /**
    * Check indentation for variable declarations.
    * @param {!Espree.VariableDeclaration} node The node to examine.
@@ -922,16 +958,7 @@ function create(context) {
 
     DoWhileStatement: checkOptionallyBodiedIndent,
 
-    /**
-     * @param {!Espree.IfStatement} node
-     */
-    IfStatement(node) {
-      if (node.consequent.type !== 'BlockStatement' &&
-          node.consequent.loc.start.line > node.loc.start.line) {
-        checkIfStatementIndent(node);
-      }
-    },
-
+    IfStatement: checkIfStatementIndent,
     /**
      * @param {!Espree.VariableDeclaration} node
      */
