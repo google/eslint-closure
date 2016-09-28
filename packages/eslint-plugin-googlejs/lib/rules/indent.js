@@ -80,21 +80,6 @@ let OptionallyBodiedNode;
 let BodiedNode;
 
 /**
- * Nodes whose body indent is based on the parents indent.
- * @typedef {(
- *     !Espree.ClassDeclaration|
- *     !Espree.DoWhileStatement|
- *     !Espree.ForInStatement|
- *     !Espree.ForOfStatement|
- *     !Espree.ForStatement|
- *     !Espree.FunctionDeclaration|
- *     !Espree.WhileStatement|
- *     !Espree.WithStatement
- * )}
- */
-let StandaloneStatement;
-
-/**
   * Gets the actual indent of the node.
   * @param {!Espree.Node} node Node to examine.
   * @param {!ESLint.SourceCode} sourceCode
@@ -776,21 +761,6 @@ function create(context) {
   }
 
   /**
-   * Checks indents of nodes that are not nested in other statement,
-   * e.g. `IfStatement`, `WhileStatment`.
-   * @param {!StandaloneStatement} node
-   */
-  function checkStandloneStatementIndent(node) {
-    if (isSingleLineNode_(node, sourceCode)) return;
-    // TODO: assert node body or classBody is a blockstatment.
-    const indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
-    const nodesToCheck = node.body;
-    if (nodesToCheck.length > 0) {
-      checkNodesIndent(nodesToCheck, 0);
-    }
-  }
-
-  /**
    * @param {!Espree.IfStatement} node
    * @returns {void}
    */
@@ -803,7 +773,9 @@ function create(context) {
         checkNodeIndent(node.consequent, expectedIndent);
       }
     } else {
-      checkNodesIndent(node.consequent.body, expectedIndent);
+      checkNodesIndent(
+          /** @type {!Espree.BlockStatement} */ (node.consequent).body,
+          expectedIndent);
       checkLastNodeLineIndent(node.consequent, baseIndent);
     }
 
@@ -816,7 +788,9 @@ function create(context) {
           checkNodeIndent(node.alternate, expectedIndent);
         }
       } else {
-        checkNodesIndent(node.alternate.body, expectedIndent);
+        checkNodesIndent(
+            /** @type {!Espree.BlockStatement} */ (node.alternate).body,
+            expectedIndent);
         checkLastNodeLineIndent(node.alternate, baseIndent);
       }
     }

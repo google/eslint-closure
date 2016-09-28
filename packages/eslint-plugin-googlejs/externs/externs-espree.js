@@ -607,7 +607,7 @@ Espree.IfStatement.prototype.test;
 /** @type {!Espree.Statement} */
 Espree.IfStatement.prototype.consequent;
 
-/** @type {!Espree.Statement} */
+/** @type {?Espree.Statement} */
 Espree.IfStatement.prototype.alternate;
 
 
