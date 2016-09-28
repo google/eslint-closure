@@ -458,16 +458,6 @@ function create(context) {
        ) {
       report(node, neededIndent, actualIndent.space, actualIndent.tab);
     }
-
-    if (node.type === 'IfStatement' && node.alternate) {
-      const elseToken = sourceCode.getTokenBefore(node.alternate);
-
-      checkNodeIndent(elseToken, neededIndent);
-
-      if (!isNodeFirstInLine_(node.alternate, sourceCode)) {
-        checkNodeIndent(node.alternate, neededIndent);
-      }
-    }
   }
 
   /**
@@ -481,8 +471,7 @@ function create(context) {
   }
 
   /**
-   * Checks that last node line indent this detects, that block closed
-   * correctly.
+   * Checks that last node's token is indentedy correctly.
    * @param {!ESLint.ASTNode} node Node to examine.
    * @param {number} lastLineIndent Needed indent.
    * @return {void}
@@ -810,21 +799,25 @@ function create(context) {
     const expectedIndent = baseIndent + indentSize;
 
     if (node.consequent.type !== 'BlockStatement') {
-        if (!tokensStartOnSameLine(node, node.consequent)) {
-          checkNodeIndent(node.consequent, expectedIndent);
-        }
+      if (!tokensStartOnSameLine(node, node.consequent)) {
+        checkNodeIndent(node.consequent, expectedIndent);
+      }
     } else {
       checkNodesIndent(node.consequent.body, expectedIndent);
+      checkLastNodeLineIndent(node.consequent, baseIndent);
     }
 
     if (node.alternate) {
+      const elseKeyword = sourceCode.getTokenBefore(node.alternate);
+      checkNodeIndent(elseKeyword, baseIndent);
+
       if (node.alternate.type !== 'BlockStatement') {
-        const elseKeyword = sourceCode.getTokenBefore(node.alternate);
-        if (!tokensStartOnSameLine(node.consequent, elseKeyword)) {
+        if (!tokensStartOnSameLine(node.alternate, elseKeyword)) {
           checkNodeIndent(node.alternate, expectedIndent);
         }
       } else {
-        checkNodesIndent(node.consequent.body, expectedIndent);
+        checkNodesIndent(node.alternate.body, expectedIndent);
+        checkLastNodeLineIndent(node.alternate, baseIndent);
       }
     }
   }
@@ -886,7 +879,7 @@ function create(context) {
   /**
    * Checks indentation of function params.
    * @param {(!Espree.FunctionExpression|!Espree.FunctionDeclaration)} node
-   * @param {number} indentSize The base indent width. 
+   * @param {number} indentSize The base indent width.
    * @param {(number|string)} indentMultiple The ident multiple of `indentSize`.
    */
   function checkFunctionParamsIndent(node, indentSize, indentMultiple) {
@@ -936,13 +929,8 @@ function create(context) {
      * @param {!Espree.Program} node
      */
     Program(node) {
-      if (node.body.length > 0) {
-
-        // Root nodes should have no indent
-        checkNodesIndent(
-            node.body, getNodeIndent_(node, sourceCode, indentType).goodChar);
-        }
-      },
+      checkNodesIndent(node.body, 0);
+    },
 
     ClassBody: checkBlockStatementIndent,
 

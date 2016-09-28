@@ -2637,9 +2637,9 @@ ruleTester.run("indent", indentRule, {
       output:
       "foo();\n" +
         "if (baz) foobar();\n" +
-        "else qux();",
+        "  else qux();",
       options: [2],
-      errors: expectedErrors([[2, 0, 2, "IfStatement"], [3, 0, 2, "Keyword"]])
+      errors: expectedErrors([[2, 0, 2, "IfStatement"]])
     },
     {
       code:
