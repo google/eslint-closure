@@ -46,18 +46,24 @@ IndentInfo.prototype.goodChar;
 IndentInfo.prototype.badChar;
 
 /**
- * Nodes that may have a body with curly braces or might just have a single body
+ * Nodes that have a `body` field that is either a `BlockStatement` or a single
  * node.  For example:
- *     `if (condition) return;`
- *     `if (condition) {return;}`
- * @typedef {(!Espree.WhileStatement|!Espree.ForStatement|
- *     !Espree.ForInStatement|!Espree.ForOfStatement|!Espree.DoWhileStatement)
- * }
+ *
+ *     `while (condition) foo();`   // body is a CallExpression
+ *     `while (condition) {foo();}` // body is a BlockStatement
+ *
+ * @typedef {(
+ *     !Espree.DoWhileStatement|
+ *     !Espree.ForStatement|
+ *     !Espree.ForInStatement|
+ *     !Espree.ForOfStatement|
+ *     !Espree.WhileStatement
+ * )}
  */
 let OptionallyBodiedNode;
 
 /**
- * Nodes that have a body property.
+ * Nodes that have a body property that is an array of ASTNodes.
  * @typedef {(
  *     !Espree.ArrowFunctionExpression|
  *     !Espree.BlockStatement|
@@ -702,11 +708,27 @@ function create(context) {
   }
 
   /**
+   * Checks indentation for BlockStatements.
+   * @param {!Espree.BlockStatement} node Node to check.
+   * @param {number} bodyIndent The indent required for the body.
+   * @param {number} closingIndent The indent required for the closing brace.
+   * @return {void}
+   */
+  function checkBlockStatementIndent(node, bodyIndent, closingIndent) {
+    // TODO: assert is a blockStatement
+    if (isSingleLineNode_(node, sourceCode)) {
+      return;
+    }
+    checkNodesIndent(node.body, bodyIndent);
+    checkLastNodeLineIndent(node, closingIndent);
+  }
+
+  /**
    * Checks indentation for blocks.
    * @param {!BodiedNode} node Node to check.
    * @return {void}
    */
-  function checkBlockStatementIndent(node) {
+  function checkBlockStatementIndentComplex(node) {
 
     // Skip inline blocks
     if (isSingleLineNode_(node, sourceCode)) {
@@ -714,7 +736,14 @@ function create(context) {
     }
 
     // TODO(jschaf): remove these once all nodes check their own indents.
-    if (node.parent.type === 'IfStatement') return;
+    if (node.parent.type === 'IfStatement' ||
+        node.parent.type === 'DoWhileStatement' ||
+        node.parent.type === 'ForStatement' ||
+        node.parent.type === 'ForInStatement' ||
+        node.parent.type === 'ForOfStatement' ||
+        node.parent.type === 'WhileStatement') {
+      return;
+    }
 
     if (node.parent && (
         node.parent.type === 'FunctionExpression' ||
@@ -834,19 +863,19 @@ function create(context) {
 
   /**
    * Checks indentation for nodes that may have a single element body without
-   * curly braces, e.g. a short `IfStatement`.
+   * curly braces, e.g. a short `WhileStatement`.
    * @param {!OptionallyBodiedNode} node The node to examine.
    * @return {void}
    */
   function checkOptionallyBodiedIndent(node) {
+    const indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
+    const bodyIndent = indent + indentSize;
+    const closingIndent = indent;
     if (node.body.type === 'BlockStatement') {
-      return;
+      checkBlockStatementIndent(node.body, bodyIndent, closingIndent);
     } else {
-      const indent = getNodeIndent_(node, sourceCode, indentType).goodChar;
       const nodesToCheck = [node.body];
-      if (nodesToCheck.length > 0) {
-        checkNodesIndent(nodesToCheck, indent + indentSize);
-      }
+      checkNodesIndent(nodesToCheck, bodyIndent);
     }
   }
 
@@ -906,19 +935,15 @@ function create(context) {
       checkNodesIndent(node.body, 0);
     },
 
-    ClassBody: checkBlockStatementIndent,
+    ClassBody: checkBlockStatementIndentComplex,
 
-    BlockStatement: checkBlockStatementIndent,
-
-    WhileStatement: checkOptionallyBodiedIndent,
-
-    ForStatement: checkOptionallyBodiedIndent,
-
-    ForInStatement: checkOptionallyBodiedIndent,
-
-    ForOfStatement: checkOptionallyBodiedIndent,
+    BlockStatement: checkBlockStatementIndentComplex,
 
     DoWhileStatement: checkOptionallyBodiedIndent,
+    ForStatement: checkOptionallyBodiedIndent,
+    ForInStatement: checkOptionallyBodiedIndent,
+    ForOfStatement: checkOptionallyBodiedIndent,
+    WhileStatement: checkOptionallyBodiedIndent,
 
     IfStatement: checkIfStatementIndent,
     /**
