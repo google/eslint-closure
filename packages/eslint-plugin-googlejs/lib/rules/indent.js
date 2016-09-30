@@ -556,10 +556,11 @@ function create(context) {
                               false).goodChar;
 
     } else if (parent.type === 'CallExpression') {
+      // This functionNode is a call back.
       const calleeParent = /** @type {!Espree.CallExpression} */ (parent);
 
       if (isCalleeNodeFirstArgMultiline_(parent) &&
-          utils.isTokenOneLine(calleeParent.callee) &&
+          utils.isNodeOneLine(calleeParent.callee) &&
           !isNodeFirstInLine_(functionNode, sourceCode)) {
         indent = getNodeIndent_(calleeParent, sourceCode, indentType)
           .goodChar;
@@ -763,7 +764,7 @@ function create(context) {
       nodeIndent = getNodeIndent_(effectiveParent, sourceCode, indentType)
           .goodChar;
 
-      if (parentVarNode && !utils.tokensStartOnSameLine(parentVarNode, node)) {
+      if (parentVarNode && !utils.nodesStartOnSameLine(parentVarNode, node)) {
         if (parent.type !== 'VariableDeclarator' ||
             parentVarNode === parentVarNode.parent.declarations[0]) {
           if (parent.type === 'VariableDeclarator' &&
@@ -916,7 +917,7 @@ function create(context) {
     const expectedIndent = baseIndent + indentSize;
 
     if (node.consequent.type !== 'BlockStatement') {
-      if (!utils.tokensStartOnSameLine(node, node.consequent)) {
+      if (!utils.nodesStartOnSameLine(node, node.consequent)) {
         checkNodeIndent(node.consequent, expectedIndent);
       }
     } else {
@@ -931,7 +932,7 @@ function create(context) {
       checkNodeIndent(elseKeyword, baseIndent);
 
       if (node.alternate.type !== 'BlockStatement') {
-        if (!utils.tokensStartOnSameLine(node.alternate, elseKeyword)) {
+        if (!utils.nodesStartOnSameLine(node.alternate, elseKeyword)) {
           checkNodeIndent(node.alternate, expectedIndent);
         }
       } else {

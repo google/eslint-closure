@@ -57,7 +57,7 @@ const INLINE_COMMENT_SPACING_RULE = {
       // Return early if there's no tokens before commentNode or there's only
       // whitespace.
       if (previousToken == null ||
-          !utils.tokensOnSameLine(commentNode, previousToken)) {
+          !utils.nodesShareOneLine(commentNode, previousToken)) {
         return;
       }
 

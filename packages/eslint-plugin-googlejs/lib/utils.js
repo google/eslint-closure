@@ -12,7 +12,7 @@ const types = goog.require('googlejs.types');
  * @param {!Espree.Node} right The right token object.
  * @return {boolean} Whether or not the tokens are on the same line.
  */
-function tokensOnSameLine(left, right) {
+function nodesShareOneLine(left, right) {
   return left.loc.end.line === right.loc.start.line;
 }
 
@@ -22,8 +22,8 @@ function tokensOnSameLine(left, right) {
  * @param {!Espree.Node} node
  * @return {boolean} Whether or not the tokens are on the same line.
  */
-function isTokenOneLine(node) {
-  return tokensOnSameLine(node, node);
+function isNodeOneLine(node) {
+  return nodesShareOneLine(node, node);
 }
 
 /**
@@ -32,7 +32,7 @@ function isTokenOneLine(node) {
  * @param {!Espree.Node} node2
  * @return {boolean}
  */
-function tokensStartOnSameLine(node1, node2) {
+function nodesStartOnSameLine(node1, node2) {
   return node1.loc.start.line === node2.loc.start.line;
 }
 
@@ -99,7 +99,7 @@ exports = {
   categorizeUnderscoredIdentifier,
   getNodeAncestorOfType,
   isUnderscored,
-  isTokenOneLine,
-  tokensOnSameLine,
-  tokensStartOnSameLine,
+  isNodeOneLine,
+  nodesShareOneLine,
+  nodesStartOnSameLine,
 };
