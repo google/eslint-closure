@@ -16,6 +16,16 @@ function tokensOnSameLine(left, right) {
   return left.loc.end.line === right.loc.start.line;
 }
 
+
+/**
+ * Returns true iff a node exists entirely on one line.
+ * @param {!Espree.Node} node
+ * @return {boolean} Whether or not the tokens are on the same line.
+ */
+function isTokenOneLine(node) {
+  return tokensOnSameLine(node, node);
+}
+
 /**
  * Returns true iff both tokens start on the same line.
  * @param {!Espree.Node} node1
@@ -89,6 +99,7 @@ exports = {
   categorizeUnderscoredIdentifier,
   getNodeAncestorOfType,
   isUnderscored,
+  isTokenOneLine,
   tokensOnSameLine,
   tokensStartOnSameLine,
 };

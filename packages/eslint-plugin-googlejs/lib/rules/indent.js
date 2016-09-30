@@ -12,7 +12,7 @@ goog.module('googlejs.rules.indent');
 // TODO(jschaf): Why won't this build?
 // const {assert} = goog.require('goog.asserts');
 
-const {getNodeAncestorOfType, tokensStartOnSameLine} = goog.require('googlejs.utils');
+const utils = goog.require('googlejs.utils');
 /**
  * Information about the indentation preceeding a Node.
  * @record
@@ -559,8 +559,7 @@ function create(context) {
       const calleeParent = /** @type {!Espree.CallExpression} */ (parent);
 
       if (isCalleeNodeFirstArgMultiline_(parent) &&
-          calleeParent.callee.loc.start.line ==
-          calleeParent.callee.loc.end.line &&
+          utils.isTokenOneLine(calleeParent.callee) &&
           !isNodeFirstInLine_(functionNode, sourceCode)) {
         indent = getNodeIndent_(calleeParent, sourceCode, indentType)
           .goodChar;
@@ -608,7 +607,7 @@ function create(context) {
 
     // Check if the bodyNode is inside a variable.
     const parentVarNode = /** @type {!Espree.VariableDeclarator} */
-        (getNodeAncestorOfType(functionNode, 'VariableDeclarator'));
+        (utils.getNodeAncestorOfType(functionNode, 'VariableDeclarator'));
 
     if (parentVarNode && isNodeInVarOnTop(functionNode, parentVarNode)) {
       indent += indentSize *
@@ -695,7 +694,7 @@ function create(context) {
 
     // Check if the node is inside a variable.
     const parentVarNode = /** @type {!Espree.VariableDeclarator} */
-        (getNodeAncestorOfType(node, 'VariableDeclarator'));
+        (utils.getNodeAncestorOfType(node, 'VariableDeclarator'));
 
     if (parentVarNode && isNodeInVarOnTop(node, parentVarNode)) {
       indent += indentSize *
@@ -747,7 +746,7 @@ function create(context) {
     let nodeIndent;
     let elementsIndent;
     const parentVarNode = /** @type {?Espree.VariableDeclarator} */
-         (getNodeAncestorOfType(node, 'VariableDeclarator'));
+         (utils.getNodeAncestorOfType(node, 'VariableDeclarator'));
 
     // TODO - come up with a better strategy in future
     if (isNodeFirstInLine_(node, sourceCode)) {
@@ -764,7 +763,7 @@ function create(context) {
       nodeIndent = getNodeIndent_(effectiveParent, sourceCode, indentType)
           .goodChar;
 
-      if (parentVarNode && !tokensStartOnSameLine(parentVarNode, node)) {
+      if (parentVarNode && !utils.tokensStartOnSameLine(parentVarNode, node)) {
         if (parent.type !== 'VariableDeclarator' ||
             parentVarNode === parentVarNode.parent.declarations[0]) {
           if (parent.type === 'VariableDeclarator' &&
@@ -917,7 +916,7 @@ function create(context) {
     const expectedIndent = baseIndent + indentSize;
 
     if (node.consequent.type !== 'BlockStatement') {
-      if (!tokensStartOnSameLine(node, node.consequent)) {
+      if (!utils.tokensStartOnSameLine(node, node.consequent)) {
         checkNodeIndent(node.consequent, expectedIndent);
       }
     } else {
@@ -932,7 +931,7 @@ function create(context) {
       checkNodeIndent(elseKeyword, baseIndent);
 
       if (node.alternate.type !== 'BlockStatement') {
-        if (!tokensStartOnSameLine(node.alternate, elseKeyword)) {
+        if (!utils.tokensStartOnSameLine(node.alternate, elseKeyword)) {
           checkNodeIndent(node.alternate, expectedIndent);
         }
       } else {
@@ -1108,11 +1107,11 @@ function create(context) {
       // alter the expectation of correct indentation. Skip them.
       // TODO: Add appropriate configuration options for variable
       // declarations and assignments.
-      if (getNodeAncestorOfType(node, 'VariableDeclarator')) {
+      if (utils.getNodeAncestorOfType(node, 'VariableDeclarator')) {
         return;
       }
 
-      if (getNodeAncestorOfType(node, 'AssignmentExpression')) {
+      if (utils.getNodeAncestorOfType(node, 'AssignmentExpression')) {
         return;
       }
 
