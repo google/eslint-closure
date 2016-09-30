@@ -198,19 +198,18 @@ function isNodeInVarOnTop(node, varNode) {
 }
 
 /**
- * Checks to see if the argument before the callee node is multi-line and
- * there should only be 1 argument before the callee node.
- * @param {!Espree.CallExpression} parent
- * @param {!FunctionNode} child Node to check.
+ * Checks if a CallExpression's first argument is multiline.
+ * @param {!Espree.CallExpression} node
  * @return {boolean} True if arguments are multi-line.
  * @private
  */
-function isArgBeforeCalleeNodeMultiline_(parent, child) {
-  if (parent.arguments.length >= 2 && parent.arguments[1] === child) {
-    return parent.arguments[0].loc.end.line >
-      parent.arguments[0].loc.start.line;
+function isCalleeNodeFirstArgMultiline_(node) {
+  if (node.arguments.length >= 1) {
+    return node.arguments[0].loc.end.line >
+      node.arguments[0].loc.start.line;
+  } else {
+    return false;
   }
-  return false;
 }
 
 /**
@@ -559,7 +558,7 @@ function create(context) {
     } else if (parent.type === 'CallExpression') {
       const calleeParent = /** @type {!Espree.CallExpression} */ (parent);
 
-      if (isArgBeforeCalleeNodeMultiline_(parent, functionNode) &&
+      if (isCalleeNodeFirstArgMultiline_(parent) &&
           calleeParent.callee.loc.start.line ==
           calleeParent.callee.loc.end.line &&
           !isNodeFirstInLine_(functionNode, sourceCode)) {
@@ -670,7 +669,7 @@ function create(context) {
               .goodChar;
         }
       } else {
-        if (isArgBeforeCalleeNodeMultiline_(calleeNode) &&
+        if (isCalleeNodeFirstArgMultiline_(calleeNode) &&
             calleeParent.callee.loc.start.line ==
             calleeParent.callee.loc.end.line &&
             !isNodeFirstInLine_(calleeNode, sourceCode)) {
