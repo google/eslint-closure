@@ -47,6 +47,17 @@ IndentInfo.prototype.badChar;
 
 
 /**
+ * All function types.
+ * @typedef {(
+ *     !Espree.ArrowFunctionExpression|
+ *     !Espree.FunctionDeclaration|
+ *     !Espree.FunctionExpression
+ * )}
+ */
+let FunctionNode;
+
+
+/**
  * A variant of Espree.ArrowFunctionExpression that must have BlockStatement
  * body.
  * @record @extends {Espree.ArrowFunctionExpression}
@@ -64,7 +75,7 @@ BodiedArrowFunction.prototype.body;
  *     !Espree.FunctionExpression
  * )}
  */
-let BodiedFunction;
+let BodiedFunctionNode;
 
 
 /**
@@ -189,13 +200,13 @@ function isNodeInVarOnTop(node, varNode) {
 /**
  * Checks to see if the argument before the callee node is multi-line and
  * there should only be 1 argument before the callee node.
- * @param {!Espree.Expression} node Node to check.
+ * @param {!Espree.CallExpression} parent
+ * @param {!FunctionNode} child Node to check.
  * @return {boolean} True if arguments are multi-line.
  * @private
  */
-function isArgBeforeCalleeNodeMultiline_(node) {
-  const parent = /** @type {!Espree.CallExpression} */ (node.parent);
-  if (parent.arguments.length >= 2 && parent.arguments[1] === node) {
+function isArgBeforeCalleeNodeMultiline_(parent, child) {
+  if (parent.arguments.length >= 2 && parent.arguments[1] === child) {
     return parent.arguments[0].loc.end.line >
       parent.arguments[0].loc.start.line;
   }
@@ -528,10 +539,40 @@ function create(context) {
     }
   }
 
+  /**
+   * Gets the base indent for the function node.
+   * @param {!FunctionNode} functionNode
+   * @returns {number}
+   */
+  function getFunctionBaseIndent(functionNode) {
+
+    // Assume a regular standalone function.
+    let indent = getNodeIndent_(functionNode, sourceCode, indentType).goodChar;
+
+    const parent = functionNode.parent;
+
+    if (parent.type === 'Property' || parent.type === 'ArrayExpression') {
+      // If function is part of array or object, comma can be put at left
+      indent = getNodeIndent_(functionNode, sourceCode, indentType,
+                              false).goodChar;
+
+    } else if (parent.type === 'CallExpression') {
+      const calleeParent = /** @type {!Espree.CallExpression} */ (parent);
+
+      if (isArgBeforeCalleeNodeMultiline_(parent, functionNode) &&
+          calleeParent.callee.loc.start.line ==
+          calleeParent.callee.loc.end.line &&
+          !isNodeFirstInLine_(functionNode, sourceCode)) {
+        indent = getNodeIndent_(calleeParent, sourceCode, indentType)
+          .goodChar;
+      }
+    }
+    return indent;
+  }
 
   /**
    * Checks indentation of a function with a BlockStatement body.
-   * @param {!BodiedFunction} functionNode
+   * @param {!BodiedFunctionNode} functionNode
    */
   function checkFunctionIndentSimple(functionNode) {
 
@@ -548,45 +589,9 @@ function create(context) {
      *
      * Looks for 'Models'
      */
-    let indent;
 
-    const node = /** @type {!Espree.BlockStatement} */ (functionNode.body);
-    node.parent = functionNode;
-
-    if (functionNode.parent &&
-        (functionNode.parent.type === 'Property' ||
-         functionNode.parent.type === 'ArrayExpression')) {
-
-      // If function is part of array or object, comma can be put at left
-      indent = getNodeIndent_(functionNode, sourceCode, indentType,
-          false).goodChar;
-    } else {
-
-      // If function is standalone, simple calculate indent
-      indent = getNodeIndent_(functionNode, sourceCode, indentType).goodChar;
-    }
-
-    if (functionNode.parent.type === 'CallExpression') {
-      const calleeParent =
-           /** @type {!Espree.CallExpression} */ (functionNode.parent);
-
-      if (functionNode.type !== 'FunctionExpression' &&
-          functionNode.type !== 'ArrowFunctionExpression') {
-        if (calleeParent && calleeParent.loc.start.line <
-            node.loc.start.line) {
-          indent = getNodeIndent_(calleeParent, sourceCode, indentType)
-              .goodChar;
-        }
-      } else {
-        if (isArgBeforeCalleeNodeMultiline_(functionNode) &&
-            calleeParent.callee.loc.start.line ==
-            calleeParent.callee.loc.end.line &&
-            !isNodeFirstInLine_(functionNode, sourceCode)) {
-          indent = getNodeIndent_(calleeParent, sourceCode, indentType)
-              .goodChar;
-        }
-      }
-    }
+    const bodyNode = functionNode.body;
+    let indent = getFunctionBaseIndent(functionNode);
 
     // function body indent should be indent + indent size, unless this is a
     // FunctionDeclaration, FunctionExpression, or outer IIFE and the
@@ -602,7 +607,7 @@ function create(context) {
     }
     indent += functionOffset;
 
-    // Check if the node is inside a variable.
+    // Check if the bodyNode is inside a variable.
     const parentVarNode = /** @type {!Espree.VariableDeclarator} */
         (getNodeAncestorOfType(functionNode, 'VariableDeclarator'));
 
@@ -611,9 +616,9 @@ function create(context) {
         options.VariableDeclarator[parentVarNode.parent.kind];
     }
 
-    checkNodesIndent(node.body, indent);
+    checkNodesIndent(bodyNode.body, indent);
 
-    checkLastNodeLineIndent(node, indent - functionOffset);
+    checkLastNodeLineIndent(bodyNode, indent - functionOffset);
   }
 
   /**
@@ -1172,8 +1177,7 @@ function create(context) {
 
 
       if (node.body.type === 'BlockStatement') {
-        node.body.parent = node;
-        checkFunctionIndent(node.body);
+        checkFunctionIndentSimple(node);
       } else {
         // TODO: Check when an arrow function just has an expression.
       }
@@ -1191,8 +1195,7 @@ function create(context) {
         checkFunctionParamsIndent(
             node, indentSize, options.FunctionDeclaration.parameters);
       }
-      node.body.parent = node;
-      checkFunctionIndent(node.body);
+      checkFunctionIndentSimple(node);
     },
 
     /**
@@ -1206,8 +1209,7 @@ function create(context) {
         checkFunctionParamsIndent(
           node, indentSize, options.FunctionExpression.parameters);
       }
-      node.body.parent = node;
-      checkFunctionIndent(node.body);
+      checkFunctionIndentSimple(node);
     },
   };
 
