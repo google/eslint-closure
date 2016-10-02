@@ -6,7 +6,7 @@ goog.module('googlejs.utils');
 const types = goog.require('googlejs.types');
 
 /**
- * Returns true iff the end of the left node is the same as the start of the
+ * Returns true if the end of the left node is the same as the start of the
  * right node.
  * @param {!Espree.Node} left The left token object.
  * @param {!Espree.Node} right The right token object.
@@ -18,7 +18,7 @@ function nodesShareOneLine(left, right) {
 
 
 /**
- * Returns true iff a node exists entirely on one line.
+ * Returns true if a node exists entirely on one line.
  * @param {!Espree.Node} node
  * @return {boolean} Whether or not the tokens are on the same line.
  */
@@ -27,7 +27,7 @@ function isNodeOneLine(node) {
 }
 
 /**
- * Returns true iff both tokens start on the same line.
+ * Returns true if both tokens start on the same line.
  * @param {!Espree.Node} node1
  * @param {!Espree.Node} node2
  * @return {boolean}
