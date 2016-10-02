@@ -692,48 +692,63 @@ function create(context) {
     const varDeclAncestor = /** @type {?Espree.VariableDeclarator} */
          (utils.getNodeAncestorOfType(node, 'VariableDeclarator'));
 
-    // TODO - come up with a better strategy in future
     if (isNodeFirstInLine_(node, sourceCode)) {
       const parent = node.parent;
-      let effectiveParent = parent;
 
-      if (parent.type === 'MemberExpression') {
-        if (isNodeFirstInLine_(parent, sourceCode)) {
-          effectiveParent = parent.parent.parent;
-        } else {
-          effectiveParent = parent.parent;
-        }
-      }
-      nodeIndent = getNodeIndent_(effectiveParent, sourceCode, indentType)
-          .goodChar;
+      nodeIndent = getNodeIndent_(parent, sourceCode, indentType).goodChar;
 
-      if (varDeclAncestor && !utils.nodesStartOnSameLine(varDeclAncestor, node)) {
-        if (parent.type !== 'VariableDeclarator' ||
-            varDeclAncestor === varDeclAncestor.parent.declarations[0]) {
-          if (parent.type === 'VariableDeclarator' &&
-              varDeclAncestor.loc.start.line === effectiveParent.loc.start.line) {
+
+      if (varDeclAncestor) {
+        if (parent === varDeclAncestor) {
+          if (varDeclAncestor === varDeclAncestor.parent.declarations[0]) {
+            // We have something like:
+            // var foo =
+            // {
+            //   foo: 2,
+            // }
             nodeIndent = nodeIndent +
               (indentSize *
                options.VariableDeclarator[varDeclAncestor.parent.kind]);
-          } else if (
-            parent.type === 'ObjectExpression' ||
+          }
+        } else {
+          // Parent is not a VariableDeclarator.  The VariableDeclarator is
+          // further up.
+          //
+          if (
+              // Limit checking to nodes that don't check their own indent.
+              parent.type === 'ObjectExpression' ||
               parent.type === 'ArrayExpression' ||
               parent.type === 'CallExpression' ||
               parent.type === 'ArrowFunctionExpression' ||
               parent.type === 'NewExpression' ||
               parent.type === 'LogicalExpression'
           ) {
+            // We have something like:
+            // var foo = [
+            //   {
+            //     foo: 2,
+            //   }
+            // ]
             nodeIndent = nodeIndent + indentSize;
           }
         }
-      } else if (!varDeclAncestor && !isFirstArrayElementOnSameLine_(parent) &&
-                 effectiveParent.type !== 'MemberExpression' &&
-                 effectiveParent.type !== 'ExpressionStatement' &&
-                 effectiveParent.type !== 'AssignmentExpression' &&
-                 effectiveParent.type !== 'Property') {
-        nodeIndent = nodeIndent + indentSize;
-      }
 
+      } else {
+        // There is no VariableDeclarator ancestor.
+        if (!isFirstArrayElementOnSameLine_(parent) &&
+            parent.type !== 'MemberExpression' &&
+            parent.type !== 'ExpressionStatement' &&
+            parent.type !== 'AssignmentExpression' &&
+            parent.type !== 'Property') {
+          // We have something like:
+          // foobar(
+          //     {
+          //       a: 1,
+          //     }
+          // );
+          nodeIndent = nodeIndent + indentSize;
+        }
+      }
       elementsIndent = nodeIndent + indentSize;
 
       checkFirstNodeLineIndent(node, nodeIndent);
