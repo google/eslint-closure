@@ -169,21 +169,6 @@ function isNodeFirstInLine_(node, sourceCode, opt_byEndLocation) {
 }
 
 /**
- * Checks if the given node starts and ends on the same line.
- * @param {!ESLint.ASTNode} node The node to check.
- * @param {!ESLint.SourceCode} sourceCode
- * @return {boolean} Whether or not the block starts and ends on the same
- *     line.
- * @private
- */
-function isSingleLineNode_(node, sourceCode) {
-  const lastToken = sourceCode.getLastToken(node);
-  const startLine = node.loc.start.line;
-  const endLine = lastToken.loc.end.line;
-  return startLine == endLine;
-}
-
-/**
  * Check to see if the node is part of the multi-line variable declaration.
  * Also if its on the same line as the varNode.
  * @param {!ESLint.ASTNode} node Node to check.
@@ -724,7 +709,7 @@ function create(context) {
     }
 
     // Skip inline
-    if (isSingleLineNode_(node, sourceCode)) {
+    if (utils.isNodeOneLine(node, sourceCode)) {
       return;
     }
 
@@ -830,7 +815,7 @@ function create(context) {
    */
   function checkBlockStatementIndent(node, bodyIndent, closingIndent) {
     // TODO: assert is a blockStatement
-    if (isSingleLineNode_(node, sourceCode)) {
+    if (utils.isNodeOneLine(node, sourceCode)) {
       return;
     }
     checkNodesIndent(node.body, bodyIndent);
@@ -845,7 +830,7 @@ function create(context) {
   function checkBlockStatementIndentComplex(node) {
 
     // Skip inline blocks
-    if (isSingleLineNode_(node, sourceCode)) {
+    if (utils.isNodeOneLine(node, sourceCode)) {
       return;
     }
 
@@ -1100,7 +1085,7 @@ function create(context) {
         return;
       }
 
-      if (isSingleLineNode_(node, sourceCode)) {
+      if (utils.isNodeOneLine(node, sourceCode)) {
         return;
       }
 
@@ -1153,7 +1138,7 @@ function create(context) {
     SwitchCase(node) {
 
       // Skip inline cases
-      if (isSingleLineNode_(node, sourceCode)) {
+      if (utils.isNodeOneLine(node, sourceCode)) {
         return;
       }
       const caseIndent = expectedCaseIndent(node);
@@ -1166,7 +1151,7 @@ function create(context) {
      * @param {!Espree.ArrowFunctionExpression} node
      */
     ArrowFunctionExpression(node) {
-      if (isSingleLineNode_(node, sourceCode)) {
+      if (utils.isNodeOneLine(node, sourceCode)) {
         return;
       }
       if (options.FunctionExpression.parameters !== -1) {
@@ -1187,7 +1172,7 @@ function create(context) {
      * @param {!Espree.FunctionDeclaration} node
      */
     FunctionDeclaration(node) {
-      if (isSingleLineNode_(node, sourceCode)) {
+      if (utils.isNodeOneLine(node, sourceCode)) {
         return;
       }
       if (options.FunctionDeclaration.parameters !== -1) {
@@ -1201,7 +1186,7 @@ function create(context) {
      * @param {!Espree.FunctionExpression} node
      */
     FunctionExpression(node) {
-      if (isSingleLineNode_(node, sourceCode)) {
+      if (utils.isNodeOneLine(node, sourceCode)) {
         return;
       }
       if (options.FunctionExpression.parameters !== -1) {
