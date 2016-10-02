@@ -579,24 +579,13 @@ function create(context) {
   }
 
   /**
-   * Checks indent for array block content or object block content.
-   * @param {(!Espree.ArrayExpression|!Espree.ObjectExpression)} node Node to
-   *     examine.
-   * @return {void}
+   * Checks indent in arrays.
+   * @param {!Espree.ArrayExpression} arrayNode
    */
-  function checkIndentInArrayOrObjectBlock(node) {
+  function checkArrayExpressionIndent(arrayNode) {
+    if (utils.isNodeOneLine(arrayNode)) return;
 
-    if (!(node.type === 'ArrayExpression' ||
-          node.type === 'ObjectExpression')) {
-      throw new Error(
-        `Expected an ArrayExpression or ObjectExpression, got ${node.type}`);
-    }
-
-    if (utils.isNodeOneLine(node)) return;
-
-    let elements = (node.type === 'ArrayExpression') ?
-      node.elements :
-      node.properties;
+    let elements = arrayNode.elements;
 
     // Filters out empty elements example would be [ , 2] so remove first
     // element as espree considers it as null.
@@ -604,15 +593,103 @@ function create(context) {
       return elem !== null;
     });
 
-    // Skip if first element is in same line with this node
-    if (elements.length > 0 && elements[0].loc.start.line ===
-        node.loc.start.line) {
+    // Skip if first element is in same line with the arrayNode.
+    if (elements.length > 0 &&
+        elements[0].loc.start.line === arrayNode.loc.start.line) {
       return;
     }
 
     let nodeIndent;
     let elementsIndent;
     const parentVarNode = /** @type {?Espree.VariableDeclarator} */
+         (utils.getNodeAncestorOfType(arrayNode, 'VariableDeclarator'));
+
+    // TODO - come up with a better strategy in future
+    if (isNodeFirstInLine_(arrayNode, sourceCode)) {
+      const parent = arrayNode.parent;
+      let effectiveParent = parent;
+
+      if (parent.type === 'MemberExpression') {
+        if (isNodeFirstInLine_(parent, sourceCode)) {
+          effectiveParent = parent.parent.parent;
+        } else {
+          effectiveParent = parent.parent;
+        }
+      }
+      nodeIndent = getNodeIndent_(effectiveParent, sourceCode, indentType)
+          .goodChar;
+
+
+      if (parentVarNode) {
+        if (parentVarNode.loc.start.line === effectiveParent.loc.start.line) {
+          nodeIndent = nodeIndent + (indentSize *
+              options.VariableDeclarator[parentVarNode.parent.kind]);
+        }
+      } else {
+       // It's not part of a variable declaration.
+        if (!isFirstArrayElementOnSameLine_(parent) &&
+            effectiveParent.type !== 'MemberExpression' &&
+            effectiveParent.type !== 'ExpressionStatement' &&
+            effectiveParent.type !== 'AssignmentExpression' &&
+            effectiveParent.type !== 'Property') {
+          nodeIndent = nodeIndent + indentSize;
+        }
+      }
+
+      elementsIndent = nodeIndent + indentSize;
+
+      checkFirstNodeLineIndent(arrayNode, nodeIndent);
+    } else {
+      nodeIndent = getNodeIndent_(arrayNode, sourceCode, indentType).goodChar;
+      elementsIndent = nodeIndent + indentSize;
+    }
+
+    // Checks if the arrayNode is a multiple variable declaration; if so, then
+    // make sure indentation takes that into account.
+    if (isNodeInVarOnTop(arrayNode, parentVarNode)) {
+      elementsIndent += indentSize *
+        options.VariableDeclarator[parentVarNode.parent.kind];
+    }
+
+    // Skip last block line check if last item in same line.
+    if (elements[elements.length - 1].loc.end.line === arrayNode.loc.end.line) {
+      return;
+    }
+
+    checkNodesIndent(elements, elementsIndent);
+    checkLastNodeLineIndent(arrayNode, elementsIndent - indentSize);
+  }
+
+  /**
+   * Checks indent for array block content or object block content.
+   * @param {!Espree.ObjectExpression} node
+   * @return {void}
+   */
+  function checkObjectExpressionIndent(node) {
+    if (utils.isNodeOneLine(node)) return;
+
+    const elements = node.properties;
+
+    // Skip checks if the first element is on same line as the beginning of the
+    // ObjectExpression.
+    if (elements.length > 0 && elements[0].loc.start.line ===
+        node.loc.start.line) {
+      return;
+    }
+    const elementsIndent = getObjectPropertyIndent(node);
+    checkNodesIndent(elements, elementsIndent);
+    checkLastNodeLineIndent(node, elementsIndent - indentSize);
+  }
+
+  /**
+   * Computs the proper indent for object properties.
+   * @param {!Espree.ObjectExpression} node
+   * @returns {number} The required indent of object properties.
+   */
+  function getObjectPropertyIndent(node) {
+    let nodeIndent;
+    let elementsIndent;
+    const varDeclAncestor = /** @type {?Espree.VariableDeclarator} */
          (utils.getNodeAncestorOfType(node, 'VariableDeclarator'));
 
     // TODO - come up with a better strategy in future
@@ -630,14 +707,14 @@ function create(context) {
       nodeIndent = getNodeIndent_(effectiveParent, sourceCode, indentType)
           .goodChar;
 
-      if (parentVarNode && !utils.nodesStartOnSameLine(parentVarNode, node)) {
+      if (varDeclAncestor && !utils.nodesStartOnSameLine(varDeclAncestor, node)) {
         if (parent.type !== 'VariableDeclarator' ||
-            parentVarNode === parentVarNode.parent.declarations[0]) {
+            varDeclAncestor === varDeclAncestor.parent.declarations[0]) {
           if (parent.type === 'VariableDeclarator' &&
-              parentVarNode.loc.start.line === effectiveParent.loc.start.line) {
+              varDeclAncestor.loc.start.line === effectiveParent.loc.start.line) {
             nodeIndent = nodeIndent +
               (indentSize *
-               options.VariableDeclarator[parentVarNode.parent.kind]);
+               options.VariableDeclarator[varDeclAncestor.parent.kind]);
           } else if (
             parent.type === 'ObjectExpression' ||
               parent.type === 'ArrayExpression' ||
@@ -649,7 +726,7 @@ function create(context) {
             nodeIndent = nodeIndent + indentSize;
           }
         }
-      } else if (!parentVarNode && !isFirstArrayElementOnSameLine_(parent) &&
+      } else if (!varDeclAncestor && !isFirstArrayElementOnSameLine_(parent) &&
                  effectiveParent.type !== 'MemberExpression' &&
                  effectiveParent.type !== 'ExpressionStatement' &&
                  effectiveParent.type !== 'AssignmentExpression' &&
@@ -665,26 +742,13 @@ function create(context) {
       elementsIndent = nodeIndent + indentSize;
     }
 
-    /*
-     * Checks if the node is a multiple variable declaration; if so, then
-     * make sure indentation takes that into account.
-     */
-    if (isNodeInVarOnTop(node, parentVarNode)) {
+    // Checks if the node is a multiple variable declaration; if so, then make
+    // sure indentation takes that into account.
+    if (isNodeInVarOnTop(node, varDeclAncestor)) {
       elementsIndent += indentSize *
-        options.VariableDeclarator[parentVarNode.parent.kind];
+        options.VariableDeclarator[varDeclAncestor.parent.kind];
     }
-
-    checkNodesIndent(elements, elementsIndent);
-
-    if (elements.length > 0) {
-
-      // Skip last block line check if last item in same line
-      if (elements[elements.length - 1].loc.end.line === node.loc.end.line) {
-        return;
-      }
-    }
-
-    checkLastNodeLineIndent(node, elementsIndent - indentSize);
+    return elementsIndent;
   }
 
   /**
@@ -895,19 +959,9 @@ function create(context) {
       }
     },
 
-    /**
-     * @param {!Espree.ObjectExpression} node
-     */
-    ObjectExpression(node) {
-      checkIndentInArrayOrObjectBlock(node);
-    },
+    ObjectExpression: checkObjectExpressionIndent,
 
-    /**
-     * @param {!Espree.ArrayExpression} node
-     */
-    ArrayExpression(node) {
-      checkIndentInArrayOrObjectBlock(node);
-    },
+    ArrayExpression: checkArrayExpressionIndent,
 
     /**
      * @param {!Espree.MemberExpression} node
