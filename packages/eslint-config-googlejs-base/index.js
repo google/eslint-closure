@@ -559,9 +559,8 @@ const STYLISTIC_RULES = {
   'id-match': OFF,
 
   // Enforce consistent indentation.
-  // TODO: https://github.com/eslint/eslint/issues/6690
-  // Disabled because ESLint doesn't intepret goog.scope as an IIFE.
-  'indent': [OFF, 2, {SwitchCase: 1, MemberExpression: 2, outerIIFEBody: 0}],
+  // Disabled because the googlejs/indent supports goog.scope.
+  'indent': OFF,
 
   // Enforce the consistent use of either double or single quotes in JSX
   // attributes.
@@ -912,6 +911,14 @@ const ES6_RULES = {
 // These rules are specific to Google code.  See
 // https://github.com/jschaf/googlejs/packages/eslint-plugin-googlejs
 const GOOGLE_PLUGIN_RULES = {
+  'googlejs/indent': [WARNING, 2, {
+    // Google ES6 Section 4.2.5
+    SwitchCase: 1,
+    // Google ES6 Section 4.5.1
+    MemberExpression: 2,
+    // Google ES5: Aliasing with goog.scope
+    outerIIFEBody: 0,
+  }]
 };
 
 
