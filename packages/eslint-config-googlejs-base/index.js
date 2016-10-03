@@ -597,7 +597,7 @@ const STYLISTIC_RULES = {
     ignoreComments: false,
     ignoreUrls: true,
   }],
- 
+
   // Enforce a maximum number of lines per file.
   'max-lines': OFF,
 
@@ -714,9 +714,9 @@ const STYLISTIC_RULES = {
   // Google ES5 assumed to follow ES6
   // Google ES6 Section 5.1.2
   'one-var': [ERROR, {
-    'const': 'never',
-    'var': 'never',
-    'let': 'never',
+    const: 'never',
+    var: 'never',
+    let: 'never',
   }],
 
   // Require or disallow assignment operator shorthand where possible.

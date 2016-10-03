@@ -36,6 +36,16 @@ function nodesStartOnSameLine(node1, node2) {
 }
 
 /**
+ * Returns true if both tokens end on the same line.
+ * @param {!Espree.Node} node1
+ * @param {!Espree.Node} node2
+ * @return {boolean}
+ */
+function nodesEndOnSameLine(node1, node2) {
+  return node1.loc.end.line === node2.loc.end.line;
+}
+
+/**
  * Checks if a string contains an underscore.
  * @param {string} name The string to check.
  * @returns {boolean} If the string is underscored.
@@ -99,6 +109,7 @@ exports = {
   getNodeAncestorOfType,
   isUnderscored,
   isNodeOneLine,
+  nodesEndOnSameLine,
   nodesShareOneLine,
   nodesStartOnSameLine,
 };
