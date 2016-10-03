@@ -416,7 +416,7 @@ const BEST_PRACTICE_RULES = {
 const STRICT_MODE_RULES = {
   // Require or disallow strict mode directives.  The style guide does not
   // mandate the use of 'use strict'.
-  'strict': OFF,
+  strict: OFF,
 };
 
 
@@ -918,7 +918,7 @@ const GOOGLE_PLUGIN_RULES = {
     MemberExpression: 2,
     // Google ES5: Aliasing with goog.scope
     outerIIFEBody: 0,
-  }]
+  }],
 };
 
 

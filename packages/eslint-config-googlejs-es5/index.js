@@ -108,6 +108,6 @@ const GOOGLE_ES5_RULES = {
       GOOGLE_PLUGIN_RULES,
       JSDOC_PLUGIN_RULES
       ),
-}
+};
 
 module.exports = GOOGLE_ES5_RULES;

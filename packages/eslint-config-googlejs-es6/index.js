@@ -267,7 +267,7 @@ const ECMA_FEATURES = {
   // Enable code point escapes.
   unicodeCodePointEscapes: true,
 
-}
+};
 
 
 const GOOGLE_ES6_RULES = {
@@ -306,6 +306,6 @@ const GOOGLE_ES6_RULES = {
     GOOGLE_PLUGIN_RULES,
     JSDOC_PLUGIN_RULES
   ),
-}
+};
 
 module.exports = GOOGLE_ES6_RULES;
