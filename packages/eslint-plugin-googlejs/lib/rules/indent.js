@@ -619,7 +619,6 @@ function create(context) {
       nodeIndent = getNodeIndent_(effectiveParent, sourceCode, indentType)
           .goodChar;
 
-
       if (parentVarNode) {
         if (parentVarNode.loc.start.line === effectiveParent.loc.start.line) {
           nodeIndent = nodeIndent + (indentSize *
@@ -687,35 +686,29 @@ function create(context) {
    * @returns {number} The required indent of object properties.
    */
   function getObjectPropertyIndent(node) {
-    let nodeIndent;
-    let elementsIndent;
+    const parent = node.parent;
     const varDeclAncestor = /** @type {?Espree.VariableDeclarator} */
          (utils.getNodeAncestorOfType(node, 'VariableDeclarator'));
 
+    let baseIndent = getNodeIndent_(parent, sourceCode, indentType).goodChar;
+    let elementsIndent;
     if (isNodeFirstInLine_(node, sourceCode)) {
-      const parent = node.parent;
-
-      nodeIndent = getNodeIndent_(parent, sourceCode, indentType).goodChar;
-
-
       if (varDeclAncestor) {
         if (parent === varDeclAncestor) {
           if (varDeclAncestor === varDeclAncestor.parent.declarations[0]) {
             // We have something like:
             // var foo =
-            // {
-            //   foo: 2,
-            // }
-            nodeIndent = nodeIndent +
+            //     {
+            //       foo: 2,
+            //     }
+            baseIndent = baseIndent + 2 +
               (indentSize *
                options.VariableDeclarator[varDeclAncestor.parent.kind]);
           }
         } else {
           // Parent is not a VariableDeclarator.  The VariableDeclarator is
           // further up.
-          //
           if (
-              // Limit checking to nodes that don't check their own indent.
               parent.type === 'ObjectExpression' ||
               parent.type === 'ArrayExpression' ||
               parent.type === 'CallExpression' ||
@@ -729,7 +722,7 @@ function create(context) {
             //     foo: 2,
             //   }
             // ]
-            nodeIndent = nodeIndent + indentSize;
+            baseIndent = baseIndent + indentSize;
           }
         }
 
@@ -746,15 +739,15 @@ function create(context) {
           //       a: 1,
           //     }
           // );
-          nodeIndent = nodeIndent + indentSize;
+          baseIndent = baseIndent + indentSize;
         }
       }
-      elementsIndent = nodeIndent + indentSize;
+      elementsIndent = baseIndent + indentSize;
 
-      checkFirstNodeLineIndent(node, nodeIndent);
+      checkFirstNodeLineIndent(node, baseIndent);
     } else {
-      nodeIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
-      elementsIndent = nodeIndent + indentSize;
+      baseIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
+      elementsIndent = baseIndent + indentSize;
     }
 
     // Checks if the node is a multiple variable declaration; if so, then make
