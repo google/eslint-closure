@@ -422,12 +422,23 @@ ESLint.SourceCode.prototype.getTokenOrCommentBefore = function(node, skip) {};
  */
 ESLint.SourceCode.prototype.getTokenOrCommentAfter = function(node, skip) {};
 
+/**
+ * The source location information of a node.
+ * @record
+ */
+ESLint.Location = function() {};
+
+/** @type {!Espree.Position} */
+ESLint.Location.prototype.start;
+
+/** @type {(!Espree.Position|undefined)} */
+ESLint.Location.prototype.end;
 
 /**
  * An error message description with at least a loc object.
  * @typedef {{
  *   node: (!Espree.Node|undefined),
- *   loc: !Location,
+ *   loc: !ESLint.Location,
  *   message: (string|undefined),
  *   data: (!Object|undefined),
  *   fix: (ESLint.FixFunction|undefined)
@@ -440,7 +451,7 @@ ESLint.MessageDescriptorWithLoc;
  * An error message description with at least a node object.
  * @typedef {{
  *   node: !Espree.Node,
- *   loc: (!Location|undefined),
+ *   loc: (!ESLint.Location|undefined),
  *   message: (string|undefined),
  *   data: (!Object|undefined),
  *   fix: (ESLint.FixFunction|undefined)

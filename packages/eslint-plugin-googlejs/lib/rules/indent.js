@@ -229,31 +229,30 @@ function isOuterIIFE_(node) {
 /**
  * Returns true if the array's first element is an object and that object starts
  * on the same line as the array.
- * @param {!Espree.ArrayExpression} node
+ * @param {!Espree.ASTNode} node
  * @return {boolean} True if above conditions are met.
  * @private
  */
 function isFirstArrayElementOnSameLine_(node) {
-  if (node.type != 'ArrayExpression') return false;
-  if (node.elements[0]) {
-    return node.elements[0].type === 'ObjectExpression' && 
-      node.elements[0].loc.start.line === node.loc.start.line;
+  if (node.type !== 'ArrayExpression') return false;
+  const arrayNode = /** @type {!Espree.ArrayExpression} */ (node);
+  if (arrayNode.elements[0]) {
+    return arrayNode.elements[0].type === 'ObjectExpression' &&
+      arrayNode.elements[0].loc.start.line === arrayNode.loc.start.line;
   } else {
     return false;
   }
 }
 
 /**
- * Filters out the elements which are on the same line of each other or the
- * node.  Basically have only 1 elements from each line except the variable
- * declaration line.
- *
+ * Returns a list of VariableDeclarators from the given VariableDeclaration
+ * where each VariableDeclarator is the first VariableDeclarator on a line.
  * @param {!Espree.VariableDeclaration} varDeclaration Variable declaration
  *     node.
- * @return {!Array<!ESLint.ASTNode>} Filtered elements
+ * @return {!Array<!Espree.VariableDeclarator>} Filtered elements
  * @private
  */
-function filterOutSameLineVars_(varDeclaration) {
+function getLeadingVariableDeclarators(varDeclaration) {
   return varDeclaration.declarations.reduce(function(finalCollection, elem) {
     const lastElem = finalCollection[finalCollection.length - 1];
 
@@ -266,78 +265,174 @@ function filterOutSameLineVars_(varDeclaration) {
   }, []);
 }
 
-function create(context) {
-  const DEFAULT_VARIABLE_INDENT = 1;
-  // For backwards compatibility, don't check parameter indentation unless
-  // specified in the config
-  const DEFAULT_PARAMETER_INDENT = -1;
-  const DEFAULT_FUNCTION_BODY_INDENT = 1;
 
-  let indentType = 'space';
-  let indentSize = 4;
-  const options = {
+/**
+ * Valid options for variable declarator indents.
+ * @typedef {{
+ *   var: number,
+ *   let: number,
+ *   const: number,
+ * }}
+ */
+let IndentOptionsVariableDeclarator;
+
+
+/**
+ * Valid options for function indents.
+ * @typedef {{
+ *   body: number,
+ *   parameters: (number|string),
+ * }}
+ */
+let IndentOptionsFunction;
+
+/**
+ * Valid options for the indent rule.
+ * @typedef {{
+ *   SwitchCase: number,
+ *   VariableDeclarator: !IndentOptionsVariableDeclarator,
+ *   outerIIFEBody: number,
+ *   MemberExpression: number,
+ *   FunctionDeclaration: !IndentOptionsFunction,
+ *   FunctionExpression: !IndentOptionsFunction,
+ * }}
+ */
+let IndentOption;
+
+/**
+ * Valid options for the indent rule.
+ * @typedef {{
+ *   SwitchCase: (number|undefined),
+ *   VariableDeclarator: (!IndentOptionsVariableDeclarator|number|undefined),
+ *   outerIIFEBody: (number|undefined),
+ *   MemberExpression: (number|undefined),
+ *   FunctionDeclaration: (!IndentOptionsFunction|undefined),
+ *   FunctionExpression: (!IndentOptionsFunction|undefined),
+ * }}
+ */
+let IndentOptionShortHand;
+
+/**
+ * Valid options for the indent rule.
+ * @typedef {{
+ *   indentSize: number,
+ *   indentType: string,
+ *   indentOptions: !IndentOption,
+ * }}
+ */
+let IndentPreference;
+
+/**
+ * Builds a completely new !IndentPreference object.
+ * @return {!IndentPreference}
+ */
+function buildDefaultPreferences_() {
+  const DEFAULT_INDENT_TYPE = 'space';
+  const DEFAULT_INDENT_SIZE = 4;
+  /** @type {IndentOption} */
+  const DEFAULT_INDENT_OPTIONS = {
     SwitchCase: 0,
     VariableDeclarator: {
-      var: DEFAULT_VARIABLE_INDENT,
-      let: DEFAULT_VARIABLE_INDENT,
-      const: DEFAULT_VARIABLE_INDENT,
+      var: 1,
+      let: 1,
+      const: 1,
     },
     outerIIFEBody: -1,
+    MemberExpression: -1,
     FunctionDeclaration: {
-      parameters: DEFAULT_PARAMETER_INDENT,
-      body: DEFAULT_FUNCTION_BODY_INDENT,
+      parameters: -1,
+      body: 1,
     },
     FunctionExpression: {
-      parameters: DEFAULT_PARAMETER_INDENT,
-      body: DEFAULT_FUNCTION_BODY_INDENT,
+      parameters: -1,
+      body: 1,
     },
   };
 
-  /** @type {!ESLint.SourceCode} */
-  const sourceCode = context.getSourceCode();
+  return {
+    indentSize: DEFAULT_INDENT_SIZE,
+    indentType: DEFAULT_INDENT_TYPE,
+    indentOptions: DEFAULT_INDENT_OPTIONS,
+  };
+}
 
-  if (context.options.length) {
-    if (context.options[0] === 'tab') {
-      indentSize = 1;
-      indentType = 'tab';
-    } else if (typeof context.options[0] === 'number') {
-      indentSize = context.options[0];
-      indentType = 'space';
+/**
+ * Build a complete sete of indentation preferences from the user's options.
+ * @param {!IndentOptionShortHand} userOptions
+ * @returns {!IndentPreference}
+ */
+function buildIndentPreferences(userOptions) {
+
+  const preferences = buildDefaultPreferences_();
+  const options = preferences.indentOptions;
+
+  if (userOptions.length) {
+    if (userOptions[0] === 'tab') {
+      preferences.indentSize = 1;
+      preferences.indentType = 'tab';
+    } else if (typeof userOptions[0] === 'number') {
+      preferences.indentSize = userOptions[0];
+      preferences.indentType = 'space';
     }
 
-    if (context.options[1]) {
-      const opts = context.options[1];
+    if (userOptions[1]) {
+      // Type is enforced by the rule schema.
+      const opts = /** @type {!IndentOptionShortHand} */ (userOptions[1]);
 
       options.SwitchCase = opts.SwitchCase || 0;
-      const variableDeclaratorRules = opts.VariableDeclarator;
 
-      if (typeof variableDeclaratorRules === 'number') {
+      if (typeof opts.VariableDeclarator === 'number') {
+        const variableDeclaratorIndent = /** @type {number} */
+            (opts.VariableDeclarator);
         options.VariableDeclarator = {
-          var: variableDeclaratorRules,
-          let: variableDeclaratorRules,
-          const: variableDeclaratorRules,
+          var: variableDeclaratorIndent,
+          let: variableDeclaratorIndent,
+          const: variableDeclaratorIndent,
         };
-      } else if (typeof variableDeclaratorRules === 'object') {
-        Object.assign(options.VariableDeclarator, variableDeclaratorRules);
+      } else if (typeof opts.VariableDeclarator === 'object') {
+        Object.assign(options.VariableDeclarator,
+            /** @type {!IndentOptionsVariableDeclarator} */
+            (opts.VariableDeclarator));
       }
 
       if (typeof opts.outerIIFEBody === 'number') {
-        options.outerIIFEBody = opts.outerIIFEBody;
+        options.outerIIFEBody =
+          /** @type {number} */ (opts.outerIIFEBody);
       }
 
       if (typeof opts.MemberExpression === 'number') {
-        options.MemberExpression = opts.MemberExpression;
+        options.MemberExpression =
+            /** @type {number} */ (opts.MemberExpression);
       }
 
       if (typeof opts.FunctionDeclaration === 'object') {
-        Object.assign(options.FunctionDeclaration, opts.FunctionDeclaration);
+        Object.assign(options.FunctionDeclaration,
+            /** @type {!IndentOptionsFunction} */ (opts.FunctionDeclaration));
       }
 
       if (typeof opts.FunctionExpression === 'object') {
-        Object.assign(options.FunctionExpression, opts.FunctionExpression);
+        Object.assign(options.FunctionExpression,
+            /** @type {!IndentOptionsFunction} */ (opts.FunctionExpression));
       }
     }
   }
+  return preferences;
+
+}
+
+/**
+ * @param {!ESLint.RuleContext} context
+ * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
+ */
+function create(context) {
+  const indentPreferences = buildIndentPreferences(
+    /** @type {!IndentOptionShortHand} */ (context.options));
+
+  const indentType = indentPreferences.indentType;
+  const indentSize = indentPreferences.indentSize;
+  const options = indentPreferences.indentOptions;
+
+  const sourceCode = context.getSourceCode();
 
   const caseIndentStore = {};
 
@@ -390,7 +485,7 @@ function create(context) {
    * @param {number} gottenSpaces Indentation space count in the actual
    *     node/code.
    * @param {number} gottenTabs Indentation tab count in the actual node/code.
-   * @param {Object=} opt_loc Error line and column location.
+   * @param {!ESLint.Location=} opt_loc Error line and column location.
    * @param {boolean=} opt_isLastNodeCheck Is the error for last node check.
    * @return {void}
    */
@@ -409,7 +504,13 @@ function create(context) {
       node,
       loc: opt_loc,
       message: createErrorMessage(needed, gottenSpaces, gottenTabs),
-      fix: fixer => fixer.replaceTextRange(textRange, desiredIndent),
+      /**
+       * @param {!ESLint.Fixer} fixer
+       * @return {!ESLint.FixCommand}
+       */
+      fix(fixer) {
+        return fixer.replaceTextRange(textRange, desiredIndent)
+      },
     });
   }
 
@@ -454,12 +555,16 @@ function create(context) {
 
     if ((endIndent.goodChar !== lastLineIndent || endIndent.badChar !== 0) &&
         isNodeFirstInLine_(node, sourceCode, true)) {
+      const location = {start: {
+        line: lastToken.loc.start.line,
+        column: lastToken.loc.start.column,
+      }};
       report(
         node,
         lastLineIndent,
         endIndent.space,
         endIndent.tab,
-        {line: lastToken.loc.start.line, column: lastToken.loc.start.column},
+        location,
         true
       );
     }
@@ -477,12 +582,16 @@ function create(context) {
     if ((startIndent.goodChar !== firstLineIndent ||
          startIndent.badChar !== 0) &&
         isNodeFirstInLine_(node, sourceCode)) {
+      const location = {start: {
+        line: node.loc.start.line,
+        column: node.loc.start.column
+      }}
       report(
         node,
         firstLineIndent,
         startIndent.space,
         startIndent.tab,
-        {line: node.loc.start.line, column: node.loc.start.column}
+        location 
       );
     }
   }
@@ -834,7 +943,7 @@ function create(context) {
    * @return {void}
    */
   function checkIndentInVariableDeclarations(node) {
-    const elements = filterOutSameLineVars_(node);
+    const elements = getLeadingVariableDeclarators(node);
     const nodeIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
     const lastElement = elements[elements.length - 1];
 
@@ -973,7 +1082,7 @@ function create(context) {
      * @param {!Espree.MemberExpression} node
      */
     MemberExpression(node) {
-      if (typeof options.MemberExpression === 'undefined') {
+      if (options.MemberExpression === -1) {
         return;
       }
 
@@ -997,7 +1106,7 @@ function create(context) {
 
       const checkNodes = [node.property];
 
-      const dot = context.getTokenBefore(node.property);
+      const dot = sourceCode.getTokenBefore(node.property);
 
       if (dot.type === 'Punctuator' && dot.value === '.') {
         checkNodes.push(dot);
