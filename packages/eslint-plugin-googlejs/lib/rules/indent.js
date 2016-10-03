@@ -2,9 +2,6 @@
  * @fileoverview This rule enforces a specific indent width for code.
  *
  * This rule has been ported and modified from ESLint.
- * @author Vitaly Puzrin
- * @author Gyandeep Singh
- * @author Joe Schafer
  */
 
 goog.module('googlejs.rules.indent');
@@ -73,31 +70,7 @@ let FunctionNode;
  *     !Espree.WithStatement
  * )}
  */
-
 let OptionallyBodiedNode;
-
-/**
- * Nodes that have a body property that is an array of ASTNodes.
- * @typedef {(
- *     !Espree.ArrowFunctionExpression|
- *     !Espree.BlockStatement|
- *     !Espree.CatchClause|
- *     !Espree.ClassBody|
- *     !Espree.ClassDeclaration|
- *     !Espree.ClassExpression|
- *     !Espree.DoWhileStatement|
- *     !Espree.ForInStatement|
- *     !Espree.ForOfStatement|
- *     !Espree.ForStatement|
- *     !Espree.FunctionDeclaration|
- *     !Espree.FunctionExpression|
- *     !Espree.LabeledStatement|
- *     !Espree.Program|
- *     !Espree.WhileStatement|
- *     !Espree.WithStatement
- * )}
- */
-let BodiedNode;
 
 /**
   * Gets the indent of the node by examining the number of whitespace characters
@@ -157,8 +130,9 @@ function isNodeFirstInLine_(node, sourceCode, opt_byEndLocation) {
  * @param {?Espree.VariableDeclarator} varNode Variable declaration node to
  *     check against.
  * @return {boolean} True if all the above condition are satisfied.
+ * @private
  */
-function isNodeInVarOnTop(node, varNode) {
+function isNodeInVarOnTop_(node, varNode) {
   return !!varNode &&
     varNode.parent.loc.start.line === node.loc.start.line &&
     varNode.parent.declarations.length > 1;
@@ -252,7 +226,7 @@ function isFirstArrayElementOnSameLine_(node) {
  * @return {!Array<!Espree.VariableDeclarator>} Filtered elements
  * @private
  */
-function getLeadingVariableDeclarators(varDeclaration) {
+function getLeadingVariableDeclarators_(varDeclaration) {
   return varDeclaration.declarations.reduce(function(finalCollection, elem) {
     const lastElem = finalCollection[finalCollection.length - 1];
 
@@ -325,6 +299,7 @@ let IndentPreference;
 /**
  * Builds a completely new !IndentPreference object.
  * @return {!IndentPreference}
+ * @private
  */
 function buildDefaultPreferences_() {
   const DEFAULT_INDENT_TYPE = 'space';
@@ -357,11 +332,12 @@ function buildDefaultPreferences_() {
 }
 
 /**
- * Build a complete sete of indentation preferences from the user's options.
+ * Builds a complete sete of indentation preferences from the user's options.
  * @param {!IndentOptionShortHand} userOptions
- * @returns {!IndentPreference}
+ * @return {!IndentPreference}
+ * @private
  */
-function buildIndentPreferences(userOptions) {
+function buildIndentPreferences_(userOptions) {
 
   const preferences = buildDefaultPreferences_();
   const options = preferences.indentOptions;
@@ -425,7 +401,7 @@ function buildIndentPreferences(userOptions) {
  * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
  */
 function create(context) {
-  const indentPreferences = buildIndentPreferences(
+  const indentPreferences = buildIndentPreferences_(
     /** @type {!IndentOptionShortHand} */ (context.options));
 
   const indentType = indentPreferences.indentType;
@@ -509,7 +485,7 @@ function create(context) {
        * @return {!ESLint.FixCommand}
        */
       fix(fixer) {
-        return fixer.replaceTextRange(textRange, desiredIndent)
+        return fixer.replaceTextRange(textRange, desiredIndent);
       },
     });
   }
@@ -584,14 +560,14 @@ function create(context) {
         isNodeFirstInLine_(node, sourceCode)) {
       const location = {start: {
         line: node.loc.start.line,
-        column: node.loc.start.column
-      }}
+        column: node.loc.start.column,
+      }};
       report(
         node,
         firstLineIndent,
         startIndent.space,
         startIndent.tab,
-        location 
+        location
       );
     }
   }
@@ -599,7 +575,7 @@ function create(context) {
   /**
    * Gets the base indent for the function node.
    * @param {(!FunctionNode|!Espree.ClassExpression)} functionNode
-   * @returns {number}
+   * @return {number}
    */
   function getFunctionBaseIndent(functionNode) {
     // Search first caller in chain.
@@ -664,7 +640,7 @@ function create(context) {
     const parentVarNode = /** @type {?Espree.VariableDeclarator} */
         (utils.getNodeAncestorOfType(functionNode, 'VariableDeclarator'));
 
-    if (parentVarNode && isNodeInVarOnTop(functionNode, parentVarNode)) {
+    if (parentVarNode && isNodeInVarOnTop_(functionNode, parentVarNode)) {
       bodyIndent += indentSize *
         options.VariableDeclarator[parentVarNode.parent.kind];
     }
@@ -752,7 +728,7 @@ function create(context) {
 
     // Checks if the arrayNode is a multiple variable declaration; if so, then
     // make sure indentation takes that into account.
-    if (isNodeInVarOnTop(arrayNode, parentVarNode)) {
+    if (isNodeInVarOnTop_(arrayNode, parentVarNode)) {
       elementsIndent += indentSize *
         options.VariableDeclarator[parentVarNode.parent.kind];
     }
@@ -790,7 +766,7 @@ function create(context) {
   /**
    * Computs the proper indent for object properties.
    * @param {!Espree.ObjectExpression} node
-   * @returns {number} The required indent of object properties.
+   * @return {number} The required indent of object properties.
    */
   function getObjectPropertyIndent(node) {
     const parent = node.parent;
@@ -859,7 +835,7 @@ function create(context) {
 
     // Checks if the node is a multiple variable declaration; if so, then make
     // sure indentation takes that into account.
-    if (isNodeInVarOnTop(node, varDeclAncestor)) {
+    if (isNodeInVarOnTop_(node, varDeclAncestor)) {
       elementsIndent += indentSize *
         options.VariableDeclarator[varDeclAncestor.parent.kind];
     }
@@ -903,7 +879,7 @@ function create(context) {
 
   /**
    * @param {!Espree.IfStatement} node
-   * @returns {void}
+   * @return {void}
    */
   function checkIfStatementIndent(node) {
     const baseIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
@@ -938,12 +914,18 @@ function create(context) {
   }
 
   /**
-   * Check indentation for variable declarations.
-   * @param {!Espree.VariableDeclaration} node The node to examine.
+   * Checks indentation for variable declarations.
+   * @param {!Espree.VariableDeclaration} node
    * @return {void}
    */
-  function checkIndentInVariableDeclarations(node) {
-    const elements = getLeadingVariableDeclarators(node);
+  function checkVariableDeclarationIndent(node) {
+    const startDeclarator = node.declarations[0];
+    const endDeclarator = node.declarations[node.declarations.length - 1];
+    if (utils.nodesStartOnSameLine(startDeclarator, endDeclarator)) {
+      return;
+    }
+
+    const elements = getLeadingVariableDeclarators_(node);
     const nodeIndent = getNodeIndent_(node, sourceCode, indentType).goodChar;
     const lastElement = elements[elements.length - 1];
 
@@ -1052,7 +1034,6 @@ function create(context) {
     ClassDeclaration: checkClassIndent,
     ClassExpression: checkClassIndent,
 
-
     BlockStatement: checkBlockStatementIndent,
 
     DoWhileStatement: checkOptionallyBodiedIndent,
@@ -1064,15 +1045,7 @@ function create(context) {
 
     IfStatement: checkIfStatementIndent,
 
-    /**
-     * @param {!Espree.VariableDeclaration} node
-     */
-    VariableDeclaration(node) {
-      if (node.declarations[node.declarations.length - 1].loc.start.line >
-          node.declarations[0].loc.start.line) {
-        checkIndentInVariableDeclarations(node);
-      }
-    },
+    VariableDeclaration: checkVariableDeclarationIndent,
 
     ObjectExpression: checkObjectExpressionIndent,
 
@@ -1119,15 +1092,11 @@ function create(context) {
      * @param {!Espree.SwitchStatement} node
      */
     SwitchStatement(node) {
-
       // Switch is not a 'BlockStatement'
       const switchIndent = getNodeIndent_(
           node, sourceCode, indentType).goodChar;
       const caseIndent = expectedCaseIndent(node, switchIndent);
-
       checkNodesIndent(node.cases, caseIndent);
-
-
       checkLastNodeLineIndent(node, switchIndent);
     },
 
