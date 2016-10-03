@@ -58,11 +58,41 @@ while(true) {
       code: `
 if(true) {
   foo();
-    bar();
+  bar();
 }`,
       options: [2],
     },
 
+    {
+      code: `
+goog.scope(function() {
+  var foo;
+})
+`,
+      options: [2],
+    },
+    {
+      code: `
+goog.scope(function() {
+var foo;
+})
+`,
+      options: [2, {outerIIFEBody: 0}],
+    },
+    {
+      code: `
+goog.scope(function() {var foo;})
+`,
+      options: [2, {outerIIFEBody: 0}],
+    },
+    {
+      code: `
+goog.scope(function() {
+    var foo;
+})
+`,
+      options: [2, {outerIIFEBody: 2}],
+    },
   ],
   invalid: [
   ],

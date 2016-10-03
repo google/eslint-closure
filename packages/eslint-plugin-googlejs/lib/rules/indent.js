@@ -154,12 +154,41 @@ function isCalleeNodeFirstArgMultiline_(node) {
 }
 
 /**
+ * Returns true if the function is a parameter in `goog.scope`.
+ * @param {!FunctionNode} node
+ * @return {boolean}
+ */
+function isGoogScopeFunction_(node) {
+  // Verify that the node is an IIFE.
+  if (node.parent.type !== 'CallExpression') {
+    return false;
+  }
+  const parent = /** @type {!Espree.CallExpression} */ (node.parent);
+  if (parent.callee.type !== 'MemberExpression') {
+    return false;
+  }
+  const callee = /** @type {!Espree.MemberExpression} */ (parent.callee);
+
+  if (callee.object.type !== 'Identifier' ||
+      callee.property.type !== 'Identifier') {
+    return false;
+  }
+  const calleeObject = /** @type {!Espree.Identifier} */ (callee.object);
+  const calleeProperty = /** @type {!Espree.Identifier} */ (callee.property);
+
+  return calleeObject.name === 'goog' && calleeProperty.name === 'scope';
+}
+
+/**
   * Returns true if the node is a file level IIFE.
   * @param {!ESLint.ASTNode} node
   * @return {boolean} True if the node is the outer IIFE.
   * @private
   */
 function isOuterIIFE_(node) {
+  if (isGoogScopeFunction_(node)) {
+    return true;
+  }
   const parent = node.parent;
   let stmt = parent.parent;
 
