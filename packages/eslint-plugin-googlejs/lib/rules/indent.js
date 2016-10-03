@@ -1,5 +1,5 @@
 /**
- * @fileoverview This option sets a specific indent width for your code.
+ * @fileoverview This rule enforces a specific indent width for code.
  *
  * This rule has been ported and modified from ESLint.
  * @author Vitaly Puzrin
@@ -13,8 +13,9 @@ goog.module('googlejs.rules.indent');
 // const {assert} = goog.require('goog.asserts');
 
 const utils = goog.require('googlejs.utils');
+
 /**
- * Information about the indentation preceeding a Node.
+ * Information about the indentation preceeding an ESLint.ASTNode.
  * @record
  */
 const IndentInfo = function() {};
@@ -68,9 +69,11 @@ let FunctionNode;
  *     !Espree.ForStatement|
  *     !Espree.ForInStatement|
  *     !Espree.ForOfStatement|
- *     !Espree.WhileStatement
+ *     !Espree.WhileStatement|
+ *     !Espree.WithStatement
  * )}
  */
+
 let OptionallyBodiedNode;
 
 /**
@@ -97,7 +100,8 @@ let OptionallyBodiedNode;
 let BodiedNode;
 
 /**
-  * Gets the actual indent of the node.
+  * Gets the indent of the node by examining the number of whitespace characters
+  * at the beginning of the line.
   * @param {!Espree.Node} node Node to examine.
   * @param {!ESLint.SourceCode} sourceCode
   * @param {string} indentType
@@ -126,12 +130,11 @@ function getNodeIndent_(node, sourceCode, indentType, opt_byLastLine) {
 }
 
 /**
- * Checks node is the first in its own start line. By default it looks by
- * start line.
- * @param {!Espree.Node} node The node to check.
+ * Returns true if node is the first node on its own start line. Can optionally
+ * check the end line instead of the start line.
+ * @param {!Espree.Node} node
  * @param {!ESLint.SourceCode} sourceCode
- * @param {boolean=} opt_byEndLocation Lookup based on start position or
- *     end.
+ * @param {boolean=} opt_byEndLocation Lookup based on start position or end.
  * @return {boolean} true if it's the first in it's start line.
  * @private
  */
@@ -147,9 +150,10 @@ function isNodeFirstInLine_(node, sourceCode, opt_byEndLocation) {
 }
 
 /**
- * Check to see if the node is part of the multi-line variable declaration.
- * Also if its on the same line as the varNode.
- * @param {!ESLint.ASTNode} node Node to check.
+ * Returns true if the node is part of the multi-variable declaration and the
+ * node starts on the same line as the VariableDeclaration, i.e. the `var`,
+ * `let`, or `const`.
+ * @param {!Espree.Node} node
  * @param {?Espree.VariableDeclarator} varNode Variable declaration node to
  *     check against.
  * @return {boolean} True if all the above condition are satisfied.
@@ -161,7 +165,7 @@ function isNodeInVarOnTop(node, varNode) {
 }
 
 /**
- * Checks if a CallExpression's first argument is multiline.
+ * Returns true if a CallExpression's first argument is multi-line.
  * @param {!Espree.CallExpression} node
  * @return {boolean} True if arguments are multi-line.
  * @private
@@ -176,8 +180,8 @@ function isCalleeNodeFirstArgMultiline_(node) {
 }
 
 /**
-  * Checks to see if the node is a file level IIFE.
-  * @param {!ESLint.ASTNode} node The function node to check.
+  * Returns true if the node is a file level IIFE.
+  * @param {!ESLint.ASTNode} node
   * @return {boolean} True if the node is the outer IIFE.
   * @private
   */
@@ -223,23 +227,17 @@ function isOuterIIFE_(node) {
 }
 
 /**
- * Check to see if the first element inside an array is an object and on the
- * same line as the node.  If the node is not an array then it will return
- * false.
- * @param {!ESLint.ASTNode} node Node to check.
- * @return {boolean} Success or failure.
+ * Returns true if the array's first element is an object and that object starts
+ * on the same line as the array.
+ * @param {!Espree.ArrayExpression} node
+ * @return {boolean} True if above conditions are met.
  * @private
  */
 function isFirstArrayElementOnSameLine_(node) {
-  if (node.type != 'ArrayExpression') {
-    return false;
-  }
-  const arrayExpression = /** @type {!Espree.ArrayExpression} */ (node);
-
-  if (arrayExpression.elements[0]) {
-    return arrayExpression.elements[0].loc.start.line ===
-        arrayExpression.loc.start.line &&
-        arrayExpression.elements[0].type === 'ObjectExpression';
+  if (node.type != 'ArrayExpression') return false;
+  if (node.elements[0]) {
+    return node.elements[0].type === 'ObjectExpression' && 
+      node.elements[0].loc.start.line === node.loc.start.line;
   } else {
     return false;
   }
@@ -701,7 +699,7 @@ function create(context) {
             //     {
             //       foo: 2,
             //     }
-            baseIndent = baseIndent + 2 +
+            baseIndent = baseIndent +
               (indentSize *
                options.VariableDeclarator[varDeclAncestor.parent.kind]);
           }
