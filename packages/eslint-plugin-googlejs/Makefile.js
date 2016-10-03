@@ -2,7 +2,7 @@
  * @fileoverview Build file for the googlejs ESLint plugin.
  */
 
-/* global echo, exec, exit, find, target */
+/* global echo, exec, exit, find, target, rm */
 /* eslint no-use-before-define: "off", no-console: "off" */
 'use strict';
 
@@ -39,6 +39,7 @@ const commonClosureCompilerSettings = {
     './externs/externs-commonjs.js',
     './externs/externs-eslint.js',
     './externs/externs-espree.js',
+    './externs/externs-escope.js',
     './externs/externs-mocha.js',
   ],
   language_in: 'ECMASCRIPT6_STRICT',
@@ -165,12 +166,12 @@ target.testIndent = function() {
 
   const testFileOld = './tests/rules/indent.js';
   const testFileNew = './tests/rules/indent-new.js';
-  const compilerOldIndentTest = buildTestCompiler(
+  const compilerTest = buildTestCompiler(
     testFileOld, 'googlejs.tests.rules.indent');
   const compilerNewIndentTest = buildTestCompiler(
     testFileNew, 'googlejs.tests.rules.indentNew');
 
-  compilerOldIndentTest.run(function(exitCode, stdout, stderr) {
+  compilerTest.run(function(exitCode, stdout, stderr) {
     console.log(stdout);
     console.log(stderr);
   });
@@ -180,6 +181,31 @@ target.testIndent = function() {
     console.log(stderr);
   });
 
+};
+
+function kebabToCamel(string) {
+  return string.replace(/(\-\w)/g, (match) => match[1].toUpperCase());
+}
+
+target.testRule = function(args) {
+  const rule = args[0];
+  console.log(`Testing the googlejs plugin rule ${rule}.`);
+
+  const testOutput = `./dist/tests/rules/${rule}.js`;
+  rm('-f', testOutput);
+
+  const testPath = './tests/rules';
+  const camelRule = kebabToCamel(rule);
+  const compilerTest = buildTestCompiler(
+    `${testPath}/${rule}.js`, `googlejs.tests.rules.${camelRule}`);
+
+  compilerTest.run(function(exitCode, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    console.log('pwd', process.cwd());
+    nodeCLI.exec('./node_modules/mocha/bin/_mocha', '-R progress',
+                 ` -t  ${MOCHA_TIMEOUT}`, '-c', testOutput);
+  });
 };
 
 target.buildAdvanced = function() {
