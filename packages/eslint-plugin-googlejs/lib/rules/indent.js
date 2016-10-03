@@ -510,7 +510,7 @@ function create(context) {
   }
 
   /**
-   * Checks indent for nodes list.
+   * Checks indentation of an array of nodes with a given indent.
    * @param {!Array<!ESLint.ASTNode>} nodes List of node objects.
    * @param {number} indent Needed indent.
    * @return {void}
@@ -520,8 +520,9 @@ function create(context) {
   }
 
   /**
-   * Checks that last node's token is indentedy correctly.
-   * @param {!ESLint.ASTNode} node Node to examine.
+   * Checks that the indentation of the last token of a node matches the given
+   * indent.
+   * @param {!ESLint.ASTNode} node
    * @param {number} lastLineIndent Needed indent.
    * @return {void}
    */
@@ -547,8 +548,9 @@ function create(context) {
   }
 
   /**
-   * Checks that first node line indent is correct.
-   * @param {!ESLint.ASTNode} node Node to examine.
+   * Checks that the indentation of the first node on a line matches the given
+   * indent.
+   * @param {!ESLint.ASTNode} node
    * @param {number} firstLineIndent Needed indent.
    * @return {void}
    */
@@ -662,7 +664,7 @@ function create(context) {
   }
 
   /**
-   * Checks indent in arrays.
+   * Checks indentation in arrays.
    * @param {!Espree.ArrayExpression} arrayNode
    */
   function checkArrayExpressionIndent(arrayNode) {
@@ -743,7 +745,7 @@ function create(context) {
   }
 
   /**
-   * Checks indent for array block content or object block content.
+   * Checks indentation for array block content or object block content.
    * @param {!Espree.ObjectExpression} node
    * @return {void}
    */
@@ -878,6 +880,7 @@ function create(context) {
   }
 
   /**
+   * Checks indentation for IfStatements.
    * @param {!Espree.IfStatement} node
    * @return {void}
    */
@@ -914,7 +917,7 @@ function create(context) {
   }
 
   /**
-   * Checks indentation for variable declarations.
+   * Checks indentation for VariableDeclarations.
    * @param {!Espree.VariableDeclaration} node
    * @return {void}
    */
@@ -976,7 +979,7 @@ function create(context) {
   }
 
   /**
-   * Checks indentation of function params.
+   * Checks indentation of function parameters.
    * @param {(!Espree.FunctionExpression|!Espree.FunctionDeclaration)} node
    * @param {number} indentSize The base baseIndent width.
    * @param {(number|string)} indentMultiple The ident multiple of `indentSize`.

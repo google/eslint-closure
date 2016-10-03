@@ -16,7 +16,6 @@ function nodesShareOneLine(left, right) {
   return left.loc.end.line === right.loc.start.line;
 }
 
-
 /**
  * Returns true if a node exists entirely on one line.
  * @param {!Espree.Node} node
