@@ -181,7 +181,7 @@ function isGoogScopeFunction_(node) {
 
 /**
   * Returns true if the node is a file level IIFE.
-  * @param {!ESLint.ASTNode} node
+  * @param {!FunctionNode} node
   * @return {boolean} True if the node is the outer IIFE.
   * @private
   */
