@@ -6,8 +6,9 @@
 
 goog.module('googlejs.rules.noUnusedVars');
 
-const lodash = require('lodash');
 const astUtils = goog.require('googlejs.astUtils');
+
+const lodash = require('lodash');
 
 /** @const {!ESLint.RuleDefinition} */
 exports = {
@@ -67,7 +68,8 @@ exports = {
         }
 
         if (firstOption.caughtErrorsIgnorePattern) {
-          config.caughtErrorsIgnorePattern = new RegExp(firstOption.caughtErrorsIgnorePattern);
+          config.caughtErrorsIgnorePattern =
+              new RegExp(firstOption.caughtErrorsIgnorePattern);
         }
       }
     }
@@ -76,7 +78,7 @@ exports = {
 
     /**
      * Determines if a given variable is being exported from a module.
-     * @param {!Escope.Variable} variable - EScope variable object.
+     * @param {!Escope.Variable} variable EScope variable object.
      * @return {boolean} True if the variable is exported, false if not.
      * @private
      */
@@ -102,7 +104,7 @@ exports = {
 
     /**
      * Determines if a reference is a read operation.
-     * @param {Reference} ref An escope Reference.
+     * @param {!Escope.Reference} ref An escope Reference.
      * @return {boolean} whether the given reference represents a read operation
      * @private
      */
@@ -112,8 +114,8 @@ exports = {
 
     /**
      * Determine if an identifier is referencing an enclosing function name.
-     * @param {Reference} ref - The reference to check.
-     * @param {!Array<!Espree.ASTNode>} nodes - The candidate function nodes.
+     * @param {!Escope.Reference} ref The reference to check.
+     * @param {!Array<!Espree.ASTNode>} nodes The candidate function nodes.
      * @return {boolean} True if it's a self-reference, false if not.
      * @private
      */
@@ -134,7 +136,7 @@ exports = {
     /**
      * Checks whether a given node is inside of a loop or not.
      *
-     * @param {!Espree.ASTNode} node - A node to check.
+     * @param {!Espree.ASTNode} node A node to check.
      * @return {boolean} `true` if the node is inside of a loop.
      * @private
      */
@@ -156,8 +158,8 @@ exports = {
     /**
      * Checks the position of given nodes.
      *
-     * @param {!Espree.ASTNode} inner - A node which is expected as inside.
-     * @param {!Espree.ASTNode} outer - A node which is expected as outside.
+     * @param {!Espree.ASTNode} inner A node which is expected as inside.
+     * @param {!Espree.ASTNode} outer A node which is expected as outside.
      * @return {boolean} `true` if the `inner` node exists in the `outer` node.
      * @private
      */
@@ -174,13 +176,13 @@ exports = {
      *
      * In the following cases, this returns null.
      *
-     * - The reference is not the LHS of an assignment expression.
-     * - The reference is inside of a loop.
-     * - The reference is inside of a function scope which is different from
+     * * The reference is not the LHS of an assignment expression.
+     * * The reference is inside of a loop.
+     * * The reference is inside of a function scope which is different from
      *   the declaration.
      *
-     * @param {escope.Reference} ref - A reference to check.
-     * @param {!Espree.ASTNode} prevRhsNode - The previous RHS node.
+     * @param {escope.Reference} ref A reference to check.
+     * @param {!Espree.ASTNode} prevRhsNode The previous RHS node.
      * @return {?Espree.ASTNode} The RHS node or null.
      * @private
      */
@@ -214,12 +216,13 @@ exports = {
      * Checks whether a given function node is stored to somewhere or not.
      * If the function node is stored, the function can be used later.
      *
-     * @param {!Espree.ASTNode} funcNode - A function node to check.
-     * @param {!Espree.ASTNode} rhsNode - The RHS node of the previous assignment.
+     * @param {!Espree.ASTNode} funcNode A function node to check.
+     * @param {!Espree.ASTNode} rhsNode The RHS node of the previous assignment.
      * @return {boolean} `true` if under the following conditions:
      *      - the funcNode is assigned to a variable.
      *      - the funcNode is bound as an argument of a function call.
-     *      - the function is bound to a property and the object satisfies above conditions.
+     *      - the function is bound to a property and the object satisfies above
+     *        conditions.
      * @private
      */
     function isStorableFunction(funcNode, rhsNode) {
@@ -228,30 +231,28 @@ exports = {
 
       while (parent && isInside(parent, rhsNode)) {
         switch (parent.type) {
-        case 'SequenceExpression':
-          if (parent.expressions[parent.expressions.length - 1] !== node) {
-            return false;
-          }
-          break;
+          case 'SequenceExpression':
+            if (parent.expressions[parent.expressions.length - 1] !== node) {
+              return false;
+            }
+            break;
 
-        case 'CallExpression':
-        case 'NewExpression':
-          return parent.callee !== node;
+          case 'CallExpression':
+          case 'NewExpression':
+            return parent.callee !== node;
 
-        case 'AssignmentExpression':
-        case 'TaggedTemplateExpression':
-        case 'YieldExpression':
-          return true;
-
-        default:
-          if (STATEMENT_TYPE.test(parent.type)) {
-
-            /*
-             * If it encountered statements, this is a complex pattern.
-             * Since analyzeing complex patterns is hard, this returns `true` to avoid false positive.
-             */
+          case 'AssignmentExpression':
+          case 'TaggedTemplateExpression':
+          case 'YieldExpression':
             return true;
-          }
+
+          default:
+            if (STATEMENT_TYPE.test(parent.type)) {
+              // If it encountered statements, this is a complex pattern.  Since
+              // analyzing complex patterns is hard, this returns `true` to
+              // avoid false positive.
+              return true;
+            }
         }
 
         node = parent;
@@ -262,18 +263,21 @@ exports = {
     }
 
     /**
-     * Checks whether a given Identifier node exists inside of a function node which can be used later.
+     * Checks whether a given Identifier node exists inside of a function node
+     * which can be used later.
      *
      * "can be used later" means:
      * - the function is assigned to a variable.
      * - the function is bound to a property and the object can be used later.
      * - the function is bound as an argument of a function call.
      *
-     * If a reference exists in a function which can be used later, the reference is read when the function is called.
+     * If a reference exists in a function which can be used later, the
+     * reference is read when the function is called.
      *
-     * @param {!Espree.ASTNode} id - An Identifier node to check.
-     * @param {!Espree.ASTNode} rhsNode - The RHS node of the previous assignment.
-     * @return {boolean} `true` if the `id` node exists inside of a function node which can be used later.
+     * @param {!Espree.ASTNode} id An Identifier node to check.
+     * @param {!Espree.ASTNode} rhsNode The RHS node of the previous assignment.
+     * @return {boolean} `true` if the `id` node exists inside of a function
+     *     node which can be used later.
      * @private
      */
     function isInsideOfStorableFunction(id, rhsNode) {
@@ -289,8 +293,8 @@ exports = {
     /**
      * Checks whether a given reference is a read to update itself or not.
      *
-     * @param {escope.Reference} ref - A reference to check.
-     * @param {!Espree.ASTNode} rhsNode - The RHS node of the previous assignment.
+     * @param {!Escope.Reference} ref A reference to check.
+     * @param {!Espree.ASTNode} rhsNode The RHS node of the previous assignment.
      * @return {boolean} The reference is a read to update itself.
      * @private
      */
@@ -322,9 +326,9 @@ exports = {
     }
 
     /**
-     * Determine if an identifier is used either in for-in loops.
+     * Determines if an identifier is used in a for-in loop.
      *
-     * @param {Reference} ref - The reference to check.
+     * @param {!Escope.Reference} ref The reference to check.
      * @return {boolean} whether reference is used in the for-in loops
      * @private
      */
@@ -360,17 +364,15 @@ exports = {
 
     /**
      * Determines if the variable is used.
-     * @param {!Escope.Variable} variable - The variable to check.
+     * @param {!Escope.Variable} variable The variable to check.
      * @return {boolean} True if the variable is used
      * @private
      */
     function isUsedVariable(variable) {
-      const functionNodes = variable.defs.filter(function(def) {
-        return def.type === 'FunctionName';
-      }).map(function(def) {
-        return def.node;
-      }),
-      isFunctionDefinition = functionNodes.length > 0;
+      const functionNodes = variable.defs
+            .filter((def) => def.type === 'FunctionName')
+            .map((def) => def.node);
+      const isFunctionDefinition = functionNodes.length > 0;
       let rhsNode = null;
 
       return variable.references.some(function(ref) {
@@ -391,9 +393,10 @@ exports = {
     }
 
     /**
-     * Checks whether the given variable is the last parameter in the non-ignored parameters.
+     * Checks whether the given variable is the last parameter in the
+     * non-ignored parameters.
      *
-     * @param {escope.Variable} variable - The variable to check.
+     * @param {escope.Variable} variable The variable to check.
      * @return {boolean} `true` if the variable is the last.
      */
     function isLastInNonIgnoredParameters(variable) {
@@ -404,12 +407,14 @@ exports = {
         return true;
       }
 
-      // if all parameters preceded by this variable are ignored and unused, this is the last.
+      // If all parameters preceded by this variable are ignored and unused,
+      // this is the last.
       if (config.argsIgnorePattern) {
         const params = context.getDeclaredVariables(def.node);
         const posteriorParams = params.slice(params.indexOf(variable) + 1);
 
-        if (posteriorParams.every(v => v.references.length === 0 && config.argsIgnorePattern.test(v.name))) {
+        if (posteriorParams.every(v => v.references.length === 0 &&
+                config.argsIgnorePattern.test(v.name))) {
           return true;
         }
       }
@@ -419,36 +424,42 @@ exports = {
 
     /**
      * Gets an array of variables without read references.
-     * @param {!Escope.Scope} scope - an escope Scope object.
-     * @param {!Array<!Escope.Variable>} unusedVars - an array that saving result.
-     * @return {!Array<!Escope.Variable>} unused variables of the scope and descendant scopes.
+     * @param {!Escope.Scope} scope an escope Scope object.
+     * @param {!Array<!Escope.Variable>} unusedVars an array that saving result.
+     * @return {!Array<!Escope.Variable>} unused variables of the scope and
+     *     descendant scopes.
      * @private
      */
     function collectUnusedVariables(scope, unusedVars) {
       const variables = scope.variables;
       const childScopes = scope.childScopes;
-      let i, l;
+      let i;
+      let l;
 
-      if (scope.type !== 'TDZ' && (scope.type !== 'global' || config.vars === 'all')) {
+      if (scope.type !== 'TDZ' &&
+          (scope.type !== 'global' || config.vars === 'all')) {
         for (i = 0, l = variables.length; i < l; ++i) {
           const variable = variables[i];
 
-          // skip a variable of class itself name in the class scope
-          if (scope.type === 'class' && scope.block.id === variable.identifiers[0]) {
+          // Skip a variable of class itself name in the class scope.
+          if (scope.type === 'class' &&
+              scope.block.id === variable.identifiers[0]) {
             continue;
           }
 
-          // skip function expression names and variables marked with markVariableAsUsed()
+          // Skip function expression names and variables marked with
+          // markVariableAsUsed().
           if (scope.functionExpressionScope || variable.eslintUsed) {
             continue;
           }
 
-          // skip implicit "arguments" variable
-          if (scope.type === 'function' && variable.name === 'arguments' && variable.identifiers.length === 0) {
+          // Skip implicit "arguments" variable.
+          if (scope.type === 'function' && variable.name === 'arguments' &&
+              variable.identifiers.length === 0) {
             continue;
           }
 
-          // explicit global variables don't have definitions.
+          // Explicit global variables don't have definitions.
           const def = variable.defs[0];
 
           if (def) {
@@ -461,7 +472,8 @@ exports = {
               }
 
               // skip ignored parameters
-              if (config.caughtErrorsIgnorePattern && config.caughtErrorsIgnorePattern.test(def.name.name)) {
+              if (config.caughtErrorsIgnorePattern &&
+                  config.caughtErrorsIgnorePattern.test(def.name.name)) {
                 continue;
               }
             }
@@ -469,7 +481,8 @@ exports = {
             if (type === 'Parameter') {
 
               // skip any setter argument
-              if (def.node.parent.type === 'Property' && def.node.parent.kind === 'set') {
+              if (def.node.parent.type === 'Property' &&
+                  def.node.parent.kind === 'set') {
                 continue;
               }
 
@@ -479,18 +492,21 @@ exports = {
               }
 
               // skip ignored parameters
-              if (config.argsIgnorePattern && config.argsIgnorePattern.test(def.name.name)) {
+              if (config.argsIgnorePattern &&
+                  config.argsIgnorePattern.test(def.name.name)) {
                 continue;
               }
 
-              // if "args" option is "after-used", skip all but the last parameter
-              if (config.args === 'after-used' && !isLastInNonIgnoredParameters(variable)) {
+              // if "args" option is "after-used", skip all but the last
+              // parameter
+              if (config.args === 'after-used' &&
+                  !isLastInNonIgnoredParameters(variable)) {
                 continue;
               }
             } else {
-
               // skip ignored variables
-              if (config.varsIgnorePattern && config.varsIgnorePattern.test(def.name.name)) {
+              if (config.varsIgnorePattern &&
+                  config.varsIgnorePattern.test(def.name.name)) {
                 continue;
               }
             }
@@ -511,13 +527,15 @@ exports = {
 
     /**
      * Gets the index of a given variable name in a given comment.
-     * @param {escope.Variable} variable - A variable to get.
-     * @param {!Espree.ASTNode} comment - A comment node which includes the variable name.
+     * @param {!Escope.Variable} variable A variable to get.
+     * @param {!Espree.ASTNode} comment A comment node which includes the
+     *     variable name.
      * @return {number} The index of the variable name's location.
      * @private
      */
     function getColumnInComment(variable, comment) {
-      const namePattern = new RegExp(`[\\s,]${lodash.escapeRegExp(variable.name)}(?:$|[\\s,:])`, 'g');
+      const namePattern = new RegExp(
+          `[\\s,]${lodash.escapeRegExp(variable.name)}(?:$|[\\s,:])`, 'g');
 
       // To ignore the first text "global".
       namePattern.lastIndex = comment.value.indexOf('global') + 6;
@@ -532,8 +550,9 @@ exports = {
      * Creates the correct location of a given variables.
      * The location is at its name string in a `/*global` comment.
      *
-     * @param {Escope.Variable} variable - A variable to get its location.
-     * @return {{line: number, column: number}} The location object for the variable.
+     * @param {!Escope.Variable} variable A variable to get its location.
+     * @return {{line: number, column: number}} The location object for the
+     *     variable.
      * @private
      */
     function getLocation(variable) {
