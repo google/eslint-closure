@@ -102,7 +102,7 @@ exports = {
 
     /**
      * Determines if a reference is a read operation.
-     * @param {Reference} ref - An escope Reference
+     * @param {Reference} ref An escope Reference.
      * @return {boolean} whether the given reference represents a read operation
      * @private
      */
