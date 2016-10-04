@@ -12,8 +12,8 @@ const PLUGIN_ESLINT_CONFIG = {
   rules: {
     camelcase,
     indent,
-    inlineCommentSpacing,
-    noUnusedVars,
+    'inline-comment-spacing': inlineCommentSpacing,
+    'no-unused-var': noUnusedVars,
   },
 };
 

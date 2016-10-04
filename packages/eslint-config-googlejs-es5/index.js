@@ -65,7 +65,6 @@ const GOOGLE_PLUGIN_RULES = {
     checkObjectProperties: false,
   }],
 
-
   // The JS style guide 'follows the C++ style guide in spirit'.  The C++ style
   // guide mandates two spaces before line-end comments.  See the 'Line
   // Comments' section under
