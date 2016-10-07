@@ -1,4 +1,5 @@
-/** * @fileoverview An extern for the Escope, an ECMAScript scope analyser at:
+/**
+ * @fileoverview An extern for the Escope, an ECMAScript scope analyser at:
  * https://github.com/estools/escope/blob/master/src/reference.js
  * @externs
  */
@@ -144,6 +145,12 @@ Escope.Variable.prototype.stack;
  */
 Escope.Variable.prototype.scope;
 
+
+/**
+ * @record
+ */
+Escope.Scope = function() {};
+
 /**
  * One of 'TDZ', 'module', 'block', 'switch', 'function', 'catch', 'with',
  * 'function', 'class', 'global'.
@@ -162,6 +169,7 @@ Escope.Scope.prototype.set;
  * The tainted variables of this scope, as <code>{ Variable.name :
  * boolean }</code>.
  * @type {Map}
+ */
 Escope.Scope.prototype.taints;
 
 /**
@@ -178,13 +186,13 @@ Escope.Scope.prototype.dynamic;
 
 /**
  * A reference to the scope-defining syntax node.
- * @type {esprima.Node}
+ * @type {!Espree.Node}
  */
 Escope.Scope.prototype.block;
 
 /**
  * The {@link Reference|references} that are not resolved with this scope.
- * @type {!Array<!Reference>}
+ * @type {!Array<!Escope.Reference>}
  */
 Escope.Scope.prototype.through;
 
@@ -203,7 +211,7 @@ Escope.Scope.prototype.variables;
  * this also includes defining occurrences (like in a 'var' statement).
  * In a 'function' scope this does not include the occurrences of the
  * formal parameter in the parameter list.
- * @type {!Array<!Reference>}
+ * @type {!Array<!Escope.Reference>}
  */
 Escope.Scope.prototype.references;
 
@@ -247,6 +255,36 @@ Escope.Scope.prototype.isStrict;
 
 /**
  * List of nested {@link Scope}s.
- * @type {!Array<!Scope>}
+ * @type {!Array<!Escope.Scope>}
  */
 Escope.Scope.prototype.childScopes;
+
+/**
+ * Defintion.
+ * @record
+ */
+Escope.Definition = function() {};
+/**
+ * @type {string} type of the occurrence (e.g. "Parameter", "Variable", ...).
+ */
+Escope.Definition.prototype.type;
+/**
+ * @type {!Espree.Identifier} the identifier AST node of the occurrence.
+ */
+Escope.Definition.prototype.name;
+/**
+ * @type {!Espree.Node} the enclosing node of the identifier.
+ */
+Escope.Definition.prototype.node;
+/**
+ * @type {(!Espree.Node|null)} the enclosing statement node of the identifier.
+ */
+Escope.Definition.prototype.parent;
+/**
+ * @type {(number|null)} the index in the declaration statement.
+ */
+Escope.Definition.prototype.index;
+/**
+ * @type {(string|null)} the kind of the declaration statement.
+ */
+Escope.Definition.prototype.kind;
