@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tests for camelcase rules.
+ * @fileoverview Tests for camelcase rule.
  */
 
 goog.module('googlejs.tests.rules.camelcase');
