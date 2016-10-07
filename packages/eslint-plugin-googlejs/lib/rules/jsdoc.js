@@ -83,7 +83,6 @@ function create(context) {
    * Indicate that return has been found in the current function.
    * @param {!ESLint.ASTNode} node The return node.
    * @return {void}
-   * @private
    */
   function addReturn(node) {
     const functionState = fns[fns.length - 1];
@@ -95,7 +94,7 @@ function create(context) {
 
   /**
    * Extract the current and expected type based on the input type object
-   * @param {Object} type JSDoc tag
+   * @param {!Doctrine.Node} type JSDoc tag
    * @return {Object} current and expected type object
    * @private
    */
@@ -115,10 +114,9 @@ function create(context) {
 
   /**
    * Validate type for a given JSDoc node
-   * @param {Object} jsdocNode JSDoc node
-   * @param {Object} type JSDoc tag
+   * @param {!Espree.CommentToken} jsdocNode JSDoc node
+   * @param {!Doctrine.Node} type JSDoc tag
    * @return {void}
-   * @private
    */
   function validateType(jsdocNode, type) {
     if (!type || !canTypeBeValidated(type.type)) {

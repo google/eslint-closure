@@ -278,8 +278,8 @@ ESLint.SourceCode.prototype.getComments = function(node) {};
 /**
  * Retrieves the JSDoc comment for a given node.
  * @param {!Espree.Node} node The AST node to get the comment for.
- * @return {!ESLint.ASTNode} The BlockComment node containing the JSDoc for the
- *      given node or null if not found.
+ * @return {!Espree.CommentToken} The BlockComment node containing the JSDoc for
+ *      the given node or null if not found.
  * @public
  */
 ESLint.SourceCode.prototype.getJSDocComment = function(node) {};

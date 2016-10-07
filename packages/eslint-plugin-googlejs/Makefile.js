@@ -37,6 +37,7 @@ const commonClosureCompilerSettings = {
   externs: [
     './externs/externs-chai.js',
     './externs/externs-commonjs.js',
+    './externs/externs-doctrine.js',
     './externs/externs-eslint.js',
     './externs/externs-espree.js',
     './externs/externs-escope.js',
