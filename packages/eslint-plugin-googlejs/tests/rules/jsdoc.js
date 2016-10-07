@@ -13,27 +13,164 @@ const ruleTester = new RuleTester();
 
 ruleTester.run('jsdoc', jsdocRule, {
 
-  valid: [
-    '/**\n* Description\n * @param {Object[]} screenings Array of screenings.\n * @param {Number} screenings[].timestamp its a time stamp \n @return {void} */\nfunction foo(){}',
-    '/**\n* Description\n */\nvar x = new Foo(function foo(){})',
-    '/**\n* Description\n* @returns {void} */\nfunction foo(){}',
-    '/**\n* Description\n* @returns {undefined} */\nfunction foo(){}',
-    '/**\n* Description\n* @alias Test#test\n* @returns {void} */\nfunction foo(){}',
-    '/**\n* Description\n*@extends MyClass\n* @returns {void} */\nfunction foo(){}',
-    '/**\n* Description\n* @constructor */\nfunction Foo(){}',
-    '/**\n* Description\n* @class */\nfunction Foo(){}',
-    '/**\n* Description\n* @param {string} p bar\n* @returns {string} desc */\nfunction foo(p){}',
-    '/**\n* Description\n* @arg {string} p bar\n* @returns {string} desc */\nfunction foo(p){}',
-    '/**\n* Description\n* @argument {string} p bar\n* @returns {string} desc */\nfunction foo(p){}',
-    '/**\n* Description\n* @param {string} [p] bar\n* @returns {string} desc */\nfunction foo(p){}',
-    '/**\n* Description\n* @param {Object} p bar\n* @param {string} p.name bar\n* @returns {string} desc */\nFoo.bar = function(p){};',
-    '(function(){\n/**\n* Description\n* @param {string} p bar\n* @returns {string} desc */\nfunction foo(p){}\n}())',
-    'var o = {\n/**\n* Description\n* @param {string} p bar\n* @returns {string} desc */\nfoo: function(p){}\n};',
-    '/**\n* Description\n* @param {Object} p bar\n* @param {string[]} p.files qux\n* @param {Function} cb baz\n* @returns {void} */\nfunction foo(p, cb){}',
-    "/**\n* Description\n* @override */\nfunction foo(arg1, arg2){ return ''; }",
-    "/**\n* Description\n* @inheritdoc */\nfunction foo(arg1, arg2){ return ''; }",
-    "/**\n* Description\n* @inheritDoc */\nfunction foo(arg1, arg2){ return ''; }",
-    '/**\n* Description\n* @Returns {void} */\nfunction foo(){}',
+  valid: [`
+/**
+ * Description
+ * @param {Object[]} screenings Array of screenings.
+ * @param {Number} screenings[].timestamp its a time stamp 
+ * @return {void}
+ */
+function foo(){}`,
+
+    `
+/**
+ * Description
+ */
+var x = new Foo(function foo(){})`,
+
+    `
+/**
+ * Description
+ * @returns {void}
+ */
+function foo(){}`,
+
+    `
+/**
+ * Description
+ * @returns {undefined} 
+ */
+function foo(){}`,
+
+    `
+/**
+ * Description
+ * @alias Test#test
+ * @returns {void} 
+ */
+function foo(){}`,
+
+    `
+/**
+ * Description
+ *@extends MyClass
+ * @returns {void} 
+ */
+function foo(){}`,
+
+    `
+/**
+ * Description
+ * @constructor 
+ */
+function Foo(){}`,
+
+    `
+/**
+ * Description
+ * @class 
+ */
+function Foo(){}`,
+
+    `
+/**
+ * Description
+ * @param {string} p bar
+ * @returns {string} desc 
+ */
+function foo(p){}`,
+
+    `
+/**
+ * Description
+ * @arg {string} p bar
+ * @returns {string} desc 
+ */
+function foo(p){}`,
+
+    `
+/**
+ * Description
+ * @argument {string} p bar
+ * @returns {string} desc 
+ */
+function foo(p){}`,
+
+    `
+/**
+ * Description
+ * @param {string} [p] bar
+ * @returns {string} desc 
+ */
+function foo(p){}`,
+
+    `
+/**
+ * Description
+ * @param {Object} p bar
+ * @param {string} p.name bar
+ * @returns {string} desc 
+ */
+ Foo.bar =function(p){};`,
+
+    `
+(function(){
+ /**
+ * Description
+ * @param {string} p bar
+ * @returns {string} desc 
+ */
+function foo(p){}
+ }())`,
+
+    `
+var o = {
+ /**
+ * Description
+ * @param {string} p bar
+ * @returns {string} desc 
+ */
+ foo:function(p){}
+ };`,
+
+    `
+/**
+ * Description
+ * @param {Object} p bar
+ * @param {string[]} p.files qux
+ * @param {Function} cb baz
+ * @returns {void} 
+ */
+function foo(p, cb){}`,
+
+    `
+/**
+ * Description
+ * @override 
+ */
+function foo(arg1, arg2){ return ''; }`,
+
+    `
+/**
+ * Description
+ * @inheritdoc 
+ */
+function foo(arg1, arg2){ return ''; }`,
+
+    `
+/**
+ * Description
+ * @inheritDoc 
+ */
+function foo(arg1, arg2){ return ''; }`,
+
+    `
+/**
+ * Description
+ * @Returns {void} 
+ */
+function foo(){}`,
+
     {
       code:
                 'call(\n' +
