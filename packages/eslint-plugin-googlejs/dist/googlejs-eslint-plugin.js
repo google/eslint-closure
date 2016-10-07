@@ -1,9 +1,9 @@
-'use strict';var k = {UnderscoreForm:{CONSTANT:"constant", LEADING:"leading", NO_UNDERSCORE:"no_underscore", MIDDLE:"middle", OPT_PREFIX:"opt_prefix", TRAILING:"trailing", VAR_ARGS:"var_args"}};
-function p(a, b) {
+'use strict';var m = {UnderscoreForm:{CONSTANT:"constant", LEADING:"leading", NO_UNDERSCORE:"no_underscore", MIDDLE:"middle", OPT_PREFIX:"opt_prefix", TRAILING:"trailing", VAR_ARGS:"var_args"}};
+function q(a, b) {
   return a.loc.end.line === b.loc.start.line;
 }
-var q = {categorizeUnderscoredIdentifier:function(a) {
-  return "" === a || 0 === a.length ? k.UnderscoreForm.NO_UNDERSCORE : a.toUpperCase() === a ? k.UnderscoreForm.CONSTANT : -1 === a.indexOf("_") ? k.UnderscoreForm.NO_UNDERSCORE : "var_args" === a ? k.UnderscoreForm.VAR_ARGS : "opt_" === a.substring(0, 4) && "opt_" != a ? k.UnderscoreForm.OPT_PREFIX : "_" === a[0] ? k.UnderscoreForm.LEADING : "_" === a[a.length - 1] ? k.UnderscoreForm.TRAILING : k.UnderscoreForm.MIDDLE;
+var r = {categorizeUnderscoredIdentifier:function(a) {
+  return "" === a || 0 === a.length ? m.UnderscoreForm.NO_UNDERSCORE : a.toUpperCase() === a ? m.UnderscoreForm.CONSTANT : -1 === a.indexOf("_") ? m.UnderscoreForm.NO_UNDERSCORE : "var_args" === a ? m.UnderscoreForm.VAR_ARGS : "opt_" === a.substring(0, 4) && "opt_" != a ? m.UnderscoreForm.OPT_PREFIX : "_" === a[0] ? m.UnderscoreForm.LEADING : "_" === a[a.length - 1] ? m.UnderscoreForm.TRAILING : m.UnderscoreForm.MIDDLE;
 }, getNodeAncestorOfType:function(a, b) {
   for (a = a.parent;a.type !== b && "Program" !== a.type;) {
     a = a.parent;
@@ -12,43 +12,43 @@ var q = {categorizeUnderscoredIdentifier:function(a) {
 }, isUnderscored:function(a) {
   return -1 < a.indexOf("_");
 }, isNodeOneLine:function(a) {
-  return p(a, a);
+  return q(a, a);
 }, nodesEndOnSameLine:function(a, b) {
   return a.loc.end.line === b.loc.end.line;
-}, nodesShareOneLine:p, nodesStartOnSameLine:function(a, b) {
+}, nodesShareOneLine:q, nodesStartOnSameLine:function(a, b) {
   return a.loc.start.line === b.loc.start.line;
 }};
-var u = {allowVarArgs:!1, allowOptPrefix:!1, allowLeadingUnderscore:!0, allowTrailingUnderscore:!0, checkObjectProperties:!0};
-function z(a, b) {
+var A = {allowVarArgs:!1, allowOptPrefix:!1, allowLeadingUnderscore:!0, allowTrailingUnderscore:!0, checkObjectProperties:!0};
+function H(a, b) {
   function d(a) {
-    return Object.assign(r, {message:a});
+    return Object.assign(k, {message:a});
   }
-  function c(c, r) {
-    return B(c, a, b) ? g : d(r);
+  function c(c, k) {
+    return I(c, a, b) ? f : d(k);
   }
-  var g = {node:a, message:"", hasError:!1}, r = {node:a, message:"", hasError:!0};
-  switch(q.categorizeUnderscoredIdentifier(a.name)) {
-    case k.UnderscoreForm.CONSTANT:
-      return g;
-    case k.UnderscoreForm.LEADING:
+  var f = {node:a, message:"", hasError:!1}, k = {node:a, message:"", hasError:!0};
+  switch(r.categorizeUnderscoredIdentifier(a.name)) {
+    case m.UnderscoreForm.CONSTANT:
+      return f;
+    case m.UnderscoreForm.LEADING:
       return b.allowLeadingUnderscore ? c(a.name.replace(/^_+/g, "").replace(/_+$/g, ""), "Identifier '" + a.name + "' is not in camel case after the leading underscore.") : d("Leading underscores are not allowed in '" + a.name + "'.");
-    case k.UnderscoreForm.NO_UNDERSCORE:
-      return g;
-    case k.UnderscoreForm.MIDDLE:
+    case m.UnderscoreForm.NO_UNDERSCORE:
+      return f;
+    case m.UnderscoreForm.MIDDLE:
       return c(a.name, "Identifier '" + a.name + "' is not in camel case.");
-    case k.UnderscoreForm.OPT_PREFIX:
+    case m.UnderscoreForm.OPT_PREFIX:
       return b.allowOptPrefix ? c(a.name.replace(/^opt_/g, ""), "Identifier '" + a.name + "' is not in camel case after the opt_ prefix.") : d("The opt_ prefix is not allowed in '" + a.name + "'.");
-    case k.UnderscoreForm.TRAILING:
+    case m.UnderscoreForm.TRAILING:
       return b.allowTrailingUnderscore ? c(a.name.replace(/^_+/g, "").replace(/_+$/g, ""), "Identifier '" + a.name + "' is not in camel case before the trailing underscore.") : d("Trailing underscores are not allowed in '" + a.name + "'.");
-    case k.UnderscoreForm.VAR_ARGS:
-      return b.allowVarArgs ? g : d("The var_args identifier is not allowed.");
+    case m.UnderscoreForm.VAR_ARGS:
+      return b.allowVarArgs ? f : d("The var_args identifier is not allowed.");
     default:
       throw Error("Unknown undercore form: " + a.name);;
   }
 }
-function B(a, b, d) {
+function I(a, b, d) {
   var c = b.parent;
-  if (!q.isUnderscored(a)) {
+  if (!r.isUnderscored(a)) {
     return !0;
   }
   switch(c.type) {
@@ -72,7 +72,7 @@ function B(a, b, d) {
   }
   return !1;
 }
-;function H(a, b, d, c) {
+;function J(a, b, d, c) {
   a = c ? b.getLastToken(a) : b.getFirstToken(a);
   b = b.getText(a, a.loc.start.column).split("");
   a = b.slice(0, b.findIndex(function(a) {
@@ -86,14 +86,14 @@ function B(a, b, d) {
   }).length;
   return {space:b, tab:a, goodChar:"space" === d ? b : a, badChar:"space" === d ? a : b};
 }
-function I(a, b, d) {
+function K(a, b, d) {
   b = !0 === d ? b.getLastToken(a, 1) : b.getTokenBefore(a);
   return (!0 === d ? a.loc.end.line : a.loc.start.line) !== (b ? b.loc.end.line : -1);
 }
-function J(a, b) {
+function L(a, b) {
   return !!b && b.parent.loc.start.line === a.loc.start.line && 1 < b.parent.declarations.length;
 }
-function K(a) {
+function M(a) {
   if ("CallExpression" !== a.parent.type) {
     return !1;
   }
@@ -108,14 +108,14 @@ function K(a) {
   var b = a.property;
   return "goog" === a.object.name && "scope" === b.name;
 }
-function L(a) {
+function N(a) {
   return a.declarations.reduce(function(b, d) {
     var c = b[b.length - 1];
     (d.loc.start.line !== a.loc.start.line && !c || c && c.loc.start.line !== d.loc.start.line) && b.push(d);
     return b;
   }, []);
 }
-function M(a) {
+function O(a) {
   var b = {indentSize:4, indentType:"space", indentOptions:{SwitchCase:0, VariableDeclarator:{var:1, let:1, const:1}, outerIIFEBody:-1, MemberExpression:-1, FunctionDeclaration:{parameters:-1, body:1}, FunctionExpression:{parameters:-1, body:1}}}, d = b.indentOptions;
   if (a.length && ("tab" === a[0] ? (b.indentSize = 1, b.indentType = "tab") : "number" === typeof a[0] && (b.indentSize = a[0], b.indentType = "space"), a[1])) {
     a = a[1];
@@ -133,64 +133,74 @@ function M(a) {
   }
   return b;
 }
+;var P = require("doctrine");
+function Q(a) {
+  return "ClassExpression" === a.type || "ClassDeclaration" === a.type;
+}
+function R(a) {
+  return null === a.type || "void" === a.type.name || "UndefinedLiteral" === a.type.type;
+}
+function S(a) {
+  return "UndefinedLiteral" !== a && "NullLiteral" !== a && "NullableLiteral" !== a && "FunctionType" !== a && "AllLiteral" !== a;
+}
 ;module.exports = {rules:{camelcase:{meta:{docs:{description:"check identifiers for camel case with options for opt_ prefix and var_args identifiers", category:"Stylistic Issues", recommended:!0}, schema:[{type:"object", properties:{allowVarArgs:{type:"boolean"}, allowOptPrefix:{type:"boolean"}, allowLeadingUnderscore:{type:"boolean"}, allowTrailingUnderscore:{type:"boolean"}, checkObjectProperties:{type:"boolean"}}, additionalProperties:!1}]}, create:function(a) {
-  var b = Object.assign({}, u, a.options[0] || {});
+  var b = Object.assign({}, A, a.options[0] || {});
   return {Identifier:function(d) {
-    d = z(d, b);
+    d = H(d, b);
     d.hasError && a.report({node:d.node, message:d.message});
   }};
 }}, indent:{meta:{docs:{description:"enforce consistent indentation", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{oneOf:[{enum:["tab"]}, {type:"integer", minimum:0}]}, {type:"object", properties:{SwitchCase:{type:"integer", minimum:0}, VariableDeclarator:{oneOf:[{type:"integer", minimum:0}, {type:"object", properties:{var:{type:"integer", minimum:0}, let:{type:"integer", minimum:0}, const:{type:"integer", minimum:0}}}]}, outerIIFEBody:{type:"integer", minimum:0}, 
 MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object", properties:{parameters:{oneOf:[{type:"integer", minimum:0}, {enum:["first"]}]}, body:{type:"integer", minimum:0}}}, FunctionExpression:{type:"object", properties:{parameters:{oneOf:[{type:"integer", minimum:0}, {enum:["first"]}]}, body:{type:"integer", minimum:0}}}}, additionalProperties:!1}]}, create:function(a) {
-  function b(e, a, m) {
-    var b = "space" + (1 === a ? "" : "s"), d = "tab" + (1 === m ? "" : "s");
-    return "Expected indentation of " + (e + " " + l + (1 === e ? "" : "s")) + " but" + (" found " + (0 < a && 0 < m ? a + " " + b + " and " + (m + " " + d) : 0 < a ? "space" === l ? a : a + " " + b : 0 < m ? "tab" === l ? m : m + " " + d : "0") + ".");
+  function b(u, a, l) {
+    var b = "space" + (1 === a ? "" : "s"), e = "tab" + (1 === l ? "" : "s");
+    return "Expected indentation of " + (u + " " + h + (1 === u ? "" : "s")) + " but" + (" found " + (0 < a && 0 < l ? a + " " + b + " and " + (l + " " + e) : 0 < a ? "space" === h ? a : a + " " + b : 0 < l ? "tab" === h ? l : l + " " + e : "0") + ".");
   }
-  function d(e, C, m, d, c, f) {
-    var h = ("space" === l ? " " : "\t").repeat(C), g = f ? [e.range[1] - m - d - 1, e.range[1] - 1] : [e.range[0] - m - d, e.range[0]];
-    a.report({node:e, loc:c, message:b(C, m, d), fix:function(e) {
-      return e.replaceTextRange(g, h);
+  function d(u, p, l, e, d, c) {
+    var g = ("space" === h ? " " : "\t").repeat(p), f = c ? [u.range[1] - l - e - 1, u.range[1] - 1] : [u.range[0] - l - e, u.range[0]];
+    a.report({node:u, loc:d, message:b(p, l, e), fix:function(a) {
+      return a.replaceTextRange(f, g);
     }});
   }
-  function c(e, a) {
-    var m = H(e, f, l, !1);
-    "ArrayExpression" === e.type || "ObjectExpression" === e.type || m.goodChar === a && 0 === m.badChar || !I(e, f) || d(e, a, m.space, m.tab);
+  function c(a, p) {
+    var l = J(a, g, h, !1);
+    "ArrayExpression" === a.type || "ObjectExpression" === a.type || l.goodChar === p && 0 === l.badChar || !K(a, g) || d(a, p, l.space, l.tab);
   }
-  function g(e, a) {
-    e.forEach(function(e) {
-      return c(e, a);
+  function f(a, p) {
+    a.forEach(function(a) {
+      return c(a, p);
     });
   }
-  function r(e, a) {
-    var m = f.getLastToken(e), b = H(m, f, l, !0);
-    b.goodChar === a && 0 === b.badChar || !I(e, f, !0) || d(e, a, b.space, b.tab, {start:{line:m.loc.start.line, column:m.loc.start.column}}, !0);
+  function k(a, p) {
+    var b = g.getLastToken(a), e = J(b, g, h, !0);
+    e.goodChar === p && 0 === e.badChar || !K(a, g, !0) || d(a, p, e.space, e.tab, {start:{line:b.loc.start.line, column:b.loc.start.column}}, !0);
   }
-  function A(e) {
-    var a = H(e, f, l).goodChar, b = e.parent;
+  function D(a) {
+    var p = J(a, g, h).goodChar, b = a.parent;
     if ("Property" === b.type || "ArrayExpression" === b.type) {
-      a = H(e, f, l, !1).goodChar;
+      p = J(a, g, h, !1).goodChar;
     } else {
       if ("CallExpression" === b.type) {
-        var d;
-        d = 1 <= b.arguments.length ? b.arguments[0].loc.end.line > b.arguments[0].loc.start.line : !1;
-        d && q.isNodeOneLine(b.callee) && !I(e, f) && (a = H(b, f, l).goodChar);
+        var e;
+        e = 1 <= b.arguments.length ? b.arguments[0].loc.end.line > b.arguments[0].loc.start.line : !1;
+        e && r.isNodeOneLine(b.callee) && !K(a, g) && (p = J(b, g, h).goodChar);
       }
     }
-    return a;
+    return p;
   }
-  function w(e) {
-    var a = e.body, b = A(e), d = h, c;
+  function t(a) {
+    var b = a.body, l = D(a), d = e, c;
     if (c = -1 !== n.outerIIFEBody) {
-      if (K(e)) {
+      if (M(a)) {
         c = !0;
       } else {
-        var f = e.parent;
-        c = f.parent;
-        if ("CallExpression" !== f.type || f.callee !== e) {
+        var h = a.parent;
+        c = h.parent;
+        if ("CallExpression" !== h.type || h.callee !== a) {
           c = !1;
         } else {
           for (;"UnaryExpression" === c.type || "AssignmentExpression" === c.type || "LogicalExpression" === c.type || "SequenceExpression" === c.type || "VariableDeclarator" === c.type;) {
             if ("UnaryExpression" === c.type) {
-              if (f = c, "!" === f.operator || "~" === f.operator || "+" === f.operator || "-" === f.operator) {
+              if (h = c, "!" === h.operator || "~" === h.operator || "+" === h.operator || "-" === h.operator) {
                 c = c.parent;
               } else {
                 break;
@@ -203,140 +213,239 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
         }
       }
     }
-    c ? d = n.outerIIFEBody * h : "FunctionExpression" === e.type ? d = n.FunctionExpression.body * h : "FunctionDeclaration" === e.type && (d = n.FunctionDeclaration.body * h);
-    b += d;
-    (c = q.getNodeAncestorOfType(e, "VariableDeclarator")) && J(e, c) && (b += h * n.VariableDeclarator[c.parent.kind]);
-    v(a, b, b - d);
+    c ? d = n.outerIIFEBody * e : "FunctionExpression" === a.type ? d = n.FunctionExpression.body * e : "FunctionDeclaration" === a.type && (d = n.FunctionDeclaration.body * e);
+    l += d;
+    (c = r.getNodeAncestorOfType(a, "VariableDeclarator")) && L(a, c) && (l += e * n.VariableDeclarator[c.parent.kind]);
+    y(b, l, l - d);
   }
-  function D(e) {
-    if (!q.isNodeOneLine(e)) {
-      var a = e.body;
-      e = A(e);
-      v(a, e + h, e);
+  function x(a) {
+    if (!r.isNodeOneLine(a)) {
+      var b = a.body;
+      a = D(a);
+      y(b, a + e, a);
     }
   }
-  function E(e) {
-    var a = e.parent, b = q.getNodeAncestorOfType(e, "VariableDeclarator"), c = H(a, f, l).goodChar;
-    if (I(e, f)) {
-      if (b) {
-        if (a === b) {
-          b === b.parent.declarations[0] && (c += h * n.VariableDeclarator[b.parent.kind]);
+  function B(a) {
+    var b = a.parent, c = r.getNodeAncestorOfType(a, "VariableDeclarator"), f = J(b, g, h).goodChar;
+    if (K(a, g)) {
+      if (c) {
+        if (b === c) {
+          c === c.parent.declarations[0] && (f += e * n.VariableDeclarator[c.parent.kind]);
         } else {
-          if ("ObjectExpression" === a.type || "ArrayExpression" === a.type || "CallExpression" === a.type || "ArrowFunctionExpression" === a.type || "NewExpression" === a.type || "LogicalExpression" === a.type) {
-            c += h;
+          if ("ObjectExpression" === b.type || "ArrayExpression" === b.type || "CallExpression" === b.type || "ArrowFunctionExpression" === b.type || "NewExpression" === b.type || "LogicalExpression" === b.type) {
+            f += e;
           }
         }
       } else {
-        var g;
-        g = "ArrayExpression" !== a.type ? !1 : a.elements[0] ? "ObjectExpression" === a.elements[0].type && a.elements[0].loc.start.line === a.loc.start.line : !1;
-        g || "MemberExpression" === a.type || "ExpressionStatement" === a.type || "AssignmentExpression" === a.type || "Property" === a.type || (c += h);
+        var k;
+        k = "ArrayExpression" !== b.type ? !1 : b.elements[0] ? "ObjectExpression" === b.elements[0].type && b.elements[0].loc.start.line === b.loc.start.line : !1;
+        k || "MemberExpression" === b.type || "ExpressionStatement" === b.type || "AssignmentExpression" === b.type || "Property" === b.type || (f += e);
       }
-      a = c + h;
-      g = H(e, f, l, !1);
-      g.goodChar === c && 0 === g.badChar || !I(e, f) || d(e, c, g.space, g.tab, {start:{line:e.loc.start.line, column:e.loc.start.column}});
+      b = f + e;
+      k = J(a, g, h, !1);
+      k.goodChar === f && 0 === k.badChar || !K(a, g) || d(a, f, k.space, k.tab, {start:{line:a.loc.start.line, column:a.loc.start.column}});
     } else {
-      c = H(e, f, l).goodChar, a = c + h;
+      f = J(a, g, h).goodChar, b = f + e;
     }
-    J(e, b) && (a += h * n.VariableDeclarator[b.parent.kind]);
-    return a;
+    L(a, c) && (b += e * n.VariableDeclarator[c.parent.kind]);
+    return b;
   }
-  function v(a, b, c) {
-    q.isNodeOneLine(a) || (g(a.body, b), r(a, c));
+  function y(a, b, c) {
+    r.isNodeOneLine(a) || (f(a.body, b), k(a, c));
   }
-  function t(a) {
-    var b = H(a, f, l).goodChar, c = b + h;
-    "BlockStatement" === a.body.type ? v(a.body, c, b) : g([a.body], c);
+  function v(a) {
+    var b = J(a, g, h).goodChar, c = b + e;
+    "BlockStatement" === a.body.type ? y(a.body, c, b) : f([a.body], c);
   }
-  function F(a, b, c) {
-    "first" === c && a.params.length ? g(a.params.slice(1), a.params[0].loc.start.column) : g(a.params, b * c);
+  function E(a, b, c) {
+    "first" === c && a.params.length ? f(a.params.slice(1), a.params[0].loc.start.column) : f(a.params, b * c);
   }
-  function G(a, b) {
+  function w(a, b) {
     a = "SwitchStatement" === a.type ? a : a.parent;
-    if (x[a.loc.start.line]) {
-      return x[a.loc.start.line];
+    if (z[a.loc.start.line]) {
+      return z[a.loc.start.line];
     }
-    "undefined" === typeof b && (b = H(a, f, l).goodChar);
-    b = 0 < a.cases.length && 0 === n.SwitchCase ? b : b + h * n.SwitchCase;
-    return x[a.loc.start.line] = b;
+    "undefined" === typeof b && (b = J(a, g, h).goodChar);
+    b = 0 < a.cases.length && 0 === n.SwitchCase ? b : b + e * n.SwitchCase;
+    return z[a.loc.start.line] = b;
   }
-  var y = M(a.options), l = y.indentType, h = y.indentSize, n = y.indentOptions, f = a.getSourceCode(), x = {};
+  var C = O(a.options), h = C.indentType, e = C.indentSize, n = C.indentOptions, g = a.getSourceCode(), z = {};
   return {Program:function(a) {
-    g(a.body, 0);
-  }, ClassDeclaration:D, ClassExpression:D, BlockStatement:function(a) {
-    if (!q.isNodeOneLine(a) && ("BlockStatement" == a.parent.type || "Program" == a.parent.type)) {
-      var b = H(a, f, l).goodChar;
-      v(a, b + h, b);
+    f(a.body, 0);
+  }, ClassDeclaration:x, ClassExpression:x, BlockStatement:function(a) {
+    if (!r.isNodeOneLine(a) && ("BlockStatement" == a.parent.type || "Program" == a.parent.type)) {
+      var b = J(a, g, h).goodChar;
+      y(a, b + e, b);
     }
-  }, DoWhileStatement:t, ForStatement:t, ForInStatement:t, ForOfStatement:t, WhileStatement:t, WithStatement:t, IfStatement:function(a) {
-    var b = H(a, f, l).goodChar, d = b + h;
-    "BlockStatement" !== a.consequent.type ? q.nodesStartOnSameLine(a, a.consequent) || c(a.consequent, d) : (g(a.consequent.body, d), r(a.consequent, b));
+  }, DoWhileStatement:v, ForStatement:v, ForInStatement:v, ForOfStatement:v, WhileStatement:v, WithStatement:v, IfStatement:function(a) {
+    var b = J(a, g, h).goodChar, d = b + e;
+    "BlockStatement" !== a.consequent.type ? r.nodesStartOnSameLine(a, a.consequent) || c(a.consequent, d) : (f(a.consequent.body, d), k(a.consequent, b));
     if (a.alternate) {
-      var n = f.getTokenBefore(a.alternate);
+      var n = g.getTokenBefore(a.alternate);
       c(n, b);
-      "BlockStatement" !== a.alternate.type ? q.nodesStartOnSameLine(a.alternate, n) || c(a.alternate, d) : (g(a.alternate.body, d), r(a.alternate, b));
+      "BlockStatement" !== a.alternate.type ? r.nodesStartOnSameLine(a.alternate, n) || c(a.alternate, d) : (f(a.alternate.body, d), k(a.alternate, b));
     }
   }, VariableDeclaration:function(a) {
-    if (!q.nodesStartOnSameLine(a.declarations[0], a.declarations[a.declarations.length - 1])) {
-      var b = L(a), c = H(a, f, l).goodChar, d = b[b.length - 1], c = c + h * n.VariableDeclarator[a.kind];
-      g(b, c);
-      f.getLastToken(a).loc.end.line <= d.loc.end.line || (b = f.getTokenBefore(d), "," === b.value ? r(a, H(b, f, l).goodChar) : r(a, c - h));
+    if (!r.nodesStartOnSameLine(a.declarations[0], a.declarations[a.declarations.length - 1])) {
+      var b = N(a), c = J(a, g, h).goodChar, d = b[b.length - 1], c = c + e * n.VariableDeclarator[a.kind];
+      f(b, c);
+      g.getLastToken(a).loc.end.line <= d.loc.end.line || (b = g.getTokenBefore(d), "," === b.value ? k(a, J(b, g, h).goodChar) : k(a, c - e));
     }
   }, ObjectExpression:function(a) {
-    if (!q.isNodeOneLine(a)) {
+    if (!r.isNodeOneLine(a)) {
       var b = a.properties;
-      if (!(0 < b.length && q.nodesStartOnSameLine(b[0], a))) {
-        var c = E(a);
-        g(b, c);
-        r(a, c - h);
+      if (!(0 < b.length && r.nodesStartOnSameLine(b[0], a))) {
+        var c = B(a);
+        f(b, c);
+        k(a, c - e);
       }
     }
   }, ArrayExpression:function(a) {
-    if (!q.isNodeOneLine(a)) {
+    if (!r.isNodeOneLine(a)) {
       var b = a.elements.filter(function(a) {
         return null !== a;
       });
-      if (!(0 < b.length && q.nodesStartOnSameLine(b[0], a))) {
-        var c = E(a);
-        g(b, c);
-        r(a, c - h);
+      if (!(0 < b.length && r.nodesStartOnSameLine(b[0], a))) {
+        var c = B(a);
+        f(b, c);
+        k(a, c - e);
       }
     }
   }, MemberExpression:function(a) {
-    if (-1 !== n.MemberExpression && !q.isNodeOneLine(a) && !q.getNodeAncestorOfType(a, "VariableDeclarator") && !q.getNodeAncestorOfType(a, "AssignmentExpression")) {
-      var b = H(a, f, l).goodChar + h * n.MemberExpression, c = [a.property];
-      a = f.getTokenBefore(a.property);
+    if (-1 !== n.MemberExpression && !r.isNodeOneLine(a) && !r.getNodeAncestorOfType(a, "VariableDeclarator") && !r.getNodeAncestorOfType(a, "AssignmentExpression")) {
+      var b = J(a, g, h).goodChar + e * n.MemberExpression, c = [a.property];
+      a = g.getTokenBefore(a.property);
       "Punctuator" === a.type && "." === a.value && c.push(a);
-      g(c, b);
+      f(c, b);
     }
   }, SwitchStatement:function(a) {
-    var b = H(a, f, l).goodChar, c = G(a, b);
-    g(a.cases, c);
-    r(a, b);
+    var b = J(a, g, h).goodChar, c = w(a, b);
+    f(a.cases, c);
+    k(a, b);
   }, SwitchCase:function(a) {
-    if (!q.isNodeOneLine(a)) {
-      var b = G(a);
-      g(a.consequent, b + h);
+    if (!r.isNodeOneLine(a)) {
+      var b = w(a);
+      f(a.consequent, b + e);
     }
   }, ArrowFunctionExpression:function(a) {
-    q.isNodeOneLine(a) || "BlockStatement" === a.body.type && w(a);
+    r.isNodeOneLine(a) || "BlockStatement" === a.body.type && t(a);
   }, FunctionDeclaration:function(a) {
-    q.isNodeOneLine(a) || (-1 !== n.FunctionDeclaration.parameters && F(a, h, n.FunctionDeclaration.parameters), w(a));
+    r.isNodeOneLine(a) || (-1 !== n.FunctionDeclaration.parameters && E(a, e, n.FunctionDeclaration.parameters), t(a));
   }, FunctionExpression:function(a) {
-    q.isNodeOneLine(a) || (-1 !== n.FunctionExpression.parameters && F(a, h, n.FunctionExpression.parameters), w(a));
+    r.isNodeOneLine(a) || (-1 !== n.FunctionExpression.parameters && E(a, e, n.FunctionExpression.parameters), t(a));
   }};
-}}, inlineCommentSpacing:{meta:{docs:{description:"enforce consistent spacing before the `//` at line end", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{type:"integer", minimum:0, maximum:5}]}, create:function(a) {
+}}, "inline-comment-spacing":{meta:{docs:{description:"enforce consistent spacing before the `//` at line end", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{type:"integer", minimum:0, maximum:5}]}, create:function(a) {
   var b = null == a.options[0] ? 1 : a.options[0];
   return {LineComment:function(d) {
     var c = a.getSourceCode();
     c.getComments(d);
     c = c.getTokenBefore(d, 1) || c.getTokenOrCommentBefore(d);
-    if (null != c && q.nodesShareOneLine(d, c)) {
-      var g = d.start - c.end;
-      g < b && a.report({node:d, message:"Expected at least " + b + " " + (1 === b ? "space" : "spaces") + " before inline comment.", fix:function(a) {
-        var c = Array(b - g + 1).join(" ");
+    if (null != c && r.nodesShareOneLine(d, c)) {
+      var f = d.start - c.end;
+      f < b && a.report({node:d, message:"Expected at least " + b + " " + (1 === b ? "space" : "spaces") + " before inline comment.", fix:function(a) {
+        var c = Array(b - f + 1).join(" ");
         return a.insertTextBefore(d, c);
       }});
     }
+  }};
+}}, jsdoc:{meta:{docs:{description:"enforce valid JSDoc comments", category:"Possible Errors", recommended:!0}, schema:[{type:"object", properties:{prefer:{type:"object", additionalProperties:{type:"string"}}, preferType:{type:"object", additionalProperties:{type:"string"}}, requireReturn:{type:"boolean"}, requireParamDescription:{type:"boolean"}, requireReturnDescription:{type:"boolean"}, matchDescription:{type:"string"}, requireReturnType:{type:"boolean"}}, additionalProperties:!1}]}, create:function(a) {
+  function b(a) {
+    k.push({returnPresent:"ArrowFunctionExpression" === a.type && "BlockStatement" !== a.body.type || Q(a)});
+  }
+  function d(a) {
+    var b;
+    a.name ? b = a.name : a.expression && (b = a.expression.name);
+    return {currentType:b, expectedType:b && w[b]};
+  }
+  function c(b, e) {
+    if (e && S(e.type)) {
+      var f = [], g = [];
+      switch(e.type) {
+        case "TypeApplication":
+          g = "UnionType" === e.applications[0].type ? e.applications[0].elements : e.applications;
+          f.push(d(e));
+          break;
+        case "RecordType":
+          g = e.fields;
+          break;
+        case "UnionType":
+        ;
+        case "ArrayType":
+          g = e.elements;
+          break;
+        case "FieldType":
+          e.value && f.push(d(e.value));
+          break;
+        default:
+          f.push(d(e));
+      }
+      g.forEach(c.bind(null, b));
+      f.forEach(function(c) {
+        c.expectedType && c.expectedType !== c.currentType && a.report({node:b, message:"Use '{{expectedType}}' instead of '{{currentType}}'.", data:{currentType:c.currentType, expectedType:c.expectedType}});
+      });
+    }
+  }
+  function f(b) {
+    var e = D.getJSDocComment(b), d = k.pop(), f = Object.create(null), z = !1, u = !1, p = !1, l = !1, w = !1, F;
+    if (e) {
+      try {
+        F = P.parse(e.value, {strict:!0, unwrap:!0, sloppy:!0});
+      } catch (T) {
+        /braces/i.test(T.message) ? a.report(e, "JSDoc type missing brace.") : a.report(e, "JSDoc syntax error.");
+        return;
+      }
+      F.tags.forEach(function(b) {
+        switch(b.title.toLowerCase()) {
+          case "param":
+          ;
+          case "arg":
+          ;
+          case "argument":
+            b.type || a.report(e, "Missing JSDoc parameter type for '{{name}}'.", {name:b.name});
+            !b.description && y && a.report(e, "Missing JSDoc parameter description for '{{name}}'.", {name:b.name});
+            f[b.name] ? a.report(e, "Duplicate JSDoc parameter '{{name}}'.", {name:b.name}) : -1 === b.name.indexOf(".") && (f[b.name] = 1);
+            break;
+          case "return":
+          ;
+          case "returns":
+            z = !0;
+            B || d.returnPresent || null !== b.type && R(b) || w ? (E && !b.type && a.report(e, "Missing JSDoc return type."), R(b) || b.description || !v || a.report(e, "Missing JSDoc return description.")) : a.report({node:e, message:"Unexpected @{{title}} tag; function has no return statement.", data:{title:b.title}});
+            break;
+          case "constructor":
+          ;
+          case "class":
+            u = !0;
+            break;
+          case "override":
+          ;
+          case "inheritdoc":
+            l = !0;
+            break;
+          case "abstract":
+          ;
+          case "virtual":
+            w = !0;
+            break;
+          case "interface":
+            p = !0;
+        }
+        x.hasOwnProperty(b.title) && b.title !== x[b.title] && a.report(e, "Use @{{name}} instead.", {name:x[b.title]});
+        C && b.type && c(e, b.type);
+      });
+      l || z || u || p || "get" === b.parent.kind || "constructor" === b.parent.kind || "set" === b.parent.kind || Q(b) || (B || d.returnPresent) && a.report({node:e, message:"Missing JSDoc @{{returns}} for function.", data:{returns:x.returns || "returns"}});
+      var G = Object.keys(f);
+      b.params && b.params.forEach(function(b, c) {
+        "AssignmentPattern" === b.type && (b = b.left);
+        var d = b.name;
+        "Identifier" === b.type && (G[c] && d !== G[c] ? a.report(e, "Expected JSDoc for '{{name}}' but found '{{jsdocName}}'.", {name:d, jsdocName:G[c]}) : f[d] || l || a.report(e, "Missing JSDoc for parameter '{{name}}'.", {name:d}));
+      });
+      t.matchDescription && ((new RegExp(t.matchDescription)).test(F.description) || a.report(e, "JSDoc description does not satisfy the regex pattern."));
+    }
+  }
+  var k = [], D = a.getSourceCode(), t = a.options[0] || {}, x = t.prefer || {}, B = !1 !== t.requireReturn, y = !1 !== t.requireParamDescription, v = !1 !== t.requireReturnDescription, E = !1 !== t.requireReturnType, w = t.preferType || {}, C = 0 !== Object.keys(w).length;
+  return {ArrowFunctionExpression:b, FunctionExpression:b, FunctionDeclaration:b, ClassExpression:b, ClassDeclaration:b, "ArrowFunctionExpression:exit":f, "FunctionExpression:exit":f, "FunctionDeclaration:exit":f, "ClassExpression:exit":f, "ClassDeclaration:exit":f, ReturnStatement:function(a) {
+    var b = k[k.length - 1];
+    b && null !== a.argument && (b.returnPresent = !0);
   }};
 }}}};
 
