@@ -7,6 +7,44 @@ goog.module('googlejs.rules.jsdoc');
 const doctrine = require('doctrine');
 
 /**
+ * Returns true if the node is a Class.
+ * @param {!ESLint.ASTNode} node
+ * @return {boolean}
+ * @private
+ */
+function isTypeClass(node) {
+  return node.type === 'ClassExpression' || node.type === 'ClassDeclaration';
+}
+
+/**
+ * Returns true if @return tag type is void or undefined.
+ * @param {Object} tag
+ * @return {boolean}
+ * @private
+ */
+function isValidReturnType(tag) {
+  return tag.type === null || tag.type.name === 'void' ||
+    tag.type.type === 'UndefinedLiteral';
+}
+
+
+/**
+ * Returns true if a type can be validated.
+ * @param {Object} type JSDoc tag.
+ * @return {boolean}
+ * @private
+ */
+function canTypeBeValidated(type) {
+  return type !== 'UndefinedLiteral' &&  // {undefined} as there is no name
+  // property available.
+  type !== 'NullLiteral' &&          // {null}
+  type !== 'NullableLiteral' &&      // {?}
+  type !== 'FunctionType' &&         // {function(a)}
+  type !== 'AllLiteral';             // {*}
+}
+
+
+/**
  * @param {!ESLint.RuleContext} context
  * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
  */
@@ -28,19 +66,9 @@ function create(context) {
   const checkPreferType = Object.keys(preferType).length !== 0;
 
   /**
-   * Check if node type is a Class
-   * @param {ASTNode} node node to check.
-   * @returns {boolean} True is its a class
-   * @private
-   */
-  function isTypeClass(node) {
-    return node.type === 'ClassExpression' || node.type === 'ClassDeclaration';
-  }
-
-  /**
    * When parsing a new function, store it in our function stack.
    * @param {ASTNode} node A function node to check.
-   * @returns {void}
+   * @return {void}
    * @private
    */
   function startFunction(node) {
@@ -54,7 +82,7 @@ function create(context) {
   /**
    * Indicate that return has been found in the current function.
    * @param {ASTNode} node The return node.
-   * @returns {void}
+   * @return {void}
    * @private
    */
   function addReturn(node) {
@@ -66,35 +94,9 @@ function create(context) {
   }
 
   /**
-   * Check if return tag type is void or undefined
-   * @param {Object} tag JSDoc tag
-   * @returns {boolean} True if its of type void or undefined
-   * @private
-   */
-  function isValidReturnType(tag) {
-    return tag.type === null || tag.type.name === 'void' ||
-        tag.type.type === 'UndefinedLiteral';
-  }
-
-  /**
-   * Check if type should be validated based on some exceptions
-   * @param {Object} type JSDoc tag
-   * @returns {boolean} True if it can be validated
-   * @private
-   */
-  function canTypeBeValidated(type) {
-    return type !== 'UndefinedLiteral' &&  // {undefined} as there is no name
-                                           // property available.
-        type !== 'NullLiteral' &&          // {null}
-        type !== 'NullableLiteral' &&      // {?}
-        type !== 'FunctionType' &&         // {function(a)}
-        type !== 'AllLiteral';             // {*}
-  }
-
-  /**
    * Extract the current and expected type based on the input type object
    * @param {Object} type JSDoc tag
-   * @returns {Object} current and expected type object
+   * @return {Object} current and expected type object
    * @private
    */
   function getCurrentExpectedTypes(type) {
@@ -108,16 +110,14 @@ function create(context) {
 
     const expectedType = currentType && preferType[currentType];
 
-    return {
-      currentType, expectedType,
-    };
+    return {currentType, expectedType};
   }
 
   /**
    * Validate type for a given JSDoc node
    * @param {Object} jsdocNode JSDoc node
    * @param {Object} type JSDoc tag
-   * @returns {void}
+   * @return {void}
    * @private
    */
   function validateType(jsdocNode, type) {
@@ -171,8 +171,7 @@ function create(context) {
   /**
    * Validate the JSDoc node and output warnings if anything is wrong.
    * @param {ASTNode} node The AST node to check.
-   * @returns {void}
-   * @private
+   * @return {void}
    */
   function checkJSDoc(node) {
     const jsdocNode = sourceCode.getJSDocComment(node);
@@ -294,7 +293,7 @@ function create(context) {
         }
       });
 
-      // check for functions missing @returns
+      // check for functions missing @return
       if (!isOverride && !hasReturns && !hasConstructor && !isInterface &&
           node.parent.kind !== 'get' && node.parent.kind !== 'constructor' &&
           node.parent.kind !== 'set' && !isTypeClass(node)) {
@@ -353,16 +352,12 @@ function create(context) {
     }
   }
 
-  // --------------------------------------------------------------------------
-  // Public
-  // --------------------------------------------------------------------------
-
   return {
     'ArrowFunctionExpression': startFunction,
-    'unctionExpression': startFunction,
-    'unctionDeclaration': startFunction,
-    'lassExpression': startFunction,
-    'lassDeclaration': startFunction,
+    'FunctionExpression': startFunction,
+    'FunctionDeclaration': startFunction,
+    'ClassExpression': startFunction,
+    'ClassDeclaration': startFunction,
     'ArrowFunctionExpression:exit': checkJSDoc,
     'FunctionExpression:exit': checkJSDoc,
     'FunctionDeclaration:exit': checkJSDoc,
@@ -383,7 +378,22 @@ const JSDOC_RULE = {
     schema: [
       {
         type: 'object',
-        properties: {},
+        properties: {
+          prefer: {
+            type: 'object',
+            additionalProperties: {type: 'string'},
+          },
+          preferType: {
+            type: 'object',
+            additionalProperties: {type: 'string'},
+          },
+          requireReturn: {type: 'boolean'},
+          requireParamDescription: {type: 'boolean'},
+          requireReturnDescription: {type: 'boolean'},
+          matchDescription: {type: 'string'},
+          requireReturnType: {type: 'boolean'},
+        },
+
         additionalProperties: false,
       },
     ],
