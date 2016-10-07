@@ -39,6 +39,10 @@ exports = {
     }],
   },
 
+  /**
+   * @param {!ESLint.RuleContext} context
+   * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
+   */
   create(context) {
 
     const MESSAGE = "'{{name}}' is defined but never used.";
@@ -528,7 +532,7 @@ exports = {
     /**
      * Gets the index of a given variable name in a given comment.
      * @param {!Escope.Variable} variable A variable to get.
-     * @param {!Espree.ASTNode} comment A comment node which includes the
+     * @param {!Espree.CommentToken} comment A comment node which includes the
      *     variable name.
      * @return {number} The index of the variable name's location.
      * @private
