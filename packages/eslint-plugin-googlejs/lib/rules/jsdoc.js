@@ -67,7 +67,7 @@ function create(context) {
 
   /**
    * When parsing a new function, store it in our function stack.
-   * @param {ASTNode} node A function node to check.
+   * @param {!ESLint.ASTNode} node A function node to check.
    * @return {void}
    * @private
    */
@@ -81,7 +81,7 @@ function create(context) {
 
   /**
    * Indicate that return has been found in the current function.
-   * @param {ASTNode} node The return node.
+   * @param {!ESLint.ASTNode} node The return node.
    * @return {void}
    * @private
    */
@@ -170,7 +170,7 @@ function create(context) {
 
   /**
    * Validate the JSDoc node and output warnings if anything is wrong.
-   * @param {ASTNode} node The AST node to check.
+   * @param {!ESLint.ASTNode} node The AST node to check.
    * @return {void}
    */
   function checkJSDoc(node) {
