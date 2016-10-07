@@ -3,6 +3,7 @@ goog.module('googlejs.config');
 const camelcase = goog.require('googlejs.rules.camelcase');
 const indent = goog.require('googlejs.rules.indent');
 const inlineCommentSpacing = goog.require('googlejs.rules.inlineCommentSpacing');
+const jsdoc = goog.require('googlejs.rules.jsdoc');
 const noUnusedVars = goog.require('googlejs.rules.noUnusedVars');
 
 /**
@@ -13,6 +14,7 @@ const PLUGIN_ESLINT_CONFIG = {
     camelcase,
     indent,
     'inline-comment-spacing': inlineCommentSpacing,
+    jsdoc,
     'no-unused-var': noUnusedVars,
   },
 };
