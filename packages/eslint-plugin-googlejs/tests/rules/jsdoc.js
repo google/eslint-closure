@@ -1404,7 +1404,15 @@ function foo(){}`,
       }],
       errors: [
         {
+          message: "Use 'Object' instead of 'object'.",
+          type: 'Block',
+        },
+        {
           message: "Use 'string' instead of 'String'.",
+          type: 'Block',
+        },
+        {
+          message: "Use 'Object' instead of 'object'.",
           type: 'Block',
         },
         {
@@ -1413,14 +1421,6 @@ function foo(){}`,
         },
         {
           message: "Use 'number' instead of 'Number'.",
-          type: 'Block',
-        },
-        {
-          message: "Use 'Object' instead of 'object'.",
-          type: 'Block',
-        },
-        {
-          message: "Use 'Object' instead of 'object'.",
           type: 'Block',
         },
       ],

@@ -5,6 +5,7 @@
 goog.module('googlejs.rules.jsdoc');
 
 const utils = goog.require('googlejs.utils');
+const jsdocUtils = goog.require('googlejs.jsdocUtils');
 
 const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 
@@ -102,74 +103,32 @@ function create(context) {
   }
 
   /**
-   * Extracts the current and expected type based on the input type object
-   * @param {!Doctrine.TagType} type JSDoc tag
-   * @return {Object} current and expected type object
+   * Reports invalid type names, e.g Number instead of number.
+   * @param {!Doctrine.NameExpression} tagType
+   * @param {!ESLint.CommentToken} node Node to provide location information to
+   *     report.
    */
-  function getCurrentExpectedTypes(type) {
-    let currentType;
-
-    if (type.name) {
-      currentType = type.name;
-    } else if (type.expression) {
-      currentType = type.expression.name;
+  function checkTypeName(tagType, node) {
+    const name = tagType.name;
+    const expectedName = preferType[name];
+    if (expectedName) {
+      context.report({
+        node,
+        message: `Use '${expectedName}' instead of '${name}'.`,
+      });
     }
-
-    const expectedType = currentType && preferType[currentType];
-
-    return {currentType, expectedType};
   }
 
   /**
    * Recursively validates a type for a given JSDoc node.
-   * @param {!Espree.CommentToken} jsdocNode JSDoc node
-   * @param {!Doctrine.TagType} type JSDoc tag
+   * @param {!Espree.CommentToken} node JSDoc node
+   * @param {!Doctrine.TagType} type
    * @return {void}
    */
-  function validateType(jsdocNode, type) {
-    if (!type || !canTypeBeValidated_(type.type)) {
-      return;
-    }
-
-    const typesToCheck = [];
-    let elements = [];
-
-    switch (type.type) {
-      case 'TypeApplication': // {Array<String>}
-        elements = /** @type {Doctrine.TypeApplication} */ (type).applications;
-        typesToCheck.push(getCurrentExpectedTypes(type));
-        break;
-      case 'RecordType':  // {{20:String}}
-        elements = /** @type {Doctrine.RecordType} */ (type).fields;
-        break;
-      case 'UnionType':  // {String|number|Test}
-        elements = /** @type {Doctrine.UnionType} */ (type).elements;
-        break;
-      case 'ArrayType':  // {[String, number, Test]}
-        elements = /** @type {Doctrine.ArrayType} */ (type).elements;
-        break;
-      case 'FieldType':  // Array.<{count: number, votes: number}>
-        if (type.value) {
-          typesToCheck.push(getCurrentExpectedTypes(type.value));
-        }
-        break;
-      default:
-        typesToCheck.push(getCurrentExpectedTypes(type));
-    }
-
-    elements.forEach(validateType.bind(null, jsdocNode));
-
-    typesToCheck.forEach(function(typeToCheck) {
-      if (typeToCheck.expectedType &&
-          typeToCheck.expectedType !== typeToCheck.currentType) {
-        context.report({
-          node: jsdocNode,
-          message: "Use '{{expectedType}}' instead of '{{currentType}}'.",
-          data: {
-            currentType: typeToCheck.currentType,
-            expectedType: typeToCheck.expectedType,
-          },
-        });
+  function validateType(node, type) {
+    jsdocUtils.traverseJSDocTagTypes(type, (tag) => {
+      if (tag.type === 'NameExpression') {
+        checkTypeName(/** @type {!Doctrine.NameExpression} */ (tag), node);
       }
     });
   }

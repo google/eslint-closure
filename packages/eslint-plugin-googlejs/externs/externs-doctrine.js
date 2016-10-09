@@ -110,7 +110,7 @@ Doctrine.TagType;
 
 /** @record @extends {Doctrine.Typeable} */ Doctrine.FieldType = function() {};
 /** @type {string} */ Doctrine.FieldType.prototype.key;
-/** @type {?string} */ Doctrine.FieldType.prototype.value;
+/** @type {?Doctrine.TagType} */ Doctrine.FieldType.prototype.value;
 
 /** @record @extends {Doctrine.Typeable} */ Doctrine.FunctionType = function() {};
 /** @type {!Array<!Doctrine.ParameterType>} */ Doctrine.FunctionType.prototype.params;
