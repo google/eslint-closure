@@ -21,31 +21,31 @@ Doctrine.ParseOptions = function() {};
 /**
  * Set to true to delete the leading /**, any * that begins a line, and the
  * trailing * / from the source text. Default: false.
- * @type {boolean}
+ * @type {(boolean|undefined)}
  */
 Doctrine.ParseOptions.prototype.unwrap;
 /**
  * An array of tags to return. When specified, Doctrine returns only tags in
  * this array. For example, if tags is ["param"], then only @param tags will be
  * returned. Default: null.
- * @type{?Array<string>}
+ * @type{(!Array<string>|undefined)}
  */
 Doctrine.ParseOptions.prototype.tags;
 /**
  * Set to true to keep parsing even when syntax errors occur. Default: false.
- * @type {boolean}
+ * @type {(boolean|undefined)}
  */
 Doctrine.ParseOptions.prototype.recoverable;
 /**
  * Set to true to allow optional parameters to be specified in brackets (@param
  * {string} [foo]). Default: false.
- * @type {boolean}
+ * @type {(boolean|undefined)}
  */
 Doctrine.ParseOptions.prototype.sloppy;
 /**
  * Set to true to add lineNumber to each node, specifying the line on which the
  * node is found in the source. Default: false.
- * @type {boolean}
+ * @type {(boolean|undefined)}
  */
 Doctrine.ParseOptions.prototype.lineNumbers;
 
@@ -93,6 +93,15 @@ Doctrine.TagType;
 /** @record @extends {Doctrine.Typeable} */ Doctrine.UndefinedLiteral = function() {};
 /** @record @extends {Doctrine.Typeable} */ Doctrine.VoidLiteral = function() {};
 
+/** @record @extends {Doctrine.Typeable} */ Doctrine.StringLiteralType = function() {};
+/** @type {string} */ Doctrine.StringLiteralType.prototype.value;
+
+/** @record @extends {Doctrine.Typeable} */ Doctrine.NumericLiteralType = function() {};
+/** @type {number} */ Doctrine.NumericLiteralType.prototype.value;
+
+/** @record @extends {Doctrine.Typeable} */ Doctrine.NameExpression = function() {};
+/** @type {string} */ Doctrine.NameExpression.prototype.name;
+
 /** @record @extends {Doctrine.Typeable} */ Doctrine.ArrayType = function() {};
 /** @type {!Array<!Doctrine.TagType>} */ Doctrine.ArrayType.prototype.elements;
 
@@ -126,15 +135,6 @@ Doctrine.TagType;
 /** @record @extends {Doctrine.Typeable} */ Doctrine.NullableType = function() {};
 /** @type {!Doctrine.TagType} */ Doctrine.NullableType.prototype.expression;
 /** @type {boolean} */ Doctrine.NullableType.prototype.prefix;
-
-/** @record @extends {Doctrine.Typeable} */ Doctrine.NameExpression = function() {};
-/** @type {string} */ Doctrine.NameExpression.prototype.name;
-
-/** @record @extends {Doctrine.Typeable} */ Doctrine.StringLiteralType = function() {};
-/** @type {string} */ Doctrine.StringLiteralType.prototype.value;
-
-/** @record @extends {Doctrine.Typeable} */ Doctrine.NumericLiteralType = function() {};
-/** @type {number} */ Doctrine.NumericLiteralType.prototype.value;
 
 /** @record @extends {Doctrine.Typeable} */ Doctrine.TypeApplication = function() {};
 /** @type {!Array<!Doctrine.TagType>} */ Doctrine.TypeApplication.prototype.applications;

@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview Tests for JSDoc rule.
  */

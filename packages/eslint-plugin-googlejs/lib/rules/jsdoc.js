@@ -135,21 +135,18 @@ function create(context) {
     let elements = [];
 
     switch (type.type) {
-      case 'TypeApplication': {  // {Array<String>}
-        const typeApplication = /** @type {Doctrine.TypeApplication} */ (type);
-        elements = typeApplication.applications[0].type === 'UnionType' ?
-            typeApplication.applications[0].elements :
-            typeApplication.applications;
+      case 'TypeApplication': // {Array<String>}
+        elements = /** @type {Doctrine.TypeApplication} */ (type).applications;
         typesToCheck.push(getCurrentExpectedTypes(type));
         break;
-      }
       case 'RecordType':  // {{20:String}}
         elements = /** @type {Doctrine.RecordType} */ (type).fields;
         break;
       case 'UnionType':  // {String|number|Test}
+        elements = /** @type {Doctrine.UnionType} */ (type).elements;
+        break;
       case 'ArrayType':  // {[String, number, Test]}
-        elements = /** @type {(Doctrine.ArrayType|Doctrine.UnionType} */
-            (type.elements);
+        elements = /** @type {Doctrine.ArrayType} */ (type).elements;
         break;
       case 'FieldType':  // Array.<{count: number, votes: number}>
         if (type.value) {

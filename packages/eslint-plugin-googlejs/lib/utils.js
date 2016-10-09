@@ -102,7 +102,7 @@ function isNodeClassType(node) {
  * there is no ancestor node with the specified type then return null.
  * @param {!ESLint.ASTNode} node Node to examine.
  * @param {string} type The Espree.NodeType that is being looked for.
- * @return {(!ESLint.ASTNode|null)} If found then node otherwise null.
+ * @return {(!ESLint.ASTNode|null)} If found ancestor node or null.
  */
 function getNodeAncestorOfType(node, type) {
   let parent = node.parent;
