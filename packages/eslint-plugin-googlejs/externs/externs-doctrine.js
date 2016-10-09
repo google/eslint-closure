@@ -5,6 +5,8 @@
  * @externs
  */
 
+/* eslint no-unused-vars: "off", max-len: ["warn", 90] */
+
 /** @const */
 const Doctrine = {};
 
