@@ -55,7 +55,7 @@ function isUnderscored(name) {
 }
 
 /**
- * Determine the type of underscore that an indentifer contains.
+ * Determines the type of underscore that an indentifer contains.
  * @param {string} name The string to check.
  * @return {!types.UnderscoreForm} The type of underscored identifier.
  */
@@ -89,8 +89,17 @@ function categorizeUnderscoredIdentifier(name) {
 }
 
 /**
+ * Returns true if the node is a class expression or declaration.
+ * @param {!ESLint.ASTNode} node
+ * @return {boolean}
+ */
+function isNodeClassType(node) {
+  return node.type === 'ClassExpression' || node.type === 'ClassDeclaration';
+}
+
+/**
  * Returns an ancestor node of the given node that has the specified type.  If
- * there is no ancestor node with the specified type, then return null.
+ * there is no ancestor node with the specified type then return null.
  * @param {!ESLint.ASTNode} node Node to examine.
  * @param {string} type The Espree.NodeType that is being looked for.
  * @return {(!ESLint.ASTNode|null)} If found then node otherwise null.
@@ -108,6 +117,7 @@ exports = {
   categorizeUnderscoredIdentifier,
   getNodeAncestorOfType,
   isUnderscored,
+  isNodeClassType,
   isNodeOneLine,
   nodesEndOnSameLine,
   nodesShareOneLine,

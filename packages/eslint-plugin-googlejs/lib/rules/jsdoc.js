@@ -4,26 +4,19 @@
 
 goog.module('googlejs.rules.jsdoc');
 
+const utils = goog.require('googlejs.utils');
+
 const doctrine = require('doctrine');
 
 /**
- * Returns true if the node is a Class.
- * @param {!ESLint.ASTNode} node
- * @return {boolean}
- * @private
- */
-function isTypeClass(node) {
-  return node.type === 'ClassExpression' || node.type === 'ClassDeclaration';
-}
-
-/**
  * Returns true if @return tag type is void or undefined.
- * @param {Object} tag
+ * @param {!Doctrine.Tag} tag
  * @return {boolean}
  * @private
  */
-function isValidReturnType(tag) {
-  return tag.type === null || tag.type.name === 'void' ||
+function isValidReturnType_(tag) {
+  return tag.type === null ||
+    (tag.type.name && tag.type.name === 'void') ||
     tag.type.type === 'UndefinedLiteral';
 }
 
@@ -34,7 +27,7 @@ function isValidReturnType(tag) {
  * @return {boolean}
  * @private
  */
-function canTypeBeValidated(type) {
+function canTypeBeValidated_(type) {
   return type !== 'UndefinedLiteral' &&  // {undefined} as there is no name
   // property available.
   type !== 'NullLiteral' &&          // {null}
@@ -42,6 +35,20 @@ function canTypeBeValidated(type) {
   type !== 'FunctionType' &&         // {function(a)}
   type !== 'AllLiteral';             // {*}
 }
+
+/**
+ * Valid options for the JSDoc rule.
+ * @typedef {{
+ *   prefer: (!Object<string, string>|undefined),
+ *   preferType: (!Object<string, string>|undefined),
+ *   requireReturn: (boolean|undefined),
+ *   requireReturnType: (boolean|undefined),
+ *   matchDescription: (string|undefined),
+ *   requireParamDescription: (boolean|undefined),
+ *   requireReturnDescription: (boolean|undefined),
+ * }}
+ */
+let JSDocOption;
 
 
 /**
@@ -55,8 +62,11 @@ function create(context) {
   const sourceCode = context.getSourceCode();
 
 
-  const options = context.options[0] || {};
+  /** @const {!JSDocOption} */
+  const options = /** @type {!JSDocOption} */ (context.options[0]) || {};
+
   const prefer = options.prefer || {};
+
   // these both default to true; so you have to explicitly make them false
   const requireReturn = options.requireReturn !== false;
   const requireParamDescription = options.requireParamDescription !== false;
@@ -67,21 +77,20 @@ function create(context) {
 
   /**
    * When parsing a new function, store it in our function stack.
-   * @param {!ESLint.ASTNode} node A function node to check.
+   * @param {!Espree.AnyFunctionNode} node A function node to check.
    * @return {void}
-   * @private
    */
   function startFunction(node) {
     fns.push({
       returnPresent: (node.type === 'ArrowFunctionExpression' &&
                       node.body.type !== 'BlockStatement') ||
-          isTypeClass(node),
+          utils.isNodeClassType(node),
     });
   }
 
   /**
-   * Indicate that return has been found in the current function.
-   * @param {!ESLint.ASTNode} node The return node.
+   * Indicates that return has been found in the current function.
+   * @param {!Espree.ReturnStatement} node The return node.
    * @return {void}
    */
   function addReturn(node) {
@@ -93,10 +102,9 @@ function create(context) {
   }
 
   /**
-   * Extract the current and expected type based on the input type object
-   * @param {!Doctrine.Node} type JSDoc tag
+   * Extracts the current and expected type based on the input type object
+   * @param {!Doctrine.TagType} type JSDoc tag
    * @return {Object} current and expected type object
-   * @private
    */
   function getCurrentExpectedTypes(type) {
     let currentType;
@@ -113,13 +121,13 @@ function create(context) {
   }
 
   /**
-   * Validate type for a given JSDoc node
+   * Validates type for a given JSDoc node.
    * @param {!Espree.CommentToken} jsdocNode JSDoc node
-   * @param {!Doctrine.Node} type JSDoc tag
+   * @param {!Doctrine.TagType} type JSDoc tag
    * @return {void}
    */
   function validateType(jsdocNode, type) {
-    if (!type || !canTypeBeValidated(type.type)) {
+    if (!type || !canTypeBeValidated_(type.type)) {
       return;
     }
 
@@ -127,18 +135,21 @@ function create(context) {
     let elements = [];
 
     switch (type.type) {
-      case 'TypeApplication':  // {Array.<String>}
-        elements = type.applications[0].type === 'UnionType' ?
-            type.applications[0].elements :
-            type.applications;
+      case 'TypeApplication': {  // {Array<String>}
+        const typeApplication = /** @type {Doctrine.TypeApplication} */ (type);
+        elements = typeApplication.applications[0].type === 'UnionType' ?
+            typeApplication.applications[0].elements :
+            typeApplication.applications;
         typesToCheck.push(getCurrentExpectedTypes(type));
         break;
+      }
       case 'RecordType':  // {{20:String}}
-        elements = type.fields;
+        elements = /** @type {Doctrine.RecordType} */ (type).fields;
         break;
       case 'UnionType':  // {String|number|Test}
       case 'ArrayType':  // {[String, number, Test]}
-        elements = type.elements;
+        elements = /** @type {(Doctrine.ArrayType|Doctrine.UnionType} */
+            (type.elements);
         break;
       case 'FieldType':  // Array.<{count: number, votes: number}>
         if (type.value) {
@@ -193,9 +204,15 @@ function create(context) {
         });
       } catch (ex) {
         if (/braces/i.test(ex.message)) {
-          context.report(jsdocNode, 'JSDoc type missing brace.');
+          context.report({
+            node: jsdocNode,
+            message: 'JSDoc type missing brace.',
+          });
         } else {
-          context.report(jsdocNode, 'JSDoc syntax error.');
+          context.report({
+            node: jsdocNode,
+            message: 'JSDoc syntax error.',
+          });
         }
 
         return;
@@ -208,22 +225,25 @@ function create(context) {
           case 'arg':
           case 'argument':
             if (!tag.type) {
-              context.report(
-                  jsdocNode, "Missing JSDoc parameter type for '{{name}}'.",
-                  {name: tag.name});
+              context.report({
+                node: jsdocNode,
+                message: `Missing JSDoc parameter type for '${tag.name}'.`,
+              });
             }
 
             if (!tag.description && requireParamDescription) {
-              context.report(
-                  jsdocNode,
-                  "Missing JSDoc parameter description for '{{name}}'.",
-                  {name: tag.name});
+              context.report({
+                node: jsdocNode,
+                message: `Missing JSDoc parameter description for ` +
+                    `'${tag.name}'.`,
+              });
             }
 
             if (params[tag.name]) {
-              context.report(
-                  jsdocNode, "Duplicate JSDoc parameter '{{name}}'.",
-                  {name: tag.name});
+              context.report({
+                node: jsdocNode,
+                message: `Duplicate JSDoc parameter '${tag.name}'.`,
+              });
             } else if (tag.name.indexOf('.') === -1) {
               params[tag.name] = 1;
             }
@@ -234,7 +254,7 @@ function create(context) {
             hasReturns = true;
 
             if (!requireReturn && !functionData.returnPresent &&
-                (tag.type === null || !isValidReturnType(tag)) && !isAbstract) {
+                (tag.type === null || !isValidReturnType_(tag)) && !isAbstract) {
               context.report({
                 node: jsdocNode,
                 message: 'Unexpected @{{title}} tag; function has no return ' +
@@ -245,12 +265,18 @@ function create(context) {
               });
             } else {
               if (requireReturnType && !tag.type) {
-                context.report(jsdocNode, 'Missing JSDoc return type.');
+                context.report({
+                  node: jsdocNode,
+                  message: 'Missing JSDoc return type.',
+                });
               }
 
-              if (!isValidReturnType(tag) && !tag.description &&
+              if (!isValidReturnType_(tag) && !tag.description &&
                   requireReturnDescription) {
-                context.report(jsdocNode, 'Missing JSDoc return description.');
+                context.report({
+                  node: jsdocNode,
+                  message: 'Missing JSDoc return description.',
+                });
               }
             }
 
@@ -281,8 +307,11 @@ function create(context) {
         // check tag preferences
         if (prefer.hasOwnProperty(tag.title) &&
             tag.title !== prefer[tag.title]) {
-          context.report(
-              jsdocNode, 'Use @{{name}} instead.', {name: prefer[tag.title]});
+          context.report({
+            node: jsdocNode,
+            message: 'Use @{{name}} instead.',
+            data: {name: prefer[tag.title]},
+          });
         }
 
         // validate the types
@@ -294,7 +323,7 @@ function create(context) {
       // check for functions missing @return
       if (!isOverride && !hasReturns && !hasConstructor && !isInterface &&
           node.parent.kind !== 'get' && node.parent.kind !== 'constructor' &&
-          node.parent.kind !== 'set' && !isTypeClass(node)) {
+          node.parent.kind !== 'set' && !utils.isNodeClassType(node)) {
         if (requireReturn || functionData.returnPresent) {
           context.report({
             node: jsdocNode,
@@ -321,18 +350,16 @@ function create(context) {
           // default, rest params
           if (param.type === 'Identifier') {
             if (jsdocParams[i] && (name !== jsdocParams[i])) {
-              context.report(
-                  jsdocNode,
-                  "Expected JSDoc for '{{name}}' but found '{{jsdocName}}'.", {
-                    name,
-                    jsdocName: jsdocParams[i],
-                  });
+              context.report({
+                node: jsdocNode,
+                message: `Expected JSDoc for '${name}' but found ` +
+                    `'${jsdocParams[i]}'.`,
+              });
             } else if (!params[name] && !isOverride) {
-              context.report(
-                  jsdocNode, "Missing JSDoc for parameter '{{name}}'.",
-                {
-                  name,
-                });
+              context.report({
+                node: jsdocNode,
+                message: `Missing JSDoc for parameter '${name}'.`,
+              });
             }
           }
         });
@@ -342,9 +369,10 @@ function create(context) {
         const regex = new RegExp(options.matchDescription);
 
         if (!regex.test(jsdoc.description)) {
-          context.report(
-              jsdocNode,
-              'JSDoc description does not satisfy the regex pattern.');
+          context.report({
+            node: jsdocNode,
+            message: 'JSDoc description does not satisfy the regex pattern.',
+          });
         }
       }
     }

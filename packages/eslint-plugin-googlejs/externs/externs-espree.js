@@ -249,11 +249,40 @@ Espree.Expression;
 /** @typedef {!Espree.AssignmentPattern | !Espree.BindingIdentifier | !Espree.BindingPattern} */
 Espree.FunctionParameter;
 
+/**
+ * All function types.
+ * @typedef {(
+ *     !Espree.ArrowFunctionExpression|
+ *     !Espree.FunctionDeclaration|
+ *     !Espree.FunctionExpression
+ * )}
+ */
+Espree.AnyFunctionNode;
+
 /** @typedef {!Espree.ImportDefaultSpecifier | !Espree.ImportNamespaceSpecifier | !Espree.ImportSpecifier} */
 Espree.ImportDeclarationSpecifier;
 
 /** @typedef {!Espree.BreakStatement | !Espree.ContinueStatement | !Espree.DebuggerStatement | !Espree.DoWhileStatement | !Espree.EmptyStatement | !Espree.ExpressionStatement | !Espree.Directive | !Espree.ForStatement | !Espree.ForInStatement | !Espree.ForOfStatement | !Espree.FunctionDeclaration | !Espree.IfStatement | !Espree.ReturnStatement | !Espree.SwitchStatement | !Espree.ThrowStatement | !Espree.TryStatement | !Espree.VariableDeclaration | !Espree.WhileStatement | !Espree.WithStatement} */
 Espree.Statement;
+
+
+/**
+ * Nodes that have a `body` field that is either a `BlockStatement` or a single
+ * node.  For example:
+ *
+ *     `while (condition) foo();`   // body is a CallExpression
+ *     `while (condition) {foo();}` // body is a BlockStatement
+ *
+ * @typedef {(
+ *     !Espree.DoWhileStatement|
+ *     !Espree.ForStatement|
+ *     !Espree.ForInStatement|
+ *     !Espree.ForOfStatement|
+ *     !Espree.WhileStatement|
+ *     !Espree.WithStatement
+ * )}
+ */
+Espree.OptionallyBodiedNode;
 
 /** @typedef {!Espree.Identifier | !Espree.Literal} */
 Espree.PropertyKey;

@@ -43,35 +43,6 @@ IndentInfo.prototype.goodChar;
  */
 IndentInfo.prototype.badChar;
 
-
-/**
- * All function types.
- * @typedef {(
- *     !Espree.ArrowFunctionExpression|
- *     !Espree.FunctionDeclaration|
- *     !Espree.FunctionExpression
- * )}
- */
-let FunctionNode;
-
-/**
- * Nodes that have a `body` field that is either a `BlockStatement` or a single
- * node.  For example:
- *
- *     `while (condition) foo();`   // body is a CallExpression
- *     `while (condition) {foo();}` // body is a BlockStatement
- *
- * @typedef {(
- *     !Espree.DoWhileStatement|
- *     !Espree.ForStatement|
- *     !Espree.ForInStatement|
- *     !Espree.ForOfStatement|
- *     !Espree.WhileStatement|
- *     !Espree.WithStatement
- * )}
- */
-let OptionallyBodiedNode;
-
 /**
   * Gets the indent of the node by examining the number of whitespace characters
   * at the beginning of the line.
@@ -155,7 +126,7 @@ function isCalleeNodeFirstArgMultiline_(node) {
 
 /**
  * Returns true if the function is a parameter in `goog.scope`.
- * @param {!FunctionNode} node
+ * @param {!Espree.AnyFunctionNode} node
  * @return {boolean}
  */
 function isGoogScopeFunction_(node) {
@@ -181,7 +152,7 @@ function isGoogScopeFunction_(node) {
 
 /**
   * Returns true if the node is a file level IIFE.
-  * @param {!FunctionNode} node
+  * @param {!Espree.AnyFunctionNode} node
   * @return {boolean} True if the node is the outer IIFE.
   * @private
   */
@@ -605,7 +576,7 @@ function create(context) {
 
   /**
    * Gets the base indent for the function node.
-   * @param {(!FunctionNode|!Espree.ClassExpression)} functionNode
+   * @param {(!Espree.AnyFunctionNode|!Espree.ClassExpression)} functionNode
    * @return {number}
    */
   function getFunctionBaseIndent(functionNode) {
@@ -647,7 +618,7 @@ function create(context) {
 
   /**
    * Checks indentation of a function with a BlockStatement body.
-   * @param {!FunctionNode} functionNode
+   * @param {!Espree.AnyFunctionNode} functionNode
    * @return {void}
    */
   function checkFunctionIndent(functionNode) {
@@ -930,7 +901,7 @@ function create(context) {
   /**
    * Checks indentation for nodes that may have a single element body without
    * curly braces, e.g. a short `WhileStatement`.
-   * @param {!OptionallyBodiedNode} node The node to examine.
+   * @param {!Espree.OptionallyBodiedNode} node The node to examine.
    * @return {void}
    */
   function checkOptionallyBodiedIndent(node) {

@@ -16,6 +16,5 @@ const UnderscoreForm = {
 };
 
 exports = {
-  /** @const {UnderscoreForm} */
   UnderscoreForm,
 };
