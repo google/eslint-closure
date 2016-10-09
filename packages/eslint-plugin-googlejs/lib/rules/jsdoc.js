@@ -6,7 +6,7 @@ goog.module('googlejs.rules.jsdoc');
 
 const utils = goog.require('googlejs.utils');
 
-const doctrine = require('doctrine');
+const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 
 /**
  * Returns true if @return tag type is void or undefined.
@@ -121,7 +121,7 @@ function create(context) {
   }
 
   /**
-   * Validates type for a given JSDoc node.
+   * Recursively validates a type for a given JSDoc node.
    * @param {!Espree.CommentToken} jsdocNode JSDoc node
    * @param {!Doctrine.TagType} type JSDoc tag
    * @return {void}
@@ -322,8 +322,10 @@ function create(context) {
 
       // check for functions missing @return
       if (!isOverride && !hasReturns && !hasConstructor && !isInterface &&
-          node.parent.kind !== 'get' && node.parent.kind !== 'constructor' &&
-          node.parent.kind !== 'set' && !utils.isNodeClassType(node)) {
+          !utils.isNodeGetterFunction(node) &&
+          !utils.isNodeSetterFunction(node) &&
+          !utils.isNodeConstructorFunction(node) &&
+          !utils.isNodeClassType(node)) {
         if (requireReturn || functionData.returnPresent) {
           context.report({
             node: jsdocNode,

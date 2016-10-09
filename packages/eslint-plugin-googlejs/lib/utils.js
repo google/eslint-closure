@@ -113,12 +113,50 @@ function getNodeAncestorOfType(node, type) {
   return parent.type === type ? parent : null;
 }
 
+/**
+ * Returns true if node is a getter function.
+ * @param {!Espree.ASTNode} node
+ * @returns {boolean}
+ */
+function isNodeGetterFunction(node) {
+  return node.type === 'FunctionExpression' &&
+      node.parent && node.parent.type === 'Property' &&
+      /** @type {!Espree.Property} */ (node.parent).kind === 'get';
+}
+
+/**
+ * Returns true if node is a setter function.
+ * @param {!Espree.ASTNode} node
+ * @returns {boolean}
+ */
+function isNodeSetterFunction(node) {
+  return node.type === 'FunctionExpression' &&
+      node.parent && node.parent.type === 'Property' &&
+      /** @type {!Espree.Property} */ (node.parent).kind === 'set';
+}
+
+
+/**
+ * Returns true if node is a constructor function.
+ * @param {!Espree.ASTNode} node
+ * @returns {boolean}
+ */
+function isNodeConstructorFunction(node) {
+  return node.type === 'FunctionExpression' &&
+      node.parent && node.parent.type === 'MethodDefinition' &&
+      /** @type {!Espree.MethodDefinition} */
+      (node.parent).kind === 'constructor';
+}
+
 exports = {
   categorizeUnderscoredIdentifier,
   getNodeAncestorOfType,
   isUnderscored,
+  isNodeConstructorFunction,
   isNodeClassType,
+  isNodeGetterFunction,
   isNodeOneLine,
+  isNodeSetterFunction,
   nodesEndOnSameLine,
   nodesShareOneLine,
   nodesStartOnSameLine,
