@@ -215,7 +215,6 @@ Escope.Scope.prototype.variables;
  */
 Escope.Scope.prototype.references;
 
-
 /**
  * For 'global' and 'function' scopes, this is a self-reference. For
  * other scope types this is the <em>variableScope</em> value of the

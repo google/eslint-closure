@@ -4,6 +4,7 @@
  * @externs
  */
 
+
 /** @const */
 const Espree = {};
 
@@ -55,7 +56,6 @@ Espree.Node.prototype.start;
 
 /** @type {number} */
 Espree.Node.prototype.end;
-
 
 /**
  * A JavaScript token such as a keyword or comma.
@@ -226,7 +226,13 @@ Espree.ArgumentListElement;
 /** @typedef {!Espree.Expression | !Espree.SpreadElement} */
 Espree.ArrayExpressionElement;
 
-/** @typedef {!Espree.AssignmentPattern | !Espree.BindingIdentifier | !Espree.BindingPattern | !Espree.RestElement} */
+/** @typedef {(
+ *      !Espree.AssignmentPattern |
+ *      !Espree.BindingIdentifier |
+ *      !Espree.BindingPattern |
+ *      !Espree.RestElement
+ *  )}
+ */
 Espree.ArrayPatternElement;
 
 /** @typedef {!Espree.ArrayPattern | !Espree.ObjectPattern} */
@@ -235,34 +241,100 @@ Espree.BindingPattern;
 /** @typedef {!Espree.Identifier} */
 Espree.BindingIdentifier;
 
-/** @typedef {!Espree.ClassDeclaration | !Espree.ExportDeclaration | !Espree.FunctionDeclaration | !Espree.ImportDeclaration | !Espree.VariableDeclaration} */
+/** @typedef {(
+ *      !Espree.ClassDeclaration |
+ *      !Espree.ExportDeclaration |
+ *      !Espree.FunctionDeclaration |
+ *      !Espree.ImportDeclaration |
+ *      !Espree.VariableDeclaration
+ *  )}
+ */
 Espree.Declaration;
 
-/** @typedef {!Espree.ExportAllDeclaration | !Espree.ExportDefaultDeclaration | !Espree.ExportNamedDeclaration} */
+/** @typedef {(
+ *      !Espree.ExportAllDeclaration |
+ *      !Espree.ExportDefaultDeclaration |
+ *      !Espree.ExportNamedDeclaration
+ *  )}
+ */
 Espree.ExportDeclaration;
 
 /**
- * @typedef {!Espree.ArrayExpression | !Espree.ArrowFunctionExpression | !Espree.AssignmentExpression | !Espree.BinaryExpression | !Espree.CallExpression | !Espree.ClassExpression | !Espree.ComputedMemberExpression | !Espree.ConditionalExpression | !Espree.Identifier | !Espree.FunctionExpression | !Espree.Literal | !Espree.MemberExpression | !Espree.NewExpression | !Espree.ObjectExpression | !Espree.RegexLiteral | !Espree.SequenceExpression | !Espree.StaticMemberExpression | !Espree.TaggedTemplateExpression | !Espree.ThisExpression | !Espree.UnaryExpression | !Espree.UpdateExpression | !Espree.YieldExpression }
+ * @typedef {(
+ *      !Espree.ArrayExpression |
+ *      !Espree.ArrowFunctionExpression |
+ *      !Espree.AssignmentExpression |
+ *      !Espree.BinaryExpression |
+ *      !Espree.CallExpression |
+ *      !Espree.ClassExpression |
+ *      !Espree.ComputedMemberExpression |
+ *      !Espree.ConditionalExpression |
+ *      !Espree.Identifier |
+ *      !Espree.FunctionExpression |
+ *      !Espree.Literal |
+ *      !Espree.MemberExpression |
+ *      !Espree.NewExpression |
+ *      !Espree.ObjectExpression |
+ *      !Espree.RegexLiteral |
+ *      !Espree.SequenceExpression |
+ *      !Espree.StaticMemberExpression |
+ *      !Espree.TaggedTemplateExpression |
+ *      !Espree.ThisExpression |
+ *      !Espree.UnaryExpression |
+ *      !Espree.UpdateExpression |
+ *      !Espree.YieldExpression
+ *  )}
  */
 Espree.Expression;
 
-/** @typedef {!Espree.AssignmentPattern | !Espree.BindingIdentifier | !Espree.BindingPattern} */
+/** @typedef {(
+ *      !Espree.AssignmentPattern |
+ *      !Espree.BindingIdentifier |
+ *      !Espree.BindingPattern
+ *  )}
+ */
 Espree.FunctionParameter;
 
 /**
  * All function types.
  * @typedef {(
- *     !Espree.ArrowFunctionExpression|
- *     !Espree.FunctionDeclaration|
- *     !Espree.FunctionExpression
+ *      !Espree.ArrowFunctionExpression|
+ *      !Espree.FunctionDeclaration|
+ *      !Espree.FunctionExpression
  * )}
  */
 Espree.AnyFunctionNode;
 
-/** @typedef {!Espree.ImportDefaultSpecifier | !Espree.ImportNamespaceSpecifier | !Espree.ImportSpecifier} */
+/** @typedef {(
+ *      !Espree.ImportDefaultSpecifier |
+ *      !Espree.ImportNamespaceSpecifier |
+ *      !Espree.ImportSpecifier
+ *  )}
+ */
 Espree.ImportDeclarationSpecifier;
 
-/** @typedef {!Espree.BreakStatement | !Espree.ContinueStatement | !Espree.DebuggerStatement | !Espree.DoWhileStatement | !Espree.EmptyStatement | !Espree.ExpressionStatement | !Espree.Directive | !Espree.ForStatement | !Espree.ForInStatement | !Espree.ForOfStatement | !Espree.FunctionDeclaration | !Espree.IfStatement | !Espree.ReturnStatement | !Espree.SwitchStatement | !Espree.ThrowStatement | !Espree.TryStatement | !Espree.VariableDeclaration | !Espree.WhileStatement | !Espree.WithStatement} */
+/** @typedef {(
+ *      !Espree.BreakStatement |
+ *      !Espree.ContinueStatement |
+ *      !Espree.DebuggerStatement |
+ *      !Espree.DoWhileStatement |
+ *      !Espree.EmptyStatement |
+ *      !Espree.ExpressionStatement |
+ *      !Espree.Directive |
+ *      !Espree.ForStatement |
+ *      !Espree.ForInStatement |
+ *      !Espree.ForOfStatement |
+ *      !Espree.FunctionDeclaration |
+ *      !Espree.IfStatement |
+ *      !Espree.ReturnStatement |
+ *      !Espree.SwitchStatement |
+ *      !Espree.ThrowStatement |
+ *      !Espree.TryStatement |
+ *      !Espree.VariableDeclaration |
+ *      !Espree.WhileStatement |
+ *      !Espree.WithStatement
+ *  )}
+ */
 Espree.Statement;
 
 
@@ -287,7 +359,13 @@ Espree.OptionallyBodiedNode;
 /** @typedef {!Espree.Identifier | !Espree.Literal} */
 Espree.PropertyKey;
 
-/** @typedef {!Espree.AssignmentPattern | !Espree.BindingIdentifier | !Espree.BindingPattern | !Espree.FunctionExpression} */
+/** @typedef {(
+ *      !Espree.AssignmentPattern |
+ *      !Espree.BindingIdentifier |
+ *      !Espree.BindingPattern |
+ *      !Espree.FunctionExpression
+ *  )}
+ */
 Espree.PropertyValue;
 
 /** @typedef {!Espree.Declaration | !Espree.Statement} */
@@ -503,14 +581,26 @@ Espree.ExportAllDeclaration.prototype.source;
 /** @record @extends {Espree.ASTNode} */
 Espree.ExportDefaultDeclaration = function() {};
 
-/** @type {(!Espree.BindingIdentifier | !Espree.BindingPattern | !Espree.ClassDeclaration | !Espree.Expression | !Espree.FunctionDeclaration)} */
+/** @type {(
+ *      !Espree.BindingIdentifier |
+ *      !Espree.BindingPattern |
+ *      !Espree.ClassDeclaration |
+ *      !Espree.Expression |
+ *      !Espree.FunctionDeclaration
+ * )}
+ */
 Espree.ExportDefaultDeclaration.prototype.declaration;
 
 
 /** @record @extends {Espree.ASTNode} */
 Espree.ExportNamedDeclaration = function() {};
 
-/** @type {(!Espree.ClassDeclaration | !Function | !Espree.VariableDeclaration)} */
+/** @type {(
+ *      !Espree.ClassDeclaration |
+ *      !Function |
+ *      !Espree.VariableDeclaration
+ *  )}
+ */
 Espree.ExportNamedDeclaration.prototype.declaration;
 
 /** @type {!Array<!Espree.ExportSpecifier>} */

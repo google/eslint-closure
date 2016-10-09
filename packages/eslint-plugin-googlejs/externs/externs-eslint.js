@@ -1,6 +1,9 @@
-/** @fileoverview An extern file for ESLint at https://github.com/eslint/eslint.
+/**
+ * @fileoverview An extern file for ESLint at https://github.com/eslint/eslint.
  * @externs
  */
+
+/* eslint no-unused-vars: "off" */
 
 /** @const */
 const ESLint = {};
@@ -213,8 +216,8 @@ ESLint.RuleContext.prototype.meta;
  */
 ESLint.RuleContext.prototype.getSourceCode = function() {};
 
-// This rule is intentionally limited to a MessageDescriptor.  There's an old
-// version that supports positional arguments.
+// NOTE: This function is intentionally limited to a MessageDescriptor.  There's
+// an old version that supports positional arguments.
 /**
  * Passthrough to eslint.report() that automatically assigns the rule ID and
  * severity.
@@ -224,13 +227,57 @@ ESLint.RuleContext.prototype.getSourceCode = function() {};
  */
 ESLint.RuleContext.prototype.report = function(descriptor) {};
 
-// TODO: add these to Rule context
-// "getAncestors",
-// "getDeclaredVariables",
-// "getFilename",
-// "getScope",
-// "markVariableAsUsed",
 
+/**
+ * Records that a particular variable has been used in code.
+ * @param {string} name The name of the variable to mark as used
+ * @return {boolean} True if the variable was found and marked as used, false
+ *      if not.
+ */
+ESLint.RuleContext.prototype.markVariableAsUsed = function(name) {};
+
+
+/**
+ * Gets the filename for the currently parsed source.
+ * @return {string} The filename associated with the source being parsed.
+ *     Defaults to "<input>" if no filename info is present.
+ */
+ESLint.RuleContext.prototype.getFilename = function() {};
+
+/**
+ * Gets the scope for the current node.
+ * @returns {!Escope.Scope} An object representing the current node's scope.
+ */
+ESLint.RuleContext.prototype.getScope = function() {};
+
+/**
+ * Gets nodes that are ancestors of current node.
+ * @returns {!Array<!ESLint.ASTNode>} Array of objects representing ancestors.
+ */
+ESLint.RuleContext.prototype.getAncestors = function() {};
+
+/**
+ * Gets variables that are declared by a specified node.
+ *
+ * The variables are its `defs[].node` or `defs[].parent` is same as the
+ * specified node.  Specifically, below:
+ *
+ * - `VariableDeclaration` - variables of its all declarators.
+ * - `VariableDeclarator` - variables.
+ * - `FunctionDeclaration`/`FunctionExpression` - its function name and
+ *   parameters.
+ * - `ArrowFunctionExpression` - its parameters.
+ * - `ClassDeclaration`/`ClassExpression` - its class name.
+ * - `CatchClause` - variables of its exception.
+ * - `ImportDeclaration` - variables of  its all specifiers.
+ * - `ImportSpecifier`/`ImportDefaultSpecifier`/`ImportNamespaceSpecifier` - a
+ *   variable.
+ * - others - always an empty array.
+ *
+ * @param {ASTNode} node A node to get.
+ * @returns {!Array<!Escope.Variable>} Variables that are declared by the node.
+ */
+ESLint.RuleContext.prototype.getDeclaredVariables = function(node) {};
 
 /**
  * Represents parsed source code.

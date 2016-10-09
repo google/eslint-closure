@@ -1,3 +1,10 @@
+/**
+ * @fileoverview An extern file for Mocha.
+ * @externs
+ */
+
+/* eslint no-unused-vars: "off" */
+
 /** @const */
 const Mocha = {};
 
@@ -80,49 +87,50 @@ Mocha.TestDefinition.prototype.state;
  * @param {!Mocha.ActionFunction} action
  * @return {void}
  */
-let setup = (action) => {};
+const setup = (action) => {};
+
 /*
  * @param {!Mocha.ActionFunction} action
  * @return {void}
  */
-let teardown = (action) => {};
+const teardown = (action) => {};
 /*
  * @param {!Mocha.ActionFunction} action
  * @return {void}
  */
-let suiteSetup = (action) => {};
+const suiteSetup = (action) => {};
 /*
  * @param {!Mocha.ActionFunction} action
  * @return {void}
  */
-let suiteTeardown = (action) => {};
+const suiteTeardown = (action) => {};
 /*
  * @param {!Mocha.ActionFunction} action
  * @param {string=} description
  * @return {void}
  */
-let before = (action, description) => {};
+const before = (action, description) => {};
 
 /*
  * @param {!Mocha.ActionFunction} action
  * @param {string=} description
  * @return {void}
  */
-let after = (action, description) => {};
+const after = (action, description) => {};
 
 /*
  * @param {!Mocha.ActionFunction} action
  * @param {string=} description
  * @return {void}
  */
-let beforeEach = (action, description) => {};
+const beforeEach = (action, description) => {};
 
 /*
  * @param {!Mocha.ActionFunction} action
  * @param {string=} description
  * @return {void}
  */
-let afterEach = (action, description) => {};
+const afterEach = (action, description) => {};
 
 /*
  * @param {*?} error

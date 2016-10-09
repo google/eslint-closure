@@ -1,8 +1,9 @@
 /**
  * @fileoverview An extern file for chai.js.
- *
  * @externs
  */
+
+/* eslint no-unused-vars: "off" */
 
 /** @const */
 const Chai = {};
