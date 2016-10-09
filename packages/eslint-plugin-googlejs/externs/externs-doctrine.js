@@ -84,6 +84,18 @@ Doctrine.ParseOptions.prototype.lineNumbers;
  */
 Doctrine.TagType;
 
+/**
+ * JSDoc tag types that modify another type via an expression field.
+ * @typedef {(
+ *     !Doctrine.ParameterType |
+ *     !Doctrine.RestType |
+ *     !Doctrine.NonNullableType |
+ *     !Doctrine.OptionalType |
+ *     !Doctrine.NullableType
+ * )}
+ */
+Doctrine.UnaryTagType;
+
 /** @record */ Doctrine.Typeable = function() {};
 /** @type {string} */ Doctrine.Typeable.prototype.type;
 
@@ -123,7 +135,7 @@ Doctrine.TagType;
 /** @type {!Doctrine.TagType} */ Doctrine.ParameterType.prototype.expression;
 
 /** @record @extends {Doctrine.Typeable} */ Doctrine.RestType = function() {};
-/** @type {!Doctrine.TagType} */ Doctrine.RestType.prototype.Expression;
+/** @type {!Doctrine.TagType} */ Doctrine.RestType.prototype.expression;
 
 /** @record @extends {Doctrine.Typeable} */ Doctrine.NonNullableType = function() {};
 /** @type {!Doctrine.TagType} */ Doctrine.NonNullableType.prototype.expression;

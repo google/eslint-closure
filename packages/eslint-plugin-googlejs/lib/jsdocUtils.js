@@ -27,8 +27,8 @@ function isTerminal(tagType) {
 }
 
 /**
- * Applies the visitor function recursively down all child elements of
- * tagType.
+ * Applies the visitor function recursively in an pre-order traversal down all
+ * child elements of tagType.
  * @param {!Doctrine.TagType} tagType
  * @param {function(!Doctrine.TagType)} visitor
  */
@@ -37,43 +37,44 @@ function traverseJSDocTagTypes(tagType, visitor) {
   if (isTerminal(tagType)) return;
   switch (tagType.type) {
     case 'ArrayType':
-      tagType.elements.forEach(tag => traverseJSDocTagTypes(tag, visitor));
+      /** @type {!Doctrine.ArrayType} */ (tagType).elements
+          .forEach(tag => traverseJSDocTagTypes(tag, visitor));
       break;
     case 'RecordType':
-      tagType.fields.forEach(tag => traverseJSDocTagTypes(tag, visitor));
+      /** @type {!Doctrine.RecordType} */ (tagType).fields
+          .forEach(tag => traverseJSDocTagTypes(tag, visitor));
       break;
     case 'FunctionType': {
-      const t = /** @type {!Doctrine.FunctionType} */ tagType;
+      const t = /** @type {!Doctrine.FunctionType} */ (tagType);
       t.params.forEach(tag => traverseJSDocTagTypes(tag, visitor));
-      if (t.result) traverseJSDocTagTypes(t.result);
-      if (t.this) traverseJSDocTagTypes(t.this);
-      if (t.new) traverseJSDocTagTypes(t.new);
+      if (t.result) traverseJSDocTagTypes(t.result, visitor);
+      if (t.this) traverseJSDocTagTypes(t.this, visitor);
       break;
     }
-    case 'FieldType':
-      if (tagType.value) traverseJSDocTagTypes(tagType.value, visitor);
+    case 'FieldType': {
+      const t = /** @type {!Doctrine.FieldType} */ (tagType);
+      if (t.value) {
+        traverseJSDocTagTypes(t.value, visitor);
+      }
       break;
+    }
     case 'ParameterType':
-      traverseJSDocTagTypes(tagType.expression, visitor);
-      break;
     case 'RestType':
-      traverseJSDocTagTypes(tagType.expression, visitor);
-      break;
     case 'NonNullableType':
-      traverseJSDocTagTypes(tagType.expression, visitor);
-      break;
     case 'OptionalType':
-      traverseJSDocTagTypes(tagType.expression, visitor);
-      break;
     case 'NullableType':
-      traverseJSDocTagTypes(tagType.expression, visitor);
+      traverseJSDocTagTypes(
+          /** @type {!Doctrine.UnaryTagType} */ (tagType).expression, visitor);
       break;
-    case 'TypeApplication':
-      traverseJSDocTagTypes(tagType.expression, visitor);
-      tagType.applications.forEach(tag => traverseJSDocTagTypes(tag, visitor));
+    case 'TypeApplication': {
+      const t = /** @type {!Doctrine.TypeApplication} */ (tagType);
+      traverseJSDocTagTypes(t.expression, visitor);
+      t.applications.forEach(tag => traverseJSDocTagTypes(tag, visitor));
       break;
+    }
     case 'UnionType':
-      tagType.elements.forEach(tag => traverseJSDocTagTypes(tag, visitor));
+      /** @type {!Doctrine.UnionType} */ (tagType).elements
+          .forEach(tag => traverseJSDocTagTypes(tag, visitor));
       break;
     default:
       throw new Error('Unrecoginized tag type.');

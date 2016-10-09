@@ -21,22 +21,6 @@ function isValidReturnType_(tag) {
     tag.type.type === 'UndefinedLiteral';
 }
 
-
-/**
- * Returns true if a type can be validated.
- * @param {Object} type JSDoc tag.
- * @return {boolean}
- * @private
- */
-function canTypeBeValidated_(type) {
-  return type !== 'UndefinedLiteral' &&  // {undefined} as there is no name
-  // property available.
-  type !== 'NullLiteral' &&          // {null}
-  type !== 'NullableLiteral' &&      // {?}
-  type !== 'FunctionType' &&         // {function(a)}
-  type !== 'AllLiteral';             // {*}
-}
-
 /**
  * Valid options for the JSDoc rule.
  * @typedef {{
@@ -51,14 +35,24 @@ function canTypeBeValidated_(type) {
  */
 let JSDocOption;
 
+/**
+ * Valid options for the JSDoc rule.
+ * @typedef {{
+ *   returnPresent: boolean,
+ * }}
+ */
+let FunctionReturnInfo;
 
 /**
  * @param {!ESLint.RuleContext} context
  * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
  */
 function create(context) {
-  // Using a stack to store if a function returns or not (handling nested
-  // functions)
+  /**
+   * A stack to store if a function returns or not to support handling nested
+   * functions.
+   * @const {!Array<!FunctionReturnInfo>}
+   */
   const fns = [];
   const sourceCode = context.getSourceCode();
 
@@ -105,7 +99,7 @@ function create(context) {
   /**
    * Reports invalid type names, e.g Number instead of number.
    * @param {!Doctrine.NameExpression} tagType
-   * @param {!ESLint.CommentToken} node Node to provide location information to
+   * @param {!Espree.CommentToken} node Node to provide location information to
    *     report.
    */
   function checkTypeName(tagType, node) {
@@ -120,13 +114,14 @@ function create(context) {
   }
 
   /**
-   * Recursively validates a type for a given JSDoc node.
+   * Checks and reports invalid type names recursively in the provide JSDoc
+   * type.
    * @param {!Espree.CommentToken} node JSDoc node
-   * @param {!Doctrine.TagType} type
+   * @param {!Doctrine.TagType} tagType
    * @return {void}
    */
-  function validateType(node, type) {
-    jsdocUtils.traverseJSDocTagTypes(type, (tag) => {
+  function checkTypeNames(node, tagType) {
+    jsdocUtils.traverseJSDocTagTypes(tagType, (tag) => {
       if (tag.type === 'NameExpression') {
         checkTypeName(/** @type {!Doctrine.NameExpression} */ (tag), node);
       }
@@ -140,6 +135,7 @@ function create(context) {
    */
   function checkJSDoc(node) {
     const jsdocNode = sourceCode.getJSDocComment(node);
+    /** @const {!FunctionReturnInfo} */
     const functionData = fns.pop();
     const params = Object.create(null);
 
@@ -272,7 +268,7 @@ function create(context) {
 
         // validate the types
         if (checkPreferType && tag.type) {
-          validateType(jsdocNode, tag.type);
+          checkTypeNames(jsdocNode, tag.type);
         }
       });
 
