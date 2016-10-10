@@ -274,7 +274,7 @@ ESLint.RuleContext.prototype.getAncestors = function() {};
  *   variable.
  * - others - always an empty array.
  *
- * @param {ASTNode} node A node to get.
+ * @param {!ESLint.ASTNode} node A node to get.
  * @returns {!Array<!Escope.Variable>} Variables that are declared by the node.
  */
 ESLint.RuleContext.prototype.getDeclaredVariables = function(node) {};

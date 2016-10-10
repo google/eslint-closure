@@ -919,6 +919,25 @@ const GOOGLE_PLUGIN_RULES = {
     // Google ES5: Aliasing with goog.scope
     outerIIFEBody: 0,
   }],
+  'googlejs/jsdoc': [WARNING, {
+    prefer: {
+      returns: 'return',
+      arg: 'param',
+      argument: 'param',
+    },
+    preferType: {
+      String: 'string',
+      Boolean: 'boolean',
+      Number: 'number',
+      Function: 'function',
+
+    },
+    requireReturn: false,
+    requireReturnType: false,
+    matchDescription: undefined,
+    requireParamDescription: false,
+    requireReturnDescription: false,
+  }],
 };
 
 

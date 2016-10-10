@@ -129,6 +129,27 @@ function create(context) {
   }
 
   /**
+   * Marks JSDoc types that are local variables as used.
+   * @param {!Array<!Escope.Reference>} references
+   * @param {!Doctrine.NameExpression} tagType
+   */
+  function markTypeVariablesAsUsed(references, tagType) {
+    const allRefs = references.map(e => e);
+    // console.log('allrefs', allRefs);
+
+    jsdocUtils.traverseJSDocTagTypes(tagType, (tag) => {
+
+      if (tag.type === 'NameExpression') {
+        const name = tagType.name;
+        // if (scopedVariables.has(name)) {
+        //   console.log('marking as USED!', name, scopedVariables.keys());
+        //   context.markVariableAsUsed(name);
+        // }
+      }
+    });
+  }
+
+  /**
    * Validate the JSDoc node and output warnings if anything is wrong.
    * @param {!ESLint.ASTNode} node The AST node to check.
    * @return {void}
@@ -138,6 +159,9 @@ function create(context) {
     /** @const {!FunctionReturnInfo} */
     const functionData = fns.pop();
     const params = Object.create(null);
+    const scope = context.getScope();
+    const scopedVariables = scope.set;
+
 
     let hasReturns = false;
     let hasConstructor = false;
@@ -206,7 +230,8 @@ function create(context) {
             hasReturns = true;
 
             if (!requireReturn && !functionData.returnPresent &&
-                (tag.type === null || !isValidReturnType_(tag)) && !isAbstract) {
+                (tag.type === null || !isValidReturnType_(tag)) &&
+                !isAbstract) {
               context.report({
                 node: jsdocNode,
                 message: 'Unexpected @{{title}} tag; function has no return ' +
@@ -264,6 +289,10 @@ function create(context) {
             message: 'Use @{{name}} instead.',
             data: {name: prefer[tag.title]},
           });
+        }
+
+        if (tag.type) {
+          markTypeVariablesAsUsed(scope.through, tag.type);
         }
 
         // validate the types

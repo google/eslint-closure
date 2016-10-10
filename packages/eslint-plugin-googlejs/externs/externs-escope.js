@@ -159,16 +159,16 @@ Escope.Scope = function() {};
 Escope.Scope.prototype.type;
 
 /**
- * The scoped {@link Variable}s of this scope, as <code>{ Variable.name
- * : Variable }</code>.
- * @type {Map}
+ * The scoped Escope.Variables of this scope, as <code>{ Variable.name :
+ * Variable }</code>.
+ * @type {!Map<string, !Escope.Variable>}
  */
 Escope.Scope.prototype.set;
 
 /**
  * The tainted variables of this scope, as <code>{ Variable.name :
  * boolean }</code>.
- * @type {Map}
+ * @type {!Map<string, boolean>}
  */
 Escope.Scope.prototype.taints;
 
