@@ -55,7 +55,7 @@ function evilEval(stuffToEval) {
       parserOptions: {ecmaVersion: 6, ecmaFeatures: {jsx: true}},
     },
     {
-      code: 'var console; [1,2,3].forEach(obj => {\n  console.log(obj);\n});',
+      code: 'var console; [1,2,3].forEach(obj => {console.log(obj);});',
       parserOptions: {ecmaVersion: 6},
     },
     {

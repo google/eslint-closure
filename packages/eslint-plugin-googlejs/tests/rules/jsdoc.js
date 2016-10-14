@@ -6,7 +6,9 @@ goog.module('googlejs.tests.rules.jsdoc');
 goog.setTestOnly('googlejs.tests.rules.jsdoc');
 
 const jsdocRule = goog.require('googlejs.rules.jsdoc');
+
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
+
 const RuleTester = eslint.RuleTester;
 const ruleTester = new RuleTester();
 
@@ -171,206 +173,314 @@ function foo(arg1, arg2){ return ''; }`,
 function foo(){}`,
 
     {
-      code:
-                'call(\n' +
-                '  /**\n' +
-                '   * Doc for a function expression in a call expression.\n' +
-                '   * @param {string} argName This is the param description.\n' +
-                '   * @return {string} This is the return description.\n' +
-                '   */\n' +
-                '  function(argName) {\n' +
-                "    return 'the return';\n" +
-                '  }\n' +
-                ');\n',
+      code: `
+call(
+  /**
+   * Doc for a function expression in a call expression.
+   * @param {string} argName This is the param description.
+   * @return {string} This is the return description.
+   */
+  function(argName) {
+    return 'the return';
+  }
+);`,
       options: [{requireReturn: false}],
     },
     {
-      code:
-                '/**\n' +
-                '* Create a new thing.\n' +
-                '*/\n' +
-                'var thing = new Thing({\n' +
-                '  foo: function() {\n' +
-                "    return 'bar';\n" +
-                '  }\n' +
-                '});\n',
+      code: `
+/**
+* Create a new thing.
+*/
+var thing = new Thing({
+  foo: function() {
+    return 'bar';
+  }
+});`,
       options: [{requireReturn: false}],
     },
     {
-      code:
-                '/**\n' +
-                '* Create a new thing.\n' +
-                '*/\n' +
-                'var thing = new Thing({\n' +
-                '  /**\n' +
-                '   * @return {string} A string.\n' +
-                '   */\n' +
-                '  foo: function() {\n' +
-                "    return 'bar';\n" +
-                '  }\n' +
-                '});\n',
+      code: `
+/**
+* Create a new thing.
+*/
+var thing = new Thing({
+  /**
+   * @return {string} A string.
+   */
+  foo: function() {
+    return 'bar';
+  }
+});`,
       options: [{requireReturn: false}],
     },
     {
-      code: '/**\n* Description\n* @return {void} */\nfunction foo(){}',
+      code: `
+/**
+* Description
+* @return {void} */
+function foo(){}`,
       options: [{}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p bar\n*/\nFoo.bar = (p) => {};',
+      code: `
+/**
+* Description
+* @param {string} p bar
+*/
+Foo.bar = (p) => {};`,
       options: [{requireReturn: false}],
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: '/**\n* Description\n* @param {string} p bar\n*/\nFoo.bar = function({p}){};',
+      code: `
+/**
+* Description
+* @param {string} p bar
+*/
+Foo.bar = function({p}){};`,
       options: [{requireReturn: false}],
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: '/**\n* Description\n* @param {string} p bar\n*/\nFoo.bar = function(p){};',
+      code: `
+/**
+* Description
+* @param {string} p bar
+*/
+Foo.bar = function(p){};`,
       options: [{requireReturn: false}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p mytest\n*/\nFoo.bar = function(p){var t = function(){return p;}};',
+      code: `
+/**
+* Description
+* @param {string} p mytest
+*/
+Foo.bar = function(p){var t = function(){return p;}};`,
       options: [{requireReturn: false}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p mytest\n*/\nFoo.bar = function(p){function func(){return p;}};',
+      code: `
+/**
+* Description
+* @param {string} p mytest
+*/
+Foo.bar = function(p){function func(){return p;}};`,
       options: [{requireReturn: false}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p mytest\n*/\nFoo.bar = function(p){var t = false; if(t){ return; }};',
+      code: `
+/**
+* Description
+* @param {string} p mytest
+*/
+Foo.bar = function(p){var t = false; if(t){ return; }};`,
       options: [{requireReturn: false}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p mytest\n* @returns {void} */\nFoo.bar = function(p){var t = false; if(t){ return; }};',
+      code: `
+/**
+* Description
+* @param {string} p mytest
+* @returns {void} */
+Foo.bar = function(p){var t = false; if(t){ return; }};`,
       options: [{requireReturn: false}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p mytest\n*/\nFoo.bar = function(p){var t = function(){function name(){return p;}}};',
+      code: `
+/**
+* Description
+* @param {string} p mytest
+*/
+Foo.bar = function(p){var t = function(){function name(){return p;}}};`,
       options: [{requireReturn: false}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p mytest\n*/\nFoo.bar = function(p){var t = function(){function name(){}; return name;}};',
+      code: `
+/**
+* Description
+* @param {string} p mytest
+*/
+Foo.bar = function(p){var t = function(){function name(){}; return name;}};`,
       options: [{requireReturn: false}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p\n* @returns {void}*/\nFoo.bar = function(p){var t = function(){function name(){}; return name;}};',
+      code: `
+/**
+* Description
+* @param {string} p
+* @returns {void}*/
+Foo.bar = function(p){var t = function(){function name(){}; return name;}};`,
       options: [{requireParamDescription: false}],
     },
     {
-      code: '/**\n* Description\n* @param {string} p mytest\n* @returns {Object}*/\nFoo.bar = function(p){return name;};',
+      code: `
+/**
+* Description
+* @param {string} p mytest
+* @returns {Object}*/
+Foo.bar = function(p){return name;};`,
       options: [{requireReturnDescription: false}],
     },
-    'var obj = {\n /**\n * Getter\n * @type {string}\n */\n get location() {\n return this._location;\n }\n }',
-    'var obj = {\n /**\n * Setter\n * @param {string} value The location\n */\n set location(value) {\n this._location = value;\n }\n }',
+   `
+var obj = {
+ /**
+ * Getter
+ * @type {string}
+ */
+ get location() {
+ return this._location;
+ }
+ }`,
+   `
+var obj = {
+ /**
+ * Setter
+ * @param {string} value The location
+ */
+ set location(value) {
+ this._location = value;
+ }
+ }`,
     {
-      code: '/**\n * Description for A.\n */\n class A {\n /**\n * Description for constructor.\n * @param {object[]} xs - xs\n */\n constructor(xs) {\n /**\n * Description for this.xs;\n * @type {object[]}\n */\n this.xs = xs.filter(x => x != null);\n }\n}',
+      code: `
+/**
+ * Description for A.
+ */
+ class A {
+ /**
+ * Description for constructor.
+ * @param {object[]} xs - xs
+ */
+ constructor(xs) {
+ /**
+ * Description for this.xs;
+ * @type {object[]}
+ */
+ this.xs = xs.filter(x => x != null);
+ }
+}`,
       options: [{requireReturn: false}],
       parserOptions: {
         ecmaVersion: 6,
       },
     },
     {
-      code: '/** @returns {object} foo */ var foo = () => bar();',
+      code: `
+/** @returns {object} foo */ var foo = () => bar();`,
       options: [{requireReturn: false}],
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: '/** @returns {object} foo */ var foo = () => { return bar(); };',
+      code: `
+/** @returns {object} foo */ var foo = () => { return bar(); };`,
       options: [{requireReturn: false}],
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: '/** foo */ var foo = () => { bar(); };',
+      code: `
+/** foo */ var foo = () => { bar(); };`,
       options: [{requireReturn: false}],
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: '/**\n* Start with caps and end with period.\n* @return {void} */\nfunction foo(){}',
+      code: `
+/**
+* Start with caps and end with period.
+* @return {void} */
+function foo(){}`,
       options: [{
         matchDescription: '^[A-Z][A-Za-z0-9\\s]*[.]$',
       }],
     },
     {
-      code: '/** Foo \n@return {void} Foo\n */\nfunction foo(){}',
+      code: `
+/** Foo 
+@return {void} Foo
+ */
+function foo(){}`,
       options: [{prefer: {return: 'return'}}],
     },
     {
-      code: '/** Foo \n@return Foo\n */\nfunction foo(){}',
+      code: `
+/** Foo 
+@return Foo
+ */
+function foo(){}`,
       options: [{requireReturnType: false}],
     },
     {
-      code:
-                '/**\n' +
-                ' * A thing interface. \n' +
-                ' * @interface\n' +
-                ' */\n' +
-                'function Thing() {}',
+      code: `
+/**
+ * A thing interface. 
+ * @interface
+ */
+function Thing() {}`,
       options: [{requireReturn: true}],
     },
 
         // classes
     {
-      code:
-                '/**\n' +
-                ' * Description for A.\n' +
-                ' */\n' +
-                'class A {\n' +
-                '    /**\n' +
-                '     * Description for constructor.\n' +
-                '     * @param {object[]} xs - xs\n' +
-                '     */\n' +
-                '    constructor(xs) {\n' +
-                '        this.a = xs;' +
-                '    }\n' +
-                '}',
+      code: `
+/**
+ * Description for A.
+ */
+class A {
+    /**
+     * Description for constructor.
+     * @param {object[]} xs - xs
+     */
+    constructor(xs) {
+        this.a = xs;
+    }
+}`,
       options: [{requireReturn: true}],
       parserOptions: {
         ecmaVersion: 6,
       },
     },
     {
-      code:
-            '/**\n' +
-            ' * Description for A.\n' +
-            ' */\n' +
-            'class A {\n' +
-            '    /**\n' +
-            '     * Description for method.\n' +
-            '     * @param {object[]} xs - xs\n' +
-            '     */\n' +
-            '    print(xs) {\n' +
-            '        this.a = xs;' +
-            '    }\n' +
-            '}',
+      code: `
+/**
+ * Description for A.
+ */
+class A {
+    /**
+     * Description for method.
+     * @param {object[]} xs - xs
+     */
+    print(xs) {
+        this.a = xs;
+    }
+}`,
       options: [{requireReturn: false}],
       parserOptions: {
         ecmaVersion: 6,
       },
     },
     {
-      code:
-                '/**\n' +
-                ' * Description for A.\n' +
-                ' */\n' +
-                'class A {\n' +
-                '    /**\n' +
-                '     * Description for constructor.\n' +
-                '     * @param {object[]} xs - xs\n' +
-                '     * @returns {void}\n' +
-                '     */\n' +
-                '    constructor(xs) {\n' +
-                '        this.a = xs;' +
-                '    }\n' +
-                '    /**\n' +
-                '     * Description for method.\n' +
-                '     * @param {object[]} xs - xs\n' +
-                '     * @returns {void}\n' +
-                '     */\n' +
-                '    print(xs) {\n' +
-                '        this.a = xs;' +
-                '    }\n' +
-                '}',
+      code: `
+/**
+ * Description for A.
+ */
+class A {
+    /**
+     * Description for constructor.
+     * @param {object[]} xs - xs
+     * @returns {void}
+     */
+    constructor(xs) {
+        this.a = xs;
+    }
+    /**
+     * Description for method.
+     * @param {object[]} xs - xs
+     * @returns {void}
+     */
+    print(xs) {
+        this.a = xs;
+    }
+}`,
       options: [],
       parserOptions: {
         ecmaVersion: 6,
@@ -379,33 +489,33 @@ function foo(){}`,
 
 
     {
-      code:
-                '/**\n' +
-                " * Use of this with a 'namepath'.\n" +
-                ' * @this some.name\n' +
-                ' */\n' +
-                'function foo() {}',
+      code: `
+/**
+ * Use of this with a 'namepath'.
+ * @this some.name
+ */
+function foo() {}`,
       options: [{requireReturn: false}],
     },
     {
-      code:
-                '/**\n' +
-                ' * Use of this with a type expression.\n' +
-                ' * @this {some.name}\n' +
-                ' */\n' +
-                'function foo() {}',
+      code: `
+/**
+ * Use of this with a type expression.
+ * @this {some.name}
+ */
+function foo() {}`,
       options: [{requireReturn: false}],
     },
 
         // type validations
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<*>} hi - desc\n' +
-            '* @returns {*} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<*>} hi - desc
+* @returns {*} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -414,13 +524,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {string} hi - desc\n' +
-            '* @returns {ASTNode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {string} hi - desc
+* @returns {ASTNode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -429,13 +539,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {{20:string}} hi - desc\n' +
-            '* @returns {Astnode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {{20:string}} hi - desc
+* @returns {Astnode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -444,13 +554,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {{String:foo}} hi - desc\n' +
-            '* @returns {ASTNode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {{String:foo}} hi - desc
+* @returns {ASTNode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -459,13 +569,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {String|number|Test} hi - desc\n' +
-            '* @returns {Astnode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {String|number|Test} hi - desc
+* @returns {Astnode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           test: 'Test',
@@ -473,13 +583,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<string>} hi - desc\n' +
-            '* @returns {Astnode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<string>} hi - desc
+* @returns {Astnode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -488,58 +598,58 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            ' * Test dash and slash.\n' +
-            ' * @extends module:stb/emitter~Emitter\n' +
-            ' */\n' +
-            'function foo() {}',
+      code: `
+/**
+ * Test dash and slash.
+ * @extends module:stb/emitter~Emitter
+ */
+function foo() {}`,
       options: [{
         requireReturn: false,
       }],
     },
     {
-      code:
-            '/**\n' +
-            ' * Test dash and slash.\n' +
-            ' * @requires module:config\n' +
-            ' * @requires module:modules/notifications\n' +
-            ' */\n' +
-            'function foo() {}',
+      code: `
+/**
+ * Test dash and slash.
+ * @requires module:config
+ * @requires module:modules/notifications
+ */
+function foo() {}`,
       options: [{
         requireReturn: false,
       }],
     },
     {
-      code:
-            '/**\n' +
-            ' * Foo\n' +
-            ' * @module module-name\n' +
-            ' */\n' +
-            'function foo() {}',
+      code: `
+/**
+ * Foo
+ * @module module-name
+ */
+function foo() {}`,
       options: [{
         requireReturn: false,
       }],
     },
     {
-      code:
-            '/**\n' +
-            ' * Foo\n' +
-            ' * @alias module:module-name\n' +
-            ' */\n' +
-            'function foo() {}',
+      code: `
+/**
+ * Foo
+ * @alias module:module-name
+ */
+function foo() {}`,
       options: [{
         requireReturn: false,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<string>} hi - desc\n' +
-            '* @returns {Array.<string|number>} desc\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<string>} hi - desc
+* @returns {Array.<string|number>} desc
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -547,13 +657,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<string|number>} hi - desc\n' +
-            '* @returns {Array.<string>} desc\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<string|number>} hi - desc
+* @returns {Array.<string>} desc
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -561,13 +671,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<{id: number, votes: number}>} hi - desc\n' +
-            '* @returns {Array.<{summary: string}>} desc\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<{id: number, votes: number}>} hi - desc
+* @returns {Array.<{summary: string}>} desc
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           Number: 'number',
@@ -576,13 +686,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<[string, number]>} hi - desc\n' +
-            '* @returns {Array.<[string, string]>} desc\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<[string, number]>} hi - desc
+* @returns {Array.<[string, string]>} desc
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           Number: 'number',
@@ -591,13 +701,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Object<string,Object<string, number>>} hi - because why not\n' +
-            '* @returns {Boolean} desc\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Object<string,Object<string, number>>} hi - because why not
+* @returns {Boolean} desc
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           Number: 'number',
@@ -606,13 +716,24 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Description\n* @param {string} a bar\n* @returns {string} desc */\nfunction foo(a = 1){}',
+      code: `
+/**
+* Description
+* @param {string} a bar
+* @returns {string} desc */
+function foo(a = 1){}`,
       parserOptions: {
         ecmaVersion: 6,
       },
     },
     {
-      code: '/**\n* Description\n* @param {string} b bar\n* @param {string} a bar\n* @returns {string} desc */\nfunction foo(b, a = 1){}',
+      code: `
+/**
+* Description
+* @param {string} b bar
+* @param {string} a bar
+* @returns {string} desc */
+function foo(b, a = 1){}`,
       parserOptions: {
         ecmaVersion: 6,
       },
@@ -620,101 +741,99 @@ function foo(){}`,
 
         // abstract
     {
-      code:
-            '/**\n' +
-            '* Description\n' +
-            '* @abstract\n' +
-            '* @returns {Number} desc\n' +
-            '*/\n' +
-            "function foo(){ throw new Error('Not Implemented'); }",
+      code: `
+/**
+* Description
+* @abstract
+* @returns {Number} desc
+*/
+function foo(){ throw new Error('Not Implemented'); }`,
       options: [{requireReturn: false}],
     },
     {
-      code:
-            '/**\n' +
-            '* Description\n' +
-            '* @virtual\n' +
-            '* @returns {Number} desc\n' +
-            '*/\n' +
-            "function foo(){ throw new Error('Not Implemented'); }",
+      code: `
+/**
+* Description
+* @virtual
+* @returns {Number} desc
+*/
+function foo(){ throw new Error('Not Implemented'); }`,
       options: [{requireReturn: false}],
     },
     {
-      code:
-            '/**\n' +
-            '* Description\n' +
-            '* @abstract\n' +
-            '* @returns {Number} desc\n' +
-            '*/\n' +
-            "function foo(){ throw new Error('Not Implemented'); }",
+      code: `
+/**
+* Description
+* @abstract
+* @returns {Number} desc
+*/
+function foo(){ throw new Error('Not Implemented'); }`,
       options: [{requireReturn: true}],
     },
     {
-      code:
-            '/**\n' +
-            '* Description\n' +
-            '* @abstract\n' +
-            '* @returns {Number} desc\n' +
-            '*/\n' +
-            'function foo(){}',
+      code: `
+/**
+* Description
+* @abstract
+* @returns {Number} desc
+*/
+function foo(){}`,
       options: [{requireReturn: true}],
     },
     {
-      code: [
-        '/**',
-        ' * @param {string} a - a.',
-        ' * @param {object} [obj] - obj.',
-        ' * @param {string} obj.b - b.',
-        ' * @param {string} obj.c - c.',
-        ' * @returns {void}',
-        ' */',
-        'function foo(a, {b, c} = {}) {',
-        '    // empty',
-        '}',
-      ].join('\n'),
+      code: `
+/**
+ * @param {string} a - a.
+ * @param {object} [obj] - obj.
+ * @param {string} obj.b - b.
+ * @param {string} obj.c - c.
+ * @returns {void}
+ */
+function foo(a, {b, c} = {}) {
+    // empty
+}`,
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: [
-        '/**',
-        ' * @param {string} a - a.',
-        ' * @param {any[]} [list] - list.',
-        ' * @returns {void}',
-        ' */',
-        'function foo(a, [b, c] = []) {',
-        '    // empty',
-        '}',
-      ].join('\n'),
+      code: `
+/**
+ * @param {string} a - a.
+ * @param {any[]} [list] - list.
+ * @returns {void}
+ */
+function foo(a, [b, c] = []) {
+    // empty
+}`,
       parserOptions: {ecmaVersion: 6},
     },
 
-        // https://github.com/eslint/eslint/issues/7184
+    // https://github.com/eslint/eslint/issues/7184
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {{foo}} hi - desc\n' +
-            '* @returns {ASTNode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {{foo}} hi - desc
+* @returns {ASTNode} returns a node
+*/
+function foo(hi){}`,
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {{foo:String, bar, baz:Array}} hi - desc\n' +
-            '* @returns {ASTNode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {{foo:String, bar, baz:Array}} hi - desc
+* @returns {ASTNode} returns a node
+*/
+function foo(hi){}`,
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {{String}} hi - desc\n' +
-            '* @returns {ASTNode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {{String}} hi - desc
+* @returns {ASTNode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -723,13 +842,13 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {{foo:string, astnode:Object, bar}} hi - desc\n' +
-            '* @returns {ASTNode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {{foo:string, astnode:Object, bar}} hi - desc
+* @returns {ASTNode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -741,17 +860,17 @@ function foo(){}`,
 
   invalid: [
     {
-      code:
-                'call(\n' +
-                '  /**\n' +
-                '   * Doc for a function expression in a call expression.\n' +
-                '   * @param {string} bogusName This is the param description.\n' +
-                '   * @return {string} This is the return description.\n' +
-                '   */\n' +
-                '  function(argName) {\n' +
-                "    return 'the return';\n" +
-                '  }\n' +
-                ');\n',
+      code: `
+call(
+  /**
+   * Doc for a function expression in a call expression.
+   * @param {string} bogusName This is the param description.
+   * @return {string} This is the return description.
+   */
+  function(argName) {
+    return 'the return';
+  }
+);`,
       options: [{requireReturn: false}],
       errors: [{
         message: "Expected JSDoc for 'argName' but found 'bogusName'.",
@@ -759,25 +878,27 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** @@foo */\nfunction foo(){}',
+      code: `
+/** @@foo */
+function foo(){}`,
       errors: [{
         message: 'JSDoc syntax error.',
         type: 'Block',
       }],
     },
     {
-      code:
-                '/**\n' +
-                '* Create a new thing.\n' +
-                '*/\n' +
-                'var thing = new Thing({\n' +
-                '  /**\n' +
-                '   * Missing return tag.\n' +
-                '   */\n' +
-                '  foo: function() {\n' +
-                "    return 'bar';\n" +
-                '  }\n' +
-                '});\n',
+      code: `
+/**
+* Create a new thing.
+*/
+var thing = new Thing({
+  /**
+   * Missing return tag.
+   */
+  foo: function() {
+    return 'bar';
+  }
+});`,
       options: [{requireReturn: false}],
       errors: [{
         message: 'Missing JSDoc @returns for function.',
@@ -785,21 +906,31 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** @@returns {void} Foo */\nfunction foo(){}',
+      code: `
+/** @@returns {void} Foo */
+function foo(){}`,
       errors: [{
         message: 'JSDoc syntax error.',
         type: 'Block',
       }],
     },
     {
-      code: '/** Foo \n@returns {void Foo\n */\nfunction foo(){}',
+      code: `
+/** Foo 
+@returns {void Foo
+ */
+function foo(){}`,
       errors: [{
         message: 'JSDoc type missing brace.',
         type: 'Block',
       }],
     },
     {
-      code: '/** Foo \n@return {void} Foo\n */\nfunction foo(){}',
+      code: `
+/** Foo 
+@return {void} Foo
+ */
+function foo(){}`,
       options: [{prefer: {return: 'returns'}}],
       errors: [{
         message: 'Use @returns instead.',
@@ -807,7 +938,11 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** Foo \n@argument {int} bar baz\n */\nfunction foo(bar){}',
+      code: `
+/** Foo 
+@argument {int} bar baz
+ */
+function foo(bar){}`,
       options: [{prefer: {argument: 'arg'}}],
       errors: [{
         message: 'Use @arg instead.',
@@ -818,7 +953,10 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** Foo \n */\nfunction foo(){}',
+      code: `
+/** Foo 
+ */
+function foo(){}`,
       options: [{prefer: {returns: 'return'}}],
       errors: [{
         message: 'Missing JSDoc @return for function.',
@@ -826,7 +964,11 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** Foo \n@return {void} Foo\n */\nfoo.bar = () => {}',
+      code: `
+/** Foo 
+@return {void} Foo
+ */
+foo.bar = () => {}`,
       options: [{prefer: {return: 'returns'}}],
       parserOptions: {ecmaVersion: 6},
       errors: [{
@@ -835,28 +977,43 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** Foo \n@param {void Foo\n */\nfunction foo(){}',
+      code: `
+/** Foo 
+@param {void Foo
+ */
+function foo(){}`,
       errors: [{
         message: 'JSDoc type missing brace.',
         type: 'Block',
       }],
     },
     {
-      code: '/** Foo \n@param {} p Bar\n */\nfunction foo(){}',
+      code: `
+/** Foo 
+@param {} p Bar
+ */
+function foo(){}`,
       errors: [{
         message: 'JSDoc syntax error.',
         type: 'Block',
       }],
     },
     {
-      code: '/** Foo \n@param {void Foo */\nfunction foo(){}',
+      code: `
+/** Foo 
+@param {void Foo */
+function foo(){}`,
       errors: [{
         message: 'JSDoc type missing brace.',
         type: 'Block',
       }],
     },
     {
-      code: '/** Foo\n* @param p Desc \n*/\nfunction foo(){}',
+      code: `
+/** Foo
+* @param p Desc 
+*/
+function foo(){}`,
       errors: [{
         message: "Missing JSDoc parameter type for 'p'.",
         type: 'Block',
@@ -866,7 +1023,12 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} p \n*/\nfunction foo(){}',
+      code: `
+/**
+* Foo
+* @param {string} p 
+*/
+function foo(){}`,
       errors: [{
         message: "Missing JSDoc parameter description for 'p'.",
         type: 'Block',
@@ -876,7 +1038,12 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} p \n*/\nvar foo = function(){}',
+      code: `
+/**
+* Foo
+* @param {string} p 
+*/
+var foo = function(){}`,
       errors: [{
         message: "Missing JSDoc parameter description for 'p'.",
         type: 'Block',
@@ -886,7 +1053,13 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} p \n*/\nvar foo = \nfunction(){}',
+      code: `
+/**
+* Foo
+* @param {string} p 
+*/
+var foo = 
+function(){}`,
       errors: [{
         message: "Missing JSDoc parameter description for 'p'.",
         type: 'Block',
@@ -896,20 +1069,20 @@ function foo(){}`,
       }],
     },
     {
-      code:
-            '/**\n' +
-            ' * Description for a\n' +
-            ' */\n' +
-            'var A = \n' +
-            '  class {\n' +
-            '    /**\n' +
-            '     * Description for method.\n' +
-            '     * @param {object[]} xs - xs\n' +
-            '     */\n' +
-            '    print(xs) {\n' +
-            '        this.a = xs;' +
-            '    }\n' +
-            '};',
+      code: `
+/**
+ * Description for a
+ */
+var A = 
+  class {
+    /**
+     * Description for method.
+     * @param {object[]} xs - xs
+     */
+    print(xs) {
+        this.a = xs;
+    }
+};`,
       options: [{
         requireReturn: true,
         matchDescription: '^[A-Z][A-Za-z0-9\\s]*[.]$',
@@ -929,21 +1102,37 @@ function foo(){}`,
       },
     },
     {
-      code: '/**\n* Foo\n* @returns {string} \n*/\nfunction foo(){}',
+      code: `
+/**
+* Foo
+* @returns {string} 
+*/
+function foo(){}`,
       errors: [{
         message: 'Missing JSDoc return description.',
         type: 'Block',
       }],
     },
     {
-      code: '/**\n* Foo\n* @returns {string} something \n*/\nfunction foo(p){}',
+      code: `
+/**
+* Foo
+* @returns {string} something 
+*/
+function foo(p){}`,
       errors: [{
         message: "Missing JSDoc for parameter 'p'.",
         type: 'Block',
       }],
     },
     {
-      code: '/**\n* Foo\n* @returns {string} something \n*/\nvar foo = \nfunction foo(a = 1){}',
+      code: `
+/**
+* Foo
+* @returns {string} something 
+*/
+var foo = 
+function foo(a = 1){}`,
       parserOptions: {ecmaVersion: 6},
       errors: [{
         message: "Missing JSDoc for parameter 'a'.",
@@ -951,7 +1140,15 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} a Description \n* @param {string} b Description \n* @returns {string} something \n*/\nvar foo = \nfunction foo(b, a = 1){}',
+      code: `
+/**
+* Foo
+* @param {string} a Description 
+* @param {string} b Description 
+* @returns {string} something 
+*/
+var foo = 
+function foo(b, a = 1){}`,
       parserOptions: {ecmaVersion: 6},
       errors: [{
         message: "Expected JSDoc for 'b' but found 'a'.",
@@ -963,7 +1160,13 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} p desc\n* @param {string} p desc \n*/\nfunction foo(){}',
+      code: `
+/**
+* Foo
+* @param {string} p desc
+* @param {string} p desc 
+*/
+function foo(){}`,
       errors: [{
         message: "Duplicate JSDoc parameter 'p'.",
         type: 'Block',
@@ -973,28 +1176,50 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} a desc\n@returns {void}*/\nfunction foo(b){}',
+      code: `
+/**
+* Foo
+* @param {string} a desc
+@returns {void}*/
+function foo(b){}`,
       errors: [{
         message: "Expected JSDoc for 'b' but found 'a'.",
         type: 'Block',
       }],
     },
     {
-      code: '/**\n* Foo\n* @override\n* @param {string} a desc\n */\nfunction foo(b){}',
+      code: `
+/**
+* Foo
+* @override
+* @param {string} a desc
+ */
+function foo(b){}`,
       errors: [{
         message: "Expected JSDoc for 'b' but found 'a'.",
         type: 'Block',
       }],
     },
     {
-      code: '/**\n* Foo\n* @inheritdoc\n* @param {string} a desc\n */\nfunction foo(b){}',
+      code: `
+/**
+* Foo
+* @inheritdoc
+* @param {string} a desc
+ */
+function foo(b){}`,
       errors: [{
         message: "Expected JSDoc for 'b' but found 'a'.",
         type: 'Block',
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} a desc\n*/\nfunction foo(a){var t = false; if(t) {return t;}}',
+      code: `
+/**
+* Foo
+* @param {string} a desc
+*/
+function foo(a){var t = false; if(t) {return t;}}`,
       options: [{requireReturn: false}],
       errors: [{
         message: 'Missing JSDoc @returns for function.',
@@ -1002,7 +1227,12 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} a desc\n*/\nfunction foo(a){var t = false; if(t) {return null;}}',
+      code: `
+/**
+* Foo
+* @param {string} a desc
+*/
+function foo(a){var t = false; if(t) {return null;}}`,
       options: [{requireReturn: false}],
       errors: [{
         message: 'Missing JSDoc @returns for function.',
@@ -1010,7 +1240,12 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* Foo\n* @param {string} a desc\n@returns {MyClass}*/\nfunction foo(a){var t = false; if(t) {process(t);}}',
+      code: `
+/**
+* Foo
+* @param {string} a desc
+@returns {MyClass}*/
+function foo(a){var t = false; if(t) {process(t);}}`,
       options: [{requireReturn: false}],
       errors: [{
         message: 'Unexpected @returns tag; function has no return statement.',
@@ -1018,7 +1253,13 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n * Does something. \n* @param {string} a - this is a \n* @return {Array<number>} The result of doing it \n*/\n export function doSomething(a) { }',
+      code: `
+/**
+ * Does something. 
+* @param {string} a - this is a 
+* @return {Array<number>} The result of doing it 
+*/
+ export function doSomething(a) { }`,
       options: [{prefer: {return: 'returns'}}],
       parserOptions: {sourceType: 'module'},
       errors: [{
@@ -1027,7 +1268,13 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n * Does something. \n* @param {string} a - this is a \n* @return {Array<number>} The result of doing it \n*/\n export default function doSomething(a) { }',
+      code: `
+/**
+ * Does something. 
+* @param {string} a - this is a 
+* @return {Array<number>} The result of doing it 
+*/
+ export default function doSomething(a) { }`,
       options: [{prefer: {return: 'returns'}}],
       parserOptions: {sourceType: 'module'},
       errors: [{
@@ -1045,7 +1292,8 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** foo */ var foo = () => { return bar(); };',
+      code: `
+/** foo */ var foo = () => { return bar(); };`,
       options: [{requireReturn: false}],
       parserOptions: {ecmaVersion: 6},
       errors: [{
@@ -1054,7 +1302,8 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** @returns {object} foo */ var foo = () => { bar(); };',
+      code: `
+/** @returns {object} foo */ var foo = () => { bar(); };`,
       options: [{requireReturn: false}],
       parserOptions: {ecmaVersion: 6},
       errors: [{
@@ -1063,7 +1312,11 @@ function foo(){}`,
       }],
     },
     {
-      code: '/**\n* @param fields [Array]\n */\n function foo(){}',
+      code: `
+/**
+* @param fields [Array]
+ */
+ function foo(){}`,
       errors: [
         {
           message: "Missing JSDoc parameter type for 'fields'.",
@@ -1076,7 +1329,11 @@ function foo(){}`,
       ],
     },
     {
-      code: '/**\n* Start with caps and end with period\n* @return {void} */\nfunction foo(){}',
+      code: `
+/**
+* Start with caps and end with period
+* @return {void} */
+function foo(){}`,
       options: [{
         matchDescription: '^[A-Z][A-Za-z0-9\\s]*[.]$',
       }],
@@ -1086,7 +1343,11 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** Foo \n@return Foo\n */\nfunction foo(){}',
+      code: `
+/** Foo 
+@return Foo
+ */
+function foo(){}`,
       options: [{prefer: {return: 'return'}}],
       errors: [{
         message: 'Missing JSDoc return type.',
@@ -1094,7 +1355,11 @@ function foo(){}`,
       }],
     },
     {
-      code: '/** Foo \n@return sdf\n */\nfunction foo(){}',
+      code: `
+/** Foo 
+@return sdf
+ */
+function foo(){}`,
       options: [{
         prefer: {return: 'return'},
         requireReturn: false,
@@ -1107,19 +1372,19 @@ function foo(){}`,
 
         // classes
     {
-      code:
-                '/**\n' +
-                ' * Description for A\n' +
-                ' */\n' +
-                'class A {\n' +
-                '    /**\n' +
-                '     * Description for constructor\n' +
-                '     * @param {object[]} xs - xs\n' +
-                '     */\n' +
-                '    constructor(xs) {\n' +
-                '        this.a = xs;' +
-                '    }\n' +
-                '}',
+      code: `
+/**
+ * Description for A
+ */
+class A {
+    /**
+     * Description for constructor
+     * @param {object[]} xs - xs
+     */
+    constructor(xs) {
+        this.a = xs;
+    }
+}`,
       options: [{
         requireReturn: false,
         matchDescription: '^[A-Z][A-Za-z0-9\\s]*[.]$',
@@ -1139,19 +1404,19 @@ function foo(){}`,
       },
     },
     {
-      code:
-                '/**\n' +
-                ' * Description for a\n' +
-                ' */\n' +
-                'var A = class {\n' +
-                '    /**\n' +
-                '     * Description for constructor.\n' +
-                '     * @param {object[]} xs - xs\n' +
-                '     */\n' +
-                '    print(xs) {\n' +
-                '        this.a = xs;' +
-                '    }\n' +
-                '};',
+      code: `
+/**
+ * Description for a
+ */
+var A = class {
+    /**
+     * Description for constructor.
+     * @param {object[]} xs - xs
+     */
+    print(xs) {
+        this.a = xs;
+    }
+};`,
       options: [{
         requireReturn: true,
         matchDescription: '^[A-Z][A-Za-z0-9\\s]*[.]$',
@@ -1171,26 +1436,26 @@ function foo(){}`,
       },
     },
     {
-      code:
-                '/**\n' +
-                ' * Description for A.\n' +
-                ' */\n' +
-                'class A {\n' +
-                '    /**\n' +
-                '     * Description for constructor.\n' +
-                '     * @param {object[]} xs - xs\n' +
-                '     * @returns {void}\n' +
-                '     */\n' +
-                '    constructor(xs) {\n' +
-                '        this.a = xs;' +
-                '    }\n' +
-                '    /**\n' +
-                '     * Description for method.\n' +
-                '     */\n' +
-                '    print(xs) {\n' +
-                '        this.a = xs;' +
-                '    }\n' +
-                '}',
+      code: `
+/**
+ * Description for A.
+ */
+class A {
+    /**
+     * Description for constructor.
+     * @param {object[]} xs - xs
+     * @returns {void}
+     */
+    constructor(xs) {
+        this.a = xs;
+    }
+    /**
+     * Description for method.
+     */
+    print(xs) {
+        this.a = xs;
+    }
+}`,
       options: [],
       errors: [
         {
@@ -1207,12 +1472,12 @@ function foo(){}`,
       },
     },
     {
-      code:
-                '/**\n' +
-                ' * Use of this with an invalid type expression\n' +
-                ' * @this {not.a.valid.type.expression\n' +
-                ' */\n' +
-                'function foo() {}',
+      code: `
+/**
+ * Use of this with an invalid type expression
+ * @this {not.a.valid.type.expression
+ */
+function foo() {}`,
       options: [{requireReturn: false}],
       errors: [{
         message: 'JSDoc type missing brace.',
@@ -1220,12 +1485,12 @@ function foo(){}`,
       }],
     },
     {
-      code:
-                '/**\n' +
-                ' * Use of this with a type that is not a member expression\n' +
-                ' * @this {Array<string>}\n' +
-                ' */\n' +
-                'function foo() {}',
+      code: `
+/**
+ * Use of this with a type that is not a member expression
+ * @this {Array<string>}
+ */
+function foo() {}`,
       options: [{requireReturn: false}],
       errors: [{
         message: 'JSDoc syntax error.',
@@ -1235,13 +1500,13 @@ function foo(){}`,
 
         // type validations
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {String} hi - desc\n' +
-            '* @returns {Astnode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {String} hi - desc
+* @returns {Astnode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -1260,13 +1525,13 @@ function foo(){}`,
       ],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {{20:String}} hi - desc\n' +
-            '* @returns {Astnode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {{20:String}} hi - desc
+* @returns {Astnode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -1285,13 +1550,13 @@ function foo(){}`,
       ],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {String|number|test} hi - desc\n' +
-            '* @returns {Astnode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {String|number|test} hi - desc
+* @returns {Astnode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           test: 'Test',
@@ -1305,13 +1570,13 @@ function foo(){}`,
       ],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<String>} hi - desc\n' +
-            '* @returns {Astnode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<String>} hi - desc
+* @returns {Astnode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
@@ -1326,13 +1591,13 @@ function foo(){}`,
       ],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<{id: Number, votes: Number}>} hi - desc\n' +
-            '* @returns {Array.<{summary: String}>} desc\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<{id: Number, votes: Number}>} hi - desc
+* @returns {Array.<{summary: String}>} desc
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           Number: 'number',
@@ -1355,13 +1620,13 @@ function foo(){}`,
       ],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {Array.<[String, Number]>} hi - desc\n' +
-            '* @returns {Array.<[String, String]>} desc\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {Array.<[String, Number]>} hi - desc
+* @returns {Array.<[String, String]>} desc
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           Number: 'number',
@@ -1388,13 +1653,13 @@ function foo(){}`,
       ],
     },
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {object<String,object<String, Number>>} hi - because why not\n' +
-            '* @returns {Boolean} desc\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {object<String,object<String, Number>>} hi - because why not
+* @returns {Boolean} desc
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           Number: 'number',
@@ -1428,13 +1693,13 @@ function foo(){}`,
 
         // https://github.com/eslint/eslint/issues/7184
     {
-      code:
-            '/**\n' +
-            '* Foo\n' +
-            '* @param {{foo:String, astnode:Object, bar}} hi - desc\n' +
-            '* @returns {ASTnode} returns a node\n' +
-            '*/\n' +
-            'function foo(hi){}',
+      code: `
+/**
+* Foo
+* @param {{foo:String, astnode:Object, bar}} hi - desc
+* @returns {ASTnode} returns a node
+*/
+function foo(hi){}`,
       options: [{
         preferType: {
           String: 'string',
