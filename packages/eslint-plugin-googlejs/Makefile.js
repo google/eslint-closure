@@ -31,34 +31,6 @@ const DIST_TEST_FILES = 'dist/tests/*.js dist/tests/**/*.js';
 const MOCHA_TIMEOUT = 10000;
 
 const COMPILER_ERROR_LIST = [
-  // Warnings about ambiguous definitions of functions. On Chrome, if (false) {
-  // function f() {} } declared 'f' in the global scope anyway. Future versions
-  // of javascript forbid this, because the actual semantics differ between
-  // browsers.
-  'ambiguousFunctionDecl',
-  // Warnings when vars are not declared or declared multiple times in the
-  // global scope.
-  'checkVars',
-  // Warnings about misused goog.provide/goog.require calls
-  'closureDepMethodUsageChecks',
-  // Warnings when a variable is declared twice in the global scope
-  'duplicate',
-  // Warnings when two i18n messages have the same id
-  'duplicateMessage',
-  // Warnings about EcmaScript3
-  'es3',
-  // Warnings about EcmaScript5 strict mode
-  'es5Strict',
-  // Warnings about syntax error on Internet Explorer.
-  'internetExplorerChecks',
-  // Warnings when a variable is never defined.
-  'undefinedVars',
-  // Warnings when there are references in earlier modules to variables defined
-  // in later modules
-  'violatedModuleDep',
-];
-
-const COMPILER_OFF_LIST = [
   // Warnings when @deprecated, @private, @protected, or @package are violated.
   'accessControls',
   // Warnings when the 'debugger' keyword is used.
@@ -94,9 +66,6 @@ const COMPILER_OFF_LIST = [
   'missingReturn',
   // Warnings from new type checker
   'newCheckTypes',
-  // Warnings for any place in the code where type is inferred to ?. NOT
-  // RECOMMENDED!
-  'reportUnknownTypes',
   // Warnings about all references potentially violating module dependencies
   'strictModuleDepCheck',
   // Warnings about goog.tweak primitives
@@ -110,9 +79,6 @@ const COMPILER_OFF_LIST = [
   'useOfGoogBase',
   // Warnings when @private and @protected are violated.
   'visibility',
-];
-
-const COMPILER_WARNING_LIST = [
   // Type-checking
   'checkTypes',
   // Warnings about conformance violations and possible conformance violations.
@@ -138,7 +104,17 @@ const COMPILER_WARNING_LIST = [
   'uselessCode',
 ];
 
-const commonClosureCompilerSettings = {
+const COMPILER_WARNING_LIST = [
+];
+
+const COMPILER_OFF_LIST = [
+
+  // Warnings for any place in the code where type is inferred to ?. NOT
+  // RECOMMENDED!
+  'reportUnknownTypes',
+];
+
+const COMMON_CLOSURE_COMPILER_SETTINGS = {
   js: [
     'index.js',
     "'./lib/**.js'",
@@ -154,6 +130,7 @@ const commonClosureCompilerSettings = {
   ],
   language_in: 'ECMASCRIPT6_STRICT',
   language_out: 'ECMASCRIPT5_STRICT',
+
   warning_level: 'VERBOSE',
   jscomp_error: COMPILER_ERROR_LIST,
   jscomp_warning: COMPILER_WARNING_LIST,
@@ -170,7 +147,7 @@ const commonClosureCompilerSettings = {
   entry_point: 'googlejs.config',
 };
 
-const closureJavaOptions = [];
+const CLOSURE_JAVA_OPTIONS = [];
 
 const CLOSURE_BASE_JS =
     './node_modules/google-closure-library/closure/goog/base.js';
@@ -197,7 +174,7 @@ let CompiledInfo;
 function buildTestCompiler(testFilePath, entryPoint) {
   const outputFile = getTestFilePathOutputLocation(testFilePath);
   const compiler = new ClosureCompiler(
-      Object.assign(commonClosureCompilerSettings, {
+      Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         js: [
           CLOSURE_BASE_JS,
           // CLOSURE_LIB_JS,
@@ -205,12 +182,13 @@ function buildTestCompiler(testFilePath, entryPoint) {
           testFilePath,
         ],
         js_output_file: outputFile,
-        compilation_level: 'WHITESPACE_ONLY',
+        // This is slower, but errors aren't reported with WHITESPACE_ONLY.
+        compilation_level: 'SIMPLE',
         formatting: 'PRETTY_PRINT',
         entry_point: entryPoint,
         rewrite_polyfills: false,
       }),
-      closureJavaOptions
+      CLOSURE_JAVA_OPTIONS
   );
   return {compiler, outputFile};
 }
@@ -296,10 +274,10 @@ target.all = () => {
 target.checkTypes = function() {
   console.log('Checking types.');
   const closureCompilerTypeCheck = new ClosureCompiler(
-      Object.assign(commonClosureCompilerSettings, {
+      Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         checks_only: null,
       }),
-      closureJavaOptions
+      CLOSURE_JAVA_OPTIONS
   );
 
   closureCompilerTypeCheck.run(function(exitCode, stdout, stderr) {
@@ -312,14 +290,14 @@ target.buildSimple = () => {
   console.log('Building the googlejs plugin library with SIMPLE ' +
               'optimizations.');
   const closureCompilerBuild = new ClosureCompiler(
-      Object.assign(commonClosureCompilerSettings, {
+      Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         js_output_file: './dist/googlejs-eslint-plugin.js',
         compilation_level: 'SIMPLE',
         assume_function_wrapper: null,
         formatting: 'PRETTY_PRINT',
         rewrite_polyfills: false,
       }),
-      closureJavaOptions
+      CLOSURE_JAVA_OPTIONS
   );
 
   closureCompilerBuild.run(function(exitCode, stdout, stderr) {
@@ -332,13 +310,13 @@ target.buildAdvanced = () => {
   console.log('Building the googlejs plugin library with ADVANCED ' +
               'optimizations.');
   const closureCompilerBuild = new ClosureCompiler(
-      Object.assign(commonClosureCompilerSettings, {
+      Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         js_output_file: './dist/googlejs-eslint-plugin.min.js',
         compilation_level: 'ADVANCED',
         use_types_for_optimization: null,
         rewrite_polyfills: false,
       }),
-      closureJavaOptions
+      CLOSURE_JAVA_OPTIONS
   );
 
   closureCompilerBuild.run(function(exitCode, stdout, stderr) {
