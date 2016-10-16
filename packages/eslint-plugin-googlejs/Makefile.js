@@ -30,6 +30,114 @@ const DIST_TEST_FILES = 'dist/tests/*.js dist/tests/**/*.js';
 
 const MOCHA_TIMEOUT = 10000;
 
+const COMPILER_ERROR_LIST = [
+  // Warnings about ambiguous definitions of functions. On Chrome, if (false) {
+  // function f() {} } declared 'f' in the global scope anyway. Future versions
+  // of javascript forbid this, because the actual semantics differ between
+  // browsers.
+  'ambiguousFunctionDecl',
+  // Warnings when vars are not declared or declared multiple times in the
+  // global scope.
+  'checkVars',
+  // Warnings about misused goog.provide/goog.require calls
+  'closureDepMethodUsageChecks',
+  // Warnings when a variable is declared twice in the global scope
+  'duplicate',
+  // Warnings when two i18n messages have the same id
+  'duplicateMessage',
+  // Warnings about EcmaScript3
+  'es3',
+  // Warnings about EcmaScript5 strict mode
+  'es5Strict',
+  // Warnings about syntax error on Internet Explorer.
+  'internetExplorerChecks',
+  // Warnings when a variable is never defined.
+  'undefinedVars',
+  // Warnings when there are references in earlier modules to variables defined
+  // in later modules
+  'violatedModuleDep',
+];
+
+const COMPILER_OFF_LIST = [
+  // Warnings when @deprecated, @private, @protected, or @package are violated.
+  'accessControls',
+  // Warnings when the 'debugger' keyword is used.
+  'checkDebuggerStatement',
+  // Warnings about undisposed eventful objects.
+  'checkEventfulObjectDisposal',
+  // Warnings about weird regular expression literals
+  'checkRegExp',
+  // Warnings when a variable or member property marked @const is reassigned.
+  'const',
+  // Warnings when a member property marked @const is reassigned.
+  'constantProperty',
+  // Warnings when non-deprecated code accesses code that's marked @deprecated
+  'deprecated',
+  // Warnings when using annotations that are deprecated
+  'deprecatedAnnotations',
+  // Warnings about unnecessary goog.require calls
+  'extraRequire',
+  // Warnings if a @const declaration contains no declared type and the compiler
+  // cannot infer one
+  'inferredConstCheck',
+  // Warnings about strings that should only be used inside calls to
+  // goog.getCssName
+  'missingGetCssName',
+  // Warnings about whether a property will ever be defined on an object. Part
+  // of type-checking.
+  'missingProperties',
+  // Warnings if missing a goog.provide('Foo') when defining a Foo class
+  'missingProvide',
+  // Warnings if missing a goog.require('Foo') when a new Foo() is encountered
+  'missingRequire',
+  // Warnings if missing return in a function which a non-void return type
+  'missingReturn',
+  // Warnings from new type checker
+  'newCheckTypes',
+  // Warnings for any place in the code where type is inferred to ?. NOT
+  // RECOMMENDED!
+  'reportUnknownTypes',
+  // Warnings about all references potentially violating module dependencies
+  'strictModuleDepCheck',
+  // Warnings about goog.tweak primitives
+  'tweakValidation',
+  // Warn about properties that cannot be disambiguated when using type based
+  // optimizations
+  'typeInvalidation',
+  // Warnings when a property of a global name is not defined.
+  'undefinedNames',
+  // Warnings aout usages of goog.base, which is not compatible with strict mode
+  'useOfGoogBase',
+  // Warnings when @private and @protected are violated.
+  'visibility',
+];
+
+const COMPILER_WARNING_LIST = [
+  // Type-checking
+  'checkTypes',
+  // Warnings about conformance violations and possible conformance violations.
+  'conformanceViolations',
+  // Warnings about malformed externs files
+  'externsValidation',
+  // Warnings about duplicate @fileoverview tags
+  'fileoverviewTags',
+  // Warnings about improper use of the global this.
+  'globalThis',
+  // Warnings about invalid type casts.
+  'invalidCasts',
+  // Warnings about jsdoc type annotations that are misplaced
+  'misplacedTypeAnnotation',
+  // Warnings when JSDoc has annotations that the compiler thinks you
+  // misspelled.
+  'nonStandardJsDocs',
+  // Warning about things like missing semicolons and comparisons to NaN
+  'suspiciousCode',
+  // Warnings when unknown @define values are specified.
+  'unknownDefines',
+  // Warnings when the compiler sees useless code that it plans to remove.
+  'uselessCode',
+];
+
 const commonClosureCompilerSettings = {
   js: [
     'index.js',
@@ -47,7 +155,10 @@ const commonClosureCompilerSettings = {
   language_in: 'ECMASCRIPT6_STRICT',
   language_out: 'ECMASCRIPT5_STRICT',
   warning_level: 'VERBOSE',
-  jscomp_error: "'*'",
+  jscomp_error: COMPILER_ERROR_LIST,
+  jscomp_warning: COMPILER_WARNING_LIST,
+  jscomp_off: COMPILER_OFF_LIST,
+
   // We use null for options that don't have a value.  Otherwise, it errors
   // out.  The existence of 'checks-only' is enough for it to be included as
   // an option.
@@ -62,10 +173,10 @@ const commonClosureCompilerSettings = {
 const closureJavaOptions = [];
 
 const CLOSURE_BASE_JS =
-      './node_modules/google-closure-library/closure/goog/base.js';
+    './node_modules/google-closure-library/closure/goog/base.js';
 
 const CLOSURE_LIB_JS =
-      './node_modules/google-closure-library/closure/goog/**.js';
+    './node_modules/google-closure-library/closure/goog/**.js';
 
 /**
  * @typedef {{
@@ -76,13 +187,13 @@ const CLOSURE_LIB_JS =
 let CompiledInfo;
 
 /**
-  * Builds a compiler object suitable for building the output test file that's
-  * directly runnable by Node JS.
-  * @param {string} testFilePath
-  * @param {string} entryPoint
-  * @return {!CompiledInfo} An object with the closure compiler and the output
-  *     file.
-  */
+ * Builds a compiler object suitable for building the output test file that's
+ * directly runnable by Node JS.
+ * @param {string} testFilePath
+ * @param {string} entryPoint
+ * @return {!CompiledInfo} An object with the closure compiler and the output
+ *     file.
+ */
 function buildTestCompiler(testFilePath, entryPoint) {
   const outputFile = getTestFilePathOutputLocation(testFilePath);
   const compiler = new ClosureCompiler(
@@ -94,7 +205,7 @@ function buildTestCompiler(testFilePath, entryPoint) {
           testFilePath,
         ],
         js_output_file: outputFile,
-        compilation_level: 'SIMPLE',
+        compilation_level: 'WHITESPACE_ONLY',
         formatting: 'PRETTY_PRINT',
         entry_point: entryPoint,
         rewrite_polyfills: false,
@@ -185,10 +296,10 @@ target.all = () => {
 target.checkTypes = function() {
   console.log('Checking types.');
   const closureCompilerTypeCheck = new ClosureCompiler(
-    Object.assign(commonClosureCompilerSettings, {
-      checks_only: null,
-    }),
-    closureJavaOptions
+      Object.assign(commonClosureCompilerSettings, {
+        checks_only: null,
+      }),
+      closureJavaOptions
   );
 
   closureCompilerTypeCheck.run(function(exitCode, stdout, stderr) {
@@ -201,14 +312,14 @@ target.buildSimple = () => {
   console.log('Building the googlejs plugin library with SIMPLE ' +
               'optimizations.');
   const closureCompilerBuild = new ClosureCompiler(
-    Object.assign(commonClosureCompilerSettings, {
-      js_output_file: './dist/googlejs-eslint-plugin.js',
-      compilation_level: 'SIMPLE',
-      assume_function_wrapper: null,
-      formatting: 'PRETTY_PRINT',
-      rewrite_polyfills: false,
-    }),
-    closureJavaOptions
+      Object.assign(commonClosureCompilerSettings, {
+        js_output_file: './dist/googlejs-eslint-plugin.js',
+        compilation_level: 'SIMPLE',
+        assume_function_wrapper: null,
+        formatting: 'PRETTY_PRINT',
+        rewrite_polyfills: false,
+      }),
+      closureJavaOptions
   );
 
   closureCompilerBuild.run(function(exitCode, stdout, stderr) {
@@ -258,7 +369,7 @@ target.lint = () => {
   let testCache = ' ';
   let lastReturn;
 
-    // using the cache locally to speed up linting process
+  // using the cache locally to speed up linting process
   if (!process.env.TRAVIS) {
     makeFileCache = ' --cache --cache-file .cache/makefile_cache ';
     jsCache = ' --cache --cache-file .cache/js_cache ';

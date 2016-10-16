@@ -7,7 +7,9 @@ goog.setTestOnly('googlejs.tests.rules.inlineCommentSpacing');
 
 const inlineCommentSpacing = goog.require('googlejs.rules.inlineCommentSpacing');
 
-const RuleTester = require('eslint').RuleTester;
+const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
+
+const RuleTester = eslint.RuleTester;
 const ruleTester = new RuleTester();
 
 ruleTester.run('inlineCommentSpacing', inlineCommentSpacing, {
