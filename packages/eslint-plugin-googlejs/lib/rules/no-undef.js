@@ -6,7 +6,7 @@ goog.module('googlejs.rules.noUndef');
 /**
  * Checks if the given node is the argument of a typeof operator.
  * @param {!ESLint.ASTNode} node The AST node being checked.
- * @returns {boolean} Whether or not the node is the argument of a typeof
+ * @return {boolean} Whether or not the node is the argument of a typeof
  *     operator.
  */
 function hasTypeOfOperator(node) {
@@ -66,8 +66,7 @@ const NO_UNDEF_RULE = {
 
           context.report({
             node: identifier,
-            message: "'{{name}}' is not defined.",
-            data: identifier,
+            message: `'${identifier.name}' is not defined.`,
           });
         });
       },
