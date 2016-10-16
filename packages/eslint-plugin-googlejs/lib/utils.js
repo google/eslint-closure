@@ -48,7 +48,7 @@ function nodesEndOnSameLine(node1, node2) {
 /**
  * Checks if a string contains an underscore.
  * @param {string} name The string to check.
- * @returns {boolean} If the string is underscored.
+ * @return {boolean} If the string is underscored.
  */
 function isUnderscored(name) {
   return name.indexOf('_') > -1;
@@ -116,7 +116,7 @@ function getNodeAncestorOfType(node, type) {
 /**
  * Returns true if node is a getter function.
  * @param {!Espree.ASTNode} node
- * @returns {boolean}
+ * @return {boolean}
  */
 function isNodeGetterFunction(node) {
   return node.type === 'FunctionExpression' &&
@@ -127,7 +127,7 @@ function isNodeGetterFunction(node) {
 /**
  * Returns true if node is a setter function.
  * @param {!Espree.ASTNode} node
- * @returns {boolean}
+ * @return {boolean}
  */
 function isNodeSetterFunction(node) {
   return node.type === 'FunctionExpression' &&
@@ -139,7 +139,7 @@ function isNodeSetterFunction(node) {
 /**
  * Returns true if node is a constructor function.
  * @param {!Espree.ASTNode} node
- * @returns {boolean}
+ * @return {boolean}
  */
 function isNodeConstructorFunction(node) {
   return node.type === 'FunctionExpression' &&
