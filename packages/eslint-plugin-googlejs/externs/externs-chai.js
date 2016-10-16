@@ -230,9 +230,9 @@ Chai.Length = function() {};
  */
 Chai.LengthComparator = (length, message) => {};
 
-/*
+/**
  * @param {!Object} constructor
  * @param {string} message?
- * @return {Expect}
+ * @return {!Chai.Expect}
  */
 Chai.InstanceOf = (constructor, message) => {};

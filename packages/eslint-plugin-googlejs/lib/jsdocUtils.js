@@ -6,6 +6,7 @@ goog.module('googlejs.jsdocUtils');
 /**
  * Returns true if the tagType is a JSDoc literal.
  * @param {!Doctrine.TagType} tagType
+ * @return {boolean}
  */
 function isLiteral(tagType) {
   return tagType.type === 'NullableLiteral' ||
@@ -20,6 +21,7 @@ function isLiteral(tagType) {
 /**
  * Returns true if tagType is a terminal tag.
  * @param {!Doctrine.TagType} tagType
+ * @return {boolean}
  */
 function isTerminal(tagType) {
   return isLiteral(tagType) ||

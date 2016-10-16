@@ -134,6 +134,7 @@ function create(context) {
    * @param {!Doctrine.NameExpression} tagType
    */
   function markTypeVariablesAsUsed(references, tagType) {
+    /** @type {!Array<!Escope.Reference>}  */
     const allRefs = references.map(e => e);
     // console.log('allrefs', allRefs);
 
@@ -141,9 +142,11 @@ function create(context) {
 
       if (tag.type === 'NameExpression') {
         const name = tagType.name;
+        if (allRefs == 'nonsense') {
+          context.markVariableAsUsed(name);
+        }
         // if (scopedVariables.has(name)) {
         //   console.log('marking as USED!', name, scopedVariables.keys());
-        //   context.markVariableAsUsed(name);
         // }
       }
     });
@@ -160,7 +163,7 @@ function create(context) {
     const functionData = fns.pop();
     const params = Object.create(null);
     const scope = context.getScope();
-    const scopedVariables = scope.set;
+    // const scopedVariables = scope.set;
 
 
     let hasReturns = false;

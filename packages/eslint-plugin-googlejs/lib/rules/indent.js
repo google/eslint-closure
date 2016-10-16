@@ -779,7 +779,9 @@ function create(context) {
     // sure indentation takes that into account.
     if (isNodeInVarOnTop_(node, varDeclAncestor)) {
       elementsIndent += indentSize *
-        options.VariableDeclarator[varDeclAncestor.parent.kind];
+          options.VariableDeclarator[
+            /** @type {!Espree.VariableDeclarator} */ (varDeclAncestor)
+                .parent.kind];
     }
     return elementsIndent;
   }

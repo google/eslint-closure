@@ -1,8 +1,12 @@
 goog.module('googlejs.config');
 
+/** @suppress {extraRequire} */
 const camelcase = goog.require('googlejs.rules.camelcase');
+/** @suppress {extraRequire} */
 const indent = goog.require('googlejs.rules.indent');
+/** @suppress {extraRequire} */
 const inlineCommentSpacing = goog.require('googlejs.rules.inlineCommentSpacing');
+/** @suppress {extraRequire} */
 const jsdoc = goog.require('googlejs.rules.jsdoc');
 
 /**

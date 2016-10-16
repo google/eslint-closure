@@ -46,8 +46,8 @@ const commonClosureCompilerSettings = {
   ],
   language_in: 'ECMASCRIPT6_STRICT',
   language_out: 'ECMASCRIPT5_STRICT',
-  // warning_level: 'VERBOSE',
-  // jscomp_error: "'*'",
+  warning_level: 'VERBOSE',
+  jscomp_error: "'*'",
   // We use null for options that don't have a value.  Otherwise, it errors
   // out.  The existence of 'checks-only' is enough for it to be included as
   // an option.
