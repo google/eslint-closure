@@ -15,18 +15,14 @@ const path = require('path');
 
 /* eslint-disable googlejs/camelcase */
 
-
 const NODE_MODULES = './node_modules';
 
-// Intentional extra space at the end of each string so it still works if we
-// forget to concat with an extra space.
-const MOCHA = `${NODE_MODULES}/mocha/bin/_mocha `;
-const ESLINT = 'eslint ';
+const MOCHA = `${NODE_MODULES}/mocha/bin/_mocha`;
+const ESLINT = 'eslint';
 
 const MAKEFILE = './Makefile.js';
 const JS_FILES = 'lib/**/*.js';
 const SOURCE_TEST_FILES = 'tests/*.js tests/**/*.js';
-const DIST_TEST_FILES = 'dist/tests/*.js dist/tests/**/*.js';
 
 const MOCHA_TIMEOUT = 10000;
 
@@ -108,16 +104,23 @@ const COMPILER_WARNING_LIST = [
 ];
 
 const COMPILER_OFF_LIST = [
-
   // Warnings for any place in the code where type is inferred to ?. NOT
   // RECOMMENDED!
   'reportUnknownTypes',
 ];
 
+const CLOSURE_BASE_JS =
+      './node_modules/google-closure-library/closure/goog/base.js';
+
+const CLOSURE_LIB_JS =
+    './node_modules/google-closure-library/closure/goog/**.js';
+
+
 const COMMON_CLOSURE_COMPILER_SETTINGS = {
   js: [
     'index.js',
     "'./lib/**.js'",
+    CLOSURE_LIB_JS,
   ],
   externs: [
     './externs/externs-chai.js',
@@ -136,24 +139,22 @@ const COMMON_CLOSURE_COMPILER_SETTINGS = {
   jscomp_warning: COMPILER_WARNING_LIST,
   jscomp_off: COMPILER_OFF_LIST,
 
-  // We use null for options that don't have a value.  Otherwise, it errors
-  // out.  The existence of 'checks-only' is enough for it to be included as
-  // an option.
-  new_type_inf: null,
-  assume_function_wrapper: null,
-  process_closure_primitives: null,
+  // We use undefined for options that don't have a value.  Otherwise, the
+  // compiler errors out because tries to pass '--new_type_inf=' to the command
+  // line.  The existence of the 'checks-only' property is enough for it to be
+  // included as an option.  Alternately, using true as the value doesn't seem
+  // to work.  Sigh.
+  new_type_inf: undefined,
+  assume_function_wrapper: undefined,
+  process_closure_primitives: undefined,
+  // Assume node JS supports ES6.  Tests will fail if this assumption is wrong.
+  rewrite_polyfills: false,
   hide_warnings_for: 'google-closure-library',
   dependency_mode: 'STRICT',
   entry_point: 'googlejs.config',
 };
 
 const CLOSURE_JAVA_OPTIONS = [];
-
-const CLOSURE_BASE_JS =
-    './node_modules/google-closure-library/closure/goog/base.js';
-
-const CLOSURE_LIB_JS =
-    './node_modules/google-closure-library/closure/goog/**.js';
 
 /**
  * @typedef {{
@@ -251,8 +252,8 @@ function buildTest(testFilePath, onCompilation) {
  * @param {string} testOutputFile
  */
 function runTest(testOutputFile) {
-  nodeCLI.exec('./node_modules/mocha/bin/_mocha', '-R progress',
-               ` -t  ${MOCHA_TIMEOUT}`, '-c', testOutputFile);
+  nodeCLI.exec(
+      MOCHA, '-R progress', ` -t  ${MOCHA_TIMEOUT}`, '-c', testOutputFile);
 }
 
 /**
@@ -275,7 +276,7 @@ target.checkTypes = function() {
   console.log('Checking types.');
   const closureCompilerTypeCheck = new ClosureCompiler(
       Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
-        checks_only: null,
+        checks_only: undefined,
       }),
       CLOSURE_JAVA_OPTIONS
   );
@@ -287,13 +288,11 @@ target.checkTypes = function() {
 };
 
 target.buildSimple = () => {
-  console.log('Building the googlejs plugin library with SIMPLE ' +
-              'optimizations.');
+  echo('Building the googlejs plugin library with SIMPLE optimizations.');
   const closureCompilerBuild = new ClosureCompiler(
       Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         js_output_file: './dist/googlejs-eslint-plugin.js',
         compilation_level: 'SIMPLE',
-        assume_function_wrapper: null,
         formatting: 'PRETTY_PRINT',
         rewrite_polyfills: false,
       }),
@@ -307,33 +306,31 @@ target.buildSimple = () => {
 };
 
 target.buildAdvanced = () => {
-  console.log('Building the googlejs plugin library with ADVANCED ' +
-              'optimizations.');
+  echo('Building the googlejs plugin library with ADVANCED optimizations.');
   const closureCompilerBuild = new ClosureCompiler(
       Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         js_output_file: './dist/googlejs-eslint-plugin.min.js',
         compilation_level: 'ADVANCED',
-        use_types_for_optimization: null,
-        rewrite_polyfills: false,
+        use_types_for_optimization: undefined,
       }),
       CLOSURE_JAVA_OPTIONS
   );
 
-  closureCompilerBuild.run(function(exitCode, stdout, stderr) {
+  closureCompilerBuild.run((exitCode, stdout, stderr) => {
     console.log(stdout);
     console.log(stderr);
   });
 };
 
 /**
- * Tests the supplied rules, i.e. no-undef indent.
- * @param {!Array<string>} args
+ * Tests the supplied rules, i.e. npm run testRule no-undef indent.
+ * @param {!Array<string>} rules
  */
-target.testRule = (args) => {
-  if (args.length == 0) {
+target.testRule = (rules) => {
+  if (rules.length == 0) {
     throw new Error('Need at least one rule to test.');
   }
-  for (const rule of args) {
+  for (const rule of rules) {
     // Remove any paths just in case.
     const baseRule = path.basename(rule, '.js');
     buildTest(`tests/rules/${baseRule}.js`, runTest);
@@ -383,12 +380,11 @@ target.test = () => {
   let errors = 0;
   let lastReturn = 0;
 
+  // Remove stale tests.
   rm('-r', './dist/tests');
   testAllFiles((outputFile) => {
     lastReturn = nodeCLI.exec(
-        'istanbul', 'cover', MOCHA, `-- -R progress -t  ${MOCHA_TIMEOUT}`,
-        '-c', outputFile);
-
+        MOCHA, '-R progress', ` -t  ${MOCHA_TIMEOUT}`, '-c', outputFile);
     if (lastReturn.code !== 0) {
       errors++;
     }
