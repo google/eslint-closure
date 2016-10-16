@@ -29,6 +29,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "istanbul": "^0.4.5",
+    "google-closure-compiler": "^20160822.2.0",
     "karma": "^1.2.0",
     "karma-mocha": "^1.1.1",
     "karma-mocha-reporter": "^2.1.0",
@@ -52,8 +53,6 @@
   },
   "dependencies": {
     "eslint": "^3.4.0",
-    "google-closure-compiler": "^20160822.2.0",
-    "google-closure-library": "^20160822.0.0",
     "lodash": "^4.15.0"
   }
 }

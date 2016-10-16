@@ -11,22 +11,23 @@ require('shelljs/make');
 const closurePackage = require('google-closure-compiler');
 const ClosureCompiler = closurePackage.compiler;
 const nodeCLI = require('shelljs-nodecli');
+const path = require('path');
 
 /* eslint-disable googlejs/camelcase */
 
 
 const NODE_MODULES = './node_modules';
 
-// Utilities - intentional extra space at the end of each string.
+// Intentional extra space at the end of each string so it still works if we
+// forget to concat with an extra space.
 const MOCHA = `${NODE_MODULES}/mocha/bin/_mocha `;
 const ESLINT = 'eslint ';
 
-// Files
 const MAKEFILE = './Makefile.js';
 const JS_FILES = 'lib/**/*.js';
-const TEST_FILES = 'dist/tests/rules/**/*.js dist/tests/*.js';
+const SOURCE_TEST_FILES = 'tests/*.js tests/**/*.js';
+const DIST_TEST_FILES = 'dist/tests/*.js dist/tests/**/*.js';
 
-// Settings
 const MOCHA_TIMEOUT = 10000;
 
 const commonClosureCompilerSettings = {
@@ -65,7 +66,120 @@ const CLOSURE_BASE_JS =
 
 const CLOSURE_LIB_JS =
       './node_modules/google-closure-library/closure/goog/**.js';
-target.all = function() {
+
+/**
+ * @typedef {{
+ *   compiler: !Object,
+ *   outputFile: string,
+ * }}
+ */
+let CompiledInfo;
+
+/**
+  * @param {string} testFilePath
+  * @param {string} entryPoint
+  * @return {!CompiledInfo} An object with the closure compiler and the output
+  *     file.
+  */
+function buildTestCompiler(testFilePath, entryPoint) {
+  const outputFile = getTestFilePathOutputLocation(testFilePath);
+  const compiler = new ClosureCompiler(
+      Object.assign(commonClosureCompilerSettings, {
+        js: [
+          CLOSURE_BASE_JS,
+          // CLOSURE_LIB_JS,
+          "'./lib/**.js'",
+          testFilePath,
+        ],
+        js_output_file: outputFile,
+        compilation_level: 'WHITESPACE_ONLY',
+        formatting: 'PRETTY_PRINT',
+        entry_point: entryPoint,
+        rewrite_polyfills: false,
+      }),
+      closureJavaOptions
+  );
+  return {compiler, outputFile};
+}
+
+function kebabToCamel(string) {
+  return string.replace(/(\-\w)/g, (match) => match[1].toUpperCase());
+}
+
+/**
+ * Convert a path to a test file to the corresponding goog.module name.
+ * @param {string} testFilePath
+ * @return {string}
+ */
+function convertTestFilePathToModuleName(testFilePath) {
+  const pathComponents = path.parse(path.normalize(testFilePath));
+  const relPath = path.relative(__dirname, pathComponents.dir);
+  const moduleNamePath = relPath.split(path.sep).join('.');
+  const moduleName = kebabToCamel(pathComponents.name);
+  const fullModuleName = `googlejs.${moduleNamePath}.${moduleName}`;
+  return fullModuleName;
+}
+
+/**
+ * Get the corresponding output file for a test file.
+ * @param {string} testFilePath
+ * @return {string} The output path for the compiled test file.
+ */
+function getTestFilePathOutputLocation(testFilePath) {
+  const relPath = path.relative(__dirname, path.normalize(testFilePath));
+  const outputPath = path.join(__dirname, 'dist', relPath);
+  return outputPath;
+}
+
+/**
+ * Build a runnable test for mocha.
+ * @param {string} testFilePath
+ * @param {function(string)} onCompilation Function to run after compilation.
+ * @return {string} The outputfile.
+ */
+function buildTest(testFilePath, onCompilation) {
+  const moduleName = convertTestFilePathToModuleName(testFilePath);
+  const compilerInfo = buildTestCompiler(testFilePath, moduleName);
+  // Delete existing test so we don't run it again if the compilation fails.
+  rm('-f', compilerInfo.outputFile);
+  compilerInfo.compiler.run((exitCode, stdout, stderr) => {
+    console.log(stdout);
+    console.error(stderr);
+    onCompilation(compilerInfo.outputFile);
+  });
+  return compilerInfo.outputFile;
+}
+
+/**
+ * Runs a compiled test.
+ * @param {string} testOutputFile
+ */
+function runTest(testOutputFile) {
+  nodeCLI.exec('./node_modules/mocha/bin/_mocha', '-R progress',
+               ` -t  ${MOCHA_TIMEOUT}`, '-c', testOutputFile);
+}
+
+/**
+ * Test the given file.
+ * @param {string} testFilePath
+ * @param {function(string)} onCompilation Function to run after compilation.
+ */
+function testFile(testFilePath, onCompilation) {
+  buildTest(testFilePath, onCompilation);
+}
+
+/**
+ * Build all tests in project and return all CompilerInfos.
+ * @param {function(string)} onCompilation Function to run after compilation.
+ */
+function testAllFiles(onCompilation) {
+  /** @type {!Array<string>} */
+  const allTests = find('./tests').filter((file) => file.match(/\.js$/));
+  allTests.forEach((path) => buildTest(path, onCompilation));
+}
+
+
+target.all = () => {
   target.test();
 };
 
@@ -84,7 +198,7 @@ target.checkTypes = function() {
   });
 };
 
-target.buildSimple = function() {
+target.buildSimple = () => {
   console.log('Building the googlejs plugin library with SIMPLE ' +
               'optimizations.');
   const closureCompilerBuild = new ClosureCompiler(
@@ -104,122 +218,17 @@ target.buildSimple = function() {
   });
 };
 
-
-/**
-  * Translate a file name into a module name.
-  * @param {string} testFile
-  * @return {string} The module name.
-  */
-function getModuleFromFile(testFile) {
-  return testFile.replace(/^\.\//, '')
-      .replace(/\.js$/, '')
-      .replace(/\//g, '.')
-      .replace(/^/, 'googlejs.');
-}
-
-/**
-  * @param {string} testFile
-  * @param {string} entryPoint
-  * @return {!Object} The closure compiler.
-  */
-function buildTestCompiler(testFile, entryPoint) {
-  const compiler = new ClosureCompiler(
-      Object.assign(commonClosureCompilerSettings, {
-        js: [
-          CLOSURE_BASE_JS,
-          // CLOSURE_LIB_JS,
-          "'./lib/**.js'",
-          testFile,
-        ],
-        js_output_file: `./dist/${testFile}`,
-        compilation_level: 'WHITESPACE_ONLY',
-        formatting: 'PRETTY_PRINT',
-        entry_point: entryPoint,
-        rewrite_polyfills: false,
-      }),
-      closureJavaOptions
-  );
-  return compiler;
-}
-
-target.buildTest = function() {
-  console.log('Building the googlejs plugin library for testing.');
-
-  const testFiles = [
-    './tests/utils.js',
-    './tests/rules/camelcase.js',
-    './tests/rules/indent.js',
-    './tests/rules/inlineCommentSpacing.js',
-  ];
-
-  for (const testFile of testFiles) {
-    const entryPoint = getModuleFromFile(testFile);
-    const compiler = buildTestCompiler(testFile, entryPoint);
-    compiler.run(function(exitCode, stdout, stderr) {
-      console.log(stdout);
-      console.log(stderr);
-    });
-  }
-};
-
-target.testIndent = function() {
-  console.log('Testing the googlejs plugin indent functionality.');
-
-  const testFileOld = './tests/rules/indent.js';
-  const testFileNew = './tests/rules/indent-new.js';
-  const compilerTest = buildTestCompiler(
-    testFileOld, 'googlejs.tests.rules.indent');
-  const compilerNewIndentTest = buildTestCompiler(
-    testFileNew, 'googlejs.tests.rules.indentNew');
-
-  compilerTest.run(function(exitCode, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-  });
-
-  compilerNewIndentTest.run(function(exitCode, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-  });
-
-};
-
-function kebabToCamel(string) {
-  return string.replace(/(\-\w)/g, (match) => match[1].toUpperCase());
-}
-
-target.testRule = function(args) {
-  const rule = args[0];
-  console.log(`Testing the googlejs plugin rule ${rule}.`);
-
-  const testOutput = `./dist/tests/rules/${rule}.js`;
-  rm('-f', testOutput);
-
-  const testPath = './tests/rules';
-  const camelRule = kebabToCamel(rule);
-  const compilerTest = buildTestCompiler(
-    `${testPath}/${rule}.js`, `googlejs.tests.rules.${camelRule}`);
-
-  compilerTest.run(function(exitCode, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    console.log('pwd', process.cwd());
-    nodeCLI.exec('./node_modules/mocha/bin/_mocha', '-R progress',
-                 ` -t  ${MOCHA_TIMEOUT}`, '-c', testOutput);
-  });
-};
-
-target.buildAdvanced = function() {
+target.buildAdvanced = () => {
   console.log('Building the googlejs plugin library with ADVANCED ' +
               'optimizations.');
   const closureCompilerBuild = new ClosureCompiler(
-    Object.assign(commonClosureCompilerSettings, {
-      js_output_file: './dist/googlejs-eslint-plugin.min.js',
-      compilation_level: 'ADVANCED',
-      use_types_for_optimization: null,
-      rewrite_polyfills: false,
-    }),
-    closureJavaOptions
+      Object.assign(commonClosureCompilerSettings, {
+        js_output_file: './dist/googlejs-eslint-plugin.min.js',
+        compilation_level: 'ADVANCED',
+        use_types_for_optimization: null,
+        rewrite_polyfills: false,
+      }),
+      closureJavaOptions
   );
 
   closureCompilerBuild.run(function(exitCode, stdout, stderr) {
@@ -228,7 +237,22 @@ target.buildAdvanced = function() {
   });
 };
 
-target.lint = function() {
+/**
+ * Tests the supplied rules, i.e. no-undef indent.
+ * @param {!Array<string>} args
+ */
+target.testRule = (args) => {
+  if (args.length == 0) {
+    throw new Error('Need at least one rule to test.');
+  }
+  for (const rule of args) {
+    // Remove any paths just in case.
+    const baseRule = path.basename(rule, '.js');
+    testFile(`tests/rules/${baseRule}.js`, runTest);
+  }
+};
+
+target.lint = () => {
   let errors = 0;
   let makeFileCache = ' ';
   let jsCache = ' ';
@@ -255,7 +279,7 @@ target.lint = function() {
   }
 
   echo('Linting JavaScript test files');
-  lastReturn = exec(ESLINT + testCache + TEST_FILES);
+  lastReturn = exec(ESLINT + testCache + SOURCE_TEST_FILES);
   if (lastReturn.code !== 0) {
     errors++;
   }
@@ -265,27 +289,29 @@ target.lint = function() {
   }
 };
 
-
-target.test = function() {
+target.test = () => {
   // target.lint();
-  // target.checkRuleFiles();
+
   let errors = 0;
-  let lastReturn;
+  let lastReturn = 0;
 
-  // exec(ISTANBUL + " cover " + MOCHA + "-- -c " + TEST_FILES);
-  lastReturn = nodeCLI.exec('istanbul', 'cover', MOCHA,
-                            `-- -R progress -t  ${MOCHA_TIMEOUT}`,
-                            '-c', TEST_FILES);
-  if (lastReturn.code !== 0) {
-    errors++;
-  }
+  rm('-r', './dist/tests');
+  testAllFiles((outputFile) => {
+    lastReturn = nodeCLI.exec(
+        'istanbul', 'cover', MOCHA, `-- -R progress -t  ${MOCHA_TIMEOUT}`,
+        '-c', outputFile);
 
-  lastReturn = nodeCLI.exec(
-      'istanbul', 'check-coverage',
-      '--statement 99 --branch 98 --function 99 --lines 99');
-  if (lastReturn.code !== 0) {
-    errors++;
-  }
+    if (lastReturn.code !== 0) {
+      errors++;
+    }
+  });
+
+  // lastReturn = nodeCLI.exec(
+  //     'istanbul', 'check-coverage',
+  //     '--statement 99 --branch 98 --function 99 --lines 99');
+  // if (lastReturn.code !== 0) {
+  //   errors++;
+  // }
 
   // target.browserify();
 
