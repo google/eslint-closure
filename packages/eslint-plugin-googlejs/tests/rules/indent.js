@@ -9,24 +9,31 @@ const indentRule = goog.require('googlejs.rules.indent');
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 
 /**
+ * @typedef {!Array<!Array<(number|string)>>}
+ */
+let IndentErrorInfo;
+
+/**
  * Create error message object for failure cases with a single 'found'
  * indentation type
- * @param {string} indentType indent type of string or tab
- * @param {!Array} errors error info
- * @return {Object} returns the error messages collection
+ * @param {(string|!IndentErrorInfo)} indentType indent type of string or tab.
+ * @param {!IndentErrorInfo=} opt_errors Error info.
+ * @return {Object} The error messages collection.
  * @private
  */
-function expectedErrors(indentType, errors) {
+function expectedErrors(indentType, opt_errors) {
+  /** @type {!IndentErrorInfo} */
+  let errors;
   if (Array.isArray(indentType)) {
     errors = indentType;
     indentType = 'space';
+  } else if (opt_errors) {
+    errors = opt_errors;
+  } else {
+    throw new Error('Array of error information must be provided.');
   }
 
-  if (!errors[0].length) {
-    errors = [errors];
-  }
-
-  return errors.map(function(err) {
+  return errors.map((err) => {
     let message;
 
     if (typeof err[1] === 'string' && typeof err[2] === 'string') {
@@ -1699,7 +1706,7 @@ switch(value){
         break;
 }`,
       options: [4, {SwitchCase: 1}],
-      errors: expectedErrors([9, 8, 4, 'BreakStatement']),
+      errors: expectedErrors([[9, 8, 4, 'BreakStatement']]),
     },
     {
       code: `
@@ -1788,7 +1795,7 @@ var obj = {foo: 1, bar: 2};
 with (obj) {
     console.log(foo + bar);
 }`,
-      errors: expectedErrors([3, 4, 0, 'ExpressionStatement']),
+      errors: expectedErrors([[3, 4, 0, 'ExpressionStatement']]),
     },
     {
       code: `
@@ -2570,7 +2577,7 @@ if (foo) bar();
 else if (baz) foobar();
 else if (qux) qux();`,
       options: [2],
-      errors: expectedErrors([3, 0, 2, 'Keyword']),
+      errors: expectedErrors([[3, 0, 2, 'Keyword']]),
     },
     {
       code: `
@@ -2582,7 +2589,7 @@ if (foo) bar();
 else if (baz) foobar();
 else qux();`,
       options: [2],
-      errors: expectedErrors([3, 0, 2, 'Keyword']),
+      errors: expectedErrors([[3, 0, 2, 'Keyword']]),
     },
     {
       code: `
@@ -2611,7 +2618,7 @@ else if (bip) {
        qux();
      }`,
       options: [2],
-      errors: expectedErrors([3, 0, 5, 'Keyword']),
+      errors: expectedErrors([[3, 0, 5, 'Keyword']]),
     },
     {
       code: `
@@ -2716,7 +2723,7 @@ function foo(aaa, bbb)
       bar();
 }`,
       options: [2, {FunctionDeclaration: {body: 3}}],
-      errors: expectedErrors([3, 6, 0, 'ExpressionStatement']),
+      errors: expectedErrors([[3, 6, 0, 'ExpressionStatement']]),
     },
     {
       code: `
@@ -2820,8 +2827,8 @@ var foo = bar;
 var foo = bar;
 var baz = qux;`,
       options: [2],
-      errors: expectedErrors(
-          [2, '0 spaces', '8 spaces and 3 tabs', 'VariableDeclaration']),
+      errors: expectedErrors([
+          [2, '0 spaces', '8 spaces and 3 tabs', 'VariableDeclaration']]),
     },
     {
       code: `

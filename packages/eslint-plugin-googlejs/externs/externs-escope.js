@@ -276,7 +276,7 @@ Escope.Definition.prototype.name;
  */
 Escope.Definition.prototype.node;
 /**
- * @type {(!Espree.Node|null)} the enclosing statement node of the identifier.
+ * @type {?Espree.Node} the enclosing statement node of the identifier.
  */
 Escope.Definition.prototype.parent;
 /**

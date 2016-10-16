@@ -37,7 +37,7 @@ ESLint.RuleTester = function() {};
  * Define a rule for one particular run of tests.
  * @param {string} name The name of the rule to define.
  * @param {!ESLint.RuleDefinition} rule The rule definition.
- * @returns {void}
+ * @return {void}
  */
 ESLint.RuleTester.prototype.defineRule = function(name, rule) {};
 
@@ -46,7 +46,7 @@ ESLint.RuleTester.prototype.defineRule = function(name, rule) {};
  * @param {string} ruleName The name of the rule to run.
  * @param {!ESLint.RuleDefinition} rule The rule to test.
  * @param {Object} test The collection of tests to run.
- * @returns {void}
+ * @return {void}
  */
 ESLint.RuleTester.prototype.run = function(ruleName, rule, test) {};
 
@@ -246,13 +246,13 @@ ESLint.RuleContext.prototype.getFilename = function() {};
 
 /**
  * Gets the scope for the current node.
- * @returns {!Escope.Scope} An object representing the current node's scope.
+ * @return {!Escope.Scope} An object representing the current node's scope.
  */
 ESLint.RuleContext.prototype.getScope = function() {};
 
 /**
  * Gets nodes that are ancestors of current node.
- * @returns {!Array<!ESLint.ASTNode>} Array of objects representing ancestors.
+ * @return {!Array<!ESLint.ASTNode>} Array of objects representing ancestors.
  */
 ESLint.RuleContext.prototype.getAncestors = function() {};
 
@@ -275,7 +275,7 @@ ESLint.RuleContext.prototype.getAncestors = function() {};
  * - others - always an empty array.
  *
  * @param {!ESLint.ASTNode} node A node to get.
- * @returns {!Array<!Escope.Variable>} Variables that are declared by the node.
+ * @return {!Array<!Escope.Variable>} Variables that are declared by the node.
  */
 ESLint.RuleContext.prototype.getDeclaredVariables = function(node) {};
 

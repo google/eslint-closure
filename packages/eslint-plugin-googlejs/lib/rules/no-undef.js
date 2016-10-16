@@ -58,6 +58,7 @@ const NO_UNDEF_RULE = {
         const globalScope = context.getScope();
 
         globalScope.through.forEach((ref) => {
+          /** @type {!Espree.Identifier} */
           const identifier = ref.identifier;
 
           if (!considerTypeOf && hasTypeOfOperator(identifier)) {

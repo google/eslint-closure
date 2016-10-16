@@ -76,6 +76,8 @@ const CLOSURE_LIB_JS =
 let CompiledInfo;
 
 /**
+  * Builds a compiler object suitable for building the output test file that's
+  * directly runnable by Node JS.
   * @param {string} testFilePath
   * @param {string} entryPoint
   * @return {!CompiledInfo} An object with the closure compiler and the output
@@ -92,7 +94,7 @@ function buildTestCompiler(testFilePath, entryPoint) {
           testFilePath,
         ],
         js_output_file: outputFile,
-        compilation_level: 'WHITESPACE_ONLY',
+        compilation_level: 'SIMPLE',
         formatting: 'PRETTY_PRINT',
         entry_point: entryPoint,
         rewrite_polyfills: false,
@@ -102,12 +104,17 @@ function buildTestCompiler(testFilePath, entryPoint) {
   return {compiler, outputFile};
 }
 
+/**
+ * Changes code-like-this to codeLikeThis, i.e. kebab-case to camelCase.
+ * @param {string} string
+ * @return {string}
+ */
 function kebabToCamel(string) {
   return string.replace(/(\-\w)/g, (match) => match[1].toUpperCase());
 }
 
 /**
- * Convert a path to a test file to the corresponding goog.module name.
+ * Converts a path to a test file to the corresponding goog.module name.
  * @param {string} testFilePath
  * @return {string}
  */
@@ -121,7 +128,7 @@ function convertTestFilePathToModuleName(testFilePath) {
 }
 
 /**
- * Get the corresponding output file for a test file.
+ * Gets the corresponding output file path for a test file.
  * @param {string} testFilePath
  * @return {string} The output path for the compiled test file.
  */
@@ -132,10 +139,10 @@ function getTestFilePathOutputLocation(testFilePath) {
 }
 
 /**
- * Build a runnable test for mocha.
+ * Builds a runnable test for mocha and return the output file path.
  * @param {string} testFilePath
  * @param {function(string)} onCompilation Function to run after compilation.
- * @return {string} The outputfile.
+ * @return {string} The output file.
  */
 function buildTest(testFilePath, onCompilation) {
   const moduleName = convertTestFilePathToModuleName(testFilePath);
@@ -160,16 +167,8 @@ function runTest(testOutputFile) {
 }
 
 /**
- * Test the given file.
- * @param {string} testFilePath
- * @param {function(string)} onCompilation Function to run after compilation.
- */
-function testFile(testFilePath, onCompilation) {
-  buildTest(testFilePath, onCompilation);
-}
-
-/**
- * Build all tests in project and return all CompilerInfos.
+ * Builds all tests in project and runs the callback onCompilation for each
+ * test.
  * @param {function(string)} onCompilation Function to run after compilation.
  */
 function testAllFiles(onCompilation) {
@@ -248,7 +247,7 @@ target.testRule = (args) => {
   for (const rule of args) {
     // Remove any paths just in case.
     const baseRule = path.basename(rule, '.js');
-    testFile(`tests/rules/${baseRule}.js`, runTest);
+    buildTest(`tests/rules/${baseRule}.js`, runTest);
   }
 };
 
