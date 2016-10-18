@@ -15,7 +15,7 @@ const Lodash = {};
  * (objValue, srcValue, index|key, object, source).
  * @param {!Object} object The object to inspect.
  * @param {!Object} source The object of property values to match.
- * @param {!isMatchWithCustomizer} customizer The function to customize
+ * @param {!Lodash.isMatchWithCustomizer} customizer The function to customize
  *     comparisons.
  * @return {boolean} Returns `true` if `object` is a match, else `false`.
  */

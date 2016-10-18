@@ -49,6 +49,7 @@
     "lint": "node Makefile.js lint",
     "test": "node Makefile.js test",
     "testRule": "node Makefile.js testRule -- ",
+    "testFile": "node Makefile.js testFile -- ",
     "checkTypes": "node Makefile.js checkTypes"
   },
   "dependencies": {

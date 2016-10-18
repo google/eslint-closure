@@ -232,7 +232,7 @@ Chai.LengthComparator = (length, message) => {};
 
 /**
  * @param {!Object} constructor
- * @param {string} message?
+ * @param {string=} message
  * @return {!Chai.Expect}
  */
 Chai.InstanceOf = (constructor, message) => {};

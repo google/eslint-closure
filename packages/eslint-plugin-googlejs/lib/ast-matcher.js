@@ -6,7 +6,8 @@ goog.module('googlejs.astMatcher');
 
 const googObject = goog.require('goog.object');
 
-const isMatchWith = /** @type {Lodash.isMatchWith} */ (require('lodash.ismatchwith'));
+/** @const {!Lodash.isMatchWith} */
+const isMatchWith = require('lodash.ismatchwith');
 
 /**
  * Creates a function that matches AST against the given pattern.
@@ -14,7 +15,7 @@ const isMatchWith = /** @type {Lodash.isMatchWith} */ (require('lodash.ismatchwi
  * See: isASTMatch()
  *
  * @param {!Object} pattern Pattern to test against
- * @return {function(!Espree.ASTNode):(!Object|boolean)} Function that returns
+ * @return {function(!Object):(!Object|boolean)} Function that returns
  *     an object with extracted fields or false when no match found.
  */
 function matchesAST(pattern) {
@@ -66,9 +67,9 @@ function isASTMatch(ast, pattern) {
 /**
  * Extracts values during matching with matchesAST().
  * @param {string} fieldName The name to give for the value
- * @param {(function|!Object)} matcher Optional matching function or pattern
+ * @param {(function(*)|!Object)} matcher Optional matching function or pattern
  *     for matchesAST()
- * @return {!function(!Espree.ASTNode):(boolean|!Object)}
+ * @return {!function(!Object):(boolean|!Object)}
  */
 function extract(fieldName, matcher) {
   return (ast) => {
@@ -81,7 +82,8 @@ function extract(fieldName, matcher) {
     if (typeof matcher === 'function') {
       const result = matcher(ast);
       if (typeof result === 'object') {
-        return googObject.extend(extractedFields, result);
+        googObject.extend(extractedFields, result);
+        return extractedFields;
       }
       if (!result) {
         return false;
