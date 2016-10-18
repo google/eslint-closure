@@ -129,6 +129,7 @@ const COMMON_CLOSURE_COMPILER_SETTINGS = {
     './externs/externs-eslint.js',
     './externs/externs-espree.js',
     './externs/externs-escope.js',
+    './externs/externs-lodash.js',
     './externs/externs-mocha.js',
   ],
   language_in: 'ECMASCRIPT6_STRICT',
@@ -177,8 +178,7 @@ function buildTestCompiler(testFilePath, entryPoint) {
   const compiler = new ClosureCompiler(
       Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         js: [
-          CLOSURE_BASE_JS,
-          // CLOSURE_LIB_JS,
+          CLOSURE_LIB_JS,
           "'./lib/**.js'",
           testFilePath,
         ],
@@ -327,13 +327,25 @@ target.buildAdvanced = () => {
  * @param {!Array<string>} rules
  */
 target.testRule = (rules) => {
-  if (rules.length == 0) {
-    throw new Error('Need at least one rule to test.');
-  }
-  for (const rule of rules) {
-    // Remove any paths just in case.
+  const expandedRulesPaths = rules.map(rule => {
     const baseRule = path.basename(rule, '.js');
-    buildTest(`tests/rules/${baseRule}.js`, runTest);
+    return `tests/rules/${baseRule}.js`;
+  });
+  target.testFile(expandedRulesPaths);
+};
+
+/**
+ * Tests the supplied files, i.e.
+ * npm run testFile tests/rules/no-undef.js tests/utils.js
+ * @param {!Array<string>} files
+ */
+target.testFile = (files) => {
+  if (files.length == 0) {
+    throw new Error('Need at least one file to test.');
+  }
+  for (const file of files) {
+    // Remove any paths just in case.
+    buildTest(file, runTest);
   }
 };
 
