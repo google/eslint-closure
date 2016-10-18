@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "eslint": "^3.4.0",
-    "lodash": "^4.15.0"
+    "lodash": "^4.15.0",
+    "lodash.ismatchwith": "^4.4.0"
   }
 }
