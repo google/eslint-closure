@@ -183,6 +183,10 @@ function buildTestCompiler(testFilePath, entryPoint) {
           testFilePath,
         ],
         js_output_file: outputFile,
+        create_source_map: `${outputFile}.map`,
+        output_wrapper: `//# sourceMappingURL=${outputFile}.map
+require('source-map-support').install();
+%output%`,
         // This is slower, but errors aren't reported with WHITESPACE_ONLY.
         compilation_level: 'SIMPLE',
         formatting: 'PRETTY_PRINT',
@@ -253,7 +257,8 @@ function buildTest(testFilePath, onCompilation) {
  */
 function runTest(testOutputFile) {
   nodeCLI.exec(
-      MOCHA, '-R progress', ` -t  ${MOCHA_TIMEOUT}`, '-c', testOutputFile);
+      MOCHA, '-R progress', ` -t  ${MOCHA_TIMEOUT}`, '--no-colors',
+      testOutputFile);
 }
 
 /**
