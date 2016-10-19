@@ -67,15 +67,16 @@ function isASTMatch(ast, pattern) {
 /**
  * Extracts values during matching with matchesAST().
  * @param {string} fieldName The name to give for the value
- * @param {(function(*)|!Object)} matcher Optional matching function or pattern
- *     for matchesAST()
- * @return {!function(!Object):(boolean|!Object)}
+ * @param {(function(*)|!Object)=} matcher Optional matching function or pattern
+ *     for matchesAST().
+ * @return {!function(!Object):*}
  */
 function extract(fieldName, matcher) {
   return (ast) => {
     const extractedFields = {[fieldName]: ast};
 
     if (typeof matcher === 'object') {
+      // Convert plain pattern into matcher function.
       matcher = matchesAST(matcher);
     }
 
