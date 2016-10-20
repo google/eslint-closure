@@ -34,7 +34,7 @@ function matchesAST(pattern) {
  * - extract() can be used to give names to the parts of AST -
  *   these are then returned as a map of key-value pairs.
  *
- * - matchesLength() ensures the exact array length is respected.
+ * - matchesASTAndLength() ensures the exact array length is respected.
  *
  * @param {!Object} ast The AST node to test.
  * @param {!Object} pattern Pattern to test against.
@@ -69,7 +69,7 @@ function isASTMatch(ast, pattern) {
  * @param {string} fieldName The name to give for the value
  * @param {(function(*)|!Object)=} matcher Optional matching function or pattern
  *     for matchesAST().
- * @return {!function(!Object):*}
+ * @return {!function(!Object):!Object}
  */
 function extract(fieldName, matcher) {
   return (ast) => {
@@ -94,26 +94,8 @@ function extract(fieldName, matcher) {
   };
 }
 
-/**
- * Asserts that AST also matches the exact length of the specified array pattern
- * (in addition to matching the first items in the array).
- * @param {!Array} pattern
- * @return {(!Object|boolean)}
- */
-function matchesLength(pattern) {
-  const matcher = matchesAST(pattern);
-
-  return (ast) => {
-    if (ast.length !== pattern.length) {
-      return false;
-    }
-    return matcher(ast);
-  };
-}
-
 exports = {
   extract,
   isASTMatch,
   matchesAST,
-  matchesLength,
 };

@@ -16,7 +16,6 @@ const expect = chai.expect;
 const matchesAST = astMatcher.matchesAST;
 const isASTMatch = astMatcher.isASTMatch;
 const extract = astMatcher.extract;
-const matchesLength = astMatcher.matchesLength;
 
 describe('astMatcher.matchesAST', () => {
 
