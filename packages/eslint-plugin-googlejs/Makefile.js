@@ -175,15 +175,17 @@ let CompiledInfo;
  */
 function buildTestCompiler(testFilePath, entryPoint) {
   const outputFile = getTestFilePathOutputLocation(testFilePath);
+  const fullTestFilePath = getFullTestFilePath(testFilePath);
   const compiler = new ClosureCompiler(
       Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         js: [
           CLOSURE_LIB_JS,
           "'./lib/**.js'",
-          testFilePath,
+          fullTestFilePath,
         ],
         js_output_file: outputFile,
         create_source_map: `${outputFile}.map`,
+        source_map_location_mapping: `'${__dirname}|../..'`,
         output_wrapper: `//# sourceMappingURL=${outputFile}.map
 require('source-map-support').install();
 %output%`,
@@ -230,6 +232,18 @@ function getTestFilePathOutputLocation(testFilePath) {
   const relPath = path.relative(__dirname, path.normalize(testFilePath));
   const outputPath = path.join(__dirname, 'dist', relPath);
   return outputPath;
+}
+
+/**
+ * Gets the full path of test file that is specified relative to the top level
+ * directory.
+ * @param {string} testFilePath
+ * @return {string}
+ */
+function getFullTestFilePath(testFilePath) {
+  const relPath = path.relative(__dirname, path.normalize(testFilePath));
+  const fullPath = path.join(__dirname, relPath);
+  return fullPath;
 }
 
 /**
