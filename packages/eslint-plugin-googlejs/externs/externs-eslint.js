@@ -14,7 +14,7 @@ const ESLint = {};
  */
 ESLint.Module = function() {};
 
-/** @type {!Object} */
+/** @type {!ESLint.Linter} */
 ESLint.Module.prototype.linter;
 
 /** @type {!Object} */
@@ -26,6 +26,124 @@ ESLint.Module.prototype.RuleTester;
 /** @type {!ESLint.SourceCode} */
 ESLint.Module.prototype.SourceCode;
 
+
+/**
+ * The ESLint linter.
+ * @final @struct @constructor
+ */
+ESLint.Linter = function() {};
+
+/**
+ * Resets the internal state of the object.
+ * @return {void}
+ */
+ESLint.Linter.prototype.reset = function() {};
+
+/**
+ * Verifies the text against the rules specified by the second argument.
+ * @param {string|!ESLint.SourceCode} textOrSourceCode The text to parse or a
+ *     SourceCode object.
+ * @param {!ESLint.Config} config An ESLintConfig instance to configure
+ *     everything.
+ * @param {(string|!Object)=} filenameOrOptions The optional filename of the
+ *     file being checked.  If this is not set, the filename will default to
+ *     '<input>' in the rule context. If an object, then it has "filename",
+ *     "saveState", and "allowInlineConfig" properties.
+ * @param {boolean=} saveState Indicates if the state from the last run should
+ *     be saved.  Mostly useful for testing purposes.
+ * @return {!Array<!Object>} The results as an array of messages or null if no
+ *     messages.
+ */
+ESLint.Linter.prototype.verify = function(textOrSourceCode, config,
+                                          filenameOrOptions, saveState) {};
+
+/**
+ * Gets the SourceCode object representing the parsed source.
+ * @return {!ESLint.SourceCode} The SourceCode object.
+ */
+ESLint.Linter.prototype.getSourceCode = function() {};
+
+/**
+ * Gets nodes that are ancestors of current node.
+ * @return {!Array<!Espree.Node>} Array of objects representing ancestors.
+ */
+ESLint.Linter.prototype.getAncestors = function() {};
+
+/**
+ * Gets the scope for the current node.
+ * @return {!Escope.Scope} An object representing the current node's scope.
+ */
+ESLint.Linter.prototype.getScope = function() {};
+
+/**
+ * Record that a particular variable has been used in code
+ * @param {string} name The name of the variable to mark as used
+ * @return {boolean} True if the variable was found and marked as used,
+ *      false if not.
+ */
+ESLint.Linter.prototype.markVariableAsUsed = function(name) {};
+
+/**
+ * Gets the filename for the currently parsed source.
+ * @return {string} The filename associated with the source being parsed.
+ *     Defaults to "<input>" if no filename info is present.
+ */
+ESLint.Linter.prototype.getFilename = function() {};
+
+/**
+ * Reports a message from one of the rules.
+ * @param {string} ruleId The ID of the rule causing the message.
+ * @param {number} severity The severity level of the rule as configured.
+ * @param {!Espree.Node} node The AST node that the message relates to.
+ * @param {!ESLint.Location} location An object containing the error line and
+ *      column numbers. If location is not provided the node's start location
+ *      will be used.
+ * @param {string} message The actual message.
+ * @param {!Object=} opts Optional template data which produces a formatted
+ *     message with symbols being replaced by this object's values.
+ * @param {!ESLint.FixFunction=} fix A fix command description.
+ * @param {!Object=} meta Metadata of the rule
+ * @return {void}
+ */
+ESLint.Linter.prototype.report = function(ruleId, severity, node, location,
+                                          message, opts, fix, meta) {};
+
+/**
+ * Defines many new linting rules.
+ * @param {Object<string, !ESLint.RuleDefinition>} rulesToDefine map from unique
+ *     rule identifier to rule
+ * @return {void}
+ */
+ESLint.Linter.prototype.defineRules = function(rulesToDefine) {};
+
+/**
+ * Gets the default eslint configuration.
+ * @return {!Object} Object mapping rule IDs to their default configurations
+ */
+ESLint.Linter.prototype.defaults = function() {};
+
+/**
+ * Gets variables that are declared by a specified node.
+ *
+ * The variables are its `defs[].node` or `defs[].parent` is same as the
+ * specified node.  Specifically, below:
+ *
+ * - `VariableDeclaration` - variables of its all declarators.
+ * - `VariableDeclarator` - variables.
+ * - `FunctionDeclaration`/`FunctionExpression` - its function name and
+ *   parameters.
+ * - `ArrowFunctionExpression` - its parameters.
+ * - `ClassDeclaration`/`ClassExpression` - its class name.
+ * - `CatchClause` - variables of its exception.
+ * - `ImportDeclaration` - variables of  its all specifiers.
+ * - `ImportSpecifier`/`ImportDefaultSpecifier`/`ImportNamespaceSpecifier` - a
+ *   variable.
+ * - others - always an empty array.
+ *
+ * @param {!ESLint.ASTNode} node A node to get.
+ * @return {!Array<!Escope.Variable>} Variables that are declared by the node.
+ */
+ESLint.Linter.prototype.getDeclaredVariables = function(node) {};
 
 /**
  * The ESLint RuleTester.
