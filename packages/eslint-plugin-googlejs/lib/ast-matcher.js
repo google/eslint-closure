@@ -69,7 +69,7 @@ function isASTMatch(ast, pattern) {
  * @param {string} fieldName The name to give for the value
  * @param {(function(*)|!Object)=} matcher Optional matching function or pattern
  *     for matchesAST().
- * @return {!function(!Object):!Object}
+ * @return {!function(!Object):(!Object|boolean)}
  */
 function extract(fieldName, matcher) {
   return (ast) => {
