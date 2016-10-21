@@ -129,6 +129,7 @@ const COMMON_CLOSURE_COMPILER_SETTINGS = {
     './externs/externs-doctrine.js',
     './externs/externs-eslint.js',
     './externs/externs-escope.js',
+    './externs/externs-espree.js',
     './externs/externs-lodash.js',
     './externs/externs-mocha.js',
   ],

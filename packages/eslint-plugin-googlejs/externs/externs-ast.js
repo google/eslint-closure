@@ -1,9 +1,7 @@
 /**
- * @fileoverview An extern for the AST JS Parser at
- * https://github.com/eslint/AST
+ * @fileoverview An extern for the JavaScript AST.
  * @externs
  */
-
 
 /** @const */
 const AST = {};
