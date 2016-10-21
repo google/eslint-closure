@@ -31,7 +31,7 @@ function matchesAST(pattern) {
  *
  * Additionally there are utility functions:
  *
- * - extract() can be used to give names to the parts of AST -
+ * - extractAST() can be used to give names to the parts of AST -
  *   these are then returned as a map of key-value pairs.
  *
  * - matchesASTAndLength() ensures the exact array length is respected.
@@ -69,9 +69,9 @@ function isASTMatch(ast, pattern) {
  * @param {string} fieldName The name to give for the value
  * @param {(function(*)|!Object)=} matcher Optional matching function or pattern
  *     for matchesAST().
- * @return {!function(!Object):(!Object|boolean)}
+ * @return {!function(*):(!Object|boolean)}
  */
-function extract(fieldName, matcher) {
+function extractAST(fieldName, matcher) {
   return (ast) => {
     const extractedFields = {[fieldName]: ast};
 
@@ -94,8 +94,26 @@ function extract(fieldName, matcher) {
   };
 }
 
+/**
+ * Matches an array of ASTs and asserts that the pattern of ASTs is the same
+ * length as the array of ASTs to examine.
+ * @param {!Array<!Object>} pattern
+ * @return {function(!Object):(!Object|boolean)}
+ */
+function matchesASTLength(pattern) {
+  const matcher = matchesAST(pattern);
+
+  return (ast) => {
+    if (ast.length !== pattern.length) {
+      return false;
+    }
+    return matcher(ast);
+  };
+}
+
 exports = {
-  extract,
+  extractAST,
   isASTMatch,
   matchesAST,
+  matchesASTLength,
 };

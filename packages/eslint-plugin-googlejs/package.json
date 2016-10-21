@@ -28,6 +28,7 @@
   "homepage": "https://github.com/jschaf/googlejs",
   "devDependencies": {
     "chai": "^3.5.0",
+    "espree": "^3.3.2",
     "google-closure-compiler": "^20160822.2.0",
     "istanbul": "^0.4.5",
     "karma": "^1.2.0",
