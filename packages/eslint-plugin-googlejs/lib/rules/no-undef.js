@@ -5,7 +5,7 @@ goog.module('googlejs.rules.noUndef');
 
 /**
  * Checks if the given node is the argument of a typeof operator.
- * @param {!ESLint.ASTNode} node The AST node being checked.
+ * @param {!AST.Node} node The AST node being checked.
  * @return {boolean} Whether or not the node is the argument of a typeof
  *     operator.
  */
@@ -13,7 +13,7 @@ function hasTypeOfOperator(node) {
   const parent = node.parent;
 
   return parent.type === 'UnaryExpression' &&
-      /** @type {!Espree.UnaryExpression} */ (parent).operator === 'typeof';
+      /** @type {!AST.UnaryExpression} */ (parent).operator === 'typeof';
 }
 
 /**
@@ -47,7 +47,7 @@ const NO_UNDEF_RULE = {
 
   /**
    * @param {!ESLint.RuleContext} context
-   * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
+   * @return {!Object<!AST.NodeType, function(!AST.Node)>}
    */
   create(context) {
     const options = /** @type {!NoUndefRuleOptions} */ (context.options[0]);
@@ -58,7 +58,7 @@ const NO_UNDEF_RULE = {
         const globalScope = context.getScope();
 
         globalScope.through.forEach((ref) => {
-          /** @type {!Espree.Identifier} */
+          /** @type {!AST.Identifier} */
           const identifier = ref.identifier;
 
           if (!considerTypeOf && hasTypeOfOperator(identifier)) {

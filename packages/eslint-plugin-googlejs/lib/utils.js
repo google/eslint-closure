@@ -8,8 +8,8 @@ const types = goog.require('googlejs.types');
 /**
  * Returns true if the end of the left node is the same as the start of the
  * right node.
- * @param {!Espree.Node} left The left token object.
- * @param {!Espree.Node} right The right token object.
+ * @param {!AST.Locatable} left The left token object.
+ * @param {!AST.Locatable} right The right token object.
  * @return {boolean} Whether or not the tokens are on the same line.
  */
 function nodesShareOneLine(left, right) {
@@ -18,7 +18,7 @@ function nodesShareOneLine(left, right) {
 
 /**
  * Returns true if a node exists entirely on one line.
- * @param {!Espree.Node} node
+ * @param {!AST.Locatable} node
  * @return {boolean} Whether or not the tokens are on the same line.
  */
 function isNodeOneLine(node) {
@@ -27,8 +27,8 @@ function isNodeOneLine(node) {
 
 /**
  * Returns true if both tokens start on the same line.
- * @param {!Espree.Node} node1
- * @param {!Espree.Node} node2
+ * @param {!AST.Locatable} node1
+ * @param {!AST.Locatable} node2
  * @return {boolean}
  */
 function nodesStartOnSameLine(node1, node2) {
@@ -37,8 +37,8 @@ function nodesStartOnSameLine(node1, node2) {
 
 /**
  * Returns true if both tokens end on the same line.
- * @param {!Espree.Node} node1
- * @param {!Espree.Node} node2
+ * @param {!AST.Locatable} node1
+ * @param {!AST.Locatable} node2
  * @return {boolean}
  */
 function nodesEndOnSameLine(node1, node2) {
@@ -90,7 +90,7 @@ function categorizeUnderscoredIdentifier(name) {
 
 /**
  * Returns true if the node is a class expression or declaration.
- * @param {!ESLint.ASTNode} node
+ * @param {!AST.Node} node
  * @return {boolean}
  */
 function isNodeClassType(node) {
@@ -100,9 +100,9 @@ function isNodeClassType(node) {
 /**
  * Returns an ancestor node of the given node that has the specified type.  If
  * there is no ancestor node with the specified type then return null.
- * @param {!ESLint.ASTNode} node Node to examine.
- * @param {string} type The Espree.NodeType that is being looked for.
- * @return {(!ESLint.ASTNode|null)} If found ancestor node or null.
+ * @param {!AST.Node} node Node to examine.
+ * @param {string} type The AST.NodeType that is being looked for.
+ * @return {(!AST.Node|null)} If found ancestor node or null.
  */
 function getNodeAncestorOfType(node, type) {
   let parent = node.parent;
@@ -115,36 +115,36 @@ function getNodeAncestorOfType(node, type) {
 
 /**
  * Returns true if node is a getter function.
- * @param {!Espree.ASTNode} node
+ * @param {!AST.Node} node
  * @return {boolean}
  */
 function isNodeGetterFunction(node) {
   return node.type === 'FunctionExpression' &&
       node.parent && node.parent.type === 'Property' &&
-      /** @type {!Espree.Property} */ (node.parent).kind === 'get';
+      /** @type {!AST.Property} */ (node.parent).kind === 'get';
 }
 
 /**
  * Returns true if node is a setter function.
- * @param {!Espree.ASTNode} node
+ * @param {!AST.Node} node
  * @return {boolean}
  */
 function isNodeSetterFunction(node) {
   return node.type === 'FunctionExpression' &&
       node.parent && node.parent.type === 'Property' &&
-      /** @type {!Espree.Property} */ (node.parent).kind === 'set';
+      /** @type {!AST.Property} */ (node.parent).kind === 'set';
 }
 
 
 /**
  * Returns true if node is a constructor function.
- * @param {!Espree.ASTNode} node
+ * @param {!AST.Node} node
  * @return {boolean}
  */
 function isNodeConstructorFunction(node) {
   return node.type === 'FunctionExpression' &&
       node.parent && node.parent.type === 'MethodDefinition' &&
-      /** @type {!Espree.MethodDefinition} */
+      /** @type {!AST.MethodDefinition} */
       (node.parent).kind === 'constructor';
 }
 

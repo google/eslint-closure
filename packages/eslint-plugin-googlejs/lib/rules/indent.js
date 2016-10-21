@@ -12,7 +12,7 @@ goog.module('googlejs.rules.indent');
 const utils = goog.require('googlejs.utils');
 
 /**
- * Information about the indentation preceeding an ESLint.ASTNode.
+ * Information about the indentation preceeding an AST.Node.
  * @record
  */
 const IndentInfo = function() {};
@@ -46,7 +46,7 @@ IndentInfo.prototype.badChar;
 /**
   * Gets the indent of the node by examining the number of whitespace characters
   * at the beginning of the line.
-  * @param {!Espree.Node} node Node to examine.
+  * @param {!AST.Locatable} node Node to examine.
   * @param {!ESLint.SourceCode} sourceCode
   * @param {string} indentType
   * @param {boolean=} opt_byLastLine Get indent of node's last line.
@@ -76,7 +76,7 @@ function getNodeIndent_(node, sourceCode, indentType, opt_byLastLine) {
 /**
  * Returns true if node is the first node on its own start line. Can optionally
  * check the end line instead of the start line.
- * @param {!Espree.Node} node
+ * @param {!AST.Locatable} node
  * @param {!ESLint.SourceCode} sourceCode
  * @param {boolean=} opt_byEndLocation Lookup based on start position or end.
  * @return {boolean} true if it's the first in it's start line.
@@ -97,8 +97,8 @@ function isNodeFirstInLine_(node, sourceCode, opt_byEndLocation) {
  * Returns true if the node is part of the multi-variable declaration and the
  * node starts on the same line as the VariableDeclaration, i.e. the `var`,
  * `let`, or `const`.
- * @param {!Espree.Node} node
- * @param {?Espree.VariableDeclarator} varNode Variable declaration node to
+ * @param {!AST.Locatable} node
+ * @param {?AST.VariableDeclarator} varNode Variable declaration node to
  *     check against.
  * @return {boolean} True if all the above condition are satisfied.
  * @private
@@ -111,7 +111,7 @@ function isNodeInVarOnTop_(node, varNode) {
 
 /**
  * Returns true if a CallExpression's first argument is multi-line.
- * @param {!Espree.CallExpression} node
+ * @param {!AST.CallExpression} node
  * @return {boolean} True if arguments are multi-line.
  * @private
  */
@@ -126,7 +126,7 @@ function isCalleeNodeFirstArgMultiline_(node) {
 
 /**
  * Returns true if the function is a parameter in `goog.scope`.
- * @param {!Espree.AnyFunctionNode} node
+ * @param {!AST.AnyFunctionNode} node
  * @return {boolean}
  */
 function isGoogScopeFunction_(node) {
@@ -134,25 +134,25 @@ function isGoogScopeFunction_(node) {
   if (node.parent.type !== 'CallExpression') {
     return false;
   }
-  const parent = /** @type {!Espree.CallExpression} */ (node.parent);
+  const parent = /** @type {!AST.CallExpression} */ (node.parent);
   if (parent.callee.type !== 'MemberExpression') {
     return false;
   }
-  const callee = /** @type {!Espree.MemberExpression} */ (parent.callee);
+  const callee = /** @type {!AST.MemberExpression} */ (parent.callee);
 
   if (callee.object.type !== 'Identifier' ||
       callee.property.type !== 'Identifier') {
     return false;
   }
-  const calleeObject = /** @type {!Espree.Identifier} */ (callee.object);
-  const calleeProperty = /** @type {!Espree.Identifier} */ (callee.property);
+  const calleeObject = /** @type {!AST.Identifier} */ (callee.object);
+  const calleeProperty = /** @type {!AST.Identifier} */ (callee.property);
 
   return calleeObject.name === 'goog' && calleeProperty.name === 'scope';
 }
 
 /**
   * Returns true if the node is a file level IIFE.
-  * @param {!Espree.AnyFunctionNode} node
+  * @param {!AST.AnyFunctionNode} node
   * @return {boolean} True if the node is the outer IIFE.
   * @private
   */
@@ -169,7 +169,7 @@ function isOuterIIFE_(node) {
   }
 
   // Parent must be a CallExpression.
-  if (/** @type {!Espree.CallExpression} */ (parent).callee !== node) {
+  if (/** @type {!AST.CallExpression} */ (parent).callee !== node) {
     return false;
   }
 
@@ -181,7 +181,7 @@ function isOuterIIFE_(node) {
          stmt.type === 'VariableDeclarator') {
     // Check for valid unary expressions.
     if (stmt.type === 'UnaryExpression') {
-      const unaryStmt = /** @type {!Espree.UnaryExpression} */ (stmt);
+      const unaryStmt = /** @type {!AST.UnaryExpression} */ (stmt);
       if (unaryStmt.operator === '!' ||
           unaryStmt.operator === '~' ||
           unaryStmt.operator === '+' ||
@@ -203,13 +203,13 @@ function isOuterIIFE_(node) {
 /**
  * Returns true if the array's first element is an object and that object starts
  * on the same line as the array.
- * @param {!Espree.ASTNode} node
+ * @param {!AST.Node} node
  * @return {boolean} True if above conditions are met.
  * @private
  */
 function isFirstArrayElementOnSameLine_(node) {
   if (node.type !== 'ArrayExpression') return false;
-  const arrayNode = /** @type {!Espree.ArrayExpression} */ (node);
+  const arrayNode = /** @type {!AST.ArrayExpression} */ (node);
   if (arrayNode.elements[0]) {
     return arrayNode.elements[0].type === 'ObjectExpression' &&
       arrayNode.elements[0].loc.start.line === arrayNode.loc.start.line;
@@ -221,9 +221,9 @@ function isFirstArrayElementOnSameLine_(node) {
 /**
  * Returns a list of VariableDeclarators from the given VariableDeclaration
  * where each VariableDeclarator is the first VariableDeclarator on a line.
- * @param {!Espree.VariableDeclaration} varDeclaration Variable declaration
+ * @param {!AST.VariableDeclaration} varDeclaration Variable declaration
  *     node.
- * @return {!Array<!Espree.VariableDeclarator>} Filtered elements
+ * @return {!Array<!AST.VariableDeclarator>} Filtered elements
  * @private
  */
 function getLeadingVariableDeclarators_(varDeclaration) {
@@ -398,7 +398,7 @@ function buildIndentPreferences_(userOptions) {
 
 /**
  * @param {!ESLint.RuleContext} context
- * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
+ * @return {!Object<!AST.NodeType, function(!AST.Node)>}
  */
 function create(context) {
   const indentPreferences = buildIndentPreferences_(
@@ -456,7 +456,7 @@ function create(context) {
 
   /**
    * Reports a given indent violation.
-   * @param {!Espree.Node} node Node violating the indent rule.
+   * @param {!AST.Locatable} node Node violating the indent rule.
    * @param {number} needed Expected indentation character count.
    * @param {number} gottenSpaces Indentation space count in the actual
    *     node/code.
@@ -492,7 +492,7 @@ function create(context) {
 
   /**
    * Checks indent for node.
-   * @param {(!ESLint.ASTNode|!Espree.Token)} node Node to check.
+   * @param {(!AST.Node|!AST.Token)} node Node to check.
    * @param {number} neededIndent The needed indent.
    * @return {void}
    */
@@ -511,7 +511,7 @@ function create(context) {
 
   /**
    * Checks indentation of an array of nodes with a given indent.
-   * @param {!Array<!ESLint.ASTNode>} nodes List of node objects.
+   * @param {!Array<!AST.Node>} nodes List of node objects.
    * @param {number} indent Needed indent.
    * @return {void}
    */
@@ -522,7 +522,7 @@ function create(context) {
   /**
    * Checks that the indentation of the last token of a node matches the given
    * indent.
-   * @param {!ESLint.ASTNode} node
+   * @param {!AST.Node} node
    * @param {number} lastLineIndent Needed indent.
    * @return {void}
    */
@@ -550,7 +550,7 @@ function create(context) {
   /**
    * Checks that the indentation of the first node on a line matches the given
    * indent.
-   * @param {!ESLint.ASTNode} node
+   * @param {!AST.Node} node
    * @param {number} firstLineIndent Needed indent.
    * @return {void}
    */
@@ -576,7 +576,7 @@ function create(context) {
 
   /**
    * Gets the base indent for the function node.
-   * @param {(!Espree.AnyFunctionNode|!Espree.ClassExpression)} functionNode
+   * @param {(!AST.AnyFunctionNode|!AST.ClassExpression)} functionNode
    * @return {number}
    */
   function getFunctionBaseIndent(functionNode) {
@@ -604,7 +604,7 @@ function create(context) {
 
     } else if (parent.type === 'CallExpression') {
       // This functionNode is a call back.
-      const calleeParent = /** @type {!Espree.CallExpression} */ (parent);
+      const calleeParent = /** @type {!AST.CallExpression} */ (parent);
 
       if (isCalleeNodeFirstArgMultiline_(calleeParent) &&
           utils.isNodeOneLine(calleeParent.callee) &&
@@ -618,13 +618,13 @@ function create(context) {
 
   /**
    * Checks indentation of a function with a BlockStatement body.
-   * @param {!Espree.AnyFunctionNode} functionNode
+   * @param {!AST.AnyFunctionNode} functionNode
    * @return {void}
    */
   function checkFunctionIndent(functionNode) {
     // TODO: assert that if functionNode is an arrow function, that it's body is
     // a BlockStatement.
-    const bodyNode = /** @type {!Espree.BlockStatement} */ (functionNode.body);
+    const bodyNode = /** @type {!AST.BlockStatement} */ (functionNode.body);
     const baseIndent = getFunctionBaseIndent(functionNode);
     let bodyIndent = baseIndent;
     let functionOffset = indentSize;
@@ -639,7 +639,7 @@ function create(context) {
     bodyIndent += functionOffset;
 
     // Check if the bodyNode is inside a variable.
-    const parentVarNode = /** @type {?Espree.VariableDeclarator} */
+    const parentVarNode = /** @type {?AST.VariableDeclarator} */
         (utils.getNodeAncestorOfType(functionNode, 'VariableDeclarator'));
 
     if (parentVarNode && isNodeInVarOnTop_(functionNode, parentVarNode)) {
@@ -652,7 +652,7 @@ function create(context) {
 
   /**
    * Checks indentation of a ClassDeclaration or ClassExpression.
-   * @param {(!Espree.ClassDeclaration|!Espree.ClassExpression)} classNode
+   * @param {(!AST.ClassDeclaration|!AST.ClassExpression)} classNode
    * @return {void}
    */
   function checkClassIndent(classNode) {
@@ -665,7 +665,7 @@ function create(context) {
 
   /**
    * Checks indentation in arrays.
-   * @param {!Espree.ArrayExpression} node
+   * @param {!AST.ArrayExpression} node
    */
   function checkArrayExpressionIndent(node) {
     if (utils.isNodeOneLine(node)) return;
@@ -687,7 +687,7 @@ function create(context) {
 
   /**
    * Checks indentation for array block content or object block content.
-   * @param {!Espree.ObjectExpression} node
+   * @param {!AST.ObjectExpression} node
    * @return {void}
    */
   function checkObjectExpressionIndent(node) {
@@ -707,12 +707,12 @@ function create(context) {
 
   /**
    * Computes the proper indent for object properties or array elements.
-   * @param {(!Espree.ObjectExpression|!Espree.ArrayExpression)} node
+   * @param {(!AST.ObjectExpression|!AST.ArrayExpression)} node
    * @return {number} The required indent of object properties.
    */
   function getIndentforObjectOrArrayElements(node) {
     const parent = node.parent;
-    const varDeclAncestor = /** @type {?Espree.VariableDeclarator} */
+    const varDeclAncestor = /** @type {?AST.VariableDeclarator} */
          (utils.getNodeAncestorOfType(node, 'VariableDeclarator'));
 
     let baseIndent = getNodeIndent_(parent, sourceCode, indentType).goodChar;
@@ -780,7 +780,7 @@ function create(context) {
     if (isNodeInVarOnTop_(node, varDeclAncestor)) {
       elementsIndent += indentSize *
           options.VariableDeclarator[
-            /** @type {!Espree.VariableDeclarator} */ (varDeclAncestor)
+            /** @type {!AST.VariableDeclarator} */ (varDeclAncestor)
                 .parent.kind];
     }
     return elementsIndent;
@@ -788,7 +788,7 @@ function create(context) {
 
   /**
    * Checks indentation for BlockStatements with a known indent.
-   * @param {(!Espree.BlockStatement|!Espree.ClassBody)} node
+   * @param {(!AST.BlockStatement|!AST.ClassBody)} node
    * @param {number} bodyIndent The indent required for the body nodes.
    * @param {number} closingIndent The indent required for the closing brace.
    * @return {void}
@@ -804,7 +804,7 @@ function create(context) {
    * use for this should be standalone blocks used to create a new scope.
    * BlockStatemnts for functions, loops, etc. get checked in dedicated
    * functions.
-   * @param {!Espree.BlockStatement} blockNode
+   * @param {!AST.BlockStatement} blockNode
    * @return {void}
    */
   function checkBlockStatementIndent(blockNode) {
@@ -823,7 +823,7 @@ function create(context) {
 
   /**
    * Checks indentation for IfStatements.
-   * @param {!Espree.IfStatement} node
+   * @param {!AST.IfStatement} node
    * @return {void}
    */
   function checkIfStatementIndent(node) {
@@ -836,7 +836,7 @@ function create(context) {
       }
     } else {
       checkNodesIndent(
-          /** @type {!Espree.BlockStatement} */ (node.consequent).body,
+          /** @type {!AST.BlockStatement} */ (node.consequent).body,
           expectedIndent);
       checkLastNodeLineIndent(node.consequent, baseIndent);
     }
@@ -851,7 +851,7 @@ function create(context) {
         }
       } else {
         checkNodesIndent(
-            /** @type {!Espree.BlockStatement} */ (node.alternate).body,
+            /** @type {!AST.BlockStatement} */ (node.alternate).body,
             expectedIndent);
         checkLastNodeLineIndent(node.alternate, baseIndent);
       }
@@ -860,7 +860,7 @@ function create(context) {
 
   /**
    * Checks indentation for VariableDeclarations.
-   * @param {!Espree.VariableDeclaration} node
+   * @param {!AST.VariableDeclaration} node
    * @return {void}
    */
   function checkVariableDeclarationIndent(node) {
@@ -903,7 +903,7 @@ function create(context) {
   /**
    * Checks indentation for nodes that may have a single element body without
    * curly braces, e.g. a short `WhileStatement`.
-   * @param {!Espree.OptionallyBodiedNode} node The node to examine.
+   * @param {!AST.OptionallyBodiedNode} node The node to examine.
    * @return {void}
    */
   function checkOptionallyBodiedIndent(node) {
@@ -911,7 +911,7 @@ function create(context) {
     const bodyIndent = baseIndent + indentSize;
     if (node.body.type === 'BlockStatement') {
       checkBlockIndent(
-        /** @type {!Espree.BlockStatement} */ (node.body),
+        /** @type {!AST.BlockStatement} */ (node.body),
         bodyIndent,
         baseIndent);
     } else {
@@ -922,7 +922,7 @@ function create(context) {
 
   /**
    * Checks indentation of function parameters.
-   * @param {(!Espree.FunctionExpression|!Espree.FunctionDeclaration)} node
+   * @param {(!AST.FunctionExpression|!AST.FunctionDeclaration)} node
    * @param {number} indentSize The base baseIndent width.
    * @param {(number|string)} indentMultiple The ident multiple of `indentSize`.
    */
@@ -940,12 +940,12 @@ function create(context) {
 
   /**
    * Returns the expected indentation for the case statement.
-   * @param {!ESLint.ASTNode} node The node to examine.
+   * @param {!AST.Node} node The node to examine.
    * @param {number=} opt_switchIndent The baseIndent for switch statement.
    * @return {number} The baseIndent size.
    */
   function expectedCaseIndent(node, opt_switchIndent) {
-    const switchNode = /** @type {!Espree.SwitchStatement} */
+    const switchNode = /** @type {!AST.SwitchStatement} */
         ((node.type === 'SwitchStatement') ? node : node.parent);
     let caseIndent;
 
@@ -970,7 +970,7 @@ function create(context) {
 
   return {
     /**
-     * @param {!Espree.Program} node
+     * @param {!AST.Program} node
      */
     Program(node) {
       checkNodesIndent(node.body, 0);
@@ -997,7 +997,7 @@ function create(context) {
     ArrayExpression: checkArrayExpressionIndent,
 
     /**
-     * @param {!Espree.MemberExpression} node
+     * @param {!AST.MemberExpression} node
      */
     MemberExpression(node) {
       if (options.MemberExpression === -1) {
@@ -1034,7 +1034,7 @@ function create(context) {
     },
 
     /**
-     * @param {!Espree.SwitchStatement} node
+     * @param {!AST.SwitchStatement} node
      */
     SwitchStatement(node) {
       // Switch is not a 'BlockStatement'
@@ -1046,7 +1046,7 @@ function create(context) {
     },
 
     /**
-     * @param {!Espree.SwitchCase} node
+     * @param {!AST.SwitchCase} node
      */
     SwitchCase(node) {
       if (utils.isNodeOneLine(node)) return;
@@ -1057,7 +1057,7 @@ function create(context) {
 
 
     /**
-     * @param {!Espree.ArrowFunctionExpression} node
+     * @param {!AST.ArrowFunctionExpression} node
      */
     ArrowFunctionExpression(node) {
       if (utils.isNodeOneLine(node)) return;
@@ -1070,7 +1070,7 @@ function create(context) {
     },
 
     /**
-     * @param {!Espree.FunctionDeclaration} node
+     * @param {!AST.FunctionDeclaration} node
      */
     FunctionDeclaration(node) {
       if (utils.isNodeOneLine(node)) return;
@@ -1082,7 +1082,7 @@ function create(context) {
     },
 
     /**
-     * @param {!Espree.FunctionExpression} node
+     * @param {!AST.FunctionExpression} node
      */
     FunctionExpression(node) {
       if (utils.isNodeOneLine(node)) return;

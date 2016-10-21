@@ -1,103 +1,103 @@
 /**
- * @fileoverview An extern for the Espree JS Parser at
- * https://github.com/eslint/espree
+ * @fileoverview An extern for the AST JS Parser at
+ * https://github.com/eslint/AST
  * @externs
  */
 
 
 /** @const */
-const Espree = {};
+const AST = {};
 
 /**
  * The source location information of a node.
  * @record
  */
-Espree.SourceLocation = function() {};
+AST.SourceLocation = function() {};
 
 /** @type {(string|null)} */
-Espree.SourceLocation.prototype.source;
+AST.SourceLocation.prototype.source;
 
-/** @type {!Espree.Position} */
-Espree.SourceLocation.prototype.start;
+/** @type {!AST.Position} */
+AST.SourceLocation.prototype.start;
 
-/** @type {!Espree.Position} */
-Espree.SourceLocation.prototype.end;
+/** @type {!AST.Position} */
+AST.SourceLocation.prototype.end;
 
 /**
  * Each Position object consists of a line number (1-indexed) and a column
  * number (0-indexed).
  * @record
  */
-Espree.Position = function() {};
+AST.Position = function() {};
 
 /** @type {number} */
-Espree.Position.prototype.line;
+AST.Position.prototype.line;
 
 /** @type {number} */
-Espree.Position.prototype.column;
+AST.Position.prototype.column;
 
 /**
- * Represents a Node for Espree.
+ * Represents a basic node with positioning information.
  * @record
  */
-Espree.Node = function() {};
+AST.Locatable = function() {};
 
-/** @type {!Espree.NodeType} */
-Espree.Node.prototype.type;
+/** @type {!AST.NodeType} */
+AST.Locatable.prototype.type;
 
 /** @type {!Array<number>} */
-Espree.Node.prototype.range;
+AST.Locatable.prototype.range;
 
-/** @type {!Espree.SourceLocation} */
-Espree.Node.prototype.loc;
-
-/** @type {number} */
-Espree.Node.prototype.start;
+/** @type {!AST.SourceLocation} */
+AST.Locatable.prototype.loc;
 
 /** @type {number} */
-Espree.Node.prototype.end;
+AST.Locatable.prototype.start;
+
+/** @type {number} */
+AST.Locatable.prototype.end;
 
 /**
  * A JavaScript token such as a keyword or comma.
  * @record
- * @extends {Espree.Node}
+ * @extends {AST.Locatable}
  */
-Espree.Token = function() {};
+AST.Token = function() {};
 
 /** @type {string} */
-Espree.Token.prototype.value;
+AST.Token.prototype.value;
 
 /**
  * A JavaScript token such as a keyword or comma.  This needs to be separate
  * from token, because otherwise we get a cycle.
  * @record
  */
-Espree.CommentToken = function() {};
+AST.CommentToken = function() {};
 
-/** @type {!Espree.NodeType} */
-Espree.CommentToken.prototype.type;
+/** @type {!AST.NodeType} */
+AST.CommentToken.prototype.type;
 
 /** @type {!Array<number>} */
-Espree.CommentToken.prototype.range;
+AST.CommentToken.prototype.range;
 
-/** @type {!Espree.SourceLocation} */
-Espree.CommentToken.prototype.loc;
-
-/** @type {number} */
-Espree.CommentToken.prototype.start;
+/** @type {!AST.SourceLocation} */
+AST.CommentToken.prototype.loc;
 
 /** @type {number} */
-Espree.CommentToken.prototype.end;
+AST.CommentToken.prototype.start;
+
+/** @type {number} */
+AST.CommentToken.prototype.end;
 
 /** @type {string} */
-Espree.CommentToken.prototype.value;
+AST.CommentToken.prototype.value;
 /**
  * Token types are re-used from Esprima.
  * @enum {string}
- * @see https://github.com/eslint/espree/blob/master/lib/token-translator.js
+ * @see https://github.com/eslint/AST/blob/master/lib/token-translator.js
  * @see https://github.com/jquery/esprima/blob/master/src/token.ts
  */
-Espree.TokenType = {
+AST.TokenType = {
   BOOLEAN: 'Boolean',
   EOF: '<end>',
   IDENTIFIER: 'Identifier',
@@ -117,27 +117,27 @@ Espree.TokenType = {
  * The main AST Node.  This really belongs to ESLint, but all the ASTNodes below
  * need these properties and it's easier to just define it here.
  * @record
- * @extends {Espree.Node}
+ * @extends {AST.Locatable}
  * @see https://github.com/estree/estree/blob/master/es5.md#node-objects
  */
-Espree.ASTNode = function() {};
+AST.Node = function() {};
 
 /**
  * Provided by ESLint.
- * @type {!Espree.ASTNode}
+ * @type {!AST.Node}
  */
-Espree.ASTNode.prototype.parent;
+AST.Node.prototype.parent;
 
-/** @type {(!Array<!Espree.CommentToken>|undefined)} */
-Espree.ASTNode.prototype.leadingComments;
+/** @type {(!Array<!AST.CommentToken>|undefined)} */
+AST.Node.prototype.leadingComments;
 
-/** @type {(!Array<!Espree.CommentToken>|undefined)} */
-Espree.ASTNode.prototype.trailingComments;
+/** @type {(!Array<!AST.CommentToken>|undefined)} */
+AST.Node.prototype.trailingComments;
 /**
  * @enum {string}
- * @see https://github.com/eslint/espree/blob/master/lib/visitor-keys.js
+ * @see https://github.com/eslint/AST/blob/master/lib/visitor-keys.js
  */
-Espree.NodeType = {
+AST.NodeType = {
   ARRAY_EXPRESSION: 'ArrayExpression',
   ARRAY_PATTERN: 'ArrayPattern',
   ARROW_FUNCTION_EXPRESSION: 'ArrowFunctionExpression',
@@ -220,122 +220,122 @@ Espree.NodeType = {
   YIELD_EXPRESSION: 'YieldExpression',
 };
 
-/** @typedef {!Espree.Expression | !Espree.SpreadElement} */
-Espree.ArgumentListElement;
+/** @typedef {!AST.Expression | !AST.SpreadElement} */
+AST.ArgumentListElement;
 
-/** @typedef {!Espree.Expression | !Espree.SpreadElement} */
-Espree.ArrayExpressionElement;
-
-/** @typedef {(
- *      !Espree.AssignmentPattern |
- *      !Espree.BindingIdentifier |
- *      !Espree.BindingPattern |
- *      !Espree.RestElement
- *  )}
- */
-Espree.ArrayPatternElement;
-
-/** @typedef {!Espree.ArrayPattern | !Espree.ObjectPattern} */
-Espree.BindingPattern;
-
-/** @typedef {!Espree.Identifier} */
-Espree.BindingIdentifier;
+/** @typedef {!AST.Expression | !AST.SpreadElement} */
+AST.ArrayExpressionElement;
 
 /** @typedef {(
- *      !Espree.ClassDeclaration |
- *      !Espree.ExportDeclaration |
- *      !Espree.FunctionDeclaration |
- *      !Espree.ImportDeclaration |
- *      !Espree.VariableDeclaration
+ *      !AST.AssignmentPattern |
+ *      !AST.BindingIdentifier |
+ *      !AST.BindingPattern |
+ *      !AST.RestElement
  *  )}
  */
-Espree.Declaration;
+AST.ArrayPatternElement;
+
+/** @typedef {!AST.ArrayPattern | !AST.ObjectPattern} */
+AST.BindingPattern;
+
+/** @typedef {!AST.Identifier} */
+AST.BindingIdentifier;
 
 /** @typedef {(
- *      !Espree.ExportAllDeclaration |
- *      !Espree.ExportDefaultDeclaration |
- *      !Espree.ExportNamedDeclaration
+ *      !AST.ClassDeclaration |
+ *      !AST.ExportDeclaration |
+ *      !AST.FunctionDeclaration |
+ *      !AST.ImportDeclaration |
+ *      !AST.VariableDeclaration
  *  )}
  */
-Espree.ExportDeclaration;
+AST.Declaration;
+
+/** @typedef {(
+ *      !AST.ExportAllDeclaration |
+ *      !AST.ExportDefaultDeclaration |
+ *      !AST.ExportNamedDeclaration
+ *  )}
+ */
+AST.ExportDeclaration;
 
 /**
  * @typedef {(
- *      !Espree.ArrayExpression |
- *      !Espree.ArrowFunctionExpression |
- *      !Espree.AssignmentExpression |
- *      !Espree.BinaryExpression |
- *      !Espree.CallExpression |
- *      !Espree.ClassExpression |
- *      !Espree.ComputedMemberExpression |
- *      !Espree.ConditionalExpression |
- *      !Espree.Identifier |
- *      !Espree.FunctionExpression |
- *      !Espree.Literal |
- *      !Espree.MemberExpression |
- *      !Espree.NewExpression |
- *      !Espree.ObjectExpression |
- *      !Espree.RegexLiteral |
- *      !Espree.SequenceExpression |
- *      !Espree.StaticMemberExpression |
- *      !Espree.TaggedTemplateExpression |
- *      !Espree.ThisExpression |
- *      !Espree.UnaryExpression |
- *      !Espree.UpdateExpression |
- *      !Espree.YieldExpression
+ *      !AST.ArrayExpression |
+ *      !AST.ArrowFunctionExpression |
+ *      !AST.AssignmentExpression |
+ *      !AST.BinaryExpression |
+ *      !AST.CallExpression |
+ *      !AST.ClassExpression |
+ *      !AST.ComputedMemberExpression |
+ *      !AST.ConditionalExpression |
+ *      !AST.Identifier |
+ *      !AST.FunctionExpression |
+ *      !AST.Literal |
+ *      !AST.MemberExpression |
+ *      !AST.NewExpression |
+ *      !AST.ObjectExpression |
+ *      !AST.RegexLiteral |
+ *      !AST.SequenceExpression |
+ *      !AST.StaticMemberExpression |
+ *      !AST.TaggedTemplateExpression |
+ *      !AST.ThisExpression |
+ *      !AST.UnaryExpression |
+ *      !AST.UpdateExpression |
+ *      !AST.YieldExpression
  *  )}
  */
-Espree.Expression;
+AST.Expression;
 
 /** @typedef {(
- *      !Espree.AssignmentPattern |
- *      !Espree.BindingIdentifier |
- *      !Espree.BindingPattern
+ *      !AST.AssignmentPattern |
+ *      !AST.BindingIdentifier |
+ *      !AST.BindingPattern
  *  )}
  */
-Espree.FunctionParameter;
+AST.FunctionParameter;
 
 /**
  * All function types.
  * @typedef {(
- *      !Espree.ArrowFunctionExpression|
- *      !Espree.FunctionDeclaration|
- *      !Espree.FunctionExpression
+ *      !AST.ArrowFunctionExpression|
+ *      !AST.FunctionDeclaration|
+ *      !AST.FunctionExpression
  * )}
  */
-Espree.AnyFunctionNode;
+AST.AnyFunctionNode;
 
 /** @typedef {(
- *      !Espree.ImportDefaultSpecifier |
- *      !Espree.ImportNamespaceSpecifier |
- *      !Espree.ImportSpecifier
+ *      !AST.ImportDefaultSpecifier |
+ *      !AST.ImportNamespaceSpecifier |
+ *      !AST.ImportSpecifier
  *  )}
  */
-Espree.ImportDeclarationSpecifier;
+AST.ImportDeclarationSpecifier;
 
 /** @typedef {(
- *      !Espree.BreakStatement |
- *      !Espree.ContinueStatement |
- *      !Espree.DebuggerStatement |
- *      !Espree.DoWhileStatement |
- *      !Espree.EmptyStatement |
- *      !Espree.ExpressionStatement |
- *      !Espree.Directive |
- *      !Espree.ForStatement |
- *      !Espree.ForInStatement |
- *      !Espree.ForOfStatement |
- *      !Espree.FunctionDeclaration |
- *      !Espree.IfStatement |
- *      !Espree.ReturnStatement |
- *      !Espree.SwitchStatement |
- *      !Espree.ThrowStatement |
- *      !Espree.TryStatement |
- *      !Espree.VariableDeclaration |
- *      !Espree.WhileStatement |
- *      !Espree.WithStatement
+ *      !AST.BreakStatement |
+ *      !AST.ContinueStatement |
+ *      !AST.DebuggerStatement |
+ *      !AST.DoWhileStatement |
+ *      !AST.EmptyStatement |
+ *      !AST.ExpressionStatement |
+ *      !AST.Directive |
+ *      !AST.ForStatement |
+ *      !AST.ForInStatement |
+ *      !AST.ForOfStatement |
+ *      !AST.FunctionDeclaration |
+ *      !AST.IfStatement |
+ *      !AST.ReturnStatement |
+ *      !AST.SwitchStatement |
+ *      !AST.ThrowStatement |
+ *      !AST.TryStatement |
+ *      !AST.VariableDeclaration |
+ *      !AST.WhileStatement |
+ *      !AST.WithStatement
  *  )}
  */
-Espree.Statement;
+AST.Statement;
 
 
 /**
@@ -346,748 +346,748 @@ Espree.Statement;
  *     `while (condition) {foo();}` // body is a BlockStatement
  *
  * @typedef {(
- *     !Espree.DoWhileStatement|
- *     !Espree.ForStatement|
- *     !Espree.ForInStatement|
- *     !Espree.ForOfStatement|
- *     !Espree.WhileStatement|
- *     !Espree.WithStatement
+ *     !AST.DoWhileStatement|
+ *     !AST.ForStatement|
+ *     !AST.ForInStatement|
+ *     !AST.ForOfStatement|
+ *     !AST.WhileStatement|
+ *     !AST.WithStatement
  * )}
  */
-Espree.OptionallyBodiedNode;
+AST.OptionallyBodiedNode;
 
-/** @typedef {!Espree.Identifier | !Espree.Literal} */
-Espree.PropertyKey;
+/** @typedef {!AST.Identifier | !AST.Literal} */
+AST.PropertyKey;
 
 /** @typedef {(
- *      !Espree.AssignmentPattern |
- *      !Espree.BindingIdentifier |
- *      !Espree.BindingPattern |
- *      !Espree.FunctionExpression
+ *      !AST.AssignmentPattern |
+ *      !AST.BindingIdentifier |
+ *      !AST.BindingPattern |
+ *      !AST.FunctionExpression
  *  )}
  */
-Espree.PropertyValue;
+AST.PropertyValue;
 
-/** @typedef {!Espree.Declaration | !Espree.Statement} */
-Espree.StatementListItem;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ArrayExpression = function() {};
-
-/** @type {!Array<!Espree.ArrayExpressionElement>} */
-Espree.ArrayExpression.prototype.elements;
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ArrayPattern = function() {};
-
-/** @type {!Array<!Espree.ArrayPatternElement>} */
-Espree.ArrayPattern.prototype.elements;
+/** @typedef {!AST.Declaration | !AST.Statement} */
+AST.StatementListItem;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ArrowFunctionExpression = function() {};
+/** @record @extends {AST.Node} */
+AST.ArrayExpression = function() {};
 
-/** @type {!Espree.Identifier} */
-Espree.ArrowFunctionExpression.prototype.id;
+/** @type {!Array<!AST.ArrayExpressionElement>} */
+AST.ArrayExpression.prototype.elements;
 
-/** @type {!Array<!Espree.FunctionParameter>} */
-Espree.ArrowFunctionExpression.prototype.params;
+/** @record @extends {AST.Node} */
+AST.ArrayPattern = function() {};
 
-/** @type {(!Espree.BlockStatement | !Espree.Expression)} */
-Espree.ArrowFunctionExpression.prototype.body;
+/** @type {!Array<!AST.ArrayPatternElement>} */
+AST.ArrayPattern.prototype.elements;
 
-/** @type {boolean} */
-Espree.ArrowFunctionExpression.prototype.generator;
+
+/** @record @extends {AST.Node} */
+AST.ArrowFunctionExpression = function() {};
+
+/** @type {!AST.Identifier} */
+AST.ArrowFunctionExpression.prototype.id;
+
+/** @type {!Array<!AST.FunctionParameter>} */
+AST.ArrowFunctionExpression.prototype.params;
+
+/** @type {(!AST.BlockStatement | !AST.Expression)} */
+AST.ArrowFunctionExpression.prototype.body;
 
 /** @type {boolean} */
-Espree.ArrowFunctionExpression.prototype.expression;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.AssignmentExpression = function() {};
-
-/** @type {string} */
-Espree.AssignmentExpression.prototype.operator;
-
-/** @type {!Espree.Expression} */
-Espree.AssignmentExpression.prototype.left;
-
-/** @type {!Espree.Expression} */
-Espree.AssignmentExpression.prototype.right;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.AssignmentPattern = function() {};
-
-/** @type {(!Espree.BindingIdentifier | !Espree.BindingPattern)} */
-Espree.AssignmentPattern.prototype.left;
-
-/** @type {!Espree.Expression} */
-Espree.AssignmentPattern.prototype.right;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.BinaryExpression = function() {};
-
-/** @type {string} */
-Espree.BinaryExpression.prototype.operator;
-
-/** @type {!Espree.Expression} */
-Espree.BinaryExpression.prototype.left;
-
-/** @type {!Espree.Expression} */
-Espree.BinaryExpression.prototype.right;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.BlockStatement = function() {};
-
-/** @type {!Array<!Espree.Statement>} */
-Espree.BlockStatement.prototype.body;
-
-
-/** @record @extends {Espree.CommentToken} */
-Espree.BlockComment = function() {};
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.BreakStatement = function() {};
-
-/** @type {!Espree.Identifier} */
-Espree.BreakStatement.prototype.label;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.CallExpression = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.CallExpression.prototype.callee;
-
-/** @type {!Array<!Espree.ArgumentListElement>} */
-Espree.CallExpression.prototype.arguments;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.CatchClause = function() {};
-
-/** @type {(!Espree.BindingIdentifier | !Espree.BindingPattern)} */
-Espree.CatchClause.prototype.param;
-
-/** @type {!Espree.BlockStatement} */
-Espree.CatchClause.prototype.body;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ClassBody = function() {};
-
-/** @type {!Array<!Espree.Property>} */
-Espree.ClassBody.prototype.body;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ClassDeclaration = function() {};
-
-/** @type {!Espree.Identifier} */
-Espree.ClassDeclaration.prototype.id;
-
-/** @type {!Espree.Identifier} */
-Espree.ClassDeclaration.prototype.superClass;
-
-/** @type {!Espree.ClassBody} */
-Espree.ClassDeclaration.prototype.body;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ClassExpression = function() {};
-
-/** @type {!Espree.Identifier} */
-Espree.ClassExpression.prototype.id;
-
-/** @type {!Espree.Identifier} */
-Espree.ClassExpression.prototype.superClass;
-
-/** @type {!Espree.ClassBody} */
-Espree.ClassExpression.prototype.body;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ComputedMemberExpression = function() {};
+AST.ArrowFunctionExpression.prototype.generator;
 
 /** @type {boolean} */
-Espree.ComputedMemberExpression.prototype.computed;
-
-/** @type {!Espree.Expression} */
-Espree.ComputedMemberExpression.prototype.object;
-
-/** @type {!Espree.Expression} */
-Espree.ComputedMemberExpression.prototype.property;
+AST.ArrowFunctionExpression.prototype.expression;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ConditionalExpression = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.ConditionalExpression.prototype.test;
-
-/** @type {!Espree.Expression} */
-Espree.ConditionalExpression.prototype.consequent;
-
-/** @type {!Espree.Expression} */
-Espree.ConditionalExpression.prototype.alternate;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ContinueStatement = function() {};
-/** @type {!Espree.Identifier} */
-Espree.ContinueStatement.prototype.label;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.DebuggerStatement = function() {};
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.Directive = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.Directive.prototype.expression;
+/** @record @extends {AST.Node} */
+AST.AssignmentExpression = function() {};
 
 /** @type {string} */
-Espree.Directive.prototype.directive;
+AST.AssignmentExpression.prototype.operator;
+
+/** @type {!AST.Expression} */
+AST.AssignmentExpression.prototype.left;
+
+/** @type {!AST.Expression} */
+AST.AssignmentExpression.prototype.right;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.DoWhileStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.AssignmentPattern = function() {};
 
-/** @type {!Espree.Statement} */
-Espree.DoWhileStatement.prototype.body;
+/** @type {(!AST.BindingIdentifier | !AST.BindingPattern)} */
+AST.AssignmentPattern.prototype.left;
 
-/** @type {!Espree.Expression} */
-Espree.DoWhileStatement.prototype.test;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.EmptyStatement = function() {};
+/** @type {!AST.Expression} */
+AST.AssignmentPattern.prototype.right;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ExportAllDeclaration = function() {};
+/** @record @extends {AST.Node} */
+AST.BinaryExpression = function() {};
 
-/** @type {!Espree.Literal} */
-Espree.ExportAllDeclaration.prototype.source;
+/** @type {string} */
+AST.BinaryExpression.prototype.operator;
+
+/** @type {!AST.Expression} */
+AST.BinaryExpression.prototype.left;
+
+/** @type {!AST.Expression} */
+AST.BinaryExpression.prototype.right;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ExportDefaultDeclaration = function() {};
+/** @record @extends {AST.Node} */
+AST.BlockStatement = function() {};
+
+/** @type {!Array<!AST.Statement>} */
+AST.BlockStatement.prototype.body;
+
+
+/** @record @extends {AST.CommentToken} */
+AST.BlockComment = function() {};
+
+
+/** @record @extends {AST.Node} */
+AST.BreakStatement = function() {};
+
+/** @type {!AST.Identifier} */
+AST.BreakStatement.prototype.label;
+
+
+/** @record @extends {AST.Node} */
+AST.CallExpression = function() {};
+
+/** @type {!AST.Expression} */
+AST.CallExpression.prototype.callee;
+
+/** @type {!Array<!AST.ArgumentListElement>} */
+AST.CallExpression.prototype.arguments;
+
+
+/** @record @extends {AST.Node} */
+AST.CatchClause = function() {};
+
+/** @type {(!AST.BindingIdentifier | !AST.BindingPattern)} */
+AST.CatchClause.prototype.param;
+
+/** @type {!AST.BlockStatement} */
+AST.CatchClause.prototype.body;
+
+
+/** @record @extends {AST.Node} */
+AST.ClassBody = function() {};
+
+/** @type {!Array<!AST.Property>} */
+AST.ClassBody.prototype.body;
+
+
+/** @record @extends {AST.Node} */
+AST.ClassDeclaration = function() {};
+
+/** @type {!AST.Identifier} */
+AST.ClassDeclaration.prototype.id;
+
+/** @type {!AST.Identifier} */
+AST.ClassDeclaration.prototype.superClass;
+
+/** @type {!AST.ClassBody} */
+AST.ClassDeclaration.prototype.body;
+
+
+/** @record @extends {AST.Node} */
+AST.ClassExpression = function() {};
+
+/** @type {!AST.Identifier} */
+AST.ClassExpression.prototype.id;
+
+/** @type {!AST.Identifier} */
+AST.ClassExpression.prototype.superClass;
+
+/** @type {!AST.ClassBody} */
+AST.ClassExpression.prototype.body;
+
+
+/** @record @extends {AST.Node} */
+AST.ComputedMemberExpression = function() {};
+
+/** @type {boolean} */
+AST.ComputedMemberExpression.prototype.computed;
+
+/** @type {!AST.Expression} */
+AST.ComputedMemberExpression.prototype.object;
+
+/** @type {!AST.Expression} */
+AST.ComputedMemberExpression.prototype.property;
+
+
+/** @record @extends {AST.Node} */
+AST.ConditionalExpression = function() {};
+
+/** @type {!AST.Expression} */
+AST.ConditionalExpression.prototype.test;
+
+/** @type {!AST.Expression} */
+AST.ConditionalExpression.prototype.consequent;
+
+/** @type {!AST.Expression} */
+AST.ConditionalExpression.prototype.alternate;
+
+
+/** @record @extends {AST.Node} */
+AST.ContinueStatement = function() {};
+/** @type {!AST.Identifier} */
+AST.ContinueStatement.prototype.label;
+
+
+/** @record @extends {AST.Node} */
+AST.DebuggerStatement = function() {};
+
+
+/** @record @extends {AST.Node} */
+AST.Directive = function() {};
+
+/** @type {!AST.Expression} */
+AST.Directive.prototype.expression;
+
+/** @type {string} */
+AST.Directive.prototype.directive;
+
+
+/** @record @extends {AST.Node} */
+AST.DoWhileStatement = function() {};
+
+/** @type {!AST.Statement} */
+AST.DoWhileStatement.prototype.body;
+
+/** @type {!AST.Expression} */
+AST.DoWhileStatement.prototype.test;
+
+
+/** @record @extends {AST.Node} */
+AST.EmptyStatement = function() {};
+
+
+/** @record @extends {AST.Node} */
+AST.ExportAllDeclaration = function() {};
+
+/** @type {!AST.Literal} */
+AST.ExportAllDeclaration.prototype.source;
+
+
+/** @record @extends {AST.Node} */
+AST.ExportDefaultDeclaration = function() {};
 
 /** @type {(
- *      !Espree.BindingIdentifier |
- *      !Espree.BindingPattern |
- *      !Espree.ClassDeclaration |
- *      !Espree.Expression |
- *      !Espree.FunctionDeclaration
+ *      !AST.BindingIdentifier |
+ *      !AST.BindingPattern |
+ *      !AST.ClassDeclaration |
+ *      !AST.Expression |
+ *      !AST.FunctionDeclaration
  * )}
  */
-Espree.ExportDefaultDeclaration.prototype.declaration;
+AST.ExportDefaultDeclaration.prototype.declaration;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ExportNamedDeclaration = function() {};
+/** @record @extends {AST.Node} */
+AST.ExportNamedDeclaration = function() {};
 
 /** @type {(
- *      !Espree.ClassDeclaration |
+ *      !AST.ClassDeclaration |
  *      !Function |
- *      !Espree.VariableDeclaration
+ *      !AST.VariableDeclaration
  *  )}
  */
-Espree.ExportNamedDeclaration.prototype.declaration;
+AST.ExportNamedDeclaration.prototype.declaration;
 
-/** @type {!Array<!Espree.ExportSpecifier>} */
-Espree.ExportNamedDeclaration.prototype.specifiers;
+/** @type {!Array<!AST.ExportSpecifier>} */
+AST.ExportNamedDeclaration.prototype.specifiers;
 
-/** @type {!Espree.Literal} */
-Espree.ExportNamedDeclaration.prototype.source;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ExportSpecifier = function() {};
-
-/** @type {!Espree.Identifier} */
-Espree.ExportSpecifier.prototype.exported;
-
-/** @type {!Espree.Identifier} */
-Espree.ExportSpecifier.prototype.local;
+/** @type {!AST.Literal} */
+AST.ExportNamedDeclaration.prototype.source;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ExpressionStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.ExportSpecifier = function() {};
 
-/** @type {!Espree.Expression} */
-Espree.ExpressionStatement.prototype.expression;
+/** @type {!AST.Identifier} */
+AST.ExportSpecifier.prototype.exported;
 
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ForInStatement = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.ForInStatement.prototype.left;
-
-/** @type {!Espree.Expression} */
-Espree.ForInStatement.prototype.right;
-
-/** @type {!Espree.Statement} */
-Espree.ForInStatement.prototype.body;
-
-/** @type {boolean} */
-Espree.ForInStatement.prototype.each;
+/** @type {!AST.Identifier} */
+AST.ExportSpecifier.prototype.local;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ForOfStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.ExpressionStatement = function() {};
 
-/** @type {!Espree.Expression} */
-Espree.ForOfStatement.prototype.left;
-
-/** @type {!Espree.Expression} */
-Espree.ForOfStatement.prototype.right;
-
-/** @type {!Espree.Statement} */
-Espree.ForOfStatement.prototype.body;
+/** @type {!AST.Expression} */
+AST.ExpressionStatement.prototype.expression;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ForStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.ForInStatement = function() {};
 
-/** @type {!Espree.Expression} */
-Espree.ForStatement.prototype.init;
+/** @type {!AST.Expression} */
+AST.ForInStatement.prototype.left;
 
-/** @type {!Espree.Expression} */
-Espree.ForStatement.prototype.test;
+/** @type {!AST.Expression} */
+AST.ForInStatement.prototype.right;
 
-/** @type {!Espree.Expression} */
-Espree.ForStatement.prototype.update;
-
-/** @type {!Espree.Statement} */
-Espree.ForStatement.prototype.body;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.FunctionDeclaration = function() {};
-
-/** @type {!Espree.Identifier} */
-Espree.FunctionDeclaration.prototype.id;
-
-/** @type {!Array<!Espree.FunctionParameter>} */
-Espree.FunctionDeclaration.prototype.params;
-
-/** @type {!Espree.BlockStatement} */
-Espree.FunctionDeclaration.prototype.body;
+/** @type {!AST.Statement} */
+AST.ForInStatement.prototype.body;
 
 /** @type {boolean} */
-Espree.FunctionDeclaration.prototype.generator;
+AST.ForInStatement.prototype.each;
+
+
+/** @record @extends {AST.Node} */
+AST.ForOfStatement = function() {};
+
+/** @type {!AST.Expression} */
+AST.ForOfStatement.prototype.left;
+
+/** @type {!AST.Expression} */
+AST.ForOfStatement.prototype.right;
+
+/** @type {!AST.Statement} */
+AST.ForOfStatement.prototype.body;
+
+
+/** @record @extends {AST.Node} */
+AST.ForStatement = function() {};
+
+/** @type {!AST.Expression} */
+AST.ForStatement.prototype.init;
+
+/** @type {!AST.Expression} */
+AST.ForStatement.prototype.test;
+
+/** @type {!AST.Expression} */
+AST.ForStatement.prototype.update;
+
+/** @type {!AST.Statement} */
+AST.ForStatement.prototype.body;
+
+
+/** @record @extends {AST.Node} */
+AST.FunctionDeclaration = function() {};
+
+/** @type {!AST.Identifier} */
+AST.FunctionDeclaration.prototype.id;
+
+/** @type {!Array<!AST.FunctionParameter>} */
+AST.FunctionDeclaration.prototype.params;
+
+/** @type {!AST.BlockStatement} */
+AST.FunctionDeclaration.prototype.body;
 
 /** @type {boolean} */
-Espree.FunctionDeclaration.prototype.expression;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.FunctionExpression = function() {};
-
-/** @type {!Espree.Identifier} */
-Espree.FunctionExpression.prototype.id;
-
-/** @type {!Array<!Espree.FunctionParameter>} */
-Espree.FunctionExpression.prototype.params;
-
-/** @type {!Espree.BlockStatement} */
-Espree.FunctionExpression.prototype.body;
+AST.FunctionDeclaration.prototype.generator;
 
 /** @type {boolean} */
-Espree.FunctionExpression.prototype.generator;
+AST.FunctionDeclaration.prototype.expression;
+
+
+/** @record @extends {AST.Node} */
+AST.FunctionExpression = function() {};
+
+/** @type {!AST.Identifier} */
+AST.FunctionExpression.prototype.id;
+
+/** @type {!Array<!AST.FunctionParameter>} */
+AST.FunctionExpression.prototype.params;
+
+/** @type {!AST.BlockStatement} */
+AST.FunctionExpression.prototype.body;
 
 /** @type {boolean} */
-Espree.FunctionExpression.prototype.expression;
+AST.FunctionExpression.prototype.generator;
+
+/** @type {boolean} */
+AST.FunctionExpression.prototype.expression;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.Identifier = function() {};
+/** @record @extends {AST.Node} */
+AST.Identifier = function() {};
 
 /** @type {string} */
-Espree.Identifier.prototype.name;
+AST.Identifier.prototype.name;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.IfStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.IfStatement = function() {};
 
-/** @type {!Espree.Expression} */
-Espree.IfStatement.prototype.test;
+/** @type {!AST.Expression} */
+AST.IfStatement.prototype.test;
 
-/** @type {!Espree.Statement} */
-Espree.IfStatement.prototype.consequent;
+/** @type {!AST.Statement} */
+AST.IfStatement.prototype.consequent;
 
-/** @type {?Espree.Statement} */
-Espree.IfStatement.prototype.alternate;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ImportDeclaration = function() {};
-
-/** @type {!Array<!Espree.ImportDeclarationSpecifier>} */
-Espree.ImportDeclaration.prototype.specifiers;
-
-/** @type {!Espree.Literal} */
-Espree.ImportDeclaration.prototype.source;
+/** @type {?AST.Statement} */
+AST.IfStatement.prototype.alternate;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ImportDefaultSpecifier = function() {};
+/** @record @extends {AST.Node} */
+AST.ImportDeclaration = function() {};
 
-/** @type {!Espree.Identifier} */
-Espree.ImportDefaultSpecifier.prototype.local;
+/** @type {!Array<!AST.ImportDeclarationSpecifier>} */
+AST.ImportDeclaration.prototype.specifiers;
 
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ImportNamespaceSpecifier = function() {};
-
-/** @type {!Espree.Identifier} */
-Espree.ImportNamespaceSpecifier.prototype.local;
+/** @type {!AST.Literal} */
+AST.ImportDeclaration.prototype.source;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ImportSpecifier = function() {};
+/** @record @extends {AST.Node} */
+AST.ImportDefaultSpecifier = function() {};
 
-/** @type {!Espree.Identifier} */
-Espree.ImportSpecifier.prototype.local;
-
-/** @type {!Espree.Identifier} */
-Espree.ImportSpecifier.prototype.imported;
+/** @type {!AST.Identifier} */
+AST.ImportDefaultSpecifier.prototype.local;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.LabeledStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.ImportNamespaceSpecifier = function() {};
 
-/** @type {!Espree.Identifier} */
-Espree.LabeledStatement.prototype.label;
-
-/** @type {!Espree.Statement} */
-Espree.LabeledStatement.prototype.body;
+/** @type {!AST.Identifier} */
+AST.ImportNamespaceSpecifier.prototype.local;
 
 
-/** @record @extends {Espree.CommentToken} */
-Espree.LineComment = function() {};
+/** @record @extends {AST.Node} */
+AST.ImportSpecifier = function() {};
 
-/** @record @extends {Espree.ASTNode} */
-Espree.Literal = function() {};
+/** @type {!AST.Identifier} */
+AST.ImportSpecifier.prototype.local;
+
+/** @type {!AST.Identifier} */
+AST.ImportSpecifier.prototype.imported;
+
+
+/** @record @extends {AST.Node} */
+AST.LabeledStatement = function() {};
+
+/** @type {!AST.Identifier} */
+AST.LabeledStatement.prototype.label;
+
+/** @type {!AST.Statement} */
+AST.LabeledStatement.prototype.body;
+
+
+/** @record @extends {AST.CommentToken} */
+AST.LineComment = function() {};
+
+/** @record @extends {AST.Node} */
+AST.Literal = function() {};
 
 /** @type {(boolean | number | string)} */
-Espree.Literal.prototype.value;
+AST.Literal.prototype.value;
 
 /** @type {string} */
-Espree.Literal.prototype.raw;
+AST.Literal.prototype.raw;
 
-/** @record @extends {Espree.ASTNode} */
-Espree.MemberExpression = function() {};
-
-/** @type {boolean} */
-Espree.MemberExpression.prototype.computed;
-
-/** @type {!Espree.Expression} */
-Espree.MemberExpression.prototype.object;
-
-/** @type {!Espree.Expression} */
-Espree.MemberExpression.prototype.property;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.MetaProperty = function() {};
-
-/** @type {!Espree.Identifier} */
-Espree.MetaProperty.prototype.meta;
-
-/** @type {!Espree.Identifier} */
-Espree.MetaProperty.prototype.property;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.MethodDefinition = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.MethodDefinition.prototype.key;
+/** @record @extends {AST.Node} */
+AST.MemberExpression = function() {};
 
 /** @type {boolean} */
-Espree.MethodDefinition.prototype.computed;
+AST.MemberExpression.prototype.computed;
 
-/** @type {!Espree.FunctionExpression} */
-Espree.MethodDefinition.prototype.value;
+/** @type {!AST.Expression} */
+AST.MemberExpression.prototype.object;
+
+/** @type {!AST.Expression} */
+AST.MemberExpression.prototype.property;
+
+
+/** @record @extends {AST.Node} */
+AST.MetaProperty = function() {};
+
+/** @type {!AST.Identifier} */
+AST.MetaProperty.prototype.meta;
+
+/** @type {!AST.Identifier} */
+AST.MetaProperty.prototype.property;
+
+
+/** @record @extends {AST.Node} */
+AST.MethodDefinition = function() {};
+
+/** @type {!AST.Expression} */
+AST.MethodDefinition.prototype.key;
+
+/** @type {boolean} */
+AST.MethodDefinition.prototype.computed;
+
+/** @type {!AST.FunctionExpression} */
+AST.MethodDefinition.prototype.value;
 
 /** @type {string} */
-Espree.MethodDefinition.prototype.kind;
+AST.MethodDefinition.prototype.kind;
 
 /** @type {boolean} */
-Espree.MethodDefinition.prototype.static;
+AST.MethodDefinition.prototype.static;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.NewExpression = function() {};
+/** @record @extends {AST.Node} */
+AST.NewExpression = function() {};
 
-/** @type {!Espree.Expression} */
-Espree.NewExpression.prototype.callee;
+/** @type {!AST.Expression} */
+AST.NewExpression.prototype.callee;
 
-/** @type {!Array<!Espree.ArgumentListElement>} */
-Espree.NewExpression.prototype.arguments;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ObjectExpression = function() {};
-
-/** @type {!Array<!Espree.Property>} */
-Espree.ObjectExpression.prototype.properties;
+/** @type {!Array<!AST.ArgumentListElement>} */
+AST.NewExpression.prototype.arguments;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ObjectPattern = function() {};
+/** @record @extends {AST.Node} */
+AST.ObjectExpression = function() {};
 
-/** @type {!Array<!Espree.Property>} */
-Espree.ObjectPattern.prototype.properties;
+/** @type {!Array<!AST.Property>} */
+AST.ObjectExpression.prototype.properties;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.Program = function() {};
+/** @record @extends {AST.Node} */
+AST.ObjectPattern = function() {};
 
-/** @type {!Array<!Espree.StatementListItem>} */
-Espree.Program.prototype.body;
+/** @type {!Array<!AST.Property>} */
+AST.ObjectPattern.prototype.properties;
+
+
+/** @record @extends {AST.Node} */
+AST.Program = function() {};
+
+/** @type {!Array<!AST.StatementListItem>} */
+AST.Program.prototype.body;
 
 /** @type {string} */
-Espree.Program.prototype.sourceType;
+AST.Program.prototype.sourceType;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.Property = function() {};
+/** @record @extends {AST.Node} */
+AST.Property = function() {};
 
-/** @type {!Espree.PropertyKey} */
-Espree.Property.prototype.key;
+/** @type {!AST.PropertyKey} */
+AST.Property.prototype.key;
 
 /** @type {boolean} */
-Espree.Property.prototype.computed;
+AST.Property.prototype.computed;
 
-/** @type {!Espree.PropertyValue} */
-Espree.Property.prototype.value;
+/** @type {!AST.PropertyValue} */
+AST.Property.prototype.value;
 
 /** @type {string} */
-Espree.Property.prototype.kind;
+AST.Property.prototype.kind;
 
 /** @type {boolean} */
-Espree.Property.prototype.method;
+AST.Property.prototype.method;
 
 /** @type {boolean} */
-Espree.Property.prototype.shorthand;
+AST.Property.prototype.shorthand;
 
-/** @record @extends {Espree.ASTNode} */
-Espree.RegexLiteral = function() {};
-
-/** @type {string} */
-Espree.RegexLiteral.prototype.value;
+/** @record @extends {AST.Node} */
+AST.RegexLiteral = function() {};
 
 /** @type {string} */
-Espree.RegexLiteral.prototype.raw;
+AST.RegexLiteral.prototype.value;
+
+/** @type {string} */
+AST.RegexLiteral.prototype.raw;
 
 /** @type {*} */
-Espree.RegexLiteral.prototype.regex;
+AST.RegexLiteral.prototype.regex;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.RestElement = function() {};
+/** @record @extends {AST.Node} */
+AST.RestElement = function() {};
 
-/** @type {!Espree.Identifier} */
-Espree.RestElement.prototype.argument;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ReturnStatement = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.ReturnStatement.prototype.argument;
+/** @type {!AST.Identifier} */
+AST.RestElement.prototype.argument;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.SequenceExpression = function() {};
+/** @record @extends {AST.Node} */
+AST.ReturnStatement = function() {};
 
-/** @type {!Array<!Espree.Expression>} */
-Espree.SequenceExpression.prototype.expressions;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.SpreadElement = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.SpreadElement.prototype.argument;
+/** @type {!AST.Expression} */
+AST.ReturnStatement.prototype.argument;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.StaticMemberExpression = function() {};
+/** @record @extends {AST.Node} */
+AST.SequenceExpression = function() {};
+
+/** @type {!Array<!AST.Expression>} */
+AST.SequenceExpression.prototype.expressions;
+
+
+/** @record @extends {AST.Node} */
+AST.SpreadElement = function() {};
+
+/** @type {!AST.Expression} */
+AST.SpreadElement.prototype.argument;
+
+
+/** @record @extends {AST.Node} */
+AST.StaticMemberExpression = function() {};
 
 /** @type {boolean} */
-Espree.StaticMemberExpression.prototype.computed;
+AST.StaticMemberExpression.prototype.computed;
 
-/** @type {!Espree.Expression} */
-Espree.StaticMemberExpression.prototype.object;
+/** @type {!AST.Expression} */
+AST.StaticMemberExpression.prototype.object;
 
-/** @type {!Espree.Expression} */
-Espree.StaticMemberExpression.prototype.property;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.Super = function() {};
+/** @type {!AST.Expression} */
+AST.StaticMemberExpression.prototype.property;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.SwitchCase = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.SwitchCase.prototype.test;
-
-/** @type {!Array<!Espree.Statement>} */
-Espree.SwitchCase.prototype.consequent;
+/** @record @extends {AST.Node} */
+AST.Super = function() {};
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.SwitchStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.SwitchCase = function() {};
 
-/** @type {!Espree.Expression} */
-Espree.SwitchStatement.prototype.discriminant;
+/** @type {!AST.Expression} */
+AST.SwitchCase.prototype.test;
 
-/** @type {!Array<!Espree.SwitchCase>} */
-Espree.SwitchStatement.prototype.cases;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.TaggedTemplateExpression = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.TaggedTemplateExpression.prototype.tag;
-
-/** @type {!Espree.TemplateLiteral} */
-Espree.TaggedTemplateExpression.prototype.quasi;
+/** @type {!Array<!AST.Statement>} */
+AST.SwitchCase.prototype.consequent;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.TemplateElement = function() {};
+/** @record @extends {AST.Node} */
+AST.SwitchStatement = function() {};
+
+/** @type {!AST.Expression} */
+AST.SwitchStatement.prototype.discriminant;
+
+/** @type {!Array<!AST.SwitchCase>} */
+AST.SwitchStatement.prototype.cases;
+
+
+/** @record @extends {AST.Node} */
+AST.TaggedTemplateExpression = function() {};
+
+/** @type {!AST.Expression} */
+AST.TaggedTemplateExpression.prototype.tag;
+
+/** @type {!AST.TemplateLiteral} */
+AST.TaggedTemplateExpression.prototype.quasi;
+
+
+/** @record @extends {AST.Node} */
+AST.TemplateElement = function() {};
 
 /** @type {{cooked: string, raw: string}} */
-Espree.TemplateElement.prototype.value;
+AST.TemplateElement.prototype.value;
 
 /** @type {boolean} */
-Espree.TemplateElement.prototype.tail;
+AST.TemplateElement.prototype.tail;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.TemplateLiteral = function() {};
+/** @record @extends {AST.Node} */
+AST.TemplateLiteral = function() {};
 
-/** @type {!Array<!Espree.TemplateElement>} */
-Espree.TemplateLiteral.prototype.quasis;
+/** @type {!Array<!AST.TemplateElement>} */
+AST.TemplateLiteral.prototype.quasis;
 
-/** @type {!Array<!Espree.Expression>} */
-Espree.TemplateLiteral.prototype.expressions;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.ThisExpression = function() {};
+/** @type {!Array<!AST.Expression>} */
+AST.TemplateLiteral.prototype.expressions;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.ThrowStatement = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.ThrowStatement.prototype.argument;
+/** @record @extends {AST.Node} */
+AST.ThisExpression = function() {};
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.TryStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.ThrowStatement = function() {};
 
-/** @type {!Espree.BlockStatement} */
-Espree.TryStatement.prototype.block;
-
-/** @type {!Espree.CatchClause} */
-Espree.TryStatement.prototype.handler;
-
-/** @type {!Espree.BlockStatement} */
-Espree.TryStatement.prototype.finalizer;
+/** @type {!AST.Expression} */
+AST.ThrowStatement.prototype.argument;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.UnaryExpression = function() {};
+/** @record @extends {AST.Node} */
+AST.TryStatement = function() {};
+
+/** @type {!AST.BlockStatement} */
+AST.TryStatement.prototype.block;
+
+/** @type {!AST.CatchClause} */
+AST.TryStatement.prototype.handler;
+
+/** @type {!AST.BlockStatement} */
+AST.TryStatement.prototype.finalizer;
+
+
+/** @record @extends {AST.Node} */
+AST.UnaryExpression = function() {};
 
 /** @type {string} */
-Espree.UnaryExpression.prototype.operator;
+AST.UnaryExpression.prototype.operator;
 
-/** @type {!Espree.Expression} */
-Espree.UnaryExpression.prototype.argument;
+/** @type {!AST.Expression} */
+AST.UnaryExpression.prototype.argument;
 
 /** @type {boolean} */
-Espree.UnaryExpression.prototype.prefix;
+AST.UnaryExpression.prototype.prefix;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.UpdateExpression = function() {};
+/** @record @extends {AST.Node} */
+AST.UpdateExpression = function() {};
 
 /** @type {string} */
-Espree.UpdateExpression.prototype.operator;
+AST.UpdateExpression.prototype.operator;
 
-/** @type {!Espree.Expression} */
-Espree.UpdateExpression.prototype.argument;
+/** @type {!AST.Expression} */
+AST.UpdateExpression.prototype.argument;
 
 /** @type {boolean} */
-Espree.UpdateExpression.prototype.prefix;
+AST.UpdateExpression.prototype.prefix;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.VariableDeclaration = function() {};
+/** @record @extends {AST.Node} */
+AST.VariableDeclaration = function() {};
 
-/** @type {!Array<!Espree.VariableDeclarator>} */
-Espree.VariableDeclaration.prototype.declarations;
+/** @type {!Array<!AST.VariableDeclarator>} */
+AST.VariableDeclaration.prototype.declarations;
 
 /** @type {string} */
-Espree.VariableDeclaration.prototype.kind;
+AST.VariableDeclaration.prototype.kind;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.VariableDeclarator = function() {};
+/** @record @extends {AST.Node} */
+AST.VariableDeclarator = function() {};
 
-/** @type {(!Espree.BindingIdentifier | !Espree.BindingPattern)} */
-Espree.VariableDeclarator.prototype.id;
+/** @type {(!AST.BindingIdentifier | !AST.BindingPattern)} */
+AST.VariableDeclarator.prototype.id;
 
-/** @type {!Espree.Expression} */
-Espree.VariableDeclarator.prototype.init;
+/** @type {!AST.Expression} */
+AST.VariableDeclarator.prototype.init;
 
-/** @type {!Espree.VariableDeclaration} */
-Espree.VariableDeclarator.prototype.parent;
+/** @type {!AST.VariableDeclaration} */
+AST.VariableDeclarator.prototype.parent;
 
-/** @record @extends {Espree.ASTNode} */
-Espree.WhileStatement = function() {};
+/** @record @extends {AST.Node} */
+AST.WhileStatement = function() {};
 
-/** @type {!Espree.Expression} */
-Espree.WhileStatement.prototype.test;
+/** @type {!AST.Expression} */
+AST.WhileStatement.prototype.test;
 
-/** @type {!Espree.Statement} */
-Espree.WhileStatement.prototype.body;
-
-
-/** @record @extends {Espree.ASTNode} */
-Espree.WithStatement = function() {};
-
-/** @type {!Espree.Expression} */
-Espree.WithStatement.prototype.object;
-
-/** @type {!Espree.Statement} */
-Espree.WithStatement.prototype.body;
+/** @type {!AST.Statement} */
+AST.WhileStatement.prototype.body;
 
 
-/** @record @extends {Espree.ASTNode} */
-Espree.YieldExpression = function() {};
+/** @record @extends {AST.Node} */
+AST.WithStatement = function() {};
 
-/** @type {!Espree.Expression} */
-Espree.YieldExpression.prototype.argument;
+/** @type {!AST.Expression} */
+AST.WithStatement.prototype.object;
+
+/** @type {!AST.Statement} */
+AST.WithStatement.prototype.body;
+
+
+/** @record @extends {AST.Node} */
+AST.YieldExpression = function() {};
+
+/** @type {!AST.Expression} */
+AST.YieldExpression.prototype.argument;
 
 /** @type {boolean} */
-Espree.YieldExpression.prototype.delegate;
+AST.YieldExpression.prototype.delegate;

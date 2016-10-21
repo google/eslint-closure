@@ -59,7 +59,7 @@ ESLint.Linter.prototype.verify = function(
 
 /**
  * Gets the source code for the given node.
- * @param {!Espree.Node} node The AST node to get the text for.
+ * @param {!AST.Locatable} node The AST node to get the text for.
  * @param {number=} beforeCount The number of characters before the node to
  *     retrieve.
  * @param {number=} afterCount The number of characters after the node to
@@ -78,7 +78,7 @@ ESLint.Linter.prototype.getSourceLines = function() {};
  * Reports a message from one of the rules.
  * @param {string} ruleId The ID of the rule causing the message.
  * @param {number} severity The severity level of the rule as configured.
- * @param {!Espree.Node} node The AST node that the message relates to.
+ * @param {!AST.Locatable} node The AST node that the message relates to.
  * @param {!ESLint.Location} location An object containing the error line and
  *      column numbers. If location is not provided the node's start location
  *      will be used.
@@ -154,15 +154,6 @@ ESLint.Config.prototype.env;
 /** @type {(!Object|undefined)} */
 ESLint.Config.prototype.global;
 
-
-/**
- * An ESLint ASTNode.
- * @record
- * @extends {Espree.ASTNode}
- */
-ESLint.ASTNode = function() {};
-
-
 /**
  * An ESLint rule.
  * @record
@@ -179,8 +170,7 @@ ESLint.RuleDefinition.prototype.create;
 ESLint.VisitorMapping;
 
 /**
- * @typedef {!Object<(Espree.NodeType|ESLint.NodeExit),
- *     function(!ESLint.ASTNode)>}
+ * @typedef {!Object<(!AST.NodeType|!ESLint.NodeExit), function(!AST.Node)>}
  */
 ESLint.NodeVisitorMapping;
 
@@ -281,7 +271,7 @@ ESLint.APICommon.prototype.getScope = function() {};
 
 /**
  * Gets nodes that are ancestors of current node.
- * @return {!Array<!ESLint.ASTNode>} Array of objects representing ancestors.
+ * @return {!Array<!AST.Node>} Array of objects representing ancestors.
  */
 ESLint.APICommon.prototype.getAncestors = function() {};
 
@@ -303,7 +293,7 @@ ESLint.APICommon.prototype.getAncestors = function() {};
  *   variable.
  * - others - always an empty array.
  *
- * @param {!ESLint.ASTNode} node A node to get.
+ * @param {!AST.Node} node A node to get.
  * @return {!Array<!Escope.Variable>} Variables that are declared by the node.
  */
 ESLint.APICommon.prototype.getDeclaredVariables = function(node) {};
@@ -370,13 +360,13 @@ ESLint.SourceCodeCommon = function() {};
 
 /**
  * Retrieves an array containing all comments in the source code.
- * @return {!Array<!ESLint.ASTNode>} An array of comment nodes.
+ * @return {!Array<!AST.Node>} An array of comment nodes.
  */
 ESLint.SourceCodeCommon.prototype.getAllComments = function() {};
 
 /**
  * Gets all comments for the given node.
- * @param {!Espree.Node} node The AST node to get the comments for.
+ * @param {!AST.Locatable} node The AST node to get the comments for.
  * @return {Object} The list of comments indexed by their position.
  * @public
  */
@@ -384,8 +374,8 @@ ESLint.SourceCodeCommon.prototype.getComments = function(node) {};
 
 /**
  * Retrieves the JSDoc comment for a given node.
- * @param {!Espree.Node} node The AST node to get the comment for.
- * @return {!Espree.CommentToken} The BlockComment node containing the JSDoc for
+ * @param {!AST.Locatable} node The AST node to get the comment for.
+ * @return {!AST.CommentToken} The BlockComment node containing the JSDoc for
  *      the given node or null if not found.
  * @public
  */
@@ -394,99 +384,99 @@ ESLint.SourceCodeCommon.prototype.getJSDocComment = function(node) {};
 /**
  * Gets the deepest node containing a range index.
  * @param {number} index Range index of the desired node.
- * @return {!ESLint.ASTNode} The node if found or null if not found.
+ * @return {!AST.Node} The node if found or null if not found.
  */
 ESLint.SourceCodeCommon.prototype.getNodeByRangeIndex = function(index) {};
 
 /**
  * Gets a number of tokens that precede a given node or token in the token
  * stream.
- * @param {!Espree.Node} node The AST node or token.
+ * @param {!AST.Locatable} node The AST node or token.
  * @param {number=} beforeCount The number of tokens before the node or
  *     token to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ * @return {!Array<!AST.Token>} Array of objects representing tokens.
  */
 ESLint.SourceCodeCommon.prototype.getTokensBefore = function(
     node, beforeCount) {};
 
 /**
  * Gets the token that precedes a given node or token in the token stream.
- * @param {!Espree.Node} node The AST node or token.
+ * @param {!AST.Locatable} node The AST node or token.
  * @param {number=} skip A number of tokens to skip before the given node or
  *     token.
- * @return {!Espree.Token} An object representing the token.
+ * @return {!AST.Token} An object representing the token.
  */
 ESLint.SourceCodeCommon.prototype.getTokenBefore = function(node, skip) {};
 
 /**
  * Gets a number of tokens that follow a given node or token in the token
  * stream.
- * @param {!Espree.Node} node The AST node or token.
+ * @param {!AST.Locatable} node The AST node or token.
  * @param {number=} afterCount The number of tokens after the node or token
  *     to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ * @return {!Array<!AST.Token>} Array of objects representing tokens.
  */
 ESLint.SourceCodeCommon.prototype.getTokensAfter = function(node, afterCount) {
 };
 
 /**
  * Gets the token that follows a given node or token in the token stream.
- * @param {!Espree.Node} node The AST node or token.
+ * @param {!AST.Locatable} node The AST node or token.
  * @param {number=} skip A number of tokens to skip after the given node or
  *     token.
- * @return {!Espree.Token} An object representing the token.
+ * @return {!AST.Token} An object representing the token.
  */
 ESLint.SourceCodeCommon.prototype.getTokenAfter = function(node, skip) {};
 
 /**
  * Gets all tokens that are related to the given node.
- * @param {!Espree.Node} node The AST node.
+ * @param {!AST.Locatable} node The AST node.
  * @param {number=} beforeCount The number of tokens before the node to
  *     retrieve.
  * @param {number=} afterCount The number of tokens after the node to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ * @return {!Array<!AST.Token>} Array of objects representing tokens.
  */
 ESLint.SourceCodeCommon.prototype.getTokens = function(
     node, beforeCount, afterCount) {};
 
 /**
  * Gets the first `count` tokens of the given node's token stream.
- * @param {!Espree.Node} node The AST node.
+ * @param {!AST.Locatable} node The AST node.
  * @param {number=} count The number of tokens of the node to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ * @return {!Array<!AST.Token>} Array of objects representing tokens.
  */
 ESLint.SourceCodeCommon.prototype.getFirstTokens = function(node, count) {};
 
 /**
  * Gets the first token of the given node's token stream.
- * @param {!Espree.Node} node The AST node.
+ * @param {!AST.Locatable} node The AST node.
  * @param {number=} skip A number of tokens to skip.
- * @return {!Espree.Token} An object representing the token.
+ * @return {!AST.Token} An object representing the token.
  */
 ESLint.SourceCodeCommon.prototype.getFirstToken = function(node, skip) {};
 
 /**
  * Gets the last `count` tokens of the given node.
- * @param {!Espree.Node} node The AST node.
+ * @param {!AST.Locatable} node The AST node.
  * @param {number=} count The number of tokens of the node to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ * @return {!Array<!AST.Token>} Array of objects representing tokens.
  */
 ESLint.SourceCodeCommon.prototype.getLastTokens = function(node, count) {};
 
 /**
  * Gets the last token of the given node's token stream.
- * @param {!Espree.Node} node The AST node.
+ * @param {!AST.Locatable} node The AST node.
  * @param {number=} skip A number of tokens to skip.
- * @return {!Espree.Token} An object representing the token.
+ * @return {!AST.Token} An object representing the token.
  */
 ESLint.SourceCodeCommon.prototype.getLastToken = function(node, skip) {};
 
 /**
  * Gets all of the tokens between two non-overlapping nodes.
- * @param {!Espree.Node} left Node before the desired token range.
- * @param {!Espree.Node} right Node after the desired token range.
+ * @param {!AST.Locatable} left Node before the desired token range.
+ * @param {!AST.Locatable} right Node after the desired token range.
  * @param {number=} padding Number of extra tokens on either side of center.
- * @return {!Array<!Espree.Token>} Tokens between left and right plus padding.
+ * @return {!Array<!AST.Token>} Tokens between left and right plus padding.
  */
 ESLint.SourceCodeCommon.prototype.getTokensBetween = function(
     left, right, padding) {};
@@ -494,7 +484,7 @@ ESLint.SourceCodeCommon.prototype.getTokensBetween = function(
 /**
  * Gets the token starting at the specified index.
  * @param {number=} startIndex Index of the start of the token's range.
- * @return {!Espree.Token} The token starting at index, or null if no such
+ * @return {!AST.Token} The token starting at index, or null if no such
  *     token.
  */
 ESLint.SourceCodeCommon.prototype.getTokenByRangeStart = function(startIndex) {
@@ -510,7 +500,7 @@ ESLint.SourceCode = function() {};
 
 /**
  * Gets the source code for the given node.
- * @param {!Espree.Node} node The AST node to get the text for.
+ * @param {!AST.Locatable} node The AST node to get the text for.
  * @param {number=} beforeCount The number of characters before the node to
  *     retrieve.
  * @param {number=} afterCount The number of characters after the node to
@@ -529,8 +519,8 @@ ESLint.SourceCode.prototype.getLines = function() {};
  * Determines if two tokens have at least one whitespace character
  * between them. This completely disregards comments in making the
  * determination, so comments count as zero-length substrings.
- * @param {!Espree.Node} first The token to check after.
- * @param {!Espree.Node} second The token to check before.
+ * @param {!AST.Locatable} first The token to check after.
+ * @param {!AST.Locatable} second The token to check before.
  * @return {boolean} True if there is only space between tokens, false
  *  if there is anything other than whitespace between tokens.
  */
@@ -539,10 +529,10 @@ ESLint.SourceCode.prototype.isSpaceBetweenTokens = function(first, second) {};
 /**
  * Gets the token or commentthat precedes a given node or token in the token
  * stream.
- * @param {!Espree.Node} node The AST node or token.
+ * @param {!AST.Locatable} node The AST node or token.
  * @param {number=} skip A number of tokens to skip before the given node or
  *     token.
- * @return {!Espree.Token} An object representing the token.
+ * @return {!AST.Token} An object representing the token.
  */
 ESLint.SourceCode.prototype.getTokenOrCommentBefore = function(node, skip) {};
 
@@ -550,10 +540,10 @@ ESLint.SourceCode.prototype.getTokenOrCommentBefore = function(node, skip) {};
 /**
  * Gets the token or comment that follows a given node or token in the token
  * stream.
- * @param {!Espree.Node} node The AST node or token.
+ * @param {!AST.Locatable} node The AST node or token.
  * @param {number=} skip A number of tokens to skip after the given node or
  *     token.
- * @return {!Espree.Token} An object representing the token.
+ * @return {!AST.Token} An object representing the token.
  */
 ESLint.SourceCode.prototype.getTokenOrCommentAfter = function(node, skip) {};
 
@@ -563,16 +553,16 @@ ESLint.SourceCode.prototype.getTokenOrCommentAfter = function(node, skip) {};
  */
 ESLint.Location = function() {};
 
-/** @type {!Espree.Position} */
+/** @type {!AST.Position} */
 ESLint.Location.prototype.start;
 
-/** @type {(!Espree.Position|undefined)} */
+/** @type {(!AST.Position|undefined)} */
 ESLint.Location.prototype.end;
 
 /**
  * An error message description with at least a loc object.
  * @typedef {{
- *   node: (!Espree.Node|undefined),
+ *   node: (!AST.Locatable|undefined),
  *   loc: !ESLint.Location,
  *   message: (string|undefined),
  *   data: (!Object|undefined),
@@ -585,7 +575,7 @@ ESLint.MessageDescriptorWithLoc;
 /**
  * An error message description with at least a node object.
  * @typedef {{
- *   node: !Espree.Node,
+ *   node: !AST.Locatable,
  *   loc: (!ESLint.Location|undefined),
  *   message: (string|undefined),
  *   data: (!Object|undefined),
@@ -610,7 +600,7 @@ ESLint.FixFunction;
 ESLint.Fixer = function() {};
 
 /**
- * @param {!Espree.Node} nodeOrToken
+ * @param {!AST.Locatable} nodeOrToken
  * @param {string} text
  * @return {!ESLint.FixCommand}
  */
@@ -624,7 +614,7 @@ ESLint.Fixer.prototype.insertTextAfter = function(nodeOrToken, text) {};
 ESLint.Fixer.prototype.insertTextAfterRange = function(range, text) {};
 
 /**
- * @param {!Espree.Node} nodeOrToken
+ * @param {!AST.Locatable} nodeOrToken
  * @param {string} text
  * @return {!ESLint.FixCommand}
  */
@@ -638,7 +628,7 @@ ESLint.Fixer.prototype.insertTextBefore = function(nodeOrToken, text) {};
 ESLint.Fixer.prototype.insertTextBeforeRange = function(range, text) {};
 
 /**
- * @param {!Espree.Node} nodeOrToken
+ * @param {!AST.Locatable} nodeOrToken
  * @return {!ESLint.FixCommand}
  */
 ESLint.Fixer.prototype.remove = function(nodeOrToken) {};
@@ -650,7 +640,7 @@ ESLint.Fixer.prototype.remove = function(nodeOrToken) {};
 ESLint.Fixer.prototype.removeRange = function(range) {};
 
 /**
- * @param {!Espree.Node} nodeOrToken
+ * @param {!AST.Locatable} nodeOrToken
  * @param {string} text
  * @return {!ESLint.FixCommand}
  */

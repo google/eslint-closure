@@ -45,7 +45,7 @@ let FunctionReturnInfo;
 
 /**
  * @param {!ESLint.RuleContext} context
- * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
+ * @return {!Object<!AST.NodeType, function(!AST.Node)>}
  */
 function create(context) {
   /**
@@ -72,7 +72,7 @@ function create(context) {
 
   /**
    * When parsing a new function, store it in our function stack.
-   * @param {!Espree.AnyFunctionNode} node A function node to check.
+   * @param {!AST.AnyFunctionNode} node A function node to check.
    * @return {void}
    */
   function startFunction(node) {
@@ -85,7 +85,7 @@ function create(context) {
 
   /**
    * Indicates that return has been found in the current function.
-   * @param {!Espree.ReturnStatement} node The return node.
+   * @param {!AST.ReturnStatement} node The return node.
    * @return {void}
    */
   function addReturn(node) {
@@ -99,7 +99,7 @@ function create(context) {
   /**
    * Reports invalid type names, e.g Number instead of number.
    * @param {!Doctrine.NameExpression} tagType
-   * @param {!Espree.CommentToken} node Node to provide location information to
+   * @param {!AST.CommentToken} node Node to provide location information to
    *     report.
    */
   function checkTypeName(tagType, node) {
@@ -116,7 +116,7 @@ function create(context) {
   /**
    * Checks and reports invalid type names recursively in the provide JSDoc
    * type.
-   * @param {!Espree.CommentToken} node JSDoc node
+   * @param {!AST.CommentToken} node JSDoc node
    * @param {!Doctrine.TagType} tagType
    * @return {void}
    */
@@ -154,7 +154,7 @@ function create(context) {
 
   /**
    * Validate the JSDoc node and output warnings if anything is wrong.
-   * @param {!ESLint.ASTNode} node The AST node to check.
+   * @param {!AST.Node} node The AST node to check.
    * @return {void}
    */
   function checkJSDoc(node) {

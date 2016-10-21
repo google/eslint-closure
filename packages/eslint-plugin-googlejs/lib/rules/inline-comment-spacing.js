@@ -41,7 +41,7 @@ const INLINE_COMMENT_SPACING_RULE = {
 
     /**
      * Reports a given comment if it's invalid..
-     * @param {!Espree.LineComment} commentNode A comment node to check.
+     * @param {!AST.LineComment} commentNode A comment node to check.
      * @return {undefined}
      */
     function checkLineCommentForPrecedingSpace(commentNode) {

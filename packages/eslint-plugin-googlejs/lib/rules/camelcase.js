@@ -21,7 +21,7 @@ let CamelCaseRuleOptions;
 /**
  * An object to describe an underscored identifier.
  * @typedef {{
- *   node: !Espree.Identifier,
+ *   node: !AST.Identifier,
  *   message: string,
  *   hasError: boolean,
  * }}
@@ -39,7 +39,7 @@ const DEFAULT_CAMELCASE_OPTIONS = {
 
 /**
  * Flags identifiers that have incorrect underscores.
- * @param {!Espree.Identifier} node The node to check.
+ * @param {!AST.Identifier} node The node to check.
  * @param {!CamelCaseRuleOptions} options The ESLint camelcase rule options.
  * @return {!UnderscoreReport} Message describing the underscore identifier.
  *     If incorrectly underscored, the `message` field describes the error and
@@ -150,7 +150,7 @@ function describeIncorrectUnderscores_(node, options) {
  * Report names that have incorrect underscores.
  * @param {string} effectiveNodeName The node name with valid underscores
  *     removed.
- * @param {!Espree.Identifier} node The node to check.
+ * @param {!AST.Identifier} node The node to check.
  * @param {!CamelCaseRuleOptions} options The ESLint camelcase rule options.
  * @return {boolean} If the node is correctly underscored.
  * @private
@@ -166,7 +166,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
 
   switch (parent.type) {
     case 'MemberExpression':
-      parent = /** @type {!Espree.MemberExpression} */ (node.parent);
+      parent = /** @type {!AST.MemberExpression} */ (node.parent);
 
       if (!options.checkObjectProperties) {
         return isCorrect;
@@ -179,7 +179,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
         // `foo.bar_baz = 2`;
         if (parent.parent && parent.parent.type === 'AssignmentExpression') {
           const grandParent =
-              /** @type {!Espree.AssignmentExpression} */ (parent.parent);
+              /** @type {!AST.AssignmentExpression} */ (parent.parent);
           // But it's okay if the identifier is on the right side.  If it's on
           // the left, it's wrong because we're probably defining it.
           return grandParent.right === parent;
@@ -190,7 +190,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
       break;
 
     case 'Property':
-      parent = /** @type {!Espree.Property} */ (node.parent);
+      parent = /** @type {!AST.Property} */ (node.parent);
 
       // Properties have their own rules.  Properties are just defined in object
       // literals.
@@ -265,7 +265,7 @@ const CAMELCASE_RULE = {
 
   /**
    * @param {!ESLint.RuleContext} context
-   * @return {!Object<!Espree.NodeType, function(!ESLint.ASTNode)>}
+   * @return {!Object<!AST.NodeType, function(!AST.Node)>}
    */
   create(context) {
 
@@ -274,7 +274,7 @@ const CAMELCASE_RULE = {
           (Object.assign({}, DEFAULT_CAMELCASE_OPTIONS, userOptions));
     /**
      * Reports incorrectly underscored identifiers.
-     * @param {!Espree.Identifier} node The node to check.
+     * @param {!AST.Identifier} node The node to check.
      */
     function reportIncorrectUnderscores(node) {
       const underscoreReport = describeIncorrectUnderscores_(node, options);

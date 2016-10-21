@@ -15,7 +15,7 @@ Escope.Reference = function() {};
 
 /**
  * Identifier syntax node.
- * @type {!Espree.Identifier}
+ * @type {!AST.Identifier}
  */
 Escope.Reference.prototype.identifier;
 
@@ -40,7 +40,7 @@ Escope.Reference.prototype.resolved;
 
 /**
  * If reference is writeable, this is the tree being written to it.
- * @type {!Espree.ASTNode}
+ * @type {!AST.Node}
  */
 Escope.Reference.prototype.writeExpr;
 
@@ -109,7 +109,7 @@ Escope.Variable.prototype.name;
 /**
  * List of defining occurrences of this variable (like in 'var ...'
  * statements or as parameter), as AST nodes.
- * @type {!Array<!Espree.Identifier>}
+ * @type {!Array<!AST.Identifier>}
  */
 Escope.Variable.prototype.identifiers;
 
@@ -186,7 +186,7 @@ Escope.Scope.prototype.dynamic;
 
 /**
  * A reference to the scope-defining syntax node.
- * @type {!Espree.Node}
+ * @type {!AST.Locatable}
  */
 Escope.Scope.prototype.block;
 
@@ -268,15 +268,15 @@ Escope.Definition = function() {};
  */
 Escope.Definition.prototype.type;
 /**
- * @type {!Espree.Identifier} the identifier AST node of the occurrence.
+ * @type {!AST.Identifier} the identifier AST node of the occurrence.
  */
 Escope.Definition.prototype.name;
 /**
- * @type {!Espree.Node} the enclosing node of the identifier.
+ * @type {!AST.Locatable} the enclosing node of the identifier.
  */
 Escope.Definition.prototype.node;
 /**
- * @type {?Espree.Node} the enclosing statement node of the identifier.
+ * @type {?AST.Locatable} the enclosing statement node of the identifier.
  */
 Escope.Definition.prototype.parent;
 /**
