@@ -123,11 +123,11 @@ const COMMON_CLOSURE_COMPILER_SETTINGS = {
     CLOSURE_LIB_JS,
   ],
   externs: [
+    './externs/externs-ast.js',
     './externs/externs-chai.js',
     './externs/externs-commonjs.js',
     './externs/externs-doctrine.js',
     './externs/externs-eslint.js',
-    './externs/externs-espree.js',
     './externs/externs-escope.js',
     './externs/externs-lodash.js',
     './externs/externs-mocha.js',
