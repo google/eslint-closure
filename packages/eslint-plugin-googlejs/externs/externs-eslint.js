@@ -26,10 +26,11 @@ ESLint.Module.prototype.RuleTester;
 /** @type {!ESLint.SourceCode} */
 ESLint.Module.prototype.SourceCode;
 
-
 /**
  * The ESLint linter.
- * @final @struct @constructor
+ * @record
+ * @extends {ESLint.SourceCodeCommon}
+ * @extends {ESLint.APICommon}
  */
 ESLint.Linter = function() {};
 
@@ -51,44 +52,27 @@ ESLint.Linter.prototype.reset = function() {};
  *     "saveState", and "allowInlineConfig" properties.
  * @param {boolean=} saveState Indicates if the state from the last run should
  *     be saved.  Mostly useful for testing purposes.
- * @return {!Array<!Object>} The results as an array of messages or null if no
- *     messages.
+ * @return {!Array<!Object>} The results as an array of messages.
  */
-ESLint.Linter.prototype.verify = function(textOrSourceCode, config,
-                                          filenameOrOptions, saveState) {};
+ESLint.Linter.prototype.verify = function(
+    textOrSourceCode, config, filenameOrOptions, saveState) {};
 
 /**
- * Gets the SourceCode object representing the parsed source.
- * @return {!ESLint.SourceCode} The SourceCode object.
+ * Gets the source code for the given node.
+ * @param {!Espree.Node} node The AST node to get the text for.
+ * @param {number=} beforeCount The number of characters before the node to
+ *     retrieve.
+ * @param {number=} afterCount The number of characters after the node to
+ *     retrieve.
+ * @return {string} The text representing the AST node.
  */
-ESLint.Linter.prototype.getSourceCode = function() {};
+ESLint.Linter.prototype.getSource = function(node, beforeCount, afterCount) {};
 
 /**
- * Gets nodes that are ancestors of current node.
- * @return {!Array<!Espree.Node>} Array of objects representing ancestors.
+ * Gets the entire source text split into an array of lines.
+ * @return {!Array<string>} The source text as an array of lines.
  */
-ESLint.Linter.prototype.getAncestors = function() {};
-
-/**
- * Gets the scope for the current node.
- * @return {!Escope.Scope} An object representing the current node's scope.
- */
-ESLint.Linter.prototype.getScope = function() {};
-
-/**
- * Record that a particular variable has been used in code
- * @param {string} name The name of the variable to mark as used
- * @return {boolean} True if the variable was found and marked as used,
- *      false if not.
- */
-ESLint.Linter.prototype.markVariableAsUsed = function(name) {};
-
-/**
- * Gets the filename for the currently parsed source.
- * @return {string} The filename associated with the source being parsed.
- *     Defaults to "<input>" if no filename info is present.
- */
-ESLint.Linter.prototype.getFilename = function() {};
+ESLint.Linter.prototype.getSourceLines = function() {};
 
 /**
  * Reports a message from one of the rules.
@@ -105,8 +89,8 @@ ESLint.Linter.prototype.getFilename = function() {};
  * @param {!Object=} meta Metadata of the rule
  * @return {void}
  */
-ESLint.Linter.prototype.report = function(ruleId, severity, node, location,
-                                          message, opts, fix, meta) {};
+ESLint.Linter.prototype.report = function(
+    ruleId, severity, node, location, message, opts, fix, meta) {};
 
 /**
  * Defines many new linting rules.
@@ -121,29 +105,6 @@ ESLint.Linter.prototype.defineRules = function(rulesToDefine) {};
  * @return {!Object} Object mapping rule IDs to their default configurations
  */
 ESLint.Linter.prototype.defaults = function() {};
-
-/**
- * Gets variables that are declared by a specified node.
- *
- * The variables are its `defs[].node` or `defs[].parent` is same as the
- * specified node.  Specifically, below:
- *
- * - `VariableDeclaration` - variables of its all declarators.
- * - `VariableDeclarator` - variables.
- * - `FunctionDeclaration`/`FunctionExpression` - its function name and
- *   parameters.
- * - `ArrowFunctionExpression` - its parameters.
- * - `ClassDeclaration`/`ClassExpression` - its class name.
- * - `CatchClause` - variables of its exception.
- * - `ImportDeclaration` - variables of  its all specifiers.
- * - `ImportSpecifier`/`ImportDefaultSpecifier`/`ImportNamespaceSpecifier` - a
- *   variable.
- * - others - always an empty array.
- *
- * @param {!ESLint.ASTNode} node A node to get.
- * @return {!Array<!Escope.Variable>} Variables that are declared by the node.
- */
-ESLint.Linter.prototype.getDeclaredVariables = function(node) {};
 
 /**
  * The ESLint RuleTester.
@@ -273,7 +234,6 @@ ESLint.RuleCategory = {
   REMOVED: 'Removed',
 };
 
-
 /** @enum {string} */
 ESLint.FixableRuleType = {
   CODE: 'code',
@@ -286,65 +246,17 @@ ESLint.FixableRuleType = {
  */
 ESLint.RuleOptions;
 
-
 /**
- * Acts as an abstraction layer between rules and the main eslint object.
+ * Common functions on both ESLint.Linter and ESLint.RuleContext.
  * @record
  */
-ESLint.RuleContext = function() {};
-
-/** @type {string} ruleId The ID of the rule using this object. */
-ESLint.RuleContext.prototype.ruleId;
-
-/** @type {!ESLint.Config} eslint The eslint object. */
-ESLint.RuleContext.prototype.eslint;
-
-/** @type {number} severity The configured severity level of the rule. */
-ESLint.RuleContext.prototype.severity;
+ESLint.APICommon = function() {};
 
 /**
- * @type {!ESLint.RuleOptions} options The configuration information to be added
- *     to the rule.
- */
-ESLint.RuleContext.prototype.options;
-
-/**
- * @type {!Object} settings The configuration settings passed from the config
- *      file.
- */
-ESLint.RuleContext.prototype.settings;
-
-/**
- * @type {!Object} parserOptions The parserOptions settings passed from the
- *     config file.
- */
-ESLint.RuleContext.prototype.parserOptions;
-
-/**
- * @type {!Object} parserPath The parser setting passed from the config file.
- */
-ESLint.RuleContext.prototype.parserPath;
-
-/** @type {!Object} */
-ESLint.RuleContext.prototype.meta;
-
-/**
- * Passthrough to eslint.getSourceCode().
+ * Gets the SourceCode object representing the parsed source.
  * @return {!ESLint.SourceCode} The SourceCode object for the code.
  */
-ESLint.RuleContext.prototype.getSourceCode = function() {};
-
-// NOTE: This function is intentionally limited to a MessageDescriptor.  There's
-// an old version that supports positional arguments.
-/**
- * Passthrough to eslint.report() that automatically assigns the rule ID and
- * severity.
- * @param {!ESLint.MessageDescriptor} descriptor The AST node related to the
- *      message or a message descriptor.
- * @return {void}
- */
-ESLint.RuleContext.prototype.report = function(descriptor) {};
-
+ESLint.APICommon.prototype.getSourceCode = function() {};
 
 /**
  * Records that a particular variable has been used in code.
@@ -352,27 +264,26 @@ ESLint.RuleContext.prototype.report = function(descriptor) {};
  * @return {boolean} True if the variable was found and marked as used, false
  *      if not.
  */
-ESLint.RuleContext.prototype.markVariableAsUsed = function(name) {};
-
+ESLint.APICommon.prototype.markVariableAsUsed = function(name) {};
 
 /**
  * Gets the filename for the currently parsed source.
  * @return {string} The filename associated with the source being parsed.
  *     Defaults to "<input>" if no filename info is present.
  */
-ESLint.RuleContext.prototype.getFilename = function() {};
+ESLint.APICommon.prototype.getFilename = function() {};
 
 /**
  * Gets the scope for the current node.
  * @return {!Escope.Scope} An object representing the current node's scope.
  */
-ESLint.RuleContext.prototype.getScope = function() {};
+ESLint.APICommon.prototype.getScope = function() {};
 
 /**
  * Gets nodes that are ancestors of current node.
  * @return {!Array<!ESLint.ASTNode>} Array of objects representing ancestors.
  */
-ESLint.RuleContext.prototype.getAncestors = function() {};
+ESLint.APICommon.prototype.getAncestors = function() {};
 
 /**
  * Gets variables that are declared by a specified node.
@@ -395,18 +306,207 @@ ESLint.RuleContext.prototype.getAncestors = function() {};
  * @param {!ESLint.ASTNode} node A node to get.
  * @return {!Array<!Escope.Variable>} Variables that are declared by the node.
  */
-ESLint.RuleContext.prototype.getDeclaredVariables = function(node) {};
+ESLint.APICommon.prototype.getDeclaredVariables = function(node) {};
+
+/**
+ * Acts as an abstraction layer between rules and the main eslint object.
+ * @record
+ * @extends {ESLint.APICommon}
+ */
+ESLint.RuleContext = function() {};
+
+/** @type {string} The ID of the rule using this object. */
+ESLint.RuleContext.prototype.ruleId;
+
+/** @type {!ESLint.Config} The eslint object. */
+ESLint.RuleContext.prototype.eslint;
+
+/** @type {number} The configured severity level of the rule. */
+ESLint.RuleContext.prototype.severity;
+
+/**
+ * @type {!ESLint.RuleOptions} The configuration information to be added
+ *     to the rule.
+ */
+ESLint.RuleContext.prototype.options;
+
+/**
+ * @type {!Object} The configuration settings passed from the config
+ *      file.
+ */
+ESLint.RuleContext.prototype.settings;
+
+/**
+ * @type {!Object} The parserOptions settings passed from the
+ *     config file.
+ */
+ESLint.RuleContext.prototype.parserOptions;
+
+/**
+ * @type {!Object} The parser setting passed from the config file.
+ */
+ESLint.RuleContext.prototype.parserPath;
+
+/** @type {!Object} */
+ESLint.RuleContext.prototype.meta;
+
+// NOTE: This function is intentionally limited to a MessageDescriptor.  There's
+// an old version that supports positional arguments.
+/**
+ * Passthrough to eslint.report() that automatically assigns the rule ID and
+ * severity.
+ * @param {!ESLint.MessageDescriptor} descriptor The AST node related to the
+ *      message or a message descriptor.
+ * @return {void}
+ */
+ESLint.RuleContext.prototype.report = function(descriptor) {};
+
+/**
+ * Represents parsed source code.  These methods are available on both
+ * ESLint.Linter and ESLint.SourceCode.
+ * @record
+ */
+ESLint.SourceCodeCommon = function() {};
+
+/**
+ * Retrieves an array containing all comments in the source code.
+ * @return {!Array<!ESLint.ASTNode>} An array of comment nodes.
+ */
+ESLint.SourceCodeCommon.prototype.getAllComments = function() {};
+
+/**
+ * Gets all comments for the given node.
+ * @param {!Espree.Node} node The AST node to get the comments for.
+ * @return {Object} The list of comments indexed by their position.
+ * @public
+ */
+ESLint.SourceCodeCommon.prototype.getComments = function(node) {};
+
+/**
+ * Retrieves the JSDoc comment for a given node.
+ * @param {!Espree.Node} node The AST node to get the comment for.
+ * @return {!Espree.CommentToken} The BlockComment node containing the JSDoc for
+ *      the given node or null if not found.
+ * @public
+ */
+ESLint.SourceCodeCommon.prototype.getJSDocComment = function(node) {};
+
+/**
+ * Gets the deepest node containing a range index.
+ * @param {number} index Range index of the desired node.
+ * @return {!ESLint.ASTNode} The node if found or null if not found.
+ */
+ESLint.SourceCodeCommon.prototype.getNodeByRangeIndex = function(index) {};
+
+/**
+ * Gets a number of tokens that precede a given node or token in the token
+ * stream.
+ * @param {!Espree.Node} node The AST node or token.
+ * @param {number=} beforeCount The number of tokens before the node or
+ *     token to retrieve.
+ * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ */
+ESLint.SourceCodeCommon.prototype.getTokensBefore = function(
+    node, beforeCount) {};
+
+/**
+ * Gets the token that precedes a given node or token in the token stream.
+ * @param {!Espree.Node} node The AST node or token.
+ * @param {number=} skip A number of tokens to skip before the given node or
+ *     token.
+ * @return {!Espree.Token} An object representing the token.
+ */
+ESLint.SourceCodeCommon.prototype.getTokenBefore = function(node, skip) {};
+
+/**
+ * Gets a number of tokens that follow a given node or token in the token
+ * stream.
+ * @param {!Espree.Node} node The AST node or token.
+ * @param {number=} afterCount The number of tokens after the node or token
+ *     to retrieve.
+ * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ */
+ESLint.SourceCodeCommon.prototype.getTokensAfter = function(node, afterCount) {
+};
+
+/**
+ * Gets the token that follows a given node or token in the token stream.
+ * @param {!Espree.Node} node The AST node or token.
+ * @param {number=} skip A number of tokens to skip after the given node or
+ *     token.
+ * @return {!Espree.Token} An object representing the token.
+ */
+ESLint.SourceCodeCommon.prototype.getTokenAfter = function(node, skip) {};
+
+/**
+ * Gets all tokens that are related to the given node.
+ * @param {!Espree.Node} node The AST node.
+ * @param {number=} beforeCount The number of tokens before the node to
+ *     retrieve.
+ * @param {number=} afterCount The number of tokens after the node to retrieve.
+ * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ */
+ESLint.SourceCodeCommon.prototype.getTokens = function(
+    node, beforeCount, afterCount) {};
+
+/**
+ * Gets the first `count` tokens of the given node's token stream.
+ * @param {!Espree.Node} node The AST node.
+ * @param {number=} count The number of tokens of the node to retrieve.
+ * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ */
+ESLint.SourceCodeCommon.prototype.getFirstTokens = function(node, count) {};
+
+/**
+ * Gets the first token of the given node's token stream.
+ * @param {!Espree.Node} node The AST node.
+ * @param {number=} skip A number of tokens to skip.
+ * @return {!Espree.Token} An object representing the token.
+ */
+ESLint.SourceCodeCommon.prototype.getFirstToken = function(node, skip) {};
+
+/**
+ * Gets the last `count` tokens of the given node.
+ * @param {!Espree.Node} node The AST node.
+ * @param {number=} count The number of tokens of the node to retrieve.
+ * @return {!Array<!Espree.Token>} Array of objects representing tokens.
+ */
+ESLint.SourceCodeCommon.prototype.getLastTokens = function(node, count) {};
+
+/**
+ * Gets the last token of the given node's token stream.
+ * @param {!Espree.Node} node The AST node.
+ * @param {number=} skip A number of tokens to skip.
+ * @return {!Espree.Token} An object representing the token.
+ */
+ESLint.SourceCodeCommon.prototype.getLastToken = function(node, skip) {};
+
+/**
+ * Gets all of the tokens between two non-overlapping nodes.
+ * @param {!Espree.Node} left Node before the desired token range.
+ * @param {!Espree.Node} right Node after the desired token range.
+ * @param {number=} padding Number of extra tokens on either side of center.
+ * @return {!Array<!Espree.Token>} Tokens between left and right plus padding.
+ */
+ESLint.SourceCodeCommon.prototype.getTokensBetween = function(
+    left, right, padding) {};
+
+/**
+ * Gets the token starting at the specified index.
+ * @param {number=} startIndex Index of the start of the token's range.
+ * @return {!Espree.Token} The token starting at index, or null if no such
+ *     token.
+ */
+ESLint.SourceCodeCommon.prototype.getTokenByRangeStart = function(startIndex) {
+};
+
 
 /**
  * Represents parsed source code.
  * @record
+ * @extends {ESLint.SourceCodeCommon}
  */
 ESLint.SourceCode = function() {};
-
-// TODO: add these functions
-// getSource
-// getSourceLines
-// getNodeByRangeIndex
 
 /**
  * Gets the source code for the given node.
@@ -425,37 +525,6 @@ ESLint.SourceCode.prototype.getText = function(
  * @return {!Array<string>} The source text as an array of lines.
  */
 ESLint.SourceCode.prototype.getLines = function() {};
-
-/**
- * Retrieves an array containing all comments in the source code.
- * @return {!Array<!ESLint.ASTNode>} An array of comment nodes.
- */
-ESLint.SourceCode.prototype.getAllComments = function() {};
-
-/**
- * Gets all comments for the given node.
- * @param {!Espree.Node} node The AST node to get the comments for.
- * @return {Object} The list of comments indexed by their position.
- * @public
- */
-ESLint.SourceCode.prototype.getComments = function(node) {};
-
-/**
- * Retrieves the JSDoc comment for a given node.
- * @param {!Espree.Node} node The AST node to get the comment for.
- * @return {!Espree.CommentToken} The BlockComment node containing the JSDoc for
- *      the given node or null if not found.
- * @public
- */
-ESLint.SourceCode.prototype.getJSDocComment = function(node) {};
-
-/**
- * Gets the deepest node containing a range index.
- * @param {number} index Range index of the desired node.
- * @return {!ESLint.ASTNode} The node if found or null if not found.
- */
-ESLint.SourceCode.prototype.getNodeByRangeIndex = function(index) {};
-
 /**
  * Determines if two tokens have at least one whitespace character
  * between them. This completely disregards comments in making the
@@ -466,105 +535,6 @@ ESLint.SourceCode.prototype.getNodeByRangeIndex = function(index) {};
  *  if there is anything other than whitespace between tokens.
  */
 ESLint.SourceCode.prototype.isSpaceBetweenTokens = function(first, second) {};
-
-/**
- * Gets a number of tokens that precede a given node or token in the token
- * stream.
- * @param {!Espree.Node} node The AST node or token.
- * @param {number=} beforeCount The number of tokens before the node or
- *     token to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
- */
-ESLint.SourceCode.prototype.getTokensBefore = function(node, beforeCount) {};
-
-/**
- * Gets the token that precedes a given node or token in the token stream.
- * @param {!Espree.Node} node The AST node or token.
- * @param {number=} skip A number of tokens to skip before the given node or
- *     token.
- * @return {!Espree.Token} An object representing the token.
- */
-ESLint.SourceCode.prototype.getTokenBefore = function(node, skip) {};
-
-/**
- * Gets a number of tokens that follow a given node or token in the token
- * stream.
- * @param {!Espree.Node} node The AST node or token.
- * @param {number=} afterCount The number of tokens after the node or token
- *     to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
- */
-ESLint.SourceCode.prototype.getTokensAfter = function(node, afterCount) {};
-
-/**
- * Gets the token that follows a given node or token in the token stream.
- * @param {!Espree.Node} node The AST node or token.
- * @param {number=} skip A number of tokens to skip after the given node or
- *     token.
- * @return {!Espree.Token} An object representing the token.
- */
-ESLint.SourceCode.prototype.getTokenAfter = function(node, skip) {};
-
-/**
- * Gets all tokens that are related to the given node.
- * @param {!Espree.Node} node The AST node.
- * @param {number=} beforeCount The number of tokens before the node to
- *     retrieve.
- * @param {number=} afterCount The number of tokens after the node to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
- */
-ESLint.SourceCode.prototype.getTokens = function(
-    node, beforeCount, afterCount) {};
-
-/**
- * Gets the first `count` tokens of the given node's token stream.
- * @param {!Espree.Node} node The AST node.
- * @param {number=} count The number of tokens of the node to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
- */
-ESLint.SourceCode.prototype.getFirstTokens = function(node, count) {};
-
-/**
- * Gets the first token of the given node's token stream.
- * @param {!Espree.Node} node The AST node.
- * @param {number=} skip A number of tokens to skip.
- * @return {!Espree.Token} An object representing the token.
- */
-ESLint.SourceCode.prototype.getFirstToken = function(node, skip) {};
-
-/**
- * Gets the last `count` tokens of the given node.
- * @param {!Espree.Node} node The AST node.
- * @param {number=} count The number of tokens of the node to retrieve.
- * @return {!Array<!Espree.Token>} Array of objects representing tokens.
- */
-ESLint.SourceCode.prototype.getLastTokens = function(node, count) {};
-
-/**
- * Gets the last token of the given node's token stream.
- * @param {!Espree.Node} node The AST node.
- * @param {number=} skip A number of tokens to skip.
- * @return {!Espree.Token} An object representing the token.
- */
-ESLint.SourceCode.prototype.getLastToken = function(node, skip) {};
-
-/**
- * Gets all of the tokens between two non-overlapping nodes.
- * @param {!Espree.Node} left Node before the desired token range.
- * @param {!Espree.Node} right Node after the desired token range.
- * @param {number=} padding Number of extra tokens on either side of center.
- * @return {!Array<!Espree.Token>} Tokens between left and right plus padding.
- */
-ESLint.SourceCode.prototype.getTokensBetween = function(
-    left, right, padding) {};
-
-/**
- * Gets the token starting at the specified index.
- * @param {number=} startIndex Index of the start of the token's range.
- * @return {!Espree.Token} The token starting at index, or null if no such
- *     token.
- */
-ESLint.SourceCode.prototype.getTokenByRangeStart = function(startIndex) {};
 
 /**
  * Gets the token or commentthat precedes a given node or token in the token
