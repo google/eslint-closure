@@ -129,5 +129,24 @@ describe('categorizeUnderscoredIdentifier', () => {
     expect(categorize(' __')).to.not.equal(UnderscoreForm.MIDDLE);
     expect(categorize('')).to.not.equal(UnderscoreForm.MIDDLE);
   });
+});
 
+describe('isValidPrefix', () => {
+  it('should return true for valid prefixes', () => {
+    expect(utils.isValidPrefix('', '')).to.equal(true);
+    expect(utils.isValidPrefix('foo', 'foo')).to.equal(true);
+    expect(utils.isValidPrefix('foo.bar', 'foo')).to.equal(true);
+    expect(utils.isValidPrefix('foo.bar.baz', 'foo')).to.equal(true);
+  });
+
+  it('should return false for invalid prefixes', () => {
+    expect(utils.isValidPrefix('foo', 'bar')).to.equal(false);
+    expect(utils.isValidPrefix('foo', 'foof')).to.equal(false);
+    expect(utils.isValidPrefix('foo', 'fo')).to.equal(false);
+    expect(utils.isValidPrefix('foo.bar', 'foo.baz')).to.equal(false);
+    expect(utils.isValidPrefix('foo.bar.baz', 'foo.bar.qux')).to.equal(false);
+    expect(utils.isValidPrefix('foobar', 'foo.bar')).to.equal(false);
+    expect(utils.isValidPrefix('foo.barf', 'foo.bar')).to.equal(false);
+    expect(utils.isValidPrefix('foo.barbaz', 'foo.bar')).to.equal(false);
+  });
 });

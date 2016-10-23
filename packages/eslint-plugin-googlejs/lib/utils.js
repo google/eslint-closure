@@ -148,6 +148,26 @@ function isNodeConstructorFunction(node) {
       (node.parent).kind === 'constructor';
 }
 
+
+/**
+ * Returns true if a prefix is a valid member expression prefix of a name.
+ * For example, `foo.bar` is a prefix of `foo.bar.baz`, but `foo.bar` is not a
+ * valid prefix of `foo.barbaz`.
+ * @param {string} name
+ * @param {string} prefix
+ * @return {boolean}
+ */
+function isValidPrefix(name, prefix) {
+  if (name.startsWith(prefix)) {
+    // If name isn't prefix then we know it has more characters.  The
+    // only valid character after the prefix is a dot to signify another
+    // member expression.
+    return name === prefix || name[prefix.length] === '.';
+  } else {
+    return false;
+  }
+}
+
 exports = {
   categorizeUnderscoredIdentifier,
   getNodeAncestorOfType,
@@ -157,6 +177,7 @@ exports = {
   isNodeGetterFunction,
   isNodeOneLine,
   isNodeSetterFunction,
+  isValidPrefix,
   nodesEndOnSameLine,
   nodesShareOneLine,
   nodesStartOnSameLine,

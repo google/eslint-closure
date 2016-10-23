@@ -24,13 +24,13 @@ function matchStringLiteral(node) {
  *   source: string,
  * }|boolean)}
  */
-let GoogRequireMatch;
+let GoogDependencyMatch;
 
 /**
  * If node is a bare goog.require call return an object with it's source module
  * name.  Otherwise return false.
  * @param {!AST.Node} node
- * @return {!GoogRequireMatch}
+ * @return {!GoogDependencyMatch}
  */
 function matchExtractBareGoogRequire(node) {
   return astMatcher.isASTMatch(node, {
@@ -59,7 +59,42 @@ function matchExtractBareGoogRequire(node) {
   });
 }
 
+
+/**
+ * If node is a goog.provide call return an object with the provided name as the
+ * property source, otherwise return false.
+ * @param {!AST.Node} node
+ * @return {!GoogDependencyMatch}
+ */
+function matchExtractGoogProvide(node) {
+  return astMatcher.isASTMatch(node, {
+    type: 'ExpressionStatement',
+    expression: {
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: {
+          type: 'Identifier',
+          name: 'goog',
+        },
+        property: {
+          type: 'Identifier',
+          name: 'provide',
+        },
+      },
+      arguments: [
+        {
+          type: 'Literal',
+          value: (v) => typeof v === 'string' &&
+              astMatcher.extractAST('source')(v),
+        },
+      ],
+    },
+  });
+}
+
 exports = {
   matchExtractBareGoogRequire,
+  matchExtractGoogProvide,
   matchStringLiteral,
 };

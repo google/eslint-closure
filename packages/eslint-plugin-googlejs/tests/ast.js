@@ -78,3 +78,37 @@ describe('matchExtractBareGoogRequire', () => {
   });
 });
 
+describe('matchExtractGoogProvide', () => {
+  const parseMatchProvide = (sourceCode) => {
+    return ast.matchExtractGoogProvide(
+        espree.parse(sourceCode, DEFAULT_CONFIG).body[0]);
+  };
+
+  it('should match and extract bare goog.provide calls', () => {
+    expect(parseMatchProvide('goog.provide("foo")')).to.eql({source: 'foo'});
+    expect(parseMatchProvide('goog.provide("foo.bar")'))
+        .to.eql({source: 'foo.bar'});
+  });
+
+  it('should not match non string literal goog.provide calls', () => {
+    expect(parseMatchProvide('goog.provide(a)')).to.equal(false);
+    expect(parseMatchProvide('goog.provide(1)')).to.equal(false);
+    expect(parseMatchProvide('goog.provide(null)')).to.equal(false);
+    expect(parseMatchProvide('goog.provide(undefined)')).to.equal(false);
+  });
+
+  it('should not match non goog.provide calls', () => {
+    expect(parseMatchProvide('goo.provide("foo")')).to.equal(false);
+    expect(parseMatchProvide('provide("foo.bar")')).to.equal(false);
+    expect(parseMatchProvide('goog.provid("foo.bar")')).to.equal(false);
+  });
+
+  // NOTE: This is illegal in closure code, but leave it in to ensure we aren't
+  // parsing it.
+  it('should not match variable assigned goog.provide calls', () => {
+    expect(parseMatchProvide('var a = goog.provide("foo")')).to.equal(false);
+    expect(parseMatchProvide('var a = goog.provide("foo.bar")'))
+        .to.equal(false);
+  });
+});
+

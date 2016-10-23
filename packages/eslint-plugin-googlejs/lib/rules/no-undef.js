@@ -6,6 +6,7 @@ goog.module('googlejs.rules.noUndef');
 
 const ast = goog.require('googlejs.ast');
 const astInfo = goog.require('googlejs.astInfo');
+const utils = goog.require('googlejs.utils');
 
 /**
  * Checks if the given node is the argument of a typeof operator.
@@ -60,6 +61,9 @@ const NO_UNDEF_RULE = {
     /** @type {!Array<string>} */
     let googRequiredStrings = [];
 
+    /** @type {!Array<string>} */
+    let googProvidedStrings = [];
+
     return {
       /**
        * @param {!AST.Program} programNode
@@ -70,19 +74,31 @@ const NO_UNDEF_RULE = {
              // No eta reduction because Closure complains about types.
             .filter((b) => Boolean(b))
             .map((dependency) => dependency.source);
+
+        googProvidedStrings = programNode.body
+            .map(ast.matchExtractGoogProvide)
+            .filter((b) => Boolean(b))
+            .map((dependency) => dependency.source);
       },
 
       'Program:exit': () => {
         const globalScope = context.getScope();
+        const undeclaredVariables = globalScope.through;
 
-        globalScope.through.forEach((ref) => {
+        const isGoogProvided = (fullName) => googProvidedStrings.some(
+            (provided) => utils.isValidPrefix(fullName, provided));
+
+        const isGoogRequired = (fullName) => googRequiredStrings.some(
+            (required) => utils.isValidPrefix(fullName, required));
+
+        undeclaredVariables.forEach((ref) => {
           /** @type {!AST.Identifier} */
           const identifier = ref.identifier;
           const fullName = astInfo.getFullyQualifedName(identifier);
 
           if (!considerTypeOf && hasTypeOfOperator(identifier)) {
             return;
-          } else if (googRequiredStrings.some((g) => fullName.startsWith(g))) {
+          } else if (isGoogProvided(fullName) || isGoogRequired(fullName)) {
             return;
           }
 

@@ -143,6 +143,46 @@ qux.bar();
 qux.bar.baz;`,
       globals: {goog: true},
     },
+    {
+      code: `
+goog.provide('foo');
+foo.bar;`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.provide('foo');
+foo = function() {return 2;}`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.provide('foo');
+foo();`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.provide('foo.bar');
+foo.bar.baz();`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.provide('foo.bar.baz');
+foo.bar.baz();`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.provide('foo.bar.baz');
+goog.provide('qux.bar');
+foo.bar.baz();
+foo.bar.baz.foof();
+qux.bar();
+qux.bar.baz;`,
+      globals: {goog: true},
+    },
   ],
   invalid: [
     {
@@ -215,6 +255,79 @@ qux.bar.baz;`,
         },
       },
       errors: [{message: "'b' is not defined."}],
+    },
+
+    {
+      code: `
+goog.require('foo');
+foo.bar;
+foobar`,
+      globals: {goog: true},
+      errors: [{message: "'foobar' is not defined."}],
+    },
+    {
+      code: `
+goog.require('foo.bar');
+foo.baz();`,
+      globals: {goog: true},
+      errors: [{message: "'foo' is not defined."}],
+    },
+    {
+      code: `
+goog.require('foo.bar.baz');
+foo.barbaz();`,
+      globals: {goog: true},
+      errors: [{message: "'foo' is not defined."}],
+    },
+    {
+      code: `
+goog.require('foo.bar.baz');
+goog.require('qux.bar');
+foobar.baz();
+foo.bar.bazfoof();
+qux.baz();
+qux.bar.baz;`,
+      globals: {goog: true},
+      errors: [
+        {message: "'foobar' is not defined."},
+        {message: "'foo' is not defined."},
+        {message: "'qux' is not defined."},
+      ],
+    },
+    {
+      code: `
+goog.provide('foo');
+foobar;`,
+      globals: {goog: true},
+      errors: [{message: "'foobar' is not defined."}],
+    },
+    {
+      code: `
+goog.provide('foo');
+foobar = function() {return 2;}`,
+      globals: {goog: true},
+      errors: [{message: "'foobar' is not defined."}],
+    },
+    {
+      code: `
+goog.provide('foo');
+foobar();`,
+      globals: {goog: true},
+      errors: [{message: "'foobar' is not defined."}],
+    },
+    {
+      code: `
+goog.provide('foo.bar');
+foo.baz();`,
+      globals: {goog: true},
+      errors: [{message: "'foo' is not defined."}],
+    },
+    {
+      code: `
+goog.provide('foo.bar.baz');
+foo.bar.qux();`,
+      globals: {goog: true},
+      errors: [{message: "'foo' is not defined."}],
     },
   ],
 });
