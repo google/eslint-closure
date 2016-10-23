@@ -36,6 +36,7 @@
     "karma-mocha-reporter": "^2.1.0",
     "karma-phantomjs-launcher": "^1.0.2",
     "mocha": "^3.0.2",
+    "node-inspector": "^0.12.8",
     "shelljs": "^0.7.4",
     "shelljs-nodecli": "^0.1.1",
     "source-map-support": "^0.4.5"
