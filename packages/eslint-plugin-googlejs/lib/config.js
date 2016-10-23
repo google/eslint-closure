@@ -8,9 +8,11 @@ const indent = goog.require('googlejs.rules.indent');
 const inlineCommentSpacing = goog.require('googlejs.rules.inlineCommentSpacing');
 /** @suppress {extraRequire} */
 const jsdoc = goog.require('googlejs.rules.jsdoc');
+/** @suppress {extraRequire} */
+const noUndef = goog.require('googlejs.rules.noUndef');
 
 /**
- *  @const {!ESLint.Config}
+ * @const {!ESLint.Config}
  */
 const PLUGIN_ESLINT_CONFIG = {
   rules: {
@@ -18,6 +20,7 @@ const PLUGIN_ESLINT_CONFIG = {
     indent,
     'inline-comment-spacing': inlineCommentSpacing,
     jsdoc,
+    'no-undef': noUndef,
   },
 };
 
