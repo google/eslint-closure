@@ -1,7 +1,11 @@
 /**
  * @fileoverview Rule to flag references to undeclared variables.
  */
+
 goog.module('googlejs.rules.noUndef');
+
+const ast = goog.require('googlejs.ast');
+const astInfo = goog.require('googlejs.astInfo');
 
 /**
  * Checks if the given node is the argument of a typeof operator.
@@ -53,15 +57,32 @@ const NO_UNDEF_RULE = {
     const options = /** @type {!NoUndefRuleOptions} */ (context.options[0]);
     const considerTypeOf = options && options.typeof === true || false;
 
+    /** @type {!Array<string>} */
+    let googRequiredStrings = [];
+
     return {
+      /**
+       * @param {!AST.Program} programNode
+       */
+      Program(programNode) {
+        googRequiredStrings = programNode.body
+            .map(ast.matchExtractBareGoogRequire)
+             // No eta reduction because Closure complains about types.
+            .filter((b) => Boolean(b))
+            .map((dependency) => dependency.source);
+      },
+
       'Program:exit': () => {
         const globalScope = context.getScope();
 
         globalScope.through.forEach((ref) => {
           /** @type {!AST.Identifier} */
           const identifier = ref.identifier;
+          const fullName = astInfo.getFullyQualifedName(identifier);
 
           if (!considerTypeOf && hasTypeOfOperator(identifier)) {
+            return;
+          } else if (googRequiredStrings.some((g) => fullName.startsWith(g))) {
             return;
           }
 

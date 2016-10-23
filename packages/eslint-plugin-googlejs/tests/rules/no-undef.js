@@ -109,6 +109,40 @@ var warn = new Warning('text');`,
       },
       globals: {stuff: false, foo: false},
     },
+    {
+      code: `
+goog.require('foo');
+foo.bar;`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.require('foo');
+foo();`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.require('foo.bar');
+foo.bar.baz();`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.require('foo.bar.baz');
+foo.bar.baz();`,
+      globals: {goog: true},
+    },
+    {
+      code: `
+goog.require('foo.bar.baz');
+goog.require('qux.bar');
+foo.bar.baz();
+foo.bar.baz.foof();
+qux.bar();
+qux.bar.baz;`,
+      globals: {goog: true},
+    },
   ],
   invalid: [
     {
