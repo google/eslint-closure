@@ -176,17 +176,20 @@ let CompiledInfo;
  */
 function buildTestCompiler(testFilePath, entryPoint) {
   const outputFile = getTestFilePathOutputLocation(testFilePath);
-  const fullTestFilePath = getFullTestFilePath(testFilePath);
+  const fullPath = getFullTestFilePath(testFilePath);
+  const relativeTestFilePath = path.relative(__dirname, fullPath);
   const compiler = new ClosureCompiler(
       Object.assign(COMMON_CLOSURE_COMPILER_SETTINGS, {
         js: [
           CLOSURE_LIB_JS,
           "'./lib/**.js'",
-          fullTestFilePath,
+          // './' + relativeTestFilePath,
+          relativeTestFilePath,
         ],
         js_output_file: outputFile,
         create_source_map: `${outputFile}.map`,
-        source_map_location_mapping: `'${__dirname}|../..'`,
+        // Controls how file system paths translate into URLs.
+        // source_map_location_mapping: `.|.`,
         output_wrapper: `//# sourceMappingURL=${outputFile}.map
 require('source-map-support').install();
 %output%`,
@@ -227,7 +230,7 @@ function convertTestFilePathToModuleName(testFilePath) {
 /**
  * Gets the corresponding output file path for a test file.
  * @param {string} testFilePath
- * @return {string} The output path for the compiled test file.
+ * @return {string} The full output path for the compiled test file.
  */
 function getTestFilePathOutputLocation(testFilePath) {
   const relPath = path.relative(__dirname, path.normalize(testFilePath));
@@ -283,7 +286,8 @@ function runTest(testOutputFile) {
  */
 function testAllFiles(onCompilation) {
   /** @type {!Array<string>} */
-  const allTests = find('./tests').filter((file) => file.match(/\.js$/));
+  const allTests = find('./tests')
+        .filter((file) => file.match(/\.js$/));
   allTests.forEach((path) => buildTest(path, onCompilation));
 }
 
@@ -364,8 +368,8 @@ target.testFile = (files) => {
     throw new Error('Need at least one file to test.');
   }
   for (const file of files) {
-    // Remove any paths just in case.
-    buildTest(file, runTest);
+    const fullPath = path.join(__dirname, path.normalize(file));
+    buildTest(fullPath, runTest);
   }
 };
 
