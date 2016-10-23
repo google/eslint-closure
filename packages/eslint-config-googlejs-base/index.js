@@ -593,7 +593,7 @@ const STYLISTIC_RULES = {
   'max-len': [ERROR, {
     code: 80,
     comments: 80,
-    ignorePattern: 'goog\\.(require|module)\\(',
+    ignorePattern: 'goog\\.(require|module|provide)\\(',
     ignoreComments: false,
     ignoreUrls: true,
   }],
