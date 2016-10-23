@@ -450,8 +450,8 @@ const VARIABLE_DECLARATION_RULES = {
 
   // Disallow the use of undeclared variables unless mentioned in /*global */
   // comments.  #eslint
-  // TODO(jschaf): Disable until we recoginize goog.provide and goog.require.
-  'no-undef': ERROR,
+  // Disabled for googlejs rule.
+  // 'no-undef': ERROR,
 
   // Disallow the use of undefined as an identifier.
   'no-undefined': OFF,
@@ -938,6 +938,7 @@ const GOOGLE_PLUGIN_RULES = {
     requireParamDescription: false,
     requireReturnDescription: false,
   }],
+  'googlejs/no-undef': ERROR,
 };
 
 
