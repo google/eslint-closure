@@ -121,7 +121,7 @@ function create(context) {
    * @return {void}
    */
   function checkTypeNames(node, tagType) {
-    jsdocUtils.traverseJSDocTagTypes(tagType, (tag) => {
+    jsdocUtils.traverseTags(tagType, (tag) => {
       if (tag.type === 'NameExpression') {
         checkTypeName(/** @type {!Doctrine.NameExpression} */ (tag), node);
       }
@@ -138,7 +138,7 @@ function create(context) {
     const allRefs = references.map(e => e);
     // console.log('allrefs', allRefs);
 
-    jsdocUtils.traverseJSDocTagTypes(tagType, (tag) => {
+    jsdocUtils.traverseTags(tagType, (tag) => {
 
       if (tag.type === 'NameExpression') {
         const name = tagType.name;

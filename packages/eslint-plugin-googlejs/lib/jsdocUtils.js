@@ -34,29 +34,29 @@ function isTerminal(tagType) {
  * @param {!Doctrine.TagType} tagType
  * @param {function(!Doctrine.TagType)} visitor
  */
-function traverseJSDocTagTypes(tagType, visitor) {
+function traverseTags(tagType, visitor) {
   visitor(tagType);
   if (isTerminal(tagType)) return;
   switch (tagType.type) {
     case 'ArrayType':
       /** @type {!Doctrine.ArrayType} */ (tagType).elements
-          .forEach(tag => traverseJSDocTagTypes(tag, visitor));
+          .forEach(tag => traverseTags(tag, visitor));
       break;
     case 'RecordType':
       /** @type {!Doctrine.RecordType} */ (tagType).fields
-          .forEach(tag => traverseJSDocTagTypes(tag, visitor));
+          .forEach(tag => traverseTags(tag, visitor));
       break;
     case 'FunctionType': {
       const t = /** @type {!Doctrine.FunctionType} */ (tagType);
-      t.params.forEach(tag => traverseJSDocTagTypes(tag, visitor));
-      if (t.result) traverseJSDocTagTypes(t.result, visitor);
-      if (t.this) traverseJSDocTagTypes(t.this, visitor);
+      t.params.forEach(tag => traverseTags(tag, visitor));
+      if (t.result) traverseTags(t.result, visitor);
+      if (t.this) traverseTags(t.this, visitor);
       break;
     }
     case 'FieldType': {
       const t = /** @type {!Doctrine.FieldType} */ (tagType);
       if (t.value) {
-        traverseJSDocTagTypes(t.value, visitor);
+        traverseTags(t.value, visitor);
       }
       break;
     }
@@ -65,18 +65,18 @@ function traverseJSDocTagTypes(tagType, visitor) {
     case 'NonNullableType':
     case 'OptionalType':
     case 'NullableType':
-      traverseJSDocTagTypes(
+      traverseTags(
           /** @type {!Doctrine.UnaryTagType} */ (tagType).expression, visitor);
       break;
     case 'TypeApplication': {
       const t = /** @type {!Doctrine.TypeApplication} */ (tagType);
-      traverseJSDocTagTypes(t.expression, visitor);
-      t.applications.forEach(tag => traverseJSDocTagTypes(tag, visitor));
+      traverseTags(t.expression, visitor);
+      t.applications.forEach(tag => traverseTags(tag, visitor));
       break;
     }
     case 'UnionType':
       /** @type {!Doctrine.UnionType} */ (tagType).elements
-          .forEach(tag => traverseJSDocTagTypes(tag, visitor));
+          .forEach(tag => traverseTags(tag, visitor));
       break;
     default:
       throw new Error('Unrecoginized tag type.');
@@ -85,5 +85,5 @@ function traverseJSDocTagTypes(tagType, visitor) {
 
 exports = {
   isLiteral,
-  traverseJSDocTagTypes,
+  traverseTags,
 };
