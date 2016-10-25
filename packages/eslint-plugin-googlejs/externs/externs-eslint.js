@@ -375,7 +375,7 @@ ESLint.SourceCodeCommon.prototype.getComments = function(node) {};
 /**
  * Retrieves the JSDoc comment for a given node.
  * @param {!AST.Locatable} node The AST node to get the comment for.
- * @return {!AST.CommentToken} The BlockComment node containing the JSDoc for
+ * @return {?AST.CommentToken} The BlockComment node containing the JSDoc for
  *      the given node or null if not found.
  * @public
  */
