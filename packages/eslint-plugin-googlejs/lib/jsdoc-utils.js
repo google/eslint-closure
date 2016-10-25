@@ -71,9 +71,9 @@ function traverseTags(tagType, visitor) {
       break;
     case 'FunctionType': {
       const t = /** @type {!Doctrine.FunctionType} */ (tagType);
+      if (t.this) traverseTags(t.this, visitor);
       t.params.forEach(tag => traverseTags(tag, visitor));
       if (t.result) traverseTags(t.result, visitor);
-      if (t.this) traverseTags(t.this, visitor);
       break;
     }
     case 'FieldType': {
