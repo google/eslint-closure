@@ -3,6 +3,8 @@
  */
 goog.module('googlejs.jsdocUtils');
 
+const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
+
 /**
  * Returns true if the tagType is a JSDoc literal.
  * @param {!Doctrine.TagType} tagType
@@ -26,6 +28,27 @@ function isLiteral(tagType) {
 function isTerminal(tagType) {
   return isLiteral(tagType) ||
       tagType.type === 'NameExpression';
+}
+
+/**
+ * Parses a comment string and returns a JSDoc AST.
+ * @param {string} jsdocString
+ * @return {!Doctrine.DocComment}
+ */
+function parseComment(jsdocString) {
+  try {
+    return doctrine.parse(jsdocString, {
+      strict: true,
+      unwrap: true,
+      sloppy: true,
+    });
+  } catch (ex) {
+    if (/braces/i.test(ex.message)) {
+      throw new Error('JSDoc type missing brace.');
+    } else {
+      throw new Error('JSDoc syntax error.');
+    }
+  }
 }
 
 /**
@@ -85,5 +108,6 @@ function traverseTags(tagType, visitor) {
 
 exports = {
   isLiteral,
+  parseComment,
   traverseTags,
 };
