@@ -10,19 +10,11 @@ const jsdocUtils = goog.require('googlejs.jsdocUtils');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
-const espree = /** @type {!Espree.Module} */ (require('espree'));
 
 const expect = chai.expect;
 const linter = eslint.linter;
 
-const DEFAULT_CONFIG = {
-  ecmaVersion: 6,
-  comment: true,
-  tokens: true,
-  range: true,
-  loc: true,
-};
-
+// NOTE: We're only testing our wrapper around Doctrine.parse.
 describe('parseComment', () => {
   const parseComment = jsdocUtils.parseComment;
   it('should parse a comment string', () => {
@@ -131,21 +123,6 @@ describe('getJSDocComment', () => {
 });
 
 describe('getVariableJSDocComment', () => {
-
-  // /**
-  //  * Parses sourceCode and returns the first VariableDeclaration node.
-  //  * @param {string} sourceCode
-  //  * @return {!AST.VariableDeclaration}
-  //  */
-  // const parseGetVariable = (sourceCode) => {
-
-  //   const program = espree.parse(sourceCode, DEFAULT_CONFIG);
-  //   // We only pass in variable declarations.
-  //   const varDecl = /** @type {!AST.VariableDeclaration} */ (program.body[0]);
-  //   return varDecl;
-  // };
-
-
   const getDoc = (code) => {
     const filename = 'jsdoc-test.js';
     const eslintOptions = {

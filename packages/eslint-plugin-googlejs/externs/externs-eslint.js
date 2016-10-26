@@ -41,7 +41,8 @@ ESLint.Linter = function() {};
 ESLint.Linter.prototype.reset = function() {};
 
 // NOTE: ESLint.Linter is an instance of NodeJS events.EventEmitter.  The only
-// method that is used is `on`, so we just implement that instead of everything.
+// methods used are `on` and `once`, so we just implement those instead of
+// everything.
 /**
  * Adds the listener function to the end of the listeners array for the event
  * named eventName.
@@ -49,6 +50,14 @@ ESLint.Linter.prototype.reset = function() {};
  * @param {!Function} listener
  */
 ESLint.Linter.prototype.on = function(eventName, listener) {};
+
+/**
+ * Adds a one time listener function for the event named eventName. The next
+ * time eventName is triggered, this listener is removed and then invoked.
+ * @param {string} eventName
+ * @param {!Function} listener
+ */
+ESLint.Linter.prototype.once = function(eventName, listener) {};
 
 /**
  * Verifies the text against the rules specified by the second argument.

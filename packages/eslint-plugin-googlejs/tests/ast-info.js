@@ -9,57 +9,25 @@ goog.setTestOnly('googlejs.tests.astInfo');
 const astInfo = goog.require('googlejs.astInfo');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
-const espree = /** @type {!Espree.Module} */ (require('espree'));
+const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 
 const expect = chai.expect;
-
-const DEFAULT_CONFIG = {
-  ecmaVersion: 6,
-  comment: true,
-  tokens: true,
-  range: true,
-  loc: true,
-};
+const linter = eslint.linter;
 
 describe('getFullyQualifedName', () => {
-  /**
-   * Parses sourceCode and returns the first identifier node.  This method also
-   * adds parent links since Espree doesn't provide that automatically.
-   * @param {string} sourceCode
-   * @return {!AST.Identifier}
-   */
-  const parseGetIdentifier = (sourceCode) => {
-    const program = espree.parse(sourceCode, DEFAULT_CONFIG);
-    // We only pass in expression statements.
-    const exprStmt = /** @type {!AST.ExpressionStatement} */ (program.body[0]);
-    let nodeSearcher = exprStmt.expression;
-    nodeSearcher.parent = exprStmt;
-    if (nodeSearcher.type === 'CallExpression') {
-      const child = /** @type {!AST.CallExpression} */ (nodeSearcher).callee;
-      child.parent = nodeSearcher;
-      nodeSearcher = child;
-    }
-    while (nodeSearcher.type === 'MemberExpression') {
-      const child = /** @type {!AST.MemberExpression} */ (nodeSearcher).object;
-      child.parent = nodeSearcher;
-      nodeSearcher = child;
-    }
-    if (nodeSearcher.type !== 'Identifier') {
-      throw new Error('Malformed source code, provide a simple member' +
-                      ' expression with an optional outer call expression.');
-    }
-    return /** @type {!AST.Identifier} */ (nodeSearcher);
-  };
 
-  /**
-   * Returns the last identifer name, e.g. `baz` in `foo.bar.baz`.
-   * The last identifier name is used soley for ease of testing.
-   * @param {string} sourceCode
-   * @return {string}
-   */
-  const getFullName = (sourceCode) => {
-    const firstIdentifier = parseGetIdentifier(sourceCode);
-    return astInfo.getFullyQualifedName(firstIdentifier);
+  const getFullName = (code) => {
+    const filename = 'test.js';
+    const eslintOptions = {
+      rules: {},
+    };
+    let fullName;
+    linter.reset();
+    linter.once('Identifier', (node) => {
+      fullName = astInfo.getFullyQualifedName(node);
+    });
+    linter.verify(code, eslintOptions, filename, true);
+    return fullName;
   };
 
   it('should get the outer most member expression property name', () => {
