@@ -71,6 +71,8 @@ Chai.Expect.prototype.eq;
 Chai.Expect.prototype.eql;
 /** @type {!Chai.Equal} */
 Chai.Expect.prototype.eqls;
+/** @type {!Chai.Throw} */
+Chai.Expect.prototype.throw;
 /** @type {!Chai.Property} */
 Chai.Expect.prototype.property;
 /** @type {!Chai.OwnProperty} */
@@ -236,3 +238,10 @@ Chai.LengthComparator = (length, message) => {};
  * @return {!Chai.Expect}
  */
 Chai.InstanceOf = (constructor, message) => {};
+
+
+/**
+ * @param {(string|RegExp|!Function)} constructor
+ * @return {!Chai.Expect}
+ */
+Chai.Throw = (constructor) => {};

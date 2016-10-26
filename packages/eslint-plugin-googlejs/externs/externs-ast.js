@@ -72,7 +72,7 @@ AST.Token.prototype.value;
  */
 AST.CommentToken = function() {};
 
-/** @type {!AST.NodeType} */
+/** @type {string} */
 AST.CommentToken.prototype.type;
 
 /** @type {!Array<number>} */
@@ -1055,7 +1055,7 @@ AST.VariableDeclarator = function() {};
 /** @type {(!AST.BindingIdentifier | !AST.BindingPattern)} */
 AST.VariableDeclarator.prototype.id;
 
-/** @type {!AST.Expression} */
+/** @type {?AST.Expression} */
 AST.VariableDeclarator.prototype.init;
 
 /** @type {!AST.VariableDeclaration} */

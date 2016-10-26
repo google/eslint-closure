@@ -9,7 +9,19 @@ goog.setTestOnly('googlejs.tests.jsdocUtils');
 const jsdocUtils = goog.require('googlejs.jsdocUtils');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
+const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
+const espree = /** @type {!Espree.Module} */ (require('espree'));
+
 const expect = chai.expect;
+const linter = eslint.linter;
+
+const DEFAULT_CONFIG = {
+  ecmaVersion: 6,
+  comment: true,
+  tokens: true,
+  range: true,
+  loc: true,
+};
 
 describe('parseComment', () => {
   const parseComment = jsdocUtils.parseComment;
@@ -93,5 +105,108 @@ describe('traverseTags', () => {
     expect(collect('@type {function(new: boolean, a: string):number}')).to.eql(
         ['FunctionType', 'boolean', 'a', 'string', 'number']);
   });
+});
 
+
+describe('getJSDocComment', () => {
+  const isJSDoc = (type, value) =>
+        jsdocUtils.isJSDocComment(
+            // Not strictly true but good enough to test.
+            /** @type {!AST.CommentToken} */ ({type, value})
+        );
+  it('should return true for JSDoc comments', () => {
+    expect(isJSDoc('Block', '* foo')).to.equal(true);
+    expect(isJSDoc('Block', '** bar')).to.equal(true);
+  });
+
+  it('should return false for multi-line comments', () => {
+    expect(isJSDoc('Block', ' bar')).to.equal(false);
+    expect(isJSDoc('Block', ' * foo')).to.equal(false);
+  });
+
+  it('should return false for line comments', () => {
+    expect(isJSDoc('Line', '* foo')).to.equal(false);
+    expect(isJSDoc('Line', '** bar')).to.equal(false);
+  });
+});
+
+describe('getVariableJSDocComment', () => {
+
+  // /**
+  //  * Parses sourceCode and returns the first VariableDeclaration node.
+  //  * @param {string} sourceCode
+  //  * @return {!AST.VariableDeclaration}
+  //  */
+  // const parseGetVariable = (sourceCode) => {
+
+  //   const program = espree.parse(sourceCode, DEFAULT_CONFIG);
+  //   // We only pass in variable declarations.
+  //   const varDecl = /** @type {!AST.VariableDeclaration} */ (program.body[0]);
+  //   return varDecl;
+  // };
+
+
+  const getDoc = (code) => {
+    const filename = 'jsdoc-test.js';
+    const eslintOptions = {
+      parserOptions: {ecmaVersion: 6},
+      rules: {},
+    };
+    let commentNode;
+    linter.reset();
+    linter.on('VariableDeclaration', (node) => {
+      commentNode = jsdocUtils.getVariableJSDocComment(node);
+    });
+    linter.verify(code, eslintOptions, filename, true);
+    return commentNode ? commentNode.value : null;
+  };
+
+  it('should return null if there are no JSDoc comments', () => {
+    expect(getDoc('var a;')).to.equal(null);
+    expect(getDoc('let a;')).to.equal(null);
+  });
+
+  it('should get JSDoc comments for uninitialized variables', () => {
+    expect(getDoc('/** desc */\nvar a;')).to.equal('* desc ');
+    expect(getDoc('/** desc */\nlet a;')).to.equal('* desc ');
+  });
+
+  it('should get JSDoc comments for simple initialized variables', () => {
+    expect(getDoc('/** desc */\nvar b = 2;')).to.equal('* desc ');
+    expect(getDoc('/** desc */\nlet c = 3;')).to.equal('* desc ');
+    expect(getDoc('/** desc */\nconst d = 4;')).to.equal('* desc ');
+  });
+
+  it('should not get JSDoc comments for class expressions', () => {
+    expect(getDoc('/** desc */\nvar a = class {};')).to.equal(null);
+    expect(getDoc('/** desc */\nlet c = class {};')).to.equal(null);
+    expect(getDoc('/** desc */\nconst e = class {};')).to.equal(null);
+    expect(getDoc('/** desc */\nconst e = (class {});')).to.equal(null);
+  });
+
+  it('should not get JSDoc comments for function expressions', () => {
+    expect(getDoc('/** desc */\nvar a = function() {}')).to.equal(null);
+    expect(getDoc('/** desc */\nlet c = function() {}')).to.equal(null);
+    expect(getDoc('/** desc */\nconst e = function() {}')).to.equal(null);
+    expect(getDoc('/** desc */\nconst e = (function() {});')).to.equal(null);
+  });
+
+  it('should not get JSDoc comments for arrow function expressions', () => {
+    expect(getDoc('/** desc */\nvar b = () => 2;')).to.equal(null);
+    expect(getDoc('/** desc */\nlet d = () => 2;')).to.equal(null);
+    expect(getDoc('/** desc */\nconst f = () => 2;')).to.equal(null);
+    expect(getDoc('/** desc */\nconst f = (() => 2);')).to.equal(null);
+  });
+
+  it('should get JSDoc comments for IIFEs', () => {
+    expect(getDoc('/** desc */\nvar a = (function() {})()'))
+        .to.equal('* desc ');
+    expect(getDoc('/** desc */\nvar b = (() => 2)();')).to.equal('* desc ');
+    expect(getDoc('/** desc */\nlet c = (function() {})();'))
+        .to.equal('* desc ');
+    expect(getDoc('/** desc */\nlet d = (() => 2)();')).to.equal('* desc ');
+    expect(getDoc('/** desc */\nconst e = (function() {})();'))
+        .to.equal('* desc ');
+    expect(getDoc('/** desc */\nconst f = (() => 2)();')).to.equal('* desc ');
+  });
 });

@@ -40,6 +40,16 @@ ESLint.Linter = function() {};
  */
 ESLint.Linter.prototype.reset = function() {};
 
+// NOTE: ESLint.Linter is an instance of NodeJS events.EventEmitter.  The only
+// method that is used is `on`, so we just implement that instead of everything.
+/**
+ * Adds the listener function to the end of the listeners array for the event
+ * named eventName.
+ * @param {string} eventName
+ * @param {!Function} listener
+ */
+ESLint.Linter.prototype.on = function(eventName, listener) {};
+
 /**
  * Verifies the text against the rules specified by the second argument.
  * @param {string|!ESLint.SourceCode} textOrSourceCode The text to parse or a
