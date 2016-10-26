@@ -40,7 +40,7 @@ AST.Position.prototype.column;
  */
 AST.Locatable = function() {};
 
-/** @type {!AST.NodeType} */
+/** @type {string} */
 AST.Locatable.prototype.type;
 
 /** @type {!Array<number>} */
