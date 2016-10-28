@@ -44,6 +44,46 @@ let JSDocOption;
 let FunctionReturnInfo;
 
 /**
+ * All types that are NameExpressions and don't have their own literal in the
+ * Doctrine parser.  We need this list so we don't mark these variables as used.
+ * @const {!Array<string>}
+ */
+const BUILT_IN_TYPES = [
+  'string',
+  'number',
+  'boolean',
+  'Object',
+  'Array',
+  'Map',
+  'Set',
+];
+
+/**
+ * Returns true if tagName is a named type included in JSDoc.
+ * @param {string} tagName
+ * @return {boolean}
+ */
+function isbuiltInType(tagName) {
+  return BUILT_IN_TYPES.indexOf(tagName) !== -1;
+}
+
+/**
+ * Marks JSDoc types that are variables in the current scope as used.
+ * @param {!ESLint.RuleContext} context
+ * @param {!Doctrine.Tag} tag
+ */
+function markTypeVariablesAsUsed(context, tag) {
+  if (!tag.type) return;
+  jsdocUtils.traverseTags(tag.type, (childTag) => {
+    if (childTag.type === 'NameExpression') {
+      const name = /** @type {!Doctrine.NameExpression} */ (childTag).name;
+      if (isbuiltInType(name)) return;
+      context.markVariableAsUsed(name);
+    }
+  });
+}
+
+/**
  * @param {!ESLint.RuleContext} context
  * @return {!Object<!AST.NodeType, function(!AST.Node)>}
  */
@@ -129,42 +169,32 @@ function create(context) {
   }
 
   /**
-   * Marks JSDoc types that are local variables as used.
-   * @param {!Array<!Escope.Reference>} references
-   * @param {!Doctrine.NameExpression} tagType
+   * Checks and reports invalid JSDoc on variable declarations.
+   * @param {!AST.VariableDeclaration} node
    */
-  function markTypeVariablesAsUsed(references, tagType) {
-    /** @type {!Array<!Escope.Reference>}  */
-    const allRefs = references.map(e => e);
-    // console.log('allrefs', allRefs);
+  function checkVariableJSDoc(node) {
+    const jsdocNode = sourceCode.getJSDocComment(node);
+    if (!jsdocNode) return;
+    const jsdocAST = jsdocUtils.parseComment(jsdocNode.value);
 
-    jsdocUtils.traverseTags(tagType, (tag) => {
-
-      if (tag.type === 'NameExpression') {
-        const name = tagType.name;
-        if (allRefs == 'nonsense') {
-          context.markVariableAsUsed(name);
-        }
-        // if (scopedVariables.has(name)) {
-        //   console.log('marking as USED!', name, scopedVariables.keys());
-        // }
-      }
+    jsdocAST.tags.forEach((tag) => {
+      // markTypeVariablesAsUsed(tag);
     });
   }
 
   /**
-   * Validate the JSDoc node and output warnings if anything is wrong.
+   * Validates the JSDoc node and output warnings if anything is wrong.
    * @param {!AST.Node} node The AST node to check.
    * @return {void}
    */
   function checkJSDoc(node) {
-    const jsdocNode = sourceCode.getJSDocComment(node);
+    // TODO(jschaf): This cast shouldn't be necessary because we check that
+    // jsdocNode is non-null with the if-statement.
+    const jsdocNode = /** @type {!AST.CommentToken} */
+          (sourceCode.getJSDocComment(node));
     /** @const {!FunctionReturnInfo} */
     const functionData = fns.pop();
     const params = Object.create(null);
-    const scope = context.getScope();
-    // const scopedVariables = scope.set;
-
 
     let hasReturns = false;
     let hasConstructor = false;
@@ -197,8 +227,7 @@ function create(context) {
         return;
       }
 
-      jsdoc.tags.forEach(function(tag) {
-
+      jsdoc.tags.forEach((/** !Doctrine.Tag */ tag) => {
         switch (tag.title.toLowerCase()) {
           case 'param':
           case 'arg':
@@ -294,9 +323,8 @@ function create(context) {
           });
         }
 
-        if (tag.type) {
-          markTypeVariablesAsUsed(scope.through, tag.type);
-        }
+
+        markTypeVariablesAsUsed(context, tag);
 
         // validate the types
         if (checkPreferType && tag.type) {
@@ -376,6 +404,7 @@ function create(context) {
     'ClassExpression:exit': checkJSDoc,
     'ClassDeclaration:exit': checkJSDoc,
     'ReturnStatement': addReturn,
+    VariableDeclaration: checkVariableJSDoc,
   };
 }
 

@@ -8,17 +8,34 @@ goog.setTestOnly('googlejs.tests.rules.jsdoc');
 const jsdocRule = goog.require('googlejs.rules.jsdoc');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
+const noUnusedVarsRule = /** @type {!ESLint.RuleDefinition} */ (require('eslint/lib/rules/no-unused-vars'));
 
 const RuleTester = eslint.RuleTester;
 const ruleTester = new RuleTester();
 
 ruleTester.run('jsdoc', jsdocRule, {
 
-  valid: [`
+  valid: [
+    {
+      code: `
+/**
+ * @typedef {{bar: string}}
+ */
+let Bar;
+
+/**
+ * @param {Bar} baz its a time stamp
+ * @return {void}
+ */
+function qux(baz){}`,
+      parserOptions: {ecmaVersion: 6},
+
+    },
+    `
 /**
  * Description
  * @param {Object[]} screenings Array of screenings.
- * @param {Number} screenings[].timestamp its a time stamp 
+ * @param {Number} screenings[].timestamp its a time stamp
  * @return {void}
  */
 function foo(){}`,
@@ -39,7 +56,7 @@ function foo(){}`,
     `
 /**
  * Description
- * @returns {undefined} 
+ * @returns {undefined}
  */
 function foo(){}`,
 
@@ -47,7 +64,7 @@ function foo(){}`,
 /**
  * Description
  * @alias Test#test
- * @returns {void} 
+ * @returns {void}
  */
 function foo(){}`,
 
@@ -55,21 +72,21 @@ function foo(){}`,
 /**
  * Description
  *@extends MyClass
- * @returns {void} 
+ * @returns {void}
  */
 function foo(){}`,
 
     `
 /**
  * Description
- * @constructor 
+ * @constructor
  */
 function Foo(){}`,
 
     `
 /**
  * Description
- * @class 
+ * @class
  */
 function Foo(){}`,
 
@@ -77,7 +94,7 @@ function Foo(){}`,
 /**
  * Description
  * @param {string} p bar
- * @returns {string} desc 
+ * @returns {string} desc
  */
 function foo(p){}`,
 
@@ -85,7 +102,7 @@ function foo(p){}`,
 /**
  * Description
  * @arg {string} p bar
- * @returns {string} desc 
+ * @returns {string} desc
  */
 function foo(p){}`,
 
@@ -93,7 +110,7 @@ function foo(p){}`,
 /**
  * Description
  * @argument {string} p bar
- * @returns {string} desc 
+ * @returns {string} desc
  */
 function foo(p){}`,
 
@@ -101,7 +118,7 @@ function foo(p){}`,
 /**
  * Description
  * @param {string} [p] bar
- * @returns {string} desc 
+ * @returns {string} desc
  */
 function foo(p){}`,
 
@@ -110,7 +127,7 @@ function foo(p){}`,
  * Description
  * @param {Object} p bar
  * @param {string} p.name bar
- * @returns {string} desc 
+ * @returns {string} desc
  */
  Foo.bar =function(p){};`,
 
@@ -119,7 +136,7 @@ function foo(p){}`,
  /**
  * Description
  * @param {string} p bar
- * @returns {string} desc 
+ * @returns {string} desc
  */
 function foo(p){}
  }())`,
@@ -129,7 +146,7 @@ var o = {
  /**
  * Description
  * @param {string} p bar
- * @returns {string} desc 
+ * @returns {string} desc
  */
  foo:function(p){}
  };`,
@@ -140,35 +157,35 @@ var o = {
  * @param {Object} p bar
  * @param {string[]} p.files qux
  * @param {Function} cb baz
- * @returns {void} 
+ * @returns {void}
  */
 function foo(p, cb){}`,
 
     `
 /**
  * Description
- * @override 
+ * @override
  */
 function foo(arg1, arg2){ return ''; }`,
 
     `
 /**
  * Description
- * @inheritdoc 
+ * @inheritdoc
  */
 function foo(arg1, arg2){ return ''; }`,
 
     `
 /**
  * Description
- * @inheritDoc 
+ * @inheritDoc
  */
 function foo(arg1, arg2){ return ''; }`,
 
     `
 /**
  * Description
- * @Returns {void} 
+ * @Returns {void}
  */
 function foo(){}`,
 
@@ -395,7 +412,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @return {void} Foo
  */
 function foo(){}`,
@@ -403,7 +420,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @return Foo
  */
 function foo(){}`,
@@ -412,7 +429,7 @@ function foo(){}`,
     {
       code: `
 /**
- * A thing interface. 
+ * A thing interface.
  * @interface
  */
 function Thing() {}`,
@@ -916,7 +933,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @returns {void Foo
  */
 function foo(){}`,
@@ -927,7 +944,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @return {void} Foo
  */
 function foo(){}`,
@@ -939,7 +956,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @argument {int} bar baz
  */
 function foo(bar){}`,
@@ -954,7 +971,7 @@ function foo(bar){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
  */
 function foo(){}`,
       options: [{prefer: {returns: 'return'}}],
@@ -965,7 +982,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @return {void} Foo
  */
 foo.bar = () => {}`,
@@ -978,7 +995,7 @@ foo.bar = () => {}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @param {void Foo
  */
 function foo(){}`,
@@ -989,7 +1006,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @param {} p Bar
  */
 function foo(){}`,
@@ -1000,7 +1017,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @param {void Foo */
 function foo(){}`,
       errors: [{
@@ -1011,7 +1028,7 @@ function foo(){}`,
     {
       code: `
 /** Foo
-* @param p Desc 
+* @param p Desc
 */
 function foo(){}`,
       errors: [{
@@ -1026,7 +1043,7 @@ function foo(){}`,
       code: `
 /**
 * Foo
-* @param {string} p 
+* @param {string} p
 */
 function foo(){}`,
       errors: [{
@@ -1041,7 +1058,7 @@ function foo(){}`,
       code: `
 /**
 * Foo
-* @param {string} p 
+* @param {string} p
 */
 var foo = function(){}`,
       errors: [{
@@ -1056,9 +1073,9 @@ var foo = function(){}`,
       code: `
 /**
 * Foo
-* @param {string} p 
+* @param {string} p
 */
-var foo = 
+var foo =
 function(){}`,
       errors: [{
         message: "Missing JSDoc parameter description for 'p'.",
@@ -1073,7 +1090,7 @@ function(){}`,
 /**
  * Description for a
  */
-var A = 
+var A =
   class {
     /**
      * Description for method.
@@ -1105,7 +1122,7 @@ var A =
       code: `
 /**
 * Foo
-* @returns {string} 
+* @returns {string}
 */
 function foo(){}`,
       errors: [{
@@ -1117,7 +1134,7 @@ function foo(){}`,
       code: `
 /**
 * Foo
-* @returns {string} something 
+* @returns {string} something
 */
 function foo(p){}`,
       errors: [{
@@ -1129,9 +1146,9 @@ function foo(p){}`,
       code: `
 /**
 * Foo
-* @returns {string} something 
+* @returns {string} something
 */
-var foo = 
+var foo =
 function foo(a = 1){}`,
       parserOptions: {ecmaVersion: 6},
       errors: [{
@@ -1143,11 +1160,11 @@ function foo(a = 1){}`,
       code: `
 /**
 * Foo
-* @param {string} a Description 
-* @param {string} b Description 
-* @returns {string} something 
+* @param {string} a Description
+* @param {string} b Description
+* @returns {string} something
 */
-var foo = 
+var foo =
 function foo(b, a = 1){}`,
       parserOptions: {ecmaVersion: 6},
       errors: [{
@@ -1164,7 +1181,7 @@ function foo(b, a = 1){}`,
 /**
 * Foo
 * @param {string} p desc
-* @param {string} p desc 
+* @param {string} p desc
 */
 function foo(){}`,
       errors: [{
@@ -1255,9 +1272,9 @@ function foo(a){var t = false; if(t) {process(t);}}`,
     {
       code: `
 /**
- * Does something. 
-* @param {string} a - this is a 
-* @return {Array<number>} The result of doing it 
+ * Does something.
+* @param {string} a - this is a
+* @return {Array<number>} The result of doing it
 */
  export function doSomething(a) { }`,
       options: [{prefer: {return: 'returns'}}],
@@ -1270,9 +1287,9 @@ function foo(a){var t = false; if(t) {process(t);}}`,
     {
       code: `
 /**
- * Does something. 
-* @param {string} a - this is a 
-* @return {Array<number>} The result of doing it 
+ * Does something.
+* @param {string} a - this is a
+* @return {Array<number>} The result of doing it
 */
  export default function doSomething(a) { }`,
       options: [{prefer: {return: 'returns'}}],
@@ -1344,7 +1361,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @return Foo
  */
 function foo(){}`,
@@ -1356,7 +1373,7 @@ function foo(){}`,
     },
     {
       code: `
-/** Foo 
+/** Foo
 @return sdf
  */
 function foo(){}`,
@@ -1714,4 +1731,72 @@ function foo(hi){}`,
       ],
     },
   ],
+});
+
+// Tests that the jsdoc rule marks type variables as used.  ruleTester limits us
+// to testing one rule at a time.  We can work around that limitation by loading
+// rules with an ESLint comment.
+ruleTester.defineRule('tempJsdoc', jsdocRule);
+const jsdocInlineOptions = `/* eslint tempJsdoc: 1 */`;
+
+ruleTester.run('no-unused-vars', noUnusedVarsRule, {
+  valid: [
+//     {
+//       code: `${jsdocInlineOptions}
+// /** @typedef {number} */
+// var Corge;
+// /** @const {Corge} */
+// window.qux = 2;`,
+//     },
+    {
+      code: `${jsdocInlineOptions}
+/** @typedef {number} */
+var Foo;
+/** @return {Foo} A number. */
+window.qux = function() { return 2; }`,
+    },
+    {
+      code: `${jsdocInlineOptions}
+/** @typedef {number} */
+let Bar;
+/** @return {Bar} A number. */
+window.qux = function() { return 2; }`,
+      parserOptions: {ecmaVersion: 6},
+    },
+    {
+      code: `${jsdocInlineOptions}
+/** @typedef {number} */
+let Bar;
+/** @return {{bar: Bar}} A number. */
+window.qux = function() { return 2; }`,
+      parserOptions: {ecmaVersion: 6},
+    },
+    {
+      code: `${jsdocInlineOptions}
+/** @typedef {number} */
+let Bar;
+/** @return {Array<Bar>} A number. */
+window.qux = function() { return 2; }`,
+      parserOptions: {ecmaVersion: 6},
+    },
+    {
+      code: `${jsdocInlineOptions}
+/** @typedef {number} */
+var Bar;
+/** @return {Object<string, Bar>} A number. */
+window.qux = function() { return 2; }`,
+    },
+    {
+      code: `${jsdocInlineOptions}
+/** @typedef {number} */
+var Bar;
+/**
+ * @param {Bar=} corge A number.
+ * @return {number} A number.
+ */
+window.qux = function(corge) { return corge; }`,
+    },
+  ],
+  invalid: [],
+
 });

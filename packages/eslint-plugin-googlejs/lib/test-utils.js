@@ -28,7 +28,6 @@ function eslintVerifier(nodeType, nodeFunction) {
  */
 function eslintVerify(nodeType, nodeFunction, code) {
   const filename = 'test.js';
-  debugger;
   const eslintOptions = {
     parserOptions: {ecmaVersion: 6},
     rules: {},

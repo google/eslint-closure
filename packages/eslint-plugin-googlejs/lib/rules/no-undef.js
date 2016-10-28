@@ -58,16 +58,14 @@ const NO_UNDEF_RULE = {
     const options = /** @type {!NoUndefRuleOptions} */ (context.options[0]);
     const considerTypeOf = options && options.typeof === true || false;
 
-    /** @type {!Array<string>} */
+    /** @const {!Array<string>} */
     let googRequiredStrings = [];
 
-    /** @type {!Array<string>} */
+    /** @const {!Array<string>} */
     let googProvidedStrings = [];
 
     return {
-      /**
-       * @param {!AST.Program} programNode
-       */
+      /** @param {!AST.Program} programNode */
       Program(programNode) {
         googRequiredStrings = programNode.body
             .map(ast.matchExtractBareGoogRequire)

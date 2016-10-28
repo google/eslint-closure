@@ -30,7 +30,7 @@ const COMPILER_ERROR_LIST = [
   // Warnings when @deprecated, @private, @protected, or @package are violated.
   'accessControls',
   // Warnings when the 'debugger' keyword is used.
-  'checkDebuggerStatement',
+  // 'checkDebuggerStatement',
   // Warnings about undisposed eventful objects.
   'checkEventfulObjectDisposal',
   // Warnings about weird regular expression literals
