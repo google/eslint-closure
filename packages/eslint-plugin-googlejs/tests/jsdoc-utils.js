@@ -100,7 +100,7 @@ describe('traverseTags', () => {
 });
 
 
-describe('getJSDocComment', () => {
+describe('isJSDocComment', () => {
   const isJSDoc = (type, value) =>
         jsdocUtils.isJSDocComment(
             // Not strictly true but good enough to test.
@@ -122,7 +122,7 @@ describe('getJSDocComment', () => {
   });
 });
 
-describe('getVariableJSDocComment', () => {
+describe('getJSDocComment', () => {
   const getDoc = (code) => {
     const filename = 'jsdoc-test.js';
     const eslintOptions = {
@@ -132,7 +132,7 @@ describe('getVariableJSDocComment', () => {
     let commentNode;
     linter.reset();
     linter.on('VariableDeclaration', (node) => {
-      commentNode = jsdocUtils.getVariableJSDocComment(node);
+      commentNode = jsdocUtils.getJSDocComment(node);
     });
     linter.verify(code, eslintOptions, filename, true);
     return commentNode ? commentNode.value : null;

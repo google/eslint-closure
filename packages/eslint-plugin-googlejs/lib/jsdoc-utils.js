@@ -150,7 +150,7 @@ function isVariableFunctionOrClassExpression_(node) {
 }
 
 /**
- * Gets the associated JSDoc comment for a variable node or null if none exists.
+ * Gets the associated JSDoc comment for a node or null if none exists.
  *
  * A variable declaration with a function or class expression initializer will
  * not have a JSDoc comment.  In that case, the JSDoc comment is associated with
@@ -158,7 +158,7 @@ function isVariableFunctionOrClassExpression_(node) {
  * @param {!AST.VariableDeclaration} node
  * @return {?AST.CommentToken}
  */
-function getVariableJSDocComment(node) {
+function getJSDocComment(node) {
   if (!node.leadingComments || node.leadingComments.length == 0) {
     return null;
   }
@@ -178,7 +178,7 @@ function getVariableJSDocComment(node) {
 }
 
 exports = {
-  getVariableJSDocComment,
+  getJSDocComment,
   isLiteral,
   isJSDocComment,
   parseComment,
