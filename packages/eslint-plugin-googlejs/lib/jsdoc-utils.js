@@ -153,8 +153,8 @@ function isVariableFunctionOrClassExpression_(node) {
  * Gets the associated JSDoc comment for a node or null if none exists.
  *
  * A variable declaration with a function or class expression initializer will
- * not have a JSDoc comment.  In that case, the JSDoc comment is associated with
- * the function expression.
+ * not have a JSDoc comment.  Instead, the JSDoc comment is associated with
+ * the function or class expression.
  * @param {!AST.VariableDeclaration} node
  * @return {?AST.CommentToken}
  */
