@@ -9,6 +9,7 @@ goog.module('googlejs.rules.indent');
 // TODO(jschaf): Why won't this build?
 // const {assert} = goog.require('goog.asserts');
 
+const ast = goog.require('googlejs.ast');
 const utils = goog.require('googlejs.utils');
 
 /**
@@ -640,7 +641,7 @@ function create(context) {
 
     // Check if the bodyNode is inside a variable.
     const parentVarNode = /** @type {?AST.VariableDeclarator} */
-        (utils.getNodeAncestorOfType(functionNode, 'VariableDeclarator'));
+        (ast.findAncestorOfType(functionNode, 'VariableDeclarator'));
 
     if (parentVarNode && isNodeInVarOnTop_(functionNode, parentVarNode)) {
       bodyIndent += indentSize *
@@ -713,7 +714,7 @@ function create(context) {
   function getIndentforObjectOrArrayElements(node) {
     const parent = node.parent;
     const varDeclAncestor = /** @type {?AST.VariableDeclarator} */
-         (utils.getNodeAncestorOfType(node, 'VariableDeclarator'));
+         (ast.findAncestorOfType(node, 'VariableDeclarator'));
 
     let baseIndent = getNodeIndent_(parent, sourceCode, indentType).goodChar;
     let elementsIndent;
@@ -1010,11 +1011,11 @@ function create(context) {
       // alter the expectation of correct indentation. Skip them.
       // TODO: Add appropriate configuration options for variable
       // declarations and assignments.
-      if (utils.getNodeAncestorOfType(node, 'VariableDeclarator')) {
+      if (ast.findAncestorOfType(node, 'VariableDeclarator')) {
         return;
       }
 
-      if (utils.getNodeAncestorOfType(node, 'AssignmentExpression')) {
+      if (ast.findAncestorOfType(node, 'AssignmentExpression')) {
         return;
       }
 

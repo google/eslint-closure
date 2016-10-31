@@ -98,22 +98,6 @@ function isNodeClassType(node) {
 }
 
 /**
- * Returns an ancestor node of the given node that has the specified type.  If
- * there is no ancestor node with the specified type then return null.
- * @param {!AST.Node} node Node to examine.
- * @param {string} type The AST.NodeType that is being looked for.
- * @return {(!AST.Node|null)} If found ancestor node or null.
- */
-function getNodeAncestorOfType(node, type) {
-  let parent = node.parent;
-
-  while (parent.type !== type && parent.type !== 'Program') {
-    parent = parent.parent;
-  }
-  return parent.type === type ? parent : null;
-}
-
-/**
  * Returns true if node is a getter function.
  * @param {!AST.Node} node
  * @return {boolean}
@@ -168,9 +152,18 @@ function isValidPrefix(name, prefix) {
   }
 }
 
+/**
+ * Escapes regular expression characters in the provided string.
+ * @param {string} string
+ * @return {string}
+ */
+function escapeRegexp(string) {
+  return String(string).replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
 exports = {
   categorizeUnderscoredIdentifier,
-  getNodeAncestorOfType,
+  escapeRegexp,
   isUnderscored,
   isNodeConstructorFunction,
   isNodeClassType,

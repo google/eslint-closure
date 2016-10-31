@@ -58,10 +58,10 @@ const NO_UNDEF_RULE = {
     const options = /** @type {!NoUndefRuleOptions} */ (context.options[0]);
     const considerTypeOf = options && options.typeof === true || false;
 
-    /** @const {!Array<string>} */
+    /** @type {!Array<string>} */
     let googRequiredStrings = [];
 
-    /** @const {!Array<string>} */
+    /** @type {!Array<string>} */
     let googProvidedStrings = [];
 
     return {

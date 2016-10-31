@@ -102,7 +102,7 @@ Escope.Variable = function() {};
 
 /**
  * The variable name, as given in the source code.
- * @type {String}
+ * @type {string}
  */
 Escope.Variable.prototype.name;
 
@@ -145,6 +145,9 @@ Escope.Variable.prototype.stack;
  */
 Escope.Variable.prototype.scope;
 
+/** @type {!AST.CommentToken} */
+Escope.Variable.prototype.eslintExplicitGlobalComment;
+
 
 /**
  * @record
@@ -154,7 +157,7 @@ Escope.Scope = function() {};
 /**
  * One of 'TDZ', 'module', 'block', 'switch', 'function', 'catch', 'with',
  * 'function', 'class', 'global'.
- * @type {String}
+ * @type {string}
  */
 Escope.Scope.prototype.type;
 
@@ -186,7 +189,7 @@ Escope.Scope.prototype.dynamic;
 
 /**
  * A reference to the scope-defining syntax node.
- * @type {!AST.Locatable}
+ * @type {!AST.Node}
  */
 Escope.Scope.prototype.block;
 
@@ -272,11 +275,11 @@ Escope.Definition.prototype.type;
  */
 Escope.Definition.prototype.name;
 /**
- * @type {!AST.Locatable} the enclosing node of the identifier.
+ * @type {!AST.Node} the enclosing node of the identifier.
  */
 Escope.Definition.prototype.node;
 /**
- * @type {?AST.Locatable} the enclosing statement node of the identifier.
+ * @type {?AST.Node} the enclosing statement node of the identifier.
  */
 Escope.Definition.prototype.parent;
 /**
