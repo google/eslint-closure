@@ -56,7 +56,6 @@
   },
   "dependencies": {
     "eslint": "~3.9.0",
-    "lodash": "~4.16.4",
     "lodash.ismatchwith": "~4.4.0"
   }
 }
