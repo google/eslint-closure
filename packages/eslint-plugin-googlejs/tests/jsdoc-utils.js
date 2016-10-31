@@ -6,13 +6,13 @@
 goog.module('googlejs.tests.jsdocUtils');
 goog.setTestOnly('googlejs.tests.jsdocUtils');
 
+const googObject = goog.require('goog.object');
 const jsdocUtils = goog.require('googlejs.jsdocUtils');
+const testUtils = goog.require('googlejs.testUtils');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
-const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 
 const expect = chai.expect;
-const linter = eslint.linter;
 
 // NOTE: We're only testing our wrapper around Doctrine.parse.
 describe('parseComment', () => {
@@ -62,6 +62,8 @@ describe('traverseTags', () => {
     return collectedTags;
   };
 
+  // TODO(jschaf): add the other non-closure JSDoc tags like [1, 2] and string
+  // literals.
   it('should traverse all tags', () => {
     expect(collect('')).to.eql([]);
     expect(collect('* ')).to.eql([]);
@@ -123,20 +125,10 @@ describe('isJSDocComment', () => {
 });
 
 describe('getJSDocComment', () => {
-  const getDoc = (code) => {
-    const filename = 'jsdoc-test.js';
-    const eslintOptions = {
-      parserOptions: {ecmaVersion: 6},
-      rules: {},
-    };
-    let commentNode;
-    linter.reset();
-    linter.on('VariableDeclaration', (node) => {
-      commentNode = jsdocUtils.getJSDocComment(node);
-    });
-    linter.verify(code, eslintOptions, filename, true);
-    return commentNode ? commentNode.value : null;
-  };
+  const getDoc = testUtils.eslintVerifier(
+      'VariableDeclaration',
+      (node) => googObject.get(
+          jsdocUtils.getJSDocComment(node), 'value', null));
 
   it('should return null if there are no JSDoc comments', () => {
     expect(getDoc('var a;')).to.equal(null);

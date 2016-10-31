@@ -2,7 +2,7 @@
  * @fileoverview Test utilities.
  */
 
-goog.module('googlejs.tests.testUtils');
+goog.module('googlejs.testUtils');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 
@@ -10,8 +10,9 @@ const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
  * Creates a function thats takes a string of source code and returns the result
  * of executing nodeFunction on the first nodeType in the parsed source code.
  * @param {string} nodeType A node type like 'VariableDeclaration'.
- * @param {function(!AST.Node)} nodeFunction Function to call on the node type.
- * @return {function(string):*} 
+ * @param {function(!AST.Node):*} nodeFunction Function to call on the node
+ *     type.
+ * @return {function(string):*}
  */
 function eslintVerifier(nodeType, nodeFunction) {
   return (code) => eslintVerify(nodeType, nodeFunction, code);
@@ -23,24 +24,25 @@ function eslintVerifier(nodeType, nodeFunction) {
  * @param {string} nodeType A node type like 'VariableDeclaration'.
  * @param {function(!AST.Node)} nodeFunction Function to call on the node type.
  * @param {string} code The source code to parse.
- * @return {*} 
+ * @return {*}
  */
 function eslintVerify(nodeType, nodeFunction, code) {
   const filename = 'test.js';
+  debugger;
   const eslintOptions = {
     parserOptions: {ecmaVersion: 6},
     rules: {},
   };
   let result;
   eslint.linter.reset();
-  eslint.linter.once('VariableDeclaration', (node) => {
+  eslint.linter.once(nodeType, (node) => {
     result = nodeFunction(node);
   });
   eslint.linter.verify(code, eslintOptions, filename, true);
-  return result ? result.value : null;
+  return result;
 }
 
 exports = {
   eslintVerifier,
   eslintVerify,
-}
+};

@@ -112,8 +112,9 @@ AST.TokenType = {
 
 
 /**
- * The main AST Node.  This really belongs to ESLint, but all the ASTNodes below
- * need these properties and it's easier to just define it here.
+ * The main AST Node.  Some of the properties really belong to ESLint, but all
+ * the ASTNodes below need these properties and it's easier to just define it
+ * here.
  * @record
  * @extends {AST.Locatable}
  * @see https://github.com/estree/estree/blob/master/es5.md#node-objects

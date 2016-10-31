@@ -120,7 +120,7 @@ function isJSDocComment(commentToken) {
 /**
  * Returns true if the variable is initialized with a function or class
  * expression.
- * @param {!AST.VariableDeclaration} node
+ * @param {!AST.Node} node
  * @return {boolean}
  * @private
  */
@@ -155,7 +155,7 @@ function isVariableFunctionOrClassExpression_(node) {
  * A variable declaration with a function or class expression initializer will
  * not have a JSDoc comment.  Instead, the JSDoc comment is associated with
  * the function or class expression.
- * @param {!AST.VariableDeclaration} node
+ * @param {!AST.Node} node
  * @return {?AST.CommentToken}
  */
 function getJSDocComment(node) {
