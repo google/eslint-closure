@@ -117,34 +117,20 @@ const NO_UNUSED_VARS_RULE = {
     }
 
     /**
-     * Determines if a reference is a read operation.
-     * @param {!Escope.Reference} ref - An escope Reference
-     * @return {boolean} whether the given reference represents a read
-     * operation
-     * @private
-     */
-    function isReadRef(ref) {
-      return ref.isRead();
-    }
-
-    /**
-     * Determine if an identifier is referencing an enclosing function name.
-     * @param {!Escope.Reference} ref - The reference to check.
-     * @param {!Array<!AST.Node>} nodes - The candidate function nodes.
+     * Determines if an identifier is referencing an enclosing function name.
+     * @param {!Escope.Reference} ref The reference to check.
+     * @param {!Array<!AST.Node>} nodes The candidate function nodes.
      * @return {boolean} True if it's a self-reference, false if not.
      * @private
      */
     function isSelfReference(ref, nodes) {
       let scope = ref.from;
-
       while (scope) {
         if (nodes.indexOf(scope.block) >= 0) {
           return true;
         }
-
         scope = scope.upper;
       }
-
       return false;
     }
 
@@ -394,7 +380,7 @@ const NO_UNUSED_VARS_RULE = {
         rhsNode = getRhsNode(ref, rhsNode);
 
         return (
-            isReadRef(ref) && !forItself &&
+            ref.isRead() && !forItself &&
             !(isFunctionDefinition && isSelfReference(ref, functionNodes)));
       });
     }
@@ -574,8 +560,7 @@ const NO_UNUSED_VARS_RULE = {
       if (lineInComment > 0) {
         column -= 1 + prefix.lastIndexOf('\n');
       } else {
-        // 2 is for `/*`
-        column += baseLoc.column + 2;
+        column += baseLoc.column + '/*'.length;
       }
 
       return {
@@ -590,8 +575,7 @@ const NO_UNUSED_VARS_RULE = {
       'Program:exit': (programNode) => {
         const unusedVars = collectUnusedVariables(context.getScope(), []);
 
-        for (let i = 0, l = unusedVars.length; i < l; ++i) {
-          const unusedVar = unusedVars[i];
+        for (const unusedVar of unusedVars) {
 
           if (unusedVar.eslintExplicitGlobal) {
             context.report({
@@ -612,6 +596,5 @@ const NO_UNUSED_VARS_RULE = {
     };
   },
 };
-
 
 exports = NO_UNUSED_VARS_RULE;
