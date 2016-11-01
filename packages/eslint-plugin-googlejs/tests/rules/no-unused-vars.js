@@ -408,16 +408,11 @@ foo();`,
           'function* foo(cb) { cb = yield function(a) { cb(1 + a); }; } foo();',
       parserOptions: {ecmaVersion: 6},
     },
+
     {
-      code:
-          `
-function foo(cb) {
-  cb = tag\`hello$ {
-    function(a) { cb(1 + a); }
-  }
-  \`;
-}
-foo();`,
+      code: 'function foo(cb) { cb = tag`hello${' +
+          'function(a) { cb(1 + a); }}`; }' +
+          ' foo();',
       parserOptions: {ecmaVersion: 6},
     },
     {
@@ -465,6 +460,15 @@ foo();`,
       options: [{argsIgnorePattern: '[cd]'}],
       parserOptions: {ecmaVersion: 6},
     },
+
+    // Allow JSDOC types to be unused.
+    {
+      code: `
+/** @typedef {number} */
+var Foo;
+`,
+    },
+
   ],
   invalid: [
     {
@@ -573,12 +577,12 @@ setTimeout(
     {
       code: `
 function foo() {
-  function foo(x) {\nreturn x; };
-  return function() { return foo; };
+  function foo(x) {return x;};
+  return function() {return foo;};
 }`,
       errors: [{
         message: "'foo' is defined but never used.",
-        line: 1,
+        line: 2,
         type: 'Identifier',
       }],
     },
@@ -732,7 +736,7 @@ function foo() {
   }
 })({});`,
       errors: [
-        {message: "'name' is defined but never used.", line: 1, column: 22},
+        {message: "'name' is defined but never used.", line: 3, column: 7},
       ],
     },
     {
