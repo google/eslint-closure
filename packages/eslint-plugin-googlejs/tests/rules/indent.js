@@ -1562,6 +1562,53 @@ var foo = function(
       // FIXME: make sure this is correct
       options: [2, {FunctionExpression: {parameters: 'first', body: 3}}],
     },
+    {
+      code: `
+while(true) {
+  foo();
+  bar();
+}`,
+      options: [2],
+    },
+    {
+      code: `
+if(true) {
+  foo();
+  bar();
+}`,
+      options: [2],
+    },
+
+    {
+      code: `
+goog.scope(function() {
+  var foo;
+})
+`,
+      options: [2],
+    },
+    {
+      code: `
+goog.scope(function() {
+var foo;
+})
+`,
+      options: [2, {outerIIFEBody: 0}],
+    },
+    {
+      code: `
+goog.scope(function() {var foo;})
+`,
+      options: [2, {outerIIFEBody: 0}],
+    },
+    {
+      code: `
+goog.scope(function() {
+    var foo;
+})
+`,
+      options: [2, {outerIIFEBody: 2}],
+    },
   ],
   invalid: [
     {

@@ -109,9 +109,6 @@ const COMPILER_OFF_LIST = [
   'reportUnknownTypes',
 ];
 
-const CLOSURE_BASE_JS =
-      './node_modules/google-closure-library/closure/goog/base.js';
-
 const CLOSURE_LIB_JS =
     './node_modules/google-closure-library/closure/goog/**.js';
 

@@ -175,11 +175,11 @@ function create(context) {
   function checkVariableJSDoc(node) {
     const jsdocNode = sourceCode.getJSDocComment(node);
     if (!jsdocNode) return;
-    const jsdocAST = jsdocUtils.parseComment(jsdocNode.value);
+    // const jsdocAST = jsdocUtils.parseComment(jsdocNode.value);
 
-    jsdocAST.tags.forEach((tag) => {
+    // jsdocAST.tags.forEach((tag) => {
       // markTypeVariablesAsUsed(tag);
-    });
+    // });
   }
 
   /**
@@ -404,7 +404,7 @@ function create(context) {
     'ClassExpression:exit': checkJSDoc,
     'ClassDeclaration:exit': checkJSDoc,
     'ReturnStatement': addReturn,
-    VariableDeclaration: checkVariableJSDoc,
+    'VariableDeclaration': checkVariableJSDoc,
   };
 }
 
