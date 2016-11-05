@@ -68,7 +68,7 @@ function isFunction(node) {
 }
 
 /**
- * If node is a string literal then return true.
+ * Returns true if node is a string literal.
  * @param {!AST.Node} node
  * @return {(!Object|boolean)}
  */
@@ -76,6 +76,20 @@ function matchStringLiteral(node) {
   return astMatcher.isASTMatch(node, {
     type: 'Literal',
     value: (v) => typeof v === 'string',
+  });
+}
+
+/**
+ * If node is a string literal then return an object with the given propertyName
+ * set to the literal.
+ * @param {!AST.Node} node
+ * @return {(!Object|boolean)}
+ */
+function matchExtractStringLiteral(node, propertyName = 'literal') {
+  return astMatcher.isASTMatch(node, {
+    type: 'Literal',
+    value: (v) => typeof v === 'string' &&
+        astMatcher.extractAST(propertyName)(v),
   });
 }
 
@@ -110,11 +124,7 @@ function matchExtractBareGoogRequire(node) {
         },
       },
       arguments: [
-        {
-          type: 'Literal',
-          value: (v) => typeof v === 'string' &&
-              astMatcher.extractAST('source')(v),
-        },
+        (v) => matchExtractStringLiteral(v, 'source'),
       ],
     },
   });
@@ -122,7 +132,7 @@ function matchExtractBareGoogRequire(node) {
 
 /**
  * If node is a goog.provide call return an object with the provided name as the
- * property source, otherwise return false.
+ * property `source`, otherwise return false.
  * @param {!AST.Node} node
  * @return {!GoogDependencyMatch}
  */
@@ -143,13 +153,30 @@ function matchExtractGoogProvide(node) {
         },
       },
       arguments: [
-        {
-          type: 'Literal',
-          value: (v) => typeof v === 'string' &&
-              astMatcher.extractAST('source')(v),
-        },
+        (v) => matchExtractStringLiteral(v, 'source'),
       ],
     },
+  });
+}
+
+/**
+ * The extracted string literal of a directive, like 'use strict'.
+ * @type {({
+ *   directive: string,
+ * }|boolean)}
+ */
+let DirectiveMatch;
+
+/**
+ * If node is a string directive return an object with the string literal as the
+ * property directive, otherwise return false.
+ * @param {!AST.Node} node
+ * @return {!DirectiveMatch}
+ */
+function matchExtractDirective(node) {
+  return astMatcher.isASTMatch(node, {
+    type: 'ExpressionStatement',
+    expression: (v) => matchExtractStringLiteral(v, 'directive'),
   });
 }
 
@@ -160,5 +187,7 @@ exports = {
   isFunction,
   matchExtractBareGoogRequire,
   matchExtractGoogProvide,
+  matchExtractDirective,
+  matchExtractStringLiteral,
   matchStringLiteral,
 };

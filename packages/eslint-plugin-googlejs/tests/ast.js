@@ -31,6 +31,60 @@ describe('matchStringLiteral', () => {
   });
 });
 
+describe('matchExtractDirective', () => {
+  const directiveMatch = testUtils.eslintVerifier(
+      'ExpressionStatement', ast.matchExtractDirective);
+
+  it('should match and extract string literal directives', () => {
+    expect(directiveMatch('"foo";')).to.eql({directive: 'foo'});
+    expect(directiveMatch('"foo bar";')).to.eql({directive: 'foo bar'});
+  });
+
+  it('should not match strings used in expressions', () => {
+    expect(directiveMatch('foo("str")')).to.equal(false);
+    expect(directiveMatch('"foo".foreach((s) => s)')).to.equal(false);
+    expect(directiveMatch('var a = "bar"')).to.equal(undefined);
+  });
+
+  it('should not match non string literals', () => {
+    expect(directiveMatch('1')).to.equal(false);
+    expect(directiveMatch('null')).to.equal(false);
+    expect(directiveMatch('true')).to.equal(false);
+    expect(directiveMatch('false')).to.equal(false);
+    expect(directiveMatch('function foo() {return 2}')).to.equal(undefined);
+  });
+});
+
+describe('matchExtractStringLiteral', () => {
+  const literalMatchDefault = testUtils.eslintVerifier(
+      'Literal', ast.matchExtractStringLiteral);
+
+  const literalMatch = testUtils.eslintVerifier(
+      'Literal',
+      (node) => ast.matchExtractStringLiteral(node, 'NAME'));
+
+  it('should match and extract string literals with a default property name',
+     () => {
+       expect(literalMatchDefault('"foo";')).to.eql({literal: 'foo'});
+       expect(literalMatchDefault('"foo bar";')).to.eql({literal: 'foo bar'});
+     });
+
+  it('should match and extract string literals with a given property name',
+     () => {
+       expect(literalMatch('"foo";')).to.eql({NAME: 'foo'});
+       expect(literalMatch('"foo bar";')).to.eql({NAME: 'foo bar'});
+     });
+
+  it('should not match non string literals', () => {
+    expect(literalMatchDefault('1')).to.equal(false);
+    expect(literalMatchDefault('null')).to.equal(false);
+    expect(literalMatchDefault('true')).to.equal(false);
+    expect(literalMatchDefault('false')).to.equal(false);
+    expect(literalMatchDefault('function foo() {return 2}')).to.equal(false);
+  });
+});
+
+
 describe('matchExtractBareGoogRequire', () => {
   const parseMatchRequire = testUtils.eslintVerifier(
       'ExpressionStatement', ast.matchExtractBareGoogRequire);

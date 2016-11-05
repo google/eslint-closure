@@ -785,6 +785,20 @@ AST.Literal.prototype.value;
 /** @type {string} */
 AST.Literal.prototype.raw;
 
+
+/** @record @extends {AST.Node} */
+AST.LogicalExpression = function() {};
+
+/** @type {string} */
+AST.LogicalExpression.prototype.operator;
+
+/** @type {!AST.Expression} */
+AST.LogicalExpression.prototype.left;
+
+/** @type {!AST.Expression} */
+AST.LogicalExpression.prototype.right;
+
+
 /** @record @extends {AST.Node} */
 AST.MemberExpression = function() {};
 
