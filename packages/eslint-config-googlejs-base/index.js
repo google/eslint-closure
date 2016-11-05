@@ -939,6 +939,7 @@ const GOOGLE_PLUGIN_RULES = {
     requireReturnDescription: false,
   }],
   'googlejs/no-undef': ERROR,
+  'googlejs/no-unused-expressions': ERROR,
 };
 
 
