@@ -124,6 +124,32 @@ describe('isJSDocComment', () => {
   });
 });
 
+describe('hasTypeInformation', () => {
+  const hasTypes = (comment) => jsdocUtils.hasTypeInformation(
+      jsdocUtils.parseComment(comment));
+
+  it('should return true for typed tags', () => {
+    expect(hasTypes('/** @type {number} */')).to.eql(true);
+    expect(hasTypes('/** @const {number} */')).to.eql(true);
+    expect(hasTypes('/** @private {number} */')).to.eql(true);
+    expect(hasTypes('/** @package {number} */')).to.eql(true);
+    expect(hasTypes('/** @protected {number} */')).to.eql(true);
+    expect(hasTypes('/** @public {number} */')).to.eql(true);
+    expect(hasTypes('/** @export {number} */')).to.eql(true);
+  });
+
+  it('should return false with no tags', () => {
+    expect(hasTypes('/** foo */')).to.eql(false);
+    expect(hasTypes('/** bar */')).to.eql(false);
+  });
+
+  it('should return false with non-typed tags', () => {
+    expect(hasTypes('/** @constructor */')).to.eql(false);
+    expect(hasTypes('/** @this {number} */')).to.eql(false);
+    expect(hasTypes('/** @template T */')).to.eql(false);
+  });
+});
+
 describe('getJSDocComment', () => {
   const getDoc = testUtils.eslintVerifier(
       'VariableDeclaration',

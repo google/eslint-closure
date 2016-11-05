@@ -5,6 +5,8 @@ goog.module('googlejs.jsdocUtils');
 
 const astMatcher = goog.require('googlejs.astMatcher');
 
+const array = goog.require('goog.array');
+
 const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 
 /**
@@ -30,6 +32,19 @@ function isLiteral(tagType) {
 function isTerminal(tagType) {
   return isLiteral(tagType) ||
       tagType.type === 'NameExpression';
+}
+
+
+/**
+ * Returns true if a JSDoc comment has type information.
+ * @param {!Doctrine.DocComment} jsdocComment
+ * @return {boolean}
+ */
+function hasTypeInformation(jsdocComment) {
+  const typeInfoTags = [
+    'type', 'const', 'private', 'package', 'protected', 'public', 'export'];
+  const isTypeInfo = (tag) => array.contains(typeInfoTags, tag.title);
+  return jsdocComment.tags.some(isTypeInfo);
 }
 
 /**
@@ -179,6 +194,7 @@ function getJSDocComment(node) {
 
 exports = {
   getJSDocComment,
+  hasTypeInformation,
   isLiteral,
   isJSDocComment,
   parseComment,

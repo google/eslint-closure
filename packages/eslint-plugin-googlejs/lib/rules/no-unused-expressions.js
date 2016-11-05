@@ -122,7 +122,6 @@ const NO_UNUSED_EXPRESSIONS_RULE = {
         }
       }
 
-
       const isReturnableRegexp =
             /^(?:Assignment|Call|New|Update|Yield|Await)Expression$/;
       const isNodeReturnable = isReturnableRegexp.test(node.type);
