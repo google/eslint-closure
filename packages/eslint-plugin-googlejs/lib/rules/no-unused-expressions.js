@@ -8,6 +8,7 @@ goog.module('googlejs.rules.noUnusedExpressions');
 const array = goog.require('goog.array');
 
 const ast = goog.require('googlejs.ast');
+const jsdocUtils = goog.require('googlejs.jsdocUtils');
 
 /**
   * @param {!AST.Node} node - any node
@@ -61,6 +62,18 @@ function isDirective(node, ancestors) {
   } else {
     return false;
   }
+}
+
+/**
+ * Returns true if a node has type information in its JSDoc comment.
+ * @param {!AST.Node} node
+ * @return {boolean}
+ */
+function hasJSDocTypeInfo(node) {
+  const comment = jsdocUtils.getJSDocComment(node);
+  if (!comment) return false;
+  const jsdoc = jsdocUtils.parseComment(comment.value);
+  return jsdocUtils.hasTypeInformation(jsdoc);
 }
 
 
@@ -137,7 +150,8 @@ const NO_UNUSED_EXPRESSIONS_RULE = {
       /** @param {!AST.ExpressionStatement} node */
       ExpressionStatement(node) {
         if (!isValidExpression(node.expression) &&
-            !isDirective(node, context.getAncestors())) {
+            !isDirective(node, context.getAncestors()) &&
+            !hasJSDocTypeInfo(node)) {
           context.report({
             node: node,
             message: 'Expected an assignment or function call and' +

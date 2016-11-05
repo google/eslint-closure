@@ -65,6 +65,13 @@ ruleTester.run('no-unused-expressions', noUnusedExpressionsRule, {
       options: [{allowTernary: true}],
       parserOptions: {ecmaVersion: 8},
     },
+    ` /** @type {number} */ this.foo;`,
+    ` /** @const {number} */ this.foo;`,
+    ` /** @private {number} */ this.foo;`,
+    ` /** @package {number} */ this.foo;`,
+    ` /** @protected {number} */ this.foo;`,
+    ` /** @public {number} */ this.foo;`,
+    ` /** @export {number} */ this.foo;`,
   ],
   invalid: [
     {
