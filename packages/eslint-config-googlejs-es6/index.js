@@ -180,7 +180,7 @@ const GOOGLE_PLUGIN_RULES = {
     allowOptPrefix: false,
     allowLeadingUnderscore: true,
     allowTrailingUnderscore: true,
-    checkObjectProperties: true,
+    checkObjectProperties: false,
   }],
 };
 
