@@ -663,12 +663,6 @@ n.defineClass.applyProperties_ = function(a, b) {
 n.tagUnsealableClass = function() {
 };
 n.UNSEALABLE_CONSTRUCTOR_PROPERTY_ = "goog_defineClass_legacy_unsealable";
-var r = {getFullyQualifedName:function(a) {
-  for (var b = a.name;a.parent && "MemberExpression" == a.parent.type;) {
-    a = a.parent, b += "." + a.property.name;
-  }
-  return b;
-}};
 n.object = {};
 n.object.is = function(a, b) {
   return a === b ? 0 !== a || 1 / a === 1 / b : a !== a && b !== b;
@@ -890,24 +884,24 @@ n.object.createImmutableView = function(a) {
 n.object.isImmutableView = function(a) {
   return !!Object.isFrozen && Object.isFrozen(a);
 };
-var x = require("lodash.ismatchwith");
-function y(a) {
+var r = require("lodash.ismatchwith");
+function x(a) {
   return function(b) {
-    return z(b, a);
+    return y(b, a);
   };
 }
-function z(a, b) {
+function y(a, b) {
   var d = {};
-  return x(a, b, function(a, b) {
+  return r(a, b, function(a, b) {
     if ("function" === typeof b) {
       return a = b(a), "object" === typeof a && n.object.extend(d, a), a;
     }
   }) ? d : !1;
 }
-var A = {extractAST:function(a, b) {
+var z = {extractAST:function(a, b) {
   return function(d) {
     var e = {}, e = (e[a] = d, e);
-    "object" === typeof b && (b = y(b));
+    "object" === typeof b && (b = x(b));
     if ("function" === typeof b) {
       d = b(d);
       if ("object" === typeof d) {
@@ -919,55 +913,60 @@ var A = {extractAST:function(a, b) {
     }
     return e;
   };
-}, isASTMatch:z, matchesAST:y, matchesASTLength:function(a) {
-  var b = y(a);
+}, isASTMatch:y, matchesAST:x, matchesASTLength:function(a) {
+  var b = x(a);
   return function(d) {
     return d.length !== a.length ? !1 : b(d);
   };
 }};
-function C(a, b) {
+function A(a, b) {
   for (a = a.parent;!b(a) && "Program" !== a.type;) {
     a = a.parent;
   }
   return b(a) ? a : null;
 }
-function D(a, b) {
+function C(a, b) {
   b = void 0 === b ? "literal" : b;
-  return A.isASTMatch(a, {type:"Literal", value:function(a) {
-    return "string" === typeof a && A.extractAST(b)(a);
+  return z.isASTMatch(a, {type:"Literal", value:function(a) {
+    return "string" === typeof a && z.extractAST(b)(a);
   }});
 }
-var F = {findAncestor:C, findAncestorOfType:function(a, b) {
-  return C(a, function(a) {
+var D = {findAncestor:A, findAncestorOfType:function(a, b) {
+  return A(a, function(a) {
     return a.type == b;
   });
+}, getFullyQualifedName:function(a) {
+  for (var b = a.name;a.parent && "MemberExpression" == a.parent.type;) {
+    a = a.parent, b += "." + a.property.name;
+  }
+  return b;
 }, isLoop:function(a) {
   return /^(?:DoWhile|For|ForIn|ForOf|While)Statement$/.test(a.type);
 }, isFunction:function(a) {
   return /^(?:Function(?:Declaration|Expression)|ArrowFunctionExpression)$/.test(a.type);
 }, matchExtractBareGoogRequire:function(a) {
-  return A.isASTMatch(a, {type:"ExpressionStatement", expression:{type:"CallExpression", callee:{type:"MemberExpression", object:{type:"Identifier", name:"goog"}, property:{type:"Identifier", name:"require"}}, arguments:[function(a) {
-    return D(a, "source");
+  return z.isASTMatch(a, {type:"ExpressionStatement", expression:{type:"CallExpression", callee:{type:"MemberExpression", object:{type:"Identifier", name:"goog"}, property:{type:"Identifier", name:"require"}}, arguments:[function(a) {
+    return C(a, "source");
   }]}});
 }, matchExtractGoogProvide:function(a) {
-  return A.isASTMatch(a, {type:"ExpressionStatement", expression:{type:"CallExpression", callee:{type:"MemberExpression", object:{type:"Identifier", name:"goog"}, property:{type:"Identifier", name:"provide"}}, arguments:[function(a) {
-    return D(a, "source");
+  return z.isASTMatch(a, {type:"ExpressionStatement", expression:{type:"CallExpression", callee:{type:"MemberExpression", object:{type:"Identifier", name:"goog"}, property:{type:"Identifier", name:"provide"}}, arguments:[function(a) {
+    return C(a, "source");
   }]}});
 }, matchExtractDirective:function(a) {
-  return A.isASTMatch(a, {type:"ExpressionStatement", expression:function(a) {
-    return D(a, "directive");
+  return z.isASTMatch(a, {type:"ExpressionStatement", expression:function(a) {
+    return C(a, "directive");
   }});
-}, matchExtractStringLiteral:D, matchStringLiteral:function(a) {
-  return A.isASTMatch(a, {type:"Literal", value:function(a) {
+}, matchExtractStringLiteral:C, matchStringLiteral:function(a) {
+  return z.isASTMatch(a, {type:"Literal", value:function(a) {
     return "string" === typeof a;
   }});
 }};
-var I = {UnderscoreForm:{CONSTANT:"constant", LEADING:"leading", NO_UNDERSCORE:"no_underscore", MIDDLE:"middle", OPT_PREFIX:"opt_prefix", TRAILING:"trailing", VAR_ARGS:"var_args"}};
-function J(a, b) {
+var F = {UnderscoreForm:{CONSTANT:"constant", LEADING:"leading", NO_UNDERSCORE:"no_underscore", MIDDLE:"middle", OPT_PREFIX:"opt_prefix", TRAILING:"trailing", VAR_ARGS:"var_args"}};
+function I(a, b) {
   return a.loc.end.line === b.loc.start.line;
 }
-var N = {categorizeUnderscoredIdentifier:function(a) {
-  return "" === a || 0 === a.length ? I.UnderscoreForm.NO_UNDERSCORE : a.toUpperCase() === a ? I.UnderscoreForm.CONSTANT : -1 === a.indexOf("_") ? I.UnderscoreForm.NO_UNDERSCORE : "var_args" === a ? I.UnderscoreForm.VAR_ARGS : "opt_" === a.substring(0, 4) && "opt_" != a ? I.UnderscoreForm.OPT_PREFIX : "_" === a[0] ? I.UnderscoreForm.LEADING : "_" === a[a.length - 1] ? I.UnderscoreForm.TRAILING : I.UnderscoreForm.MIDDLE;
+var J = {categorizeUnderscoredIdentifier:function(a) {
+  return "" === a || 0 === a.length ? F.UnderscoreForm.NO_UNDERSCORE : a.toUpperCase() === a ? F.UnderscoreForm.CONSTANT : -1 === a.indexOf("_") ? F.UnderscoreForm.NO_UNDERSCORE : "var_args" === a ? F.UnderscoreForm.VAR_ARGS : "opt_" === a.substring(0, 4) && "opt_" != a ? F.UnderscoreForm.OPT_PREFIX : "_" === a[0] ? F.UnderscoreForm.LEADING : "_" === a[a.length - 1] ? F.UnderscoreForm.TRAILING : F.UnderscoreForm.MIDDLE;
 }, escapeRegexp:function(a) {
   return String(a).replace(/[\\^$*+?.()|[\]{}]/g, "\\$&");
 }, isUnderscored:function(a) {
@@ -979,47 +978,47 @@ var N = {categorizeUnderscoredIdentifier:function(a) {
 }, isNodeGetterFunction:function(a) {
   return "FunctionExpression" === a.type && a.parent && "Property" === a.parent.type && "get" === a.parent.kind;
 }, isNodeOneLine:function(a) {
-  return J(a, a);
+  return I(a, a);
 }, isNodeSetterFunction:function(a) {
   return "FunctionExpression" === a.type && a.parent && "Property" === a.parent.type && "set" === a.parent.kind;
 }, isValidPrefix:function(a, b) {
   return a.startsWith(b) ? a === b || "." === a[b.length] : !1;
 }, nodesEndOnSameLine:function(a, b) {
   return a.loc.end.line === b.loc.end.line;
-}, nodesShareOneLine:J, nodesStartOnSameLine:function(a, b) {
+}, nodesShareOneLine:I, nodesStartOnSameLine:function(a, b) {
   return a.loc.start.line === b.loc.start.line;
 }};
-var O = {allowVarArgs:!1, allowOptPrefix:!1, allowLeadingUnderscore:!0, allowTrailingUnderscore:!0, checkObjectProperties:!0};
-function P(a, b) {
+var N = {allowVarArgs:!1, allowOptPrefix:!1, allowLeadingUnderscore:!0, allowTrailingUnderscore:!0, checkObjectProperties:!0};
+function O(a, b) {
   function d(a) {
     return Object.assign(g, {message:a});
   }
   function e(e, g) {
-    return Q(e, a, b) ? f : d(g);
+    return P(e, a, b) ? f : d(g);
   }
   var f = {node:a, message:"", hasError:!1}, g = {node:a, message:"", hasError:!0};
-  switch(N.categorizeUnderscoredIdentifier(a.name)) {
-    case I.UnderscoreForm.CONSTANT:
+  switch(J.categorizeUnderscoredIdentifier(a.name)) {
+    case F.UnderscoreForm.CONSTANT:
       return f;
-    case I.UnderscoreForm.LEADING:
+    case F.UnderscoreForm.LEADING:
       return b.allowLeadingUnderscore ? e(a.name.replace(/^_+/g, "").replace(/_+$/g, ""), "Identifier '" + a.name + "' is not in camel case after the leading underscore.") : d("Leading underscores are not allowed in '" + a.name + "'.");
-    case I.UnderscoreForm.NO_UNDERSCORE:
+    case F.UnderscoreForm.NO_UNDERSCORE:
       return f;
-    case I.UnderscoreForm.MIDDLE:
+    case F.UnderscoreForm.MIDDLE:
       return e(a.name, "Identifier '" + a.name + "' is not in camel case.");
-    case I.UnderscoreForm.OPT_PREFIX:
+    case F.UnderscoreForm.OPT_PREFIX:
       return b.allowOptPrefix ? e(a.name.replace(/^opt_/g, ""), "Identifier '" + a.name + "' is not in camel case after the opt_ prefix.") : d("The opt_ prefix is not allowed in '" + a.name + "'.");
-    case I.UnderscoreForm.TRAILING:
+    case F.UnderscoreForm.TRAILING:
       return b.allowTrailingUnderscore ? e(a.name.replace(/^_+/g, "").replace(/_+$/g, ""), "Identifier '" + a.name + "' is not in camel case before the trailing underscore.") : d("Trailing underscores are not allowed in '" + a.name + "'.");
-    case I.UnderscoreForm.VAR_ARGS:
+    case F.UnderscoreForm.VAR_ARGS:
       return b.allowVarArgs ? f : d("The var_args identifier is not allowed.");
     default:
       throw Error("Unknown undercore form: " + a.name);
   }
 }
-function Q(a, b, d) {
+function P(a, b, d) {
   var e = b.parent;
-  if (!N.isUnderscored(a)) {
+  if (!J.isUnderscored(a)) {
     return !0;
   }
   switch(e.type) {
@@ -1043,7 +1042,7 @@ function Q(a, b, d) {
   }
   return !1;
 }
-;function R(a, b, d, e) {
+;function Q(a, b, d, e) {
   a = e ? b.getLastToken(a) : b.getFirstToken(a);
   b = b.getText(a, a.loc.start.column).split("");
   a = b.slice(0, b.findIndex(function(a) {
@@ -1057,14 +1056,14 @@ function Q(a, b, d) {
   }).length;
   return {space:b, tab:a, goodChar:"space" === d ? b : a, badChar:"space" === d ? a : b};
 }
-function S(a, b, d) {
+function R(a, b, d) {
   b = !0 === d ? b.getLastToken(a, 1) : b.getTokenBefore(a);
   return (!0 === d ? a.loc.end.line : a.loc.start.line) !== (b ? b.loc.end.line : -1);
 }
-function T(a, b) {
+function S(a, b) {
   return !!b && b.parent.loc.start.line === a.loc.start.line && 1 < b.parent.declarations.length;
 }
-function aa(a) {
+function T(a) {
   if ("CallExpression" !== a.parent.type) {
     return !1;
   }
@@ -1079,14 +1078,14 @@ function aa(a) {
   var b = a.property;
   return "goog" === a.object.name && "scope" === b.name;
 }
-function ba(a) {
+function aa(a) {
   return a.declarations.reduce(function(b, d) {
     var e = b[b.length - 1];
     (d.loc.start.line !== a.loc.start.line && !e || e && e.loc.start.line !== d.loc.start.line) && b.push(d);
     return b;
   }, []);
 }
-function ca(a) {
+function ba(a) {
   var b = {indentSize:4, indentType:"space", indentOptions:{SwitchCase:0, VariableDeclarator:{var:1, let:1, const:1}, outerIIFEBody:-1, MemberExpression:-1, FunctionDeclaration:{parameters:-1, body:1}, FunctionExpression:{parameters:-1, body:1}}}, d = b.indentOptions;
   if (a.length && ("tab" === a[0] ? (b.indentSize = 1, b.indentType = "tab") : "number" === typeof a[0] && (b.indentSize = a[0], b.indentType = "space"), a[1])) {
     a = a[1];
@@ -2038,16 +2037,16 @@ n.array.copyByIndex = function(a, b) {
 n.array.concatMap = function(a, b, d) {
   return n.array.concat.apply([], n.array.map(a, b, d));
 };
-var da = require("doctrine");
+var ca = require("doctrine");
 function V(a) {
   return "NullableLiteral" === a.type || "AllLiteral" === a.type || "NullLiteral" === a.type || "UndefinedLiteral" === a.type || "VoidLiteral" === a.type || "StringLiteralType" === a.type || "NumericLiteralType" === a.type;
 }
-function ea(a) {
+function da(a) {
   return V(a) || "NameExpression" === a.type;
 }
 function W(a, b) {
   b(a);
-  if (!ea(a)) {
+  if (!da(a)) {
     switch(a.type) {
       case "ArrayType":
         a.elements.forEach(function(a) {
@@ -2095,14 +2094,14 @@ function W(a, b) {
 function X(a) {
   return "Block" === a.type && "*" === a.value.charAt(0);
 }
-function fa(a) {
+function ea(a) {
   var b = ["FunctionExpression", "ArrowFunctionExpression", "ClassExpression"];
-  return A.isASTMatch(a, {type:"VariableDeclaration", declarations:[{type:"VariableDeclarator", init:function(a) {
+  return z.isASTMatch(a, {type:"VariableDeclaration", declarations:[{type:"VariableDeclarator", init:function(a) {
     return !!a && -1 !== b.indexOf(a.type);
   }}]});
 }
 var Y = {getJSDocComment:function(a) {
-  return !a.leadingComments || 0 == a.leadingComments.length || fa(a) ? null : a.leadingComments.filter(X).reduce(function(a, d) {
+  return !a.leadingComments || 0 == a.leadingComments.length || ea(a) ? null : a.leadingComments.filter(X).reduce(function(a, d) {
     return d || a;
   }, null);
 }, hasTypeInformation:function(a) {
@@ -2112,7 +2111,7 @@ var Y = {getJSDocComment:function(a) {
   });
 }, isLiteral:V, isJSDocComment:X, parseComment:function(a) {
   try {
-    return da.parse(a, {strict:!0, unwrap:!0, sloppy:!0});
+    return ca.parse(a, {strict:!0, unwrap:!0, sloppy:!0});
   } catch (b) {
     if (/braces/i.test(b.message)) {
       throw Error("JSDoc type missing brace.");
@@ -2120,20 +2119,20 @@ var Y = {getJSDocComment:function(a) {
     throw Error("JSDoc syntax error.");
   }
 }, traverseTags:W};
-var ga = require("doctrine");
+var fa = require("doctrine");
 function Z(a) {
   return null === a.type || a.type.name && "void" === a.type.name || "UndefinedLiteral" === a.type.type;
 }
-var ha = "string number boolean Object Array Map Set".split(" ");
-function ia(a, b) {
+var ga = "string number boolean Object Array Map Set".split(" ");
+function ha(a, b) {
   b.type && Y.traverseTags(b.type, function(b) {
-    "NameExpression" === b.type && (b = b.name, -1 === ha.indexOf(b) && a.markVariableAsUsed(b));
+    "NameExpression" === b.type && (b = b.name, -1 === ga.indexOf(b) && a.markVariableAsUsed(b));
   });
 }
-;function ja(a) {
-  return !!F.matchExtractDirective(a);
+;function ia(a) {
+  return !!D.matchExtractDirective(a);
 }
-function ka(a, b) {
+function ja(a, b) {
   for (var d = 0;d < b.length;++d) {
     if (!a(b[d])) {
       return b.slice(0, d);
@@ -2142,9 +2141,9 @@ function ka(a, b) {
   return b.slice();
 }
 ;module.exports = {rules:{camelcase:{meta:{docs:{description:"check identifiers for camel case with options for opt_ prefix and var_args identifiers", category:"Stylistic Issues", recommended:!0}, schema:[{type:"object", properties:{allowVarArgs:{type:"boolean"}, allowOptPrefix:{type:"boolean"}, allowLeadingUnderscore:{type:"boolean"}, allowTrailingUnderscore:{type:"boolean"}, checkObjectProperties:{type:"boolean"}}, additionalProperties:!1}]}, create:function(a) {
-  var b = Object.assign({}, O, a.options[0] || {});
+  var b = Object.assign({}, N, a.options[0] || {});
   return {Identifier:function(d) {
-    d = P(d, b);
+    d = O(d, b);
     d.hasError && a.report({node:d.node, message:d.message});
   }};
 }}, indent:{meta:{docs:{description:"enforce consistent indentation", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{oneOf:[{enum:["tab"]}, {type:"integer", minimum:0}]}, {type:"object", properties:{SwitchCase:{type:"integer", minimum:0}, VariableDeclarator:{oneOf:[{type:"integer", minimum:0}, {type:"object", properties:{var:{type:"integer", minimum:0}, let:{type:"integer", minimum:0}, const:{type:"integer", minimum:0}}}]}, outerIIFEBody:{type:"integer", minimum:0}, 
@@ -2154,14 +2153,14 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
     return "Expected indentation of " + (a + " " + w + (1 === a ? "" : "s")) + " but" + (" found " + (0 < b && 0 < d ? b + " " + e + " and " + (d + " " + f) : 0 < b ? "space" === w ? b : b + " " + e : 0 < d ? "tab" === w ? d : d + " " + f : "0") + ".");
   }
   function d(d, e, f, g, h, q) {
-    var la = ("space" === w ? " " : "\t").repeat(e), G = q ? [d.range[1] - f - g - 1, d.range[1] - 1] : [d.range[0] - f - g, d.range[0]];
+    var ka = ("space" === w ? " " : "\t").repeat(e), G = q ? [d.range[1] - f - g - 1, d.range[1] - 1] : [d.range[0] - f - g, d.range[0]];
     a.report({node:d, loc:h, message:b(e, f, g), fix:function(a) {
-      return a.replaceTextRange(G, la);
+      return a.replaceTextRange(G, ka);
     }});
   }
   function e(a, b) {
-    var e = R(a, k, w, !1);
-    "ArrayExpression" === a.type || "ObjectExpression" === a.type || e.goodChar === b && 0 === e.badChar || !S(a, k) || d(a, b, e.space, e.tab);
+    var e = Q(a, k, w, !1);
+    "ArrayExpression" === a.type || "ObjectExpression" === a.type || e.goodChar === b && 0 === e.badChar || !R(a, k) || d(a, b, e.space, e.tab);
   }
   function f(a, b) {
     a.forEach(function(a) {
@@ -2169,18 +2168,18 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
     });
   }
   function g(a, b) {
-    var e = k.getLastToken(a), f = R(e, k, w, !0);
-    f.goodChar === b && 0 === f.badChar || !S(a, k, !0) || d(a, b, f.space, f.tab, {start:{line:e.loc.start.line, column:e.loc.start.column}}, !0);
+    var e = k.getLastToken(a), f = Q(e, k, w, !0);
+    f.goodChar === b && 0 === f.badChar || !R(a, k, !0) || d(a, b, f.space, f.tab, {start:{line:e.loc.start.line, column:e.loc.start.column}}, !0);
   }
   function h(a) {
-    var b = R(a, k, w).goodChar, d = a.parent;
+    var b = Q(a, k, w).goodChar, d = a.parent;
     if ("Property" === d.type || "ArrayExpression" === d.type) {
-      b = R(a, k, w, !1).goodChar;
+      b = Q(a, k, w, !1).goodChar;
     } else {
       if ("CallExpression" === d.type) {
         var e;
         e = 1 <= d.arguments.length ? d.arguments[0].loc.end.line > d.arguments[0].loc.start.line : !1;
-        e && N.isNodeOneLine(d.callee) && !S(a, k) && (b = R(d, k, w).goodChar);
+        e && J.isNodeOneLine(d.callee) && !R(a, k) && (b = Q(d, k, w).goodChar);
       }
     }
     return b;
@@ -2188,7 +2187,7 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
   function m(a) {
     var b = a.body, d = h(a), e = q, f;
     if (f = -1 !== p.outerIIFEBody) {
-      if (aa(a)) {
+      if (T(a)) {
         f = !0;
       } else {
         var g = a.parent;
@@ -2213,19 +2212,19 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
     }
     f ? e = p.outerIIFEBody * q : "FunctionExpression" === a.type ? e = p.FunctionExpression.body * q : "FunctionDeclaration" === a.type && (e = p.FunctionDeclaration.body * q);
     d += e;
-    (f = F.findAncestorOfType(a, "VariableDeclarator")) && T(a, f) && (d += q * p.VariableDeclarator[f.parent.kind]);
+    (f = D.findAncestorOfType(a, "VariableDeclarator")) && S(a, f) && (d += q * p.VariableDeclarator[f.parent.kind]);
     B(b, d, d - e);
   }
   function l(a) {
-    if (!N.isNodeOneLine(a)) {
+    if (!J.isNodeOneLine(a)) {
       var b = a.body;
       a = h(a);
       B(b, a + q, a);
     }
   }
   function t(a) {
-    var b = a.parent, e = F.findAncestorOfType(a, "VariableDeclarator"), f = R(b, k, w).goodChar;
-    if (S(a, k)) {
+    var b = a.parent, e = D.findAncestorOfType(a, "VariableDeclarator"), f = Q(b, k, w).goodChar;
+    if (R(a, k)) {
       if (e) {
         if (b === e) {
           e === e.parent.declarations[0] && (f += q * p.VariableDeclarator[e.parent.kind]);
@@ -2240,19 +2239,19 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
         g || "MemberExpression" === b.type || "ExpressionStatement" === b.type || "AssignmentExpression" === b.type || "Property" === b.type || (f += q);
       }
       b = f + q;
-      g = R(a, k, w, !1);
-      g.goodChar === f && 0 === g.badChar || !S(a, k) || d(a, f, g.space, g.tab, {start:{line:a.loc.start.line, column:a.loc.start.column}});
+      g = Q(a, k, w, !1);
+      g.goodChar === f && 0 === g.badChar || !R(a, k) || d(a, f, g.space, g.tab, {start:{line:a.loc.start.line, column:a.loc.start.column}});
     } else {
-      f = R(a, k, w).goodChar, b = f + q;
+      f = Q(a, k, w).goodChar, b = f + q;
     }
-    T(a, e) && (b += q * p.VariableDeclarator[e.parent.kind]);
+    S(a, e) && (b += q * p.VariableDeclarator[e.parent.kind]);
     return b;
   }
   function B(a, b, d) {
-    N.isNodeOneLine(a) || (f(a.body, b), g(a, d));
+    J.isNodeOneLine(a) || (f(a.body, b), g(a, d));
   }
   function v(a) {
-    var b = R(a, k, w).goodChar, d = b + q;
+    var b = Q(a, k, w).goodChar, d = b + q;
     "BlockStatement" === a.body.type ? B(a.body, d, b) : f([a.body], d);
   }
   function u(a, b, d) {
@@ -2263,74 +2262,74 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
     if (M[a.loc.start.line]) {
       return M[a.loc.start.line];
     }
-    "undefined" === typeof b && (b = R(a, k, w).goodChar);
+    "undefined" === typeof b && (b = Q(a, k, w).goodChar);
     b = 0 < a.cases.length && 0 === p.SwitchCase ? b : b + q * p.SwitchCase;
     return M[a.loc.start.line] = b;
   }
-  var E = ca(a.options), w = E.indentType, q = E.indentSize, p = E.indentOptions, k = a.getSourceCode(), M = {};
+  var E = ba(a.options), w = E.indentType, q = E.indentSize, p = E.indentOptions, k = a.getSourceCode(), M = {};
   return {Program:function(a) {
     f(a.body, 0);
   }, ClassDeclaration:l, ClassExpression:l, BlockStatement:function(a) {
-    if (!N.isNodeOneLine(a) && ("BlockStatement" == a.parent.type || "Program" == a.parent.type)) {
-      var b = R(a, k, w).goodChar;
+    if (!J.isNodeOneLine(a) && ("BlockStatement" == a.parent.type || "Program" == a.parent.type)) {
+      var b = Q(a, k, w).goodChar;
       B(a, b + q, b);
     }
   }, DoWhileStatement:v, ForStatement:v, ForInStatement:v, ForOfStatement:v, WhileStatement:v, WithStatement:v, IfStatement:function(a) {
-    var b = R(a, k, w).goodChar, d = b + q;
-    "BlockStatement" !== a.consequent.type ? N.nodesStartOnSameLine(a, a.consequent) || e(a.consequent, d) : (f(a.consequent.body, d), g(a.consequent, b));
+    var b = Q(a, k, w).goodChar, d = b + q;
+    "BlockStatement" !== a.consequent.type ? J.nodesStartOnSameLine(a, a.consequent) || e(a.consequent, d) : (f(a.consequent.body, d), g(a.consequent, b));
     if (a.alternate) {
       var h = k.getTokenBefore(a.alternate);
       e(h, b);
-      "BlockStatement" !== a.alternate.type ? N.nodesStartOnSameLine(a.alternate, h) || e(a.alternate, d) : (f(a.alternate.body, d), g(a.alternate, b));
+      "BlockStatement" !== a.alternate.type ? J.nodesStartOnSameLine(a.alternate, h) || e(a.alternate, d) : (f(a.alternate.body, d), g(a.alternate, b));
     }
   }, VariableDeclaration:function(a) {
-    if (!N.nodesStartOnSameLine(a.declarations[0], a.declarations[a.declarations.length - 1])) {
-      var b = ba(a), d = R(a, k, w).goodChar, e = b[b.length - 1], d = d + q * p.VariableDeclarator[a.kind];
+    if (!J.nodesStartOnSameLine(a.declarations[0], a.declarations[a.declarations.length - 1])) {
+      var b = aa(a), d = Q(a, k, w).goodChar, e = b[b.length - 1], d = d + q * p.VariableDeclarator[a.kind];
       f(b, d);
-      k.getLastToken(a).loc.end.line <= e.loc.end.line || (b = k.getTokenBefore(e), "," === b.value ? g(a, R(b, k, w).goodChar) : g(a, d - q));
+      k.getLastToken(a).loc.end.line <= e.loc.end.line || (b = k.getTokenBefore(e), "," === b.value ? g(a, Q(b, k, w).goodChar) : g(a, d - q));
     }
   }, ObjectExpression:function(a) {
-    if (!N.isNodeOneLine(a)) {
+    if (!J.isNodeOneLine(a)) {
       var b = a.properties;
-      if (!(0 < b.length && N.nodesStartOnSameLine(b[0], a))) {
+      if (!(0 < b.length && J.nodesStartOnSameLine(b[0], a))) {
         var d = t(a);
         f(b, d);
         g(a, d - q);
       }
     }
   }, ArrayExpression:function(a) {
-    if (!N.isNodeOneLine(a)) {
+    if (!J.isNodeOneLine(a)) {
       var b = a.elements.filter(function(a) {
         return null !== a;
       });
-      if (!(0 < b.length && N.nodesStartOnSameLine(b[0], a))) {
+      if (!(0 < b.length && J.nodesStartOnSameLine(b[0], a))) {
         var d = t(a);
         f(b, d);
         g(a, d - q);
       }
     }
   }, MemberExpression:function(a) {
-    if (-1 !== p.MemberExpression && !N.isNodeOneLine(a) && !F.findAncestorOfType(a, "VariableDeclarator") && !F.findAncestorOfType(a, "AssignmentExpression")) {
-      var b = R(a, k, w).goodChar + q * p.MemberExpression, d = [a.property];
+    if (-1 !== p.MemberExpression && !J.isNodeOneLine(a) && !D.findAncestorOfType(a, "VariableDeclarator") && !D.findAncestorOfType(a, "AssignmentExpression")) {
+      var b = Q(a, k, w).goodChar + q * p.MemberExpression, d = [a.property];
       a = k.getTokenBefore(a.property);
       "Punctuator" === a.type && "." === a.value && d.push(a);
       f(d, b);
     }
   }, SwitchStatement:function(a) {
-    var b = R(a, k, w).goodChar, d = H(a, b);
+    var b = Q(a, k, w).goodChar, d = H(a, b);
     f(a.cases, d);
     g(a, b);
   }, SwitchCase:function(a) {
-    if (!N.isNodeOneLine(a)) {
+    if (!J.isNodeOneLine(a)) {
       var b = H(a);
       f(a.consequent, b + q);
     }
   }, ArrowFunctionExpression:function(a) {
-    N.isNodeOneLine(a) || "BlockStatement" === a.body.type && m(a);
+    J.isNodeOneLine(a) || "BlockStatement" === a.body.type && m(a);
   }, FunctionDeclaration:function(a) {
-    N.isNodeOneLine(a) || (-1 !== p.FunctionDeclaration.parameters && u(a, q, p.FunctionDeclaration.parameters), m(a));
+    J.isNodeOneLine(a) || (-1 !== p.FunctionDeclaration.parameters && u(a, q, p.FunctionDeclaration.parameters), m(a));
   }, FunctionExpression:function(a) {
-    N.isNodeOneLine(a) || (-1 !== p.FunctionExpression.parameters && u(a, q, p.FunctionExpression.parameters), m(a));
+    J.isNodeOneLine(a) || (-1 !== p.FunctionExpression.parameters && u(a, q, p.FunctionExpression.parameters), m(a));
   }};
 }}, "inline-comment-spacing":{meta:{docs:{description:"enforce consistent spacing before the `//` at line end", category:"Stylistic Issues", recommended:!1}, fixable:"whitespace", schema:[{type:"integer", minimum:0, maximum:5}]}, create:function(a) {
   var b = null == a.options[0] ? 1 : a.options[0];
@@ -2338,7 +2337,7 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
     var e = a.getSourceCode();
     e.getComments(d);
     e = e.getTokenBefore(d, 1) || e.getTokenOrCommentBefore(d);
-    if (null != e && N.nodesShareOneLine(d, e)) {
+    if (null != e && J.nodesShareOneLine(d, e)) {
       var f = d.start - e.end;
       f < b && a.report({node:d, message:"Expected at least " + b + " " + (1 === b ? "space" : "spaces") + " before inline comment.", fix:function(a) {
         var e = Array(b - f + 1).join(" ");
@@ -2348,7 +2347,7 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
   }};
 }}, jsdoc:{meta:{docs:{description:"enforce valid JSDoc comments", category:"Possible Errors", recommended:!0}, schema:[{type:"object", properties:{prefer:{type:"object", additionalProperties:{type:"string"}}, preferType:{type:"object", additionalProperties:{type:"string"}}, requireReturn:{type:"boolean"}, requireParamDescription:{type:"boolean"}, requireReturnDescription:{type:"boolean"}, matchDescription:{type:"string"}, requireReturnType:{type:"boolean"}}, additionalProperties:!1}]}, create:function(a) {
   function b(a) {
-    f.push({returnPresent:"ArrowFunctionExpression" === a.type && "BlockStatement" !== a.body.type || N.isNodeClassType(a)});
+    f.push({returnPresent:"ArrowFunctionExpression" === a.type && "BlockStatement" !== a.body.type || J.isNodeClassType(a)});
   }
   function d(b, d) {
     Y.traverseTags(d, function(d) {
@@ -2363,9 +2362,9 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
     var e = g.getJSDocComment(b), q = f.pop(), p = Object.create(null), k = !1, u = !1, E = !1, G = !1, U = !1, K;
     if (e) {
       try {
-        K = ga.parse(e.value, {strict:!0, unwrap:!0, sloppy:!0});
-      } catch (ma) {
-        /braces/i.test(ma.message) ? a.report({node:e, message:"JSDoc type missing brace."}) : a.report({node:e, message:"JSDoc syntax error."});
+        K = fa.parse(e.value, {strict:!0, unwrap:!0, sloppy:!0});
+      } catch (la) {
+        /braces/i.test(la.message) ? a.report({node:e, message:"JSDoc type missing brace."}) : a.report({node:e, message:"JSDoc syntax error."});
         return;
       }
       K.tags.forEach(function(b) {
@@ -2398,10 +2397,10 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
             E = !0;
         }
         m.hasOwnProperty(b.title) && b.title !== m[b.title] && a.report({node:e, message:"Use @{{name}} instead.", data:{name:m[b.title]}});
-        ia(a, b);
+        ha(a, b);
         H && b.type && d(e, b.type);
       });
-      G || k || u || E || N.isNodeGetterFunction(b) || N.isNodeSetterFunction(b) || N.isNodeConstructorFunction(b) || N.isNodeClassType(b) || (l || q.returnPresent) && a.report({node:e, message:"Missing JSDoc @{{returns}} for function.", data:{returns:m.returns || "returns"}});
+      G || k || u || E || J.isNodeGetterFunction(b) || J.isNodeSetterFunction(b) || J.isNodeConstructorFunction(b) || J.isNodeClassType(b) || (l || q.returnPresent) && a.report({node:e, message:"Missing JSDoc @{{returns}} for function.", data:{returns:m.returns || "returns"}});
       var L = Object.keys(p);
       b.params && b.params.forEach(function(b, d) {
         "AssignmentPattern" === b.type && (b = b.left);
@@ -2416,18 +2415,17 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
     var b = f[f.length - 1];
     b && null !== a.argument && (b.returnPresent = !0);
   }, VariableDeclaration:function(a) {
-    (a = g.getJSDocComment(a)) && Y.parseComment(a.value).tags.forEach(function() {
-    });
+    g.getJSDocComment(a);
   }};
 }}, "no-undef":{meta:{docs:{description:"disallow the use of undeclared variables unless mentioned in `/*global */` comments", category:"Variables", recommended:!0}, schema:[{type:"object", properties:{typeof:{type:"boolean"}}, additionalProperties:!1}]}, create:function(a) {
   var b = a.options[0], d = b && !0 === b.typeof || !1, e = [], f = [];
   return {Program:function(a) {
-    e = a.body.map(F.matchExtractBareGoogRequire).filter(function(a) {
+    e = a.body.map(D.matchExtractBareGoogRequire).filter(function(a) {
       return !!a;
     }).map(function(a) {
       return a.source;
     });
-    f = a.body.map(F.matchExtractGoogProvide).filter(function(a) {
+    f = a.body.map(D.matchExtractGoogProvide).filter(function(a) {
       return !!a;
     }).map(function(a) {
       return a.source;
@@ -2435,17 +2433,17 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
   }, "Program:exit":function() {
     function b(a) {
       return e.some(function(b) {
-        return N.isValidPrefix(a, b);
+        return J.isValidPrefix(a, b);
       });
     }
     function h(a) {
       return f.some(function(b) {
-        return N.isValidPrefix(a, b);
+        return J.isValidPrefix(a, b);
       });
     }
     a.getScope().through.forEach(function(e) {
       e = e.identifier;
-      var f = r.getFullyQualifedName(e), g;
+      var f = D.getFullyQualifedName(e), g;
       if (g = !d) {
         g = e.parent, g = "UnaryExpression" === g.type && "typeof" === g.operator;
       }
@@ -2472,7 +2470,7 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
       e = f[f.length - 1];
       f = f[f.length - 2];
       f = "BlockStatement" === e.type && /Function/.test(f.type);
-      e = "Program" === e.type || f ? n.array.contains(ka(ja, e.body), d) : !1;
+      e = "Program" === e.type || f ? n.array.contains(ja(ia, e.body), d) : !1;
       e = !e;
     }
     if (e) {
@@ -2539,7 +2537,7 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
       h = g;
       var l = a.identifier, k = l.parent, v = k.parent, u;
       if (u = a.isRead()) {
-        !(k = "AssignmentExpression" === k.type && "ExpressionStatement" === v.type && k.left === l || "UpdateExpression" === k.type && "ExpressionStatement" === v.type) && (k = h && b(l, h)) && (l = F.findAncestor(l, F.isFunction), k = !(l && b(l, h) && d(l, h))), u = k;
+        !(k = "AssignmentExpression" === k.type && "ExpressionStatement" === v.type && k.left === l || "UpdateExpression" === k.type && "ExpressionStatement" === v.type) && (k = h && b(l, h)) && (l = D.findAncestor(l, D.isFunction), k = !(l && b(l, h) && d(l, h))), u = k;
       }
       h = u;
       l = g;
@@ -2550,11 +2548,11 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
       if (!(m = a.from.variableScope !== a.resolved.scope.variableScope)) {
         b: {
           for (m = k;m;) {
-            if (F.isLoop(m)) {
+            if (D.isLoop(m)) {
               m = !0;
               break b;
             }
-            if (F.isFunction(m)) {
+            if (D.isFunction(m)) {
               break;
             }
             m = m.parent;
@@ -2654,7 +2652,7 @@ MemberExpression:{type:"integer", minimum:0}, FunctionDeclaration:{type:"object"
   }
   function h(a) {
     var b = a.eslintExplicitGlobalComment, d = b.loc.start;
-    a = new RegExp("[\\s,]" + N.escapeRegexp(a.name) + "(?:$|[\\s,:])", "g");
+    a = new RegExp("[\\s,]" + J.escapeRegexp(a.name) + "(?:$|[\\s,:])", "g");
     a.lastIndex = b.value.indexOf("global") + 6;
     a = (a = a.exec(b.value)) ? a.index + 1 : 0;
     var b = b.value.slice(0, a), e = (b.match(/\n/g) || []).length;
