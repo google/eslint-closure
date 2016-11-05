@@ -27,7 +27,7 @@ const PLUGIN_ESLINT_CONFIG = {
     'inline-comment-spacing': inlineCommentSpacing,
     jsdoc,
     'no-undef': noUndef,
-    'no-unused-expresssions': noUnusedExpressions,
+    'no-unused-expressions': noUnusedExpressions,
     'no-unused-vars': noUnusedVars,
   },
 };
