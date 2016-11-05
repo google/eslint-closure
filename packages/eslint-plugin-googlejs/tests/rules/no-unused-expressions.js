@@ -235,6 +235,13 @@ ruleTester.run('no-unused-expressions', noUnusedExpressionsRule, {
       }],
     },
     {
+      code: '/** @ {number} */ this.foo;',
+      errors: [{
+        message: DEFAULT_MESSAGE,
+        type: 'ExpressionStatement',
+      }],
+    },
+    {
       code: 'var foo = () => { var foo = true; "use strict"; }',
       parserOptions: {ecmaVersion: 6},
       errors: [{

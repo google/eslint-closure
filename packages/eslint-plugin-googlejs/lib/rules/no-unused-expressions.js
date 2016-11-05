@@ -72,8 +72,12 @@ function isDirective(node, ancestors) {
 function hasJSDocTypeInfo(node) {
   const comment = jsdocUtils.getJSDocComment(node);
   if (!comment) return false;
-  const jsdoc = jsdocUtils.parseComment(comment.value);
-  return jsdocUtils.hasTypeInformation(jsdoc);
+  try {
+    const jsdoc = jsdocUtils.parseComment(comment.value);
+    return jsdocUtils.hasTypeInformation(jsdoc);
+  } catch (e) {
+    return false;
+  }
 }
 
 
