@@ -151,3 +151,23 @@ describe('matchExtractGoogProvide', () => {
   });
 });
 
+
+describe('getFullyQualifedName', () => {
+
+  const getFullName = testUtils.eslintVerifier(
+      'Identifier',
+      (node) =>
+        ast.getFullyQualifedName(/** @type {!AST.Identifier} */ (node)));
+  it('should get the outer most member expression property name', () => {
+    expect(getFullName(`foo;`)).to.equal('foo');
+    expect(getFullName(`foo.bar;`)).to.equal('foo.bar');
+    expect(getFullName(`foo.bar.baz`)).to.equal('foo.bar.baz');
+    expect(getFullName(`foo.bar.baz.qux`)).to.equal('foo.bar.baz.qux');
+
+    expect(getFullName(`foo();`)).to.equal('foo');
+    expect(getFullName(`foo.bar();`)).to.equal('foo.bar');
+    expect(getFullName(`foo.bar.baz()`)).to.equal('foo.bar.baz');
+    expect(getFullName(`foo.bar.baz.qux()`)).to.equal('foo.bar.baz.qux');
+  });
+});
+

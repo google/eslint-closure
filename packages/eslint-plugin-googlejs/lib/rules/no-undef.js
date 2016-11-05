@@ -5,7 +5,6 @@
 goog.module('googlejs.rules.noUndef');
 
 const ast = goog.require('googlejs.ast');
-const astInfo = goog.require('googlejs.astInfo');
 const utils = goog.require('googlejs.utils');
 
 /**
@@ -92,7 +91,7 @@ const NO_UNDEF_RULE = {
         undeclaredVariables.forEach((ref) => {
           /** @type {!AST.Identifier} */
           const identifier = ref.identifier;
-          const fullName = astInfo.getFullyQualifedName(identifier);
+          const fullName = ast.getFullyQualifedName(identifier);
 
           if (!considerTypeOf && hasTypeOfOperator(identifier)) {
             return;
