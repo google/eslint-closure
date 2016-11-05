@@ -1,6 +1,6 @@
 goog.module('googlejs.config');
 
-// TODO(jschaf): Why are all these suppresses required, they're clearly
+// TODO(jschaf): Why are all these suppresses required?  They're clearly
 // exported.
 /** @suppress {extraRequire} */
 const camelcase = goog.require('googlejs.rules.camelcase');
@@ -13,7 +13,10 @@ const jsdoc = goog.require('googlejs.rules.jsdoc');
 /** @suppress {extraRequire} */
 const noUndef = goog.require('googlejs.rules.noUndef');
 /** @suppress {extraRequire} */
-const noUsedVars = goog.require('googlejs.rules.noUnusedVars');
+const noUnusedExpressions = goog.require('googlejs.rules.noUnusedExpressions');
+/** @suppress {extraRequire} */
+const noUnusedVars = goog.require('googlejs.rules.noUnusedVars');
+
 /**
  * @const {!ESLint.Config}
  */
@@ -24,7 +27,8 @@ const PLUGIN_ESLINT_CONFIG = {
     'inline-comment-spacing': inlineCommentSpacing,
     jsdoc,
     'no-undef': noUndef,
-    'no-unused-vars': noUsedVars,
+    'no-unused-expresssions': noUnusedExpressions,
+    'no-unused-vars': noUnusedVars,
   },
 };
 
