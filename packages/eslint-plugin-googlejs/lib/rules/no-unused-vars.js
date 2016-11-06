@@ -6,9 +6,7 @@
 goog.module('googlejs.rules.noUnusedVars');
 
 const ast = goog.require('googlejs.ast');
-const jsdocUtils = goog.require('googlejs.jsdocUtils');
 const utils = goog.require('googlejs.utils');
-
 
 /**
  * @param {!ESLint.RuleContext} context
@@ -535,35 +533,11 @@ function create(context) {
     };
   }
 
-  /**
-   * Returns true if variable creates a type, e.g. @typedef.
-   * @param {!Escope.Variable} variable
-   * @return {boolean}
-   */
-  function isTypeVariable(variable) {
-    if (variable.defs.length <= 0) return false;
-
-    const node = variable.defs[0].node;
-
-    const comment = jsdocUtils.getJSDocComment(node);
-    if (!comment) return false;
-    try {
-      const jsdoc = jsdocUtils.parseComment(comment.value);
-      return jsdocUtils.hasTypeInformation(jsdoc);
-    } catch (e) {
-      return false;
-    }
-  }
-
   return {
     'Program:exit': (programNode) => {
       const unusedVars = collectUnusedVariables(context.getScope(), []);
 
       for (const unusedVar of unusedVars) {
-
-        if (isTypeVariable(unusedVar)) {
-          continue;
-        }
 
         if (unusedVar.eslintExplicitGlobal) {
           context.report({
