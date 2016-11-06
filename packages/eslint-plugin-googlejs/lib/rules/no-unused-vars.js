@@ -544,19 +544,15 @@ function create(context) {
     if (variable.defs.length <= 0) return false;
 
     const node = variable.defs[0].node;
-    const jsdocToken = jsdocUtils.getJSDocComment(node);
-    if (!jsdocToken) return false;
 
-    let jsdocComment;
+    const comment = jsdocUtils.getJSDocComment(node);
+    if (!comment) return false;
     try {
-      jsdocComment = jsdocUtils.parseComment(jsdocToken.value);
-    } catch (ex) {
+      const jsdoc = jsdocUtils.parseComment(comment.value);
+      return jsdocUtils.hasTypeInformation(jsdoc);
+    } catch (e) {
       return false;
     }
-
-    const isTypeCreator = jsdocComment.tags
-          .some((tag) => tag.title == 'typedef');
-    return isTypeCreator;
   }
 
   return {
@@ -565,7 +561,7 @@ function create(context) {
 
       for (const unusedVar of unusedVars) {
 
-        if (config.allowUnusedTypes && isTypeVariable(unusedVar)) {
+        if (isTypeVariable(unusedVar)) {
           continue;
         }
 
