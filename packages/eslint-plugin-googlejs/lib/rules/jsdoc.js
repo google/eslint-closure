@@ -170,16 +170,37 @@ function create(context) {
 
   /**
    * Checks and reports invalid JSDoc on variable declarations.
-   * @param {!AST.VariableDeclaration} node
+   * @param {!AST.VariableDeclaration} varDeclaration
    */
-  function checkVariableJSDoc(node) {
-    const jsdocNode = sourceCode.getJSDocComment(node);
-    if (!jsdocNode) return;
-    // const jsdocAST = jsdocUtils.parseComment(jsdocNode.value);
+  function checkVariableJSDoc(varDeclaration) {
+    if (varDeclaration.declarations.length !== 1) return;
 
-    // jsdocAST.tags.forEach((tag) => {
-      // markTypeVariablesAsUsed(tag);
-    // });
+    const comment = jsdocUtils.getJSDocComment(varDeclaration);
+    if (!comment) return;
+
+    let jsdoc;
+    try {
+      jsdoc = jsdocUtils.parseComment(comment.value);
+    } catch (e) {
+      return;
+    }
+
+    const node = varDeclaration.declarations[0];
+    if (node.id.type !== 'Identifier') return;
+    const name = /** @type {!AST.Identifier} */ (node.id).name;
+
+    // TODO(jschaf): We're blindly marking all variables with type information
+    // as used.  A better approach would be be to traverse all JSDoc comments
+    // and mark variables as used based on what types we actually use.  For
+    // goog.provide dependencies, you need to mark any property on a provided
+    // type as used because there's no explicit export.
+    if (jsdocUtils.hasTypeInformation(jsdoc)) {
+      context.markVariableAsUsed(name);
+    }
+
+    jsdoc.tags.forEach((tag) => {
+      markTypeVariablesAsUsed(context, tag);
+    });
   }
 
   /**

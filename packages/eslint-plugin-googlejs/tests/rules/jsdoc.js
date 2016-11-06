@@ -1741,13 +1741,23 @@ const jsdocInlineOptions = `/* eslint tempJsdoc: 1 */`;
 
 ruleTester.run('no-unused-vars', noUnusedVarsRule, {
   valid: [
-//     {
-//       code: `${jsdocInlineOptions}
-// /** @typedef {number} */
-// var Corge;
-// /** @const {Corge} */
-// window.qux = 2;`,
-//     },
+    {
+      code: `${jsdocInlineOptions}
+/** @export {number} */
+var Corge;`,
+    },
+    {
+      code: `${jsdocInlineOptions}
+/** @type {number} */
+var Corge;`,
+    },
+    {
+      code: `${jsdocInlineOptions}
+/** @typedef {number} */
+var Corge;
+/** @const {Corge} */
+window.qux = 2;`,
+    },
     {
       code: `${jsdocInlineOptions}
 /** @typedef {number} */
