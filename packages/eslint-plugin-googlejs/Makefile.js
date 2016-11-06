@@ -190,7 +190,8 @@ function buildTestCompiler(testFilePath, entryPoint) {
         output_wrapper: `//# sourceMappingURL=${outputFile}.map
 require('source-map-support').install();
 %output%`,
-        // This is slower but errors aren't reported with WHITESPACE_ONLY.
+        // SIMPLE is slower but errors aren't reported with WHITESPACE_ONLY and
+        // compilation sometimes fails with errors.
         compilation_level: 'SIMPLE',
         formatting: 'PRETTY_PRINT',
         entry_point: entryPoint,

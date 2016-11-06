@@ -42,7 +42,8 @@ function isTerminal(tagType) {
  */
 function hasTypeInformation(jsdocComment) {
   const typeInfoTags = [
-    'type', 'const', 'private', 'package', 'protected', 'public', 'export'];
+    'type', 'typedef', 'record', 'const', 'private', 'package', 'protected',
+    'public', 'export'];
   const isTypeInfo = (tag) => array.contains(typeInfoTags, tag.title);
   return jsdocComment.tags.some(isTypeInfo);
 }

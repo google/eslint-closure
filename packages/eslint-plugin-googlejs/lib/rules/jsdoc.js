@@ -188,8 +188,8 @@ function create(context) {
    * @return {void}
    */
   function checkJSDoc(node) {
-    // TODO(jschaf): This cast shouldn't be necessary because we check that
-    // jsdocNode is non-null with the if-statement.
+    // TODO(jschaf): This cast shouldn't be necessary because we check below
+    // that jsdocNode is non-null with the if-statement.
     const jsdocNode = /** @type {!AST.CommentToken} */
           (sourceCode.getJSDocComment(node));
     /** @const {!FunctionReturnInfo} */
