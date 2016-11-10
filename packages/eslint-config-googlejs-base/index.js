@@ -124,7 +124,8 @@ const POSSIBLE_ERROR_RULES = {
   'no-ex-assign': ERROR,
 
   // Disallow unnecessary boolean casts.  #eslint
-  'no-extra-boolean-cast': ERROR,
+  // No explicit recommendation in either style guide.
+  'no-extra-boolean-cast': OFF,
 
   // Disallow unnecessary parentheses.
   'no-extra-parens': OFF,
