@@ -1,0 +1,70 @@
+
+    <hr>
+
+    <div class="container">
+
+      <footer>
+        <ul class="list-inline">
+          <li><a href="https://groups.google.com/group/eslint">Mailing List</a></li>
+          <li><a href="https://github.com/eslint/eslint">GitHub</a></li>
+          <li><a href="https://twitter.com/geteslint">Twitter</a></li>
+          <li><a href="https://gitter.im/eslint/eslint">Chat Room</a></li>
+          <li>Copyright JS Foundation and other contributors, <a href="https://js.foundation">https://js.foundation/</a></li>
+        </ul>
+      </footer>
+    </div><!-- /.container -->
+
+
+  <script id="suggestion-item-template" type="text/template">
+  {%raw %}
+  {{#isCategoryHeader}}<div class="suggestion-category">{{{category}}}</div>{{/isCategoryHeader}}
+  <div class="suggestion {{#isCategoryHeader}}suggestion-is-category-header{{/isCategoryHeader}}">
+    <div class="suggestion-subcategory-main">{{#isSubcategoryHeader}}{{{subcategory}}}{{/isSubcategoryHeader}}</div>
+    <div class="suggestion-content">
+      <div class="suggestion-subcategory-secondary">{{{subcategory}}}</div>
+      <div class="suggestion-title">{{{title}}}</div>
+      <div class="suggestion-text">{{{text}}}</div>
+    </div>
+  </div>
+  {% endraw %}
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js"></script>
+  <script src="/js/app/search.js"></script>
+  <script>
+    $(document).ready(function() {
+      anchors.add('.doc h2, .doc h3, .doc h4, .blog h2, .blog h3, .blog h4');
+      {% if page.homepage %}
+      function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+        }
+        return array;
+      }
+
+      var logos = [{% for logo in site.data.logos %}{ url: '{{ logo.url }}', src: '{{ logo.src }}', name: '{{ logo.name }}' }{% unless forloop.last %},{% endunless %}{% endfor %}];
+      logos = shuffleArray(logos);
+      for (var i = 0, l = logos.length; i<l; i++) {
+        var logo = $('<div class="slide col-sm-4"><a href="' + logos[i].url + '"><img src="' + logos[i].src + '" alt="' + logos[i].name + '"></a></div>');
+        $('.logos').append(logo);
+      }
+
+      $('.expender').click(function() {
+        if ($('.logos').hasClass('expended')) {
+          $('.logos').removeClass('expended').css('max-height', '150px');
+          $('.expender').html('see more <span class="caret"/>');
+        } else {
+          $('.logos').addClass('expended').css('max-height', 5000);
+          $('.expender').html('see less <span class="dropup"><span class="caret"></span></span>');
+        }
+      });
+    {% endif %}
+    });
+  </script>
+</body>
+</html>
