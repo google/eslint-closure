@@ -9,11 +9,11 @@
 
         <title>Googlejs</title>
         <link href="{{ site.url }}{{ page.url }}" rel="canonical" />
-        <link rel="stylesheet" href="/styles/main.css"/>
+        <link rel="stylesheet" href="{{ site.url }}/styles/main.css"/>
     </head>
     <body>
 
-        <link rel="stylesheet" property="stylesheet" type="text/css" href="http://eclipse.org/orion/editor/releases/current/built-editor.css" />
+        <link rel="stylesheet" property="stylesheet" type="text/css" href="https://eclipse.org/orion/editor/releases/current/built-editor.css" />
         <main class="container">
             {{ content }}
         </main>
@@ -21,6 +21,6 @@
         <hr>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <script src="/js/app/search.js"></script>
+        <script src="{{ site.url }}/js/app/search.js"></script>
     </body>
 </html>
