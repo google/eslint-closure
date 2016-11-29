@@ -1,0 +1,26 @@
+.editorRow {
+    padding-top: 30px;
+}
+
+@media(min-width: 992px) {
+    .results {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+}
+
+.list label {
+    font-weight: 400;
+}
+
+.rules .popover {
+    min-width: 250px;
+}
+
+.rules .popover-content {
+    font-size: 12px;
+}
+
+.rules .radio+.radio, .rules .checkbox+.checkbox {
+    margin-top: inherit;
+}

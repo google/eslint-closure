@@ -4,3 +4,9 @@ node_modules/
 coverage/
 /packages/eslint-plugin-googlejs/dist/tests/
 .agignore
+npm-debug.log
+docs/_site
+docs/.sass-cache
+docs/.jekyll-metadata
+docs/vendor/
+docs/Gemfile.lock
