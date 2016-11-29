@@ -3,8 +3,12 @@
 requirejs.config({
   paths: {
     text: '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text',
+    bootstrap: '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.min',
     orion: '//eclipse.org/orion/editor/releases/current/built-editor-amd.min',
-    lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min',
+    lodash: '//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min',
+    jquery: '//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min',
+    googlejs: './js/app/googlejs-eslint-plugin.min',
+    config: './js/app/eslint.json',
   },
 });
 
@@ -25,10 +29,13 @@ function debounce(func, wait, immediate) {
 }
 
 require(
-    ['orion', 'lodash', './js/app/eslint.js',
-     './js/app/googlejs-eslint-plugin.min.js',
-      'text!./js/app/eslint.json'],
-    function(edit, lodash, eslint, googlejs, config) {
+    ['orion', 'lodash', './js/app/eslint.js', 'jquery', 'text!config'],
+    function(edit, lodash, eslint, $, config) {
+      window.lodash = lodash;
+      require(['bootstrap'], () => {});
+      require(['googlejs'], (googlejs) => {
+        window.googlejs = googlejs;
+      });
       function makeResultNode(options) {
         const result = document.createElement('div');
         const classList = result.classList;
@@ -167,7 +174,7 @@ require(
         let parent;
 
         // ecmaFeatures
-        for (const feature of ecmaFeatures) {
+        for (const feature in ecmaFeatures) {
           checkbox = $(
               '<div class="checkbox-inline"><label><input class="feature" type="checkbox" />' +
               feature + '</label></div>');
@@ -178,7 +185,7 @@ require(
         }
 
         // environments
-        for (const env of environments) {
+        for (const env in environments) {
           checkbox = $(
               '<div class="checkbox-inline"><label><input type="checkbox" />' +
               env + '</label></div>');
