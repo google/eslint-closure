@@ -2,8 +2,8 @@
 
 requirejs.config({
     paths: {
-        'text': '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text',
-        'orion': 'http://eclipse.org/orion/editor/releases/current/built-editor-amd.min'
+      'text': '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text',
+      'orion': '//eclipse.org/orion/editor/releases/current/built-editor-amd.min',
     }
 });
 
@@ -25,8 +25,8 @@ function debounce(func, wait, immediate) {
 
 require([
     'orion',
-    '../js/app/eslint.js',
-    'text!../js/app/eslint.json'
+    './js/app/eslint.js',
+    'text!./js/app/eslint.json'
 ], function(edit, eslint, config) {
     function makeResultNode(options) {
         var result = document.createElement('div');
