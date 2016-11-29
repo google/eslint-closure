@@ -1,6 +1,26 @@
-{% include header.html %}
-<link rel="stylesheet" property="stylesheet" type="text/css" href="http://eclipse.org/orion/editor/releases/current/built-editor.css" />
-<main class="container">
-    {{ content }}
-</main>
-{% include footer.html %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <meta name="keywords" content="JavaScript, Linter, Linting, Pluggable, Configurable, Code Quality">
+        <meta name="description" content="{{ site.description }}">
+
+        <title>Googlejs</title>
+        <link href="{{ site.url }}{{ page.url }}" rel="canonical" />
+        <link rel="stylesheet" href="/styles/main.css"/>
+    </head>
+    <body>
+
+        <link rel="stylesheet" property="stylesheet" type="text/css" href="http://eclipse.org/orion/editor/releases/current/built-editor.css" />
+        <main class="container">
+            {{ content }}
+        </main>
+
+        <hr>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script src="/js/app/search.js"></script>
+    </body>
+</html>
