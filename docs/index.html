@@ -2,12 +2,15 @@
 title: ESLint Demo
 layout: default
 ---
-<link rel="stylesheet" property="stylesheet" href="{{ site.url }}/styles/demo.css"/>
+<link rel="stylesheet" property="stylesheet" href="{{ site.baseurl }}/styles/demo.css"/>
 
 <div class="container editorRow">
     <div class="row">
         <div class="col-md-7">
-            <pre id="editor" data-editor-lang="js" style="height:350px">var foo = bar;</pre>
+            <pre id="editor" data-editor-lang="js" style="height:350px">goog.require('module.name');
+
+module.name.fooBar();
+module.notName.fooBar();</pre>
         </div>
         <div class="col-md-5">
             <div id="results">
@@ -68,4 +71,4 @@ layout: default
 </div>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js"></script>
-<script src="{{ site.url }}/js/app/demo.js"></script>
+<script src="{{ site.baseurl }}/js/app/demo.js"></script>

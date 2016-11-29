@@ -2,8 +2,9 @@
 
 requirejs.config({
   paths: {
-    'text': '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text',
-    'orion': '//eclipse.org/orion/editor/releases/current/built-editor-amd.min',
+    text: '//cdnjs.cloudflare.com/ajax/libs/require-text/2.0.12/text',
+    orion: '//eclipse.org/orion/editor/releases/current/built-editor-amd.min',
+    lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min',
   },
 });
 
@@ -24,8 +25,10 @@ function debounce(func, wait, immediate) {
 }
 
 require(
-    ['orion', './js/app/eslint.js', 'text!./js/app/eslint.json'],
-    function(edit, eslint, config) {
+    ['orion', 'lodash', './js/app/eslint.js',
+     './js/app/googlejs-eslint-plugin.min.js',
+      'text!./js/app/eslint.json'],
+    function(edit, lodash, eslint, googlejs, config) {
       function makeResultNode(options) {
         const result = document.createElement('div');
         const classList = result.classList;
@@ -252,5 +255,7 @@ require(
 
       verify();
 
-      editor.getTextView().onModify = function() { verify(); };
+      editor.getTextView().onModify = function() {
+        verify();
+      };
     });
