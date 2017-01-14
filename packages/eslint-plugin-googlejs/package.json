@@ -55,6 +55,7 @@
     "checkTypes": "node Makefile.js checkTypes"
   },
   "dependencies": {
+    "doctrine": "^2.0.0",
     "eslint": "~3.9.0",
     "lodash.ismatchwith": "~4.4.0"
   }
