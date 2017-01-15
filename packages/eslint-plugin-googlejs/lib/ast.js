@@ -83,6 +83,7 @@ function matchStringLiteral(node) {
  * If node is a string literal then return an object with the given propertyName
  * set to the literal.
  * @param {!AST.Node} node
+ * @param {string=} propertyName
  * @return {(!Object|boolean)}
  */
 function matchExtractStringLiteral(node, propertyName = 'literal') {

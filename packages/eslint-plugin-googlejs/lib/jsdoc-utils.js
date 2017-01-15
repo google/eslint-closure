@@ -3,9 +3,8 @@
  */
 goog.module('googlejs.jsdocUtils');
 
-const astMatcher = goog.require('googlejs.astMatcher');
-
 const array = goog.require('goog.array');
+const astMatcher = goog.require('googlejs.astMatcher');
 
 const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 

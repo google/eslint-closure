@@ -4,8 +4,8 @@
 
 goog.module('googlejs.rules.jsdoc');
 
-const utils = goog.require('googlejs.utils');
 const jsdocUtils = goog.require('googlejs.jsdocUtils');
+const utils = goog.require('googlejs.utils');
 
 const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 

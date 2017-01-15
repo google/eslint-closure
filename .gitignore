@@ -10,3 +10,8 @@ docs/.sass-cache
 docs/.jekyll-metadata
 docs/vendor/
 docs/Gemfile.lock
+**/bazel-bin
+**/bazel-genfiles
+**/bazel-out
+**/bazel-testlogs
+/docs/js/app/googlejs-eslint-plugin.min.js

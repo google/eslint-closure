@@ -1,0 +1,61 @@
+{
+  "name": "googlejs-site",
+  "version": "0.0.1",
+  "author": "Joe Schafer <joe@jschaf.com>",
+  "license": "Apache-2.0",
+  "description": "An ESLint plugin for Google style guide rules.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "google",
+    "lint",
+    "linter"
+  ],
+  "files": [
+    "lib/*.js",
+    "index.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "bugs": {
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "homepage": "https://github.com/jschaf/googlejs",
+  "devDependencies": {
+    "chai": "~3.5.0",
+    "espree": "~3.3.2",
+    "google-closure-compiler": "~20161024.1.0",
+    "istanbul": "~0.4.5",
+    "karma": "~1.3.0",
+    "karma-mocha": "~1.2.0",
+    "karma-mocha-reporter": "~2.2.0",
+    "karma-phantomjs-launcher": "~1.0.2",
+    "mocha": "~3.1.2",
+    "shelljs": "~0.7.4",
+    "shelljs-nodecli": "~0.1.1",
+    "source-map-support": "~0.4.5"
+  },
+  "peerDependencies": {},
+  "engines": {
+    "node": ">= 4"
+  },
+  "scripts": {
+    "build": "node Makefile.js buildSimple",
+    "buildAdvanced": "node Makefile.js buildAdvanced",
+    "make": "node Makefile.js",
+    "lint": "node Makefile.js lint",
+    "test": "node Makefile.js test",
+    "testRule": "node Makefile.js testRule -- ",
+    "testFile": "node Makefile.js testFile -- ",
+    "checkTypes": "node Makefile.js checkTypes"
+  },
+  "dependencies": {
+    "eslint": "~3.9.0",
+    "lodash.ismatchwith": "~4.4.0"
+  }
+}
