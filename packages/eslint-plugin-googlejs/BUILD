@@ -15,7 +15,7 @@ closure_js_binary(
         "//lib/externs:all-externs",
     ],
     defs = [
-        "--new_type_inf",
     ],
+    entry_points = ["googlejs.config"],
     warning_level = "VERBOSE",
 )

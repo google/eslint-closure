@@ -6,11 +6,10 @@ goog.module('googlejs.astMatcher');
 
 const googObject = goog.require('goog.object');
 
-/** @const {!Lodash.isMatchWith} */
-const isMatchWith = require('lodash.ismatchwith');
+const isMatchWith = /** @type {!Lodash.Module} */ (require('lodash.ismatchwith'));
 
 /**
- * Creates a function that matches AST against the given pattern.
+ * Creates a function that matches an AST against the given pattern.
  *
  * See: isASTMatch()
  *
@@ -23,7 +22,7 @@ function matchesAST(pattern) {
 }
 
 /**
- * Matches AST against the given pattern,
+ * Matches AST against the given pattern.
  *
  * Similar to LoDash.isMatch(), but with the addition that a Function
  * can be provided to assert various conditions e.g. checking that
@@ -44,7 +43,13 @@ function matchesAST(pattern) {
 function isASTMatch(ast, pattern) {
   const extractedFields = {};
 
-  const matches = isMatchWith(ast, pattern, (value, matcher) => {
+  /**
+   * Adds matched fields to extractedFields.
+   * @param {!Object} value
+   * @param {(function(*):(!Object|boolean))} matcher
+   * @return {*}
+   */
+  function matchHelper(value, matcher) {
     if (typeof matcher === 'function') {
       const result = matcher(value);
       if (typeof result === 'object') {
@@ -55,7 +60,9 @@ function isASTMatch(ast, pattern) {
       // Otherwise fall back to built-in comparison logic.
       return undefined;
     }
-  });
+  }
+
+  const matches = isMatchWith(ast, pattern, matchHelper);
 
   if (matches) {
     return extractedFields;

@@ -96,7 +96,7 @@ function matchExtractStringLiteral(node, propertyName = 'literal') {
 
 /**
  * The extracted module name of a goog.require call or false.
- * @type {({
+ * @typedef {({
  *   source: string,
  * }|boolean)}
  */
@@ -162,7 +162,7 @@ function matchExtractGoogProvide(node) {
 
 /**
  * The extracted string literal of a directive, like 'use strict'.
- * @type {({
+ * @typedef {({
  *   directive: string,
  * }|boolean)}
  */
