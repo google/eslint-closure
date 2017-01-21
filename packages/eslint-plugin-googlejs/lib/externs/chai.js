@@ -86,7 +86,7 @@ Chai.Expect.prototype.lengthOf;
 
 /**
  * Language Chains.
- * @record
+ * @interface
  */
 Chai.LanguageChains = function() {};
 /** @type {!Chai.Expect} */
@@ -121,7 +121,7 @@ Chai.LanguageChains.prototype.same;
  */
 Chai.NumberComparer = function(value, message) {};
 
-/** @record */
+/** @interface */
 Chai.NumericComparison = function() {};
 /** @type {!Chai.NumberComparer} */
 Chai.NumberComparison.prototype.above;

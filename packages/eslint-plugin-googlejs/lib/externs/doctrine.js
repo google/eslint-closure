@@ -98,7 +98,7 @@ Doctrine.TagType;
  */
 Doctrine.UnaryTagType;
 
-/** @record */ Doctrine.Typeable = function() {};
+/** @interface */ Doctrine.Typeable = function() {};
 /** @type {string} */ Doctrine.Typeable.prototype.type;
 
 /** @record @extends {Doctrine.Typeable} */ Doctrine.NullableLiteral = function() {};

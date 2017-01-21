@@ -6,7 +6,7 @@ goog.module('googlejs.astMatcher');
 
 const googObject = goog.require('goog.object');
 
-const isMatchWith = /** @type {!Lodash.Module} */ (require('lodash.ismatchwith'));
+const isMatchWith = /** @type {!Lodash.isMatchWith} */ (require('lodash.ismatchwith'));
 
 /**
  * Creates a function that matches an AST against the given pattern.
