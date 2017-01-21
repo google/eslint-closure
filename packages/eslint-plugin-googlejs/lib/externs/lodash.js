@@ -8,11 +8,6 @@
 /** @const */
 const Lodash = {};
 
-/** The overall lodash module.
- * @record
- */
-Lodash.Module = function() {};
-
 /**
  * This method is like _.isMatch except that it accepts customizer which is
  * invoked to compare values. If customizer returns undefined, comparisons are
@@ -23,8 +18,9 @@ Lodash.Module = function() {};
  * @param {!Lodash.isMatchWithCustomizer} customizer The function to customize
  *     comparisons.
  * @return {boolean} Returns `true` if `object` is a match, else `false`.
+ * @constructor
  */
-Lodash.Module.prototype.isMatchWith = function(object, source, customizer) {};
+Lodash.isMatchWith = function(object, source, customizer) {};
 
 /**
  * Function used with `isMatchWith` to compare values.
@@ -33,6 +29,7 @@ Lodash.Module.prototype.isMatchWith = function(object, source, customizer) {};
  * @param {(number|string)=} indexOrKey
  * @param {!Object=} object
  * @param {!Object=} src
+ * @constructor
  */
-Lodash.Module.prototype.isMatchWithCustomizer = function(value, other, indexOrKey, object,
+Lodash.isMatchWithCustomizer = function(value, other, indexOrKey, object,
                                         src) {};

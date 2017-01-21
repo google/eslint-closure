@@ -117,8 +117,9 @@ Chai.LanguageChains.prototype.same;
  * @param {number} value
  * @param {string=} message
  * @return {!Chai.Expect}
+ * @constructor
  */
-Chai.NumberComparer = (value, message) => {};
+Chai.NumberComparer = function(value, message) {};
 
 /** @record */
 Chai.NumericComparison = function() {};
@@ -154,8 +155,9 @@ Chai.NumberComparison.prototype.within = (start, finish, message) => {};
  * @param {*} value
  * @param {string=} msg
  * @return {void}
+ * @constructor
  */
-Chai.Equal = (value, msg) => {};
+Chai.Equal = function(value, msg) {};
 
 /** @record */
 Chai.TypeComparison = function() {};
@@ -169,8 +171,9 @@ Chai.TypeComparison.prototype.instanceOf;
  * @param {string} type
  * @param {string=} message
  * @return {!Chai.Expect}
+ * @constructor
  */
-Chai.TypeComparator = (type, message) => {};
+Chai.TypeComparator = function(type, message) {};
 
 /** @record */
 Chai.Deep = function() {};
@@ -199,8 +202,9 @@ Chai.Include.prototype.members = (set, message) => {};
  * @param {(!Object|string|number)} value
  * @param {string=} message
  * @return {!Chai.Expect}
+ * @constructor
  */
-Chai.IncludeComparator = (value, message) => {};
+Chai.IncludeComparator = function(value, message) {};
 
 
 /**
@@ -208,15 +212,17 @@ Chai.IncludeComparator = (value, message) => {};
  * @param {*} value
  * @param {string=} message
  * @return {!Chai.Expect}
+ * @constructor
  */
-Chai.Property = (name, value, message) => {};
+Chai.Property = function(name, value, message) {};
 
 /**
  * @param {string} name
  * @param {string=} message
  * @return {!Chai.Expect}
+ * @constructor
  */
-Chai.OwnProperty = (name, message) => {};
+Chai.OwnProperty = function(name, message) {};
 
 /**
  * @extends {Chai.LanguageChains}
@@ -229,19 +235,22 @@ Chai.Length = function() {};
  * @param {number} length
  * @param {string=} message
  * @return {!Chai.Expect}
+ * @constructor
  */
-Chai.LengthComparator = (length, message) => {};
+Chai.LengthComparator = function(length, message) {};
 
 /**
  * @param {!Object} constructor
  * @param {string=} message
  * @return {!Chai.Expect}
+ * @constructor
  */
-Chai.InstanceOf = (constructor, message) => {};
+Chai.InstanceOf = function(constructor, message) {};
 
 
 /**
  * @param {(string|RegExp|!Function)} constructor
  * @return {!Chai.Expect}
+ * @constructor
  */
-Chai.Throw = (constructor) => {};
+Chai.Throw = function(constructor) {};

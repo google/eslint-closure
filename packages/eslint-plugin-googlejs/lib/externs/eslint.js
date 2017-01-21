@@ -797,6 +797,7 @@ ESLint.LintResult;
  * An ESLint formatting function, e.g. stylish, or unix.
  * @param {!Array<!ESLint.LintResult>} results
  * @return {string}
+ * @constructor
  */
 ESLint.ResultsFormatter = function(results) {};
 

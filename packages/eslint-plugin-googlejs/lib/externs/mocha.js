@@ -26,8 +26,9 @@ let xit;
  * @param {string} description
  * @param {function()} spec
  * @return {void}
+ * @constructor
  */
-Mocha.ContextRunnable = (description, spec) => {};
+Mocha.ContextRunnable = function(description, spec) {};
 
 /** @record */
 Mocha.ContextDefinition = function() {};
@@ -53,8 +54,9 @@ Mocha.ContextDefinition.prototype.timeout = (ms) => {};
  * @param {string} expectation
  * @param {!Mocha.ActionFunction=} assertion
  * @return {void}
+ * @constructor
  */
-Mocha.TestRunnable = (expectation, assertion) => {};
+Mocha.TestRunnable = function(expectation, assertion) {};
 
 
 /** @record */
@@ -135,11 +137,13 @@ const afterEach = (action, description) => {};
 /**
  * @param {*?} error
  * @return {*}
+ * @constructor
  */
-Mocha.Done = (error) => {};
+Mocha.Done = function(error) {};
 
 /**
  * @param {!Mocha.Done} done
  * @return {*}
+ * @constructor
  */
-Mocha.ActionFunction = (done) => {};
+Mocha.ActionFunction = function(done) {};
