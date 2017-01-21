@@ -73,6 +73,7 @@ function parseComment(jsdocString) {
  * child elements of tagType.
  * @param {!Doctrine.TagType} tagType
  * @param {function(!Doctrine.TagType)} visitor
+ * @return {void}
  */
 function traverseTags(tagType, visitor) {
   visitor(tagType);

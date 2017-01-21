@@ -45,13 +45,15 @@ function isASTMatch(ast, pattern) {
 
   /**
    * Adds matched fields to extractedFields.
-   * @param {!Object} value
-   * @param {(function(*):(!Object|boolean))} matcher
-   * @return {*}
+   * @param {*} value
+   * @param {*} matcher
+   * @return {(boolean|undefined)}
    */
   function matchHelper(value, matcher) {
     if (typeof matcher === 'function') {
-      const result = matcher(value);
+      const matcherFn =
+            /** @type {function(*):(boolean|undefined)} */ (matcher);
+      const result = matcherFn(value);
       if (typeof result === 'object') {
         googObject.extend(extractedFields, result);
       }
@@ -63,12 +65,7 @@ function isASTMatch(ast, pattern) {
   }
 
   const matches = isMatchWith(ast, pattern, matchHelper);
-
-  if (matches) {
-    return extractedFields;
-  } else {
-    return false;
-  }
+  return matches ? extractedFields : false;
 }
 
 /**

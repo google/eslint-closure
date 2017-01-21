@@ -508,7 +508,7 @@ function create(context) {
    * Creates the correct location of a given variables.
    * The location is at its name string in a `/*global` comment.
    *
-   * @param {!Escope.Variable} variable - A variable to get its location.
+   * @param {!Escope.Variable} variable A variable to get its location.
    * @return {!ESLint.Location} The location object for the
    *     variable.
    */

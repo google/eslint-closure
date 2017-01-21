@@ -15,7 +15,6 @@ closure_js_library(
     srcs = ["ast-matcher.js"],
     deps = [
         "@io_bazel_rules_closure//closure/library",
-        "//lib/externs:lodash",
     ],
 )
 
