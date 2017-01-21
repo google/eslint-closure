@@ -25,8 +25,5 @@ goog.exportProperty(PLUGIN_ESLINT_CONFIG.rules, 'no-unused-expressions',
                     noUnusedExpressions);
 goog.exportProperty(PLUGIN_ESLINT_CONFIG.rules, 'no-unused-vars', noUnusedVars);
 
-// For node.js.
-module.exports = PLUGIN_ESLINT_CONFIG;
-
 // For closure in case anyone decides to goog.require this module.
 exports = PLUGIN_ESLINT_CONFIG;
