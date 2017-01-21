@@ -14,6 +14,7 @@ const utils = goog.require('googlejs.utils');
  *   allowOptPrefix: boolean,
  *   allowLeadingUnderscore: boolean,
  *   allowTrailingUnderscore: boolean,
+ *   checkObjectProperties: boolean,
  * }}
  */
 let CamelCaseRuleOptions;

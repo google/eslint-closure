@@ -186,9 +186,8 @@ function getJSDocComment(node) {
   }
 
   /** @type {?AST.CommentToken} */
-  const closestDocComment = node.leadingComments
-      .filter(isJSDocComment)
-      .reduce((prev, current) => current || prev, null);
+  const closestDocComment = /** @type {(AST.CommentToken|undefined)} */
+      (node.leadingComments.filter(isJSDocComment).reverse().pop()) || null;
 
   return closestDocComment;
 }
