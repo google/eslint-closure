@@ -50,9 +50,9 @@ closure_js_library(
     name = "no-unused-expressions",
     srcs = ["no-unused-expressions.js"],
     deps = [
-        "@io_bazel_rules_closure//closure/library",
         "//lib:ast",
         "//lib:jsdoc-utils",
+        "@io_bazel_rules_closure//closure/library",
     ],
 )
 

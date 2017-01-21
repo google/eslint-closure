@@ -28,7 +28,7 @@ closure_js_library(
         "//lib/rules:jsdoc",
         "//lib/rules:no-undef",
         "//lib/rules:no-unused-expressions",
-        "//lib/rules:no-unused-vars"
+        "//lib/rules:no-unused-vars",
     ],
 )
 
@@ -36,8 +36,8 @@ closure_js_library(
     name = "jsdoc-utils",
     srcs = ["jsdoc-utils.js"],
     deps = [
-        "@io_bazel_rules_closure//closure/library",
         ":ast-matcher",
+        "@io_bazel_rules_closure//closure/library",
     ],
 )
 
@@ -49,7 +49,6 @@ closure_js_library(
 closure_js_library(
     name = "types",
     srcs = ["types.js"],
-
 )
 
 closure_js_library(
@@ -57,5 +56,5 @@ closure_js_library(
     srcs = ["utils.js"],
     deps = [
         ":types",
-    ]
+    ],
 )

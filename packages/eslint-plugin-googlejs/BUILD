@@ -10,12 +10,13 @@ package_group(
 
 closure_js_binary(
     name = "plugin",
+    defs = [
+        "--new_type_inf",
+    ],
+    entry_points = ["googlejs.config"],
+    warning_level = "VERBOSE",
     deps = [
         "//lib:config",
         "//lib/externs:all-externs",
     ],
-    defs = [
-    ],
-    entry_points = ["googlejs.config"],
-    warning_level = "VERBOSE",
 )
