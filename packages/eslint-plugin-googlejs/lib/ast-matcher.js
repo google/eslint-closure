@@ -13,12 +13,20 @@ const isMatchWith = /** @type {!Lodash.isMatchWith} */ (require('lodash.ismatchw
  *
  * See: isASTMatch()
  *
- * @param {!Object} pattern Pattern to test against
- * @return {function(!Object):(!Object|boolean)} Function that returns
+ * @param {*} pattern Pattern to test against
+ * @return {function(*):(!Object|boolean)} Function that returns
  *     an object with extracted fields or false when no match found.
  */
 function matchesAST(pattern) {
-  return (ast) => isASTMatch(ast, pattern);
+  /**
+   *
+   * @param {*} ast
+   * @return {(!Object|boolean)}
+   */
+  function matchHelper(ast) {
+    return isASTMatch(ast, pattern);
+  }
+  return matchHelper;
 }
 
 /**
@@ -35,8 +43,8 @@ function matchesAST(pattern) {
  *
  * - matchesASTAndLength() ensures the exact array length is respected.
  *
- * @param {!Object} ast The AST node to test.
- * @param {!Object} pattern Pattern to test against.
+ * @param {*} ast The AST node to test.
+ * @param {*} pattern Pattern to test against.
  * @return {(!Object|boolean)} An object with extracted fields
  *     or false when no match found.
  */
@@ -73,11 +81,17 @@ function isASTMatch(ast, pattern) {
  * @param {string} fieldName The name to give for the value
  * @param {(function(*)|!Object)=} matcher Optional matching function or pattern
  *     for matchesAST().
- * @return {!function(*):(!Object|boolean)}
+ * @return {function(*):(!Object|boolean)}
  */
 function extractAST(fieldName, matcher) {
-  return (ast) => {
-    const extractedFields = {[fieldName]: ast};
+
+  /**
+   * @param {*} ast
+   * @return {(!Object<string, *>|boolean)}
+   */
+  function extractASTHelper(ast) {
+    const extractedFields = {};
+    extractedFields[fieldName] = ast;
 
     if (typeof matcher === 'object') {
       // Convert plain pattern into matcher function.
@@ -95,24 +109,34 @@ function extractAST(fieldName, matcher) {
       }
     }
     return extractedFields;
-  };
+  }
+
+  return extractASTHelper;
 }
 
 /**
  * Matches an array of ASTs and asserts that the pattern of ASTs is the same
  * length as the array of ASTs to examine.
- * @param {!Array<!Object>} pattern
- * @return {function(!Object):(!Object|boolean)}
+ * @param {*} pattern
+ * @return {function(*):(!Object|boolean)}
  */
 function matchesASTLength(pattern) {
   const matcher = matchesAST(pattern);
 
-  return (ast) => {
+  /**
+   * @param {*} ast
+   * @return {(!Object|boolean)}
+   */
+  function lengthMatcher(ast) {
+    if (!goog.isArray(ast) || !goog.isArray(pattern)) {
+      return false;
+    }
     if (ast.length !== pattern.length) {
       return false;
     }
     return matcher(ast);
-  };
+  }
+  return lengthMatcher;
 }
 
 exports = {

@@ -75,7 +75,7 @@ function isFunction(node) {
 function matchStringLiteral(node) {
   return astMatcher.isASTMatch(node, {
     type: 'Literal',
-    value: (v) => typeof v === 'string',
+    value: (/** * */ v) => typeof v === 'string',
   });
 }
 
@@ -86,11 +86,13 @@ function matchStringLiteral(node) {
  * @param {string=} propertyName
  * @return {(!Object|boolean)}
  */
-function matchExtractStringLiteral(node, propertyName = 'literal') {
+function matchExtractStringLiteral(node, propertyName) {
+  // TODO(jschaf): Why don't default values work? e.g. propertyName = 'literal'
+  const name = propertyName || 'literal';
   return astMatcher.isASTMatch(node, {
     type: 'Literal',
-    value: (v) => typeof v === 'string' &&
-        astMatcher.extractAST(propertyName)(v),
+    value: (/** * */ v) => typeof v === 'string' &&
+        astMatcher.extractAST(name)(v),
   });
 }
 
@@ -103,13 +105,13 @@ function matchExtractStringLiteral(node, propertyName = 'literal') {
 let GoogDependencyMatch;
 
 /**
- * If node is a bare goog.require call return an object with it's source module
+ * If node is a bare goog.require call, return an object with it's source module
  * name.  Otherwise return false.
  * @param {!AST.Node} node
  * @return {!GoogDependencyMatch}
  */
 function matchExtractBareGoogRequire(node) {
-  return astMatcher.isASTMatch(node, {
+  return /** @type {!GoogDependencyMatch} */ (astMatcher.isASTMatch(node, {
     type: 'ExpressionStatement',
     expression: {
       type: 'CallExpression',
@@ -128,7 +130,7 @@ function matchExtractBareGoogRequire(node) {
         (v) => matchExtractStringLiteral(v, 'source'),
       ],
     },
-  });
+  }));
 }
 
 /**
@@ -138,7 +140,7 @@ function matchExtractBareGoogRequire(node) {
  * @return {!GoogDependencyMatch}
  */
 function matchExtractGoogProvide(node) {
-  return astMatcher.isASTMatch(node, {
+  return /** @type {!GoogDependencyMatch} */ (astMatcher.isASTMatch(node, {
     type: 'ExpressionStatement',
     expression: {
       type: 'CallExpression',
@@ -157,7 +159,7 @@ function matchExtractGoogProvide(node) {
         (v) => matchExtractStringLiteral(v, 'source'),
       ],
     },
-  });
+  }));
 }
 
 /**
@@ -175,10 +177,10 @@ let DirectiveMatch;
  * @return {!DirectiveMatch}
  */
 function matchExtractDirective(node) {
-  return astMatcher.isASTMatch(node, {
+  return /** @type {!DirectiveMatch} */ (astMatcher.isASTMatch(node, {
     type: 'ExpressionStatement',
     expression: (v) => matchExtractStringLiteral(v, 'directive'),
-  });
+  }));
 }
 
 /**

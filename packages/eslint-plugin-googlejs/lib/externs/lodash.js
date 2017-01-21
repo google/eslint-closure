@@ -9,7 +9,7 @@
 const Lodash = {};
 
 /**
- * @typedef {function(!Object, !Object, !Lodash.isMatchWithCustomizer): boolean}
+ * @typedef {function(*, *, !Lodash.isMatchWithCustomizer): boolean}
  */
 Lodash.isMatchWith;
 
