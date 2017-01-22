@@ -127,7 +127,7 @@ function matchExtractBareGoogRequire(node) {
         },
       },
       arguments: [
-        (v) => matchExtractStringLiteral(v, 'source'),
+        (/** !AST.Node */ v) => matchExtractStringLiteral(v, 'source'),
       ],
     },
   }));
@@ -156,7 +156,7 @@ function matchExtractGoogProvide(node) {
         },
       },
       arguments: [
-        (v) => matchExtractStringLiteral(v, 'source'),
+        (/** !AST.Node */ v) => matchExtractStringLiteral(v, 'source'),
       ],
     },
   }));
@@ -179,7 +179,8 @@ let DirectiveMatch;
 function matchExtractDirective(node) {
   return /** @type {!DirectiveMatch} */ (astMatcher.isASTMatch(node, {
     type: 'ExpressionStatement',
-    expression: (v) => matchExtractStringLiteral(v, 'directive'),
+    expression: (/** !AST.Node */ v) =>
+        matchExtractStringLiteral(v, 'directive'),
   }));
 }
 

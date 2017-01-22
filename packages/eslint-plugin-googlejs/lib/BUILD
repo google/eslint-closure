@@ -22,6 +22,7 @@ closure_js_library(
     name = "config",
     srcs = ["config.js"],
     deps = [
+        "//lib/externs:all-externs",
         "//lib/rules:camelcase",
         "//lib/rules:indent",
         "//lib/rules:inline-comment-spacing",

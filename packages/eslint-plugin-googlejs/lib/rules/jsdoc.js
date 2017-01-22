@@ -16,9 +16,9 @@ const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
  * @private
  */
 function isValidReturnType_(tag) {
-  return tag.type === null ||
-    (tag.type.name && tag.type.name === 'void') ||
-    tag.type.type === 'UndefinedLiteral';
+  return !goog.isDefAndNotNull(tag.type) ||
+      jsdocUtils.isVoid(tag.type) ||
+      tag.type.typeId === 'UndefinedLiteral';
 }
 
 /**

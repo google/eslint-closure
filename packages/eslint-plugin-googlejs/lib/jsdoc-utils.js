@@ -14,13 +14,13 @@ const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
  * @return {boolean}
  */
 function isLiteral(tagType) {
-  return tagType.type === 'NullableLiteral' ||
-      tagType.type === 'AllLiteral' ||
-      tagType.type === 'NullLiteral' ||
-      tagType.type === 'UndefinedLiteral' ||
-      tagType.type === 'VoidLiteral' ||
-      tagType.type === 'StringLiteralType' ||
-      tagType.type === 'NumericLiteralType';
+  return tagType.typeId === 'NullableLiteral' ||
+      tagType.typeId === 'AllLiteral' ||
+      tagType.typeId === 'NullLiteral' ||
+      tagType.typeId === 'UndefinedLiteral' ||
+      tagType.typeId === 'VoidLiteral' ||
+      tagType.typeId === 'StringLiteralType' ||
+      tagType.typeId === 'NumericLiteralType';
 }
 
 /**
@@ -30,9 +30,20 @@ function isLiteral(tagType) {
  */
 function isTerminal(tagType) {
   return isLiteral(tagType) ||
-      tagType.type === 'NameExpression';
+      tagType.typeId === 'NameExpression';
 }
 
+/**
+ * Returns true if the tag type is void.
+ * @param {!Doctrine.TagType} tagType
+ * @return {boolean}
+ */
+function isVoid(tagType) {
+  const isVoidLiteral = tagType.typeId == 'VoidLiteral';
+  const isVoidNameExpression = tagType.typeId == 'NameExpression' &&
+        /** @type {!Doctrine.NameExpression} */ (tagType).name == 'void';
+  return isVoidLiteral || isVoidNameExpression;
+}
 
 /**
  * Returns true if a JSDoc comment has type information.
@@ -43,7 +54,8 @@ function hasTypeInformation(jsdocComment) {
   const typeInfoTags = [
     'type', 'typedef', 'record', 'const', 'private', 'package', 'protected',
     'public', 'export'];
-  const isTypeInfo = (tag) => array.contains(typeInfoTags, tag.title);
+  const isTypeInfo = (/** !Doctrine.Tag */ tag) =>
+        array.contains(typeInfoTags, tag.title);
   return jsdocComment.tags.some(isTypeInfo);
 }
 
@@ -51,6 +63,7 @@ function hasTypeInformation(jsdocComment) {
  * Parses a comment string and returns a JSDoc AST.
  * @param {string} jsdocString
  * @return {!Doctrine.DocComment}
+ * @throws {Error}
  */
 function parseComment(jsdocString) {
   try {
@@ -78,7 +91,7 @@ function parseComment(jsdocString) {
 function traverseTags(tagType, visitor) {
   visitor(tagType);
   if (isTerminal(tagType)) return;
-  switch (tagType.type) {
+  switch (tagType.typeId) {
     case 'ArrayType':
       /** @type {!Doctrine.ArrayType} */ (tagType).elements
           .forEach(tag => traverseTags(tag, visitor));
@@ -196,6 +209,7 @@ exports = {
   getJSDocComment,
   hasTypeInformation,
   isLiteral,
+  isVoid,
   isJSDocComment,
   parseComment,
   traverseTags,

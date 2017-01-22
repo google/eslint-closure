@@ -17,6 +17,7 @@ closure_js_library(
     deps = [
         "//lib:ast",
         "//lib:utils",
+        "@io_bazel_rules_closure//closure/library",
     ],
 )
 

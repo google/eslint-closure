@@ -60,12 +60,12 @@ function isASTMatch(ast, pattern) {
   function matchHelper(value, matcher) {
     if (typeof matcher === 'function') {
       const matcherFn =
-            /** @type {function(*):(boolean|undefined)} */ (matcher);
+            /** @type {function(*):(!Object|boolean|undefined)} */ (matcher);
       const result = matcherFn(value);
-      if (typeof result === 'object') {
+      if (goog.isObject(result)) {
         googObject.extend(extractedFields, result);
       }
-      return result;
+      return !!result;
     } else {
       // Otherwise fall back to built-in comparison logic.
       return undefined;

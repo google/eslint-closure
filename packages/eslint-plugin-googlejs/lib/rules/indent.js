@@ -10,6 +10,8 @@ goog.module('googlejs.rules.indent');
 // const {assert} = goog.require('goog.asserts');
 
 const ast = goog.require('googlejs.ast');
+const functions = goog.require('goog.functions');
+const googString = goog.require('goog.string');
 const utils = goog.require('googlejs.utils');
 
 /**
@@ -45,6 +47,25 @@ IndentInfo.prototype.goodChar;
 IndentInfo.prototype.badChar;
 
 /**
+ * Returns true if char is a space or a tab.
+ * @param {string} character
+ * @return {boolean}
+ * @private
+ */
+function isIndentCharacter_(character) {
+  return character == ' ' || character == '\t';
+}
+
+/**
+ * Checks if a character is a tab character.
+ * @param {string} char
+ * @return {boolean}
+ */
+function isTab_(char) {
+  return char == '\t';
+}
+
+/**
   * Gets the indent of the node by examining the number of whitespace characters
   * at the beginning of the line.
   * @param {!AST.Locatable} node Node to examine.
@@ -58,13 +79,15 @@ function getNodeIndent_(node, sourceCode, indentType, opt_byLastLine) {
   const token = opt_byLastLine ?
       sourceCode.getLastToken(node) :
       sourceCode.getFirstToken(node);
-  const srcCharsBeforeNode = sourceCode.getText(
-      token, token.loc.start.column).split('');
+
+  // Must be a string because Array.from on a string returns an array of 1
+  // letter strings.
+  const srcCharsBeforeNode = /** @type {!Array<string>} */ (Array.from(
+      sourceCode.getText(token, token.loc.start.column)));
   const indentChars = srcCharsBeforeNode.slice(
-      0,
-      srcCharsBeforeNode.findIndex(char => char !== ' ' && char !== '\t'));
-  const spaces = indentChars.filter(char => char === ' ').length;
-  const tabs = indentChars.filter(char => char === '\t').length;
+      0, srcCharsBeforeNode.findIndex(functions.not(isIndentCharacter_)));
+  const spaces = indentChars.filter(googString.isSpace).length;
+  const tabs = indentChars.filter(isTab_).length;
 
   return {
     space: spaces,
@@ -228,7 +251,12 @@ function isFirstArrayElementOnSameLine_(node) {
  * @private
  */
 function getLeadingVariableDeclarators_(varDeclaration) {
-  return varDeclaration.declarations.reduce(function(finalCollection, elem) {
+  /**
+   * @param {!Array<!AST.VariableDeclarator>} finalCollection
+   * @param {!AST.VariableDeclarator} elem
+   * @return {!Array<!AST.VariableDeclarator>}
+   */
+  function collectVariableDeclarators(finalCollection, elem) {
     const lastElem = finalCollection[finalCollection.length - 1];
 
     if ((elem.loc.start.line !== varDeclaration.loc.start.line && !lastElem) ||
@@ -237,7 +265,8 @@ function getLeadingVariableDeclarators_(varDeclaration) {
     }
 
     return finalCollection;
-  }, []);
+  }
+  return varDeclaration.declarations.reduce(collectVariableDeclarators, []);
 }
 
 
@@ -289,6 +318,12 @@ let IndentOptionShortHand;
 
 /**
  * Valid options for the indent rule.
+ * @typedef {!Array<(number|string|!IndentOptionShortHand)>}
+ */
+let IndentOptionsRaw;
+
+/**
+ * Valid options for the indent rule.
  * @typedef {{
  *   indentSize: number,
  *   indentType: string,
@@ -334,7 +369,7 @@ function buildDefaultPreferences_() {
 
 /**
  * Builds a complete sete of indentation preferences from the user's options.
- * @param {!IndentOptionShortHand} userOptions
+ * @param {!IndentOptionsRaw} userOptions
  * @return {!IndentPreference}
  * @private
  */
@@ -343,12 +378,12 @@ function buildIndentPreferences_(userOptions) {
   const preferences = buildDefaultPreferences_();
   const options = preferences.indentOptions;
 
-  if (userOptions.length) {
-    if (userOptions[0] === 'tab') {
+  if (userOptions.length > 0) {
+    if (userOptions[0] == 'tab') {
       preferences.indentSize = 1;
       preferences.indentType = 'tab';
     } else if (typeof userOptions[0] === 'number') {
-      preferences.indentSize = userOptions[0];
+      preferences.indentSize = /** @type {number} */ (userOptions[0]);
       preferences.indentType = 'space';
     }
 
@@ -403,7 +438,7 @@ function buildIndentPreferences_(userOptions) {
  */
 function create(context) {
   const indentPreferences = buildIndentPreferences_(
-    /** @type {!IndentOptionShortHand} */ (context.options));
+    /** @type {!IndentOptionsRaw} */ (context.options));
 
   const indentType = indentPreferences.indentType;
   const indentSize = indentPreferences.indentSize;
@@ -673,7 +708,8 @@ function create(context) {
 
     // Filter out empty elements from an array like [1, , 2] because espree
     // considers it as null.
-    const elements = node.elements.filter((elem) => elem !== null);
+    const elements = node.elements.filter(
+        (/** !AST.Expression */ elem) => elem != null);
 
     // Skip checks if the first element is on same line as the beginning of the
     // ArrayExpression.

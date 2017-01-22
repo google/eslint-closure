@@ -358,11 +358,12 @@ AST.OptionallyBodiedNode;
 /** @typedef {!AST.Identifier | !AST.Literal} */
 AST.PropertyKey;
 
-/** @typedef {(
- *      !AST.AssignmentPattern |
- *      !AST.BindingIdentifier |
- *      !AST.BindingPattern |
- *      !AST.FunctionExpression
+/**
+ * @typedef {(
+ *     !AST.AssignmentPattern |
+ *     !AST.BindingIdentifier |
+ *     !AST.BindingPattern |
+ *     !AST.FunctionExpression
  *  )}
  */
 AST.PropertyValue;

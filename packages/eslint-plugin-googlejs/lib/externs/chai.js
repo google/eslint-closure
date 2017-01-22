@@ -124,32 +124,32 @@ Chai.NumberComparer = function(value, message) {};
 /** @interface */
 Chai.NumericComparison = function() {};
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.above;
+Chai.NumericComparison.prototype.above;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.gt;
+Chai.NumericComparison.prototype.gt;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.greaterThan;
+Chai.NumericComparison.prototype.greaterThan;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.least;
+Chai.NumericComparison.prototype.least;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.gte;
+Chai.NumericComparison.prototype.gte;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.below;
+Chai.NumericComparison.prototype.below;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.lt;
+Chai.NumericComparison.prototype.lt;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.lessThan;
+Chai.NumericComparison.prototype.lessThan;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.most;
+Chai.NumericComparison.prototype.most;
 /** @type {!Chai.NumberComparer} */
-Chai.NumberComparison.prototype.lte;
+Chai.NumericComparison.prototype.lte;
 /**
  * @param {number} start
  * @param {number} finish
  * @param {string=} message
  * @return {!Chai.Expect}
  */
-Chai.NumberComparison.prototype.within = (start, finish, message) => {};
+Chai.NumericComparison.prototype.within = (start, finish, message) => {};
 
 /**
  * @param {*} value
