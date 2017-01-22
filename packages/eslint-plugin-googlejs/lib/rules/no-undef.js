@@ -82,11 +82,23 @@ const NO_UNDEF_RULE = {
         const globalScope = context.getScope();
         const undeclaredVariables = globalScope.through;
 
-        const isGoogProvided = (fullName) => googProvidedStrings.some(
+        /**
+         * @param {string} fullName
+         * @return {boolean}
+         */
+        function isGoogProvided(fullName) {
+          return googProvidedStrings.some(
             (provided) => utils.isValidPrefix(fullName, provided));
+        }
 
-        const isGoogRequired = (fullName) => googRequiredStrings.some(
+        /**
+         * @param {string} fullName
+         * @return {boolean}
+         */
+        function isGoogRequired(fullName) {
+          return googRequiredStrings.some(
             (required) => utils.isValidPrefix(fullName, required));
+        }
 
         undeclaredVariables.forEach((ref) => {
           /** @type {!AST.Identifier} */

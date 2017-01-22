@@ -32,15 +32,22 @@ closure_js_library(
 closure_js_library(
     name = "jsdoc",
     srcs = ["jsdoc.js"],
+    suppress = [
+        "reportUnknownTypes",
+    ],
     deps = [
         "//lib:jsdoc-utils",
         "//lib:utils",
+        "@io_bazel_rules_closure//closure/library",
     ],
 )
 
 closure_js_library(
     name = "no-undef",
     srcs = ["no-undef.js"],
+    suppress = [
+        "reportUnknownTypes",
+    ],
     deps = [
         "//lib:ast",
         "//lib:utils",
@@ -60,6 +67,9 @@ closure_js_library(
 closure_js_library(
     name = "no-unused-vars",
     srcs = ["no-unused-vars.js"],
+    suppress = [
+        "reportUnknownTypes",
+    ],
     deps = [
         "//lib:ast",
         "//lib:utils",

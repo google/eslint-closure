@@ -161,6 +161,16 @@ function escapeRegexp(string) {
   return String(string).replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
+/**
+ * Returns true if the item is not falsey.
+ * Falsey values are 0, -0, NaN, null, undefined, false, "".
+ * @param {*} item
+ * @return {boolean}
+ */
+function isTruthy(item) {
+  return !!item;
+}
+
 exports = {
   categorizeUnderscoredIdentifier,
   escapeRegexp,
@@ -171,6 +181,7 @@ exports = {
   isNodeOneLine,
   isNodeSetterFunction,
   isValidPrefix,
+  isTruthy,
   nodesEndOnSameLine,
   nodesShareOneLine,
   nodesStartOnSameLine,

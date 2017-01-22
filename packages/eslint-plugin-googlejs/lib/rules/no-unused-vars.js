@@ -9,6 +9,34 @@ const ast = goog.require('googlejs.ast');
 const utils = goog.require('googlejs.utils');
 
 /**
+ * Valid options for the no-unused-vars rule.
+ * @typedef {(string|{
+ *   vars: (string|undefined),
+ *   varsIgnorePattern: (string|undefined),
+ *   args: (string|undefined),
+ *   argsIgnorePattern: (string|undefined),
+ *   caughtErrors: (string|undefined),
+ *   caughtErrorsIgnorePattern: (string|undefined),
+ *   allowUnusedTypes: (boolean|undefined),
+ * })}
+ */
+let RuleOptionsRaw;
+
+/**
+ * Valid options for the no-unused-vars rule.
+ * @typedef {{
+ *   vars: string,
+ *   varsIgnorePattern: (!RegExp|undefined),
+ *   args: string,
+ *   argsIgnorePattern: (!RegExp|undefined),
+ *   caughtErrors: string,
+ *   caughtErrorsIgnorePattern: (!RegExp|undefined),
+ *   allowUnusedTypes: boolean,
+ * }}
+ */
+let RuleOptions;
+
+/**
  * @param {!ESLint.RuleContext} context
  * @return {!Object<!AST.NodeType, function(!AST.Node)>}
  */
@@ -16,6 +44,7 @@ function create(context) {
 
   const MESSAGE = "'{{name}}' is defined but never used.";
 
+  /** @type {!RuleOptions} */
   const config = {
     vars: 'all',
     args: 'after-used',
@@ -23,10 +52,10 @@ function create(context) {
     allowUnusedTypes: false,
   };
 
-  const firstOption = context.options[0];
+  const firstOption = /** @type {!RuleOptionsRaw} */ (context.options[0]);
 
   if (firstOption) {
-    if (typeof firstOption === 'string') {
+    if (goog.isString(firstOption)) {
       config.vars = firstOption;
     } else {
       config.vars = firstOption.vars || config.vars;
@@ -371,6 +400,7 @@ function create(context) {
 
       if (posteriorParams.every(
           v => v.references.length === 0 &&
+            config.argsIgnorePattern &&
             config.argsIgnorePattern.test(v.name))) {
         return true;
       }

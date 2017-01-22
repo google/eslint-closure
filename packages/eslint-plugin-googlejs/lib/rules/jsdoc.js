@@ -4,6 +4,7 @@
 
 goog.module('googlejs.rules.jsdoc');
 
+const googMap = goog.require('goog.structs.Map');
 const jsdocUtils = goog.require('googlejs.jsdocUtils');
 const utils = goog.require('googlejs.utils');
 
@@ -75,7 +76,7 @@ function isbuiltInType(tagName) {
 function markTypeVariablesAsUsed(context, tag) {
   if (!tag.type) return;
   jsdocUtils.traverseTags(tag.type, (childTag) => {
-    if (childTag.type === 'NameExpression') {
+    if (childTag.typeId === 'NameExpression') {
       const name = /** @type {!Doctrine.NameExpression} */ (childTag).name;
       if (isbuiltInType(name)) return;
       context.markVariableAsUsed(name);
@@ -100,7 +101,8 @@ function create(context) {
   /** @const {!JSDocOption} */
   const options = /** @type {!JSDocOption} */ (context.options[0]) || {};
 
-  const prefer = options.prefer || {};
+  /** @const {!googMap<string, string>} */
+  const prefer = new googMap(options.prefer);
 
   // these both default to true; so you have to explicitly make them false
   const requireReturn = options.requireReturn !== false;
@@ -131,7 +133,7 @@ function create(context) {
   function addReturn(node) {
     const functionState = fns[fns.length - 1];
 
-    if (functionState && node.argument !== null) {
+    if (functionState && !goog.isNull(node.argument)) {
       functionState.returnPresent = true;
     }
   }
@@ -162,7 +164,7 @@ function create(context) {
    */
   function checkTypeNames(node, tagType) {
     jsdocUtils.traverseTags(tagType, (tag) => {
-      if (tag.type === 'NameExpression') {
+      if (tag.typeId === 'NameExpression') {
         checkTypeName(/** @type {!Doctrine.NameExpression} */ (tag), node);
       }
     });
@@ -217,10 +219,15 @@ function create(context) {
     const functionData = fns.pop();
     const params = Object.create(null);
 
+    /** @type {boolean} */
     let hasReturns = false;
+    /** @type {boolean} */
     let hasConstructor = false;
+    /** @type {boolean} */
     let isInterface = false;
+    /** @type {boolean} */
     let isOverride = false;
+    /** @type {boolean} */
     let isAbstract = false;
     let jsdoc;
 
@@ -283,7 +290,7 @@ function create(context) {
             hasReturns = true;
 
             if (!requireReturn && !functionData.returnPresent &&
-                (tag.type === null || !isValidReturnType_(tag)) &&
+                (goog.isNull(tag.type) || !isValidReturnType_(tag)) &&
                 !isAbstract) {
               context.report({
                 node: jsdocNode,
@@ -335,12 +342,13 @@ function create(context) {
         }
 
         // check tag preferences
-        if (prefer.hasOwnProperty(tag.title) &&
-            tag.title !== prefer[tag.title]) {
+        const tagMismatch = prefer.containsKey(tag.title) &&
+              tag.title != prefer.get(tag.title);
+        if (tagMismatch) {
           context.report({
             node: jsdocNode,
             message: 'Use @{{name}} instead.',
-            data: {name: prefer[tag.title]},
+            data: {name: prefer.get(tag.title)},
           });
         }
 
@@ -364,7 +372,7 @@ function create(context) {
             node: jsdocNode,
             message: 'Missing JSDoc @{{returns}} for function.',
             data: {
-              returns: prefer.returns || 'returns',
+              returns: prefer.get('returns', 'returns'),
             },
           });
         }
@@ -374,7 +382,7 @@ function create(context) {
       const jsdocParams = Object.keys(params);
 
       if (node.params) {
-        node.params.forEach(function(param, i) {
+        node.params.forEach((param, i) => {
           if (param.type === 'AssignmentPattern') {
             param = param.left;
           }

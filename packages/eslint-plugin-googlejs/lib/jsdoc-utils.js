@@ -73,7 +73,7 @@ function parseComment(jsdocString) {
       sloppy: true,
     });
   } catch (ex) {
-    if (/braces/i.test(ex.message)) {
+    if (ex instanceof Error && /braces/i.test(ex.message)) {
       throw new Error('JSDoc type missing brace.');
     } else {
       throw new Error('JSDoc syntax error.');

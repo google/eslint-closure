@@ -13,10 +13,9 @@ closure_js_binary(
     defs = [
         "--new_type_inf",
     ],
+    dependency_mode = "strict",
     entry_points = ["googlejs.config"],
-    warning_level = "VERBOSE",
     deps = [
         "//lib:config",
-        "//lib/externs:all-externs",
     ],
 )

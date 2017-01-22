@@ -80,6 +80,14 @@ function hasJSDocTypeInfo(node) {
   }
 }
 
+/**
+ * Valid options for the no-unused-expressions rule.
+ * @typedef {{
+ *   allowShortCircuit: (boolean|undefined),
+ *   allowTernary: (boolean|undefined),
+ * }}
+ */
+let RuleOptions;
 
 /** @const {!ESLint.RuleDefinition} */
 const NO_UNUSED_EXPRESSIONS_RULE = {
@@ -111,7 +119,8 @@ const NO_UNUSED_EXPRESSIONS_RULE = {
    * @return {!Object<!AST.NodeType, function(!AST.Node)>}
    */
   create(context) {
-    const config = context.options[0] || {};
+    /** @const {!RuleOptions} */
+    const config = /** @type {!RuleOptions} */ (context.options[0]) || {};
     /** @const {boolean} */
     const allowShortCircuit = config.allowShortCircuit || false;
     /** @const {boolean} */

@@ -207,6 +207,7 @@ function getFullyQualifedName(node) {
 
 
 exports = {
+  GoogDependencyMatch,
   findAncestor,
   findAncestorOfType,
   getFullyQualifedName,
