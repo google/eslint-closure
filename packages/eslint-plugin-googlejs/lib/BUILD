@@ -21,6 +21,9 @@ closure_js_library(
 closure_js_library(
     name = "config",
     srcs = ["config.js"],
+    suppress = [
+        "reportUnknownTypes",
+    ],
     deps = [
         "//lib/externs:all-externs",
         "//lib/rules:camelcase",

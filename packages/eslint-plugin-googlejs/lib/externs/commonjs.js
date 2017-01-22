@@ -10,9 +10,9 @@
 /* eslint no-unused-vars: "off" */
 
 /** @type {!Object} */
-let module;
+let module = {};
 
-/** @type {*} */
+/** @type {!Object<string, *>} */
 module.exports;
 
 /**
