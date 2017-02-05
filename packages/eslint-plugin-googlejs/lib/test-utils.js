@@ -22,7 +22,8 @@ function eslintVerifier(nodeType, nodeFunction) {
  * Executes the provided function on the first parsed node of nodeType and
  * returns the result.
  * @param {string} nodeType A node type like 'VariableDeclaration'.
- * @param {function(!AST.Node)} nodeFunction Function to call on the node type.
+ * @param {function(!AST.Node):*} nodeFunction Function to call on the node
+ *     type.
  * @param {string} code The source code to parse.
  * @return {*}
  */
@@ -32,6 +33,7 @@ function eslintVerify(nodeType, nodeFunction, code) {
     parserOptions: {ecmaVersion: 6},
     rules: {},
   };
+  /** @type {*} */
   let result;
   eslint.linter.reset();
   eslint.linter.once(nodeType, (node) => {
