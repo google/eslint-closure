@@ -5,26 +5,17 @@ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 
 closure_js_library(
     name = "all-tests",
-    testonly = 1,
     srcs = glob(["*.js"]) + glob(["rules/*.js"]),
     deps = [
-        "//lib/externs:all-externs",
-        "//lib:plugin",
         "//lib:ast",
         "//lib:ast-matcher",
+        "//lib:jsdoc-utils",
+        "//lib:plugin",
+        "//lib:test-utils",
         "//lib:types",
         "//lib:utils",
-        "//lib:test-utils",
-        "//lib:jsdoc-utils",
-        # "//lib/rules:indent",
-        # "//lib/rules:inline-comment-spacing",
-        # "//lib/rules:jsdoc",
-        # "//lib/rules:no-undef",
-        # "//lib/rules:no-unused-expressions",
-        # "//lib/rules:no-unused-vars",
-        # "//tests/rules:rule-tests",
+        "//lib/externs:all-externs",
         "@io_bazel_rules_closure//closure/library",
-        "@io_bazel_rules_closure//closure/library:testing",
     ],
 )
 
@@ -34,8 +25,7 @@ closure_js_binary(
     defs = [
         "--new_type_inf",
     ],
-    # dependency_mode = "strict",
-    # entry_points = ["googlejs.plugin"],
+    entry_points = ["googlejs.tests.ast"],
     deps = [
         ":all-tests",
     ],
