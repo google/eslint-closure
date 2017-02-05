@@ -19,7 +19,7 @@ Chai.Module = function() {};
  * The expect function.
  * @param {*} target
  * @param {string=} message
- * @return {Chai.Expect}
+ * @return {!Chai.Expect}
  */
 Chai.Module.prototype.expect = function(target, message) {};
 
@@ -152,12 +152,9 @@ Chai.NumericComparison.prototype.lte;
 Chai.NumericComparison.prototype.within = (start, finish, message) => {};
 
 /**
- * @param {*} value
- * @param {string=} msg
- * @return {void}
- * @constructor
+ * @typedef {function(*, string=):void}
  */
-Chai.Equal = function(value, msg) {};
+Chai.Equal;
 
 /** @record */
 Chai.TypeComparison = function() {};

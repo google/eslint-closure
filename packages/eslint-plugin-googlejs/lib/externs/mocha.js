@@ -8,27 +8,37 @@
 /** @const */
 const Mocha = {};
 
-
-/** @type {(!Mocha.ContextDefinition|Mocha.ContextRunnable)} */
-let describe;
-
-/** @type {(!Mocha.ContextDefinition|Mocha.ContextRunnable)} */
-let xdescribe;
-
-/** @type {(!Mocha.TestDefinition|Mocha.TestRunnable)} */
-let it;
-
-/** @type {(!Mocha.TestDefinition|Mocha.TestRunnable)} */
-let xit;
-
+/**
+ * @param {string} description
+ * @param {function()} spec
+ * @return {!Mocha.ContextDefinition}
+ * @constructor
+ */
+let describe = function(description, spec) {};
 
 /**
  * @param {string} description
  * @param {function()} spec
- * @return {void}
+ * @return {!Mocha.ContextDefinition}
  * @constructor
  */
-Mocha.ContextRunnable = function(description, spec) {};
+let xdescribe = function(description, spec) {};
+
+/**
+ * @param {string} description
+ * @param {!Mocha.ActionFunction} spec
+ * @return {!Mocha.TestDefinition}
+ * @constructor
+ */
+let it = function(description, spec) {};
+
+/**
+ * @param {string} description
+ * @param {!Mocha.ActionFunction} spec
+ * @return {!Mocha.TestDefinition}
+ * @constructor
+ */
+let xit = function(description, spec) {};
 
 /** @record */
 Mocha.ContextDefinition = function() {};
@@ -49,15 +59,6 @@ Mocha.ContextDefinition.prototype.skip = (description, spec) => {};
  * @return {void}
  */
 Mocha.ContextDefinition.prototype.timeout = (ms) => {};
-
-/**
- * @param {string} expectation
- * @param {!Mocha.ActionFunction=} assertion
- * @return {void}
- * @constructor
- */
-Mocha.TestRunnable = function(expectation, assertion) {};
-
 
 /** @record */
 Mocha.TestDefinition = function() {};
@@ -141,9 +142,5 @@ const afterEach = (action, description) => {};
  */
 Mocha.Done = function(error) {};
 
-/**
- * @param {!Mocha.Done} done
- * @return {*}
- * @constructor
- */
-Mocha.ActionFunction = function(done) {};
+/** @typedef {function(!Mocha.Done):*} */
+Mocha.ActionFunction;
