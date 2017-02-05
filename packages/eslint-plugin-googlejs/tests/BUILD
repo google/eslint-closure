@@ -6,9 +6,6 @@ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 closure_js_library(
     name = "all-tests",
     srcs = glob(["*.js"]),
-    suppress = [
-        "reportUnknownTypes",
-    ],
     deps = [
         "//lib:ast",
         "//lib:ast-matcher",

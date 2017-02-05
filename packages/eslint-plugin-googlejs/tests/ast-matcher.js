@@ -1,5 +1,6 @@
 /**
  * @fileoverview Tests for astMatcher.
+ * @suppress {reportUnknownTypes}
  */
 
 /* global describe it */

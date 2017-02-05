@@ -22,6 +22,10 @@ describe('parseComment', () => {
         .to.include.keys('description', 'tags');
   });
 
+  /**
+   * @param {string} c
+   * @return {function():!Doctrine.DocComment}
+   */
   const parseCommentWrapper = (c) => () => jsdocUtils.parseComment(c);
   it('should throw a missing brace error when missing braces', () => {
     expect(parseCommentWrapper('* @param{')).to.throw(/missing brace/);
@@ -45,6 +49,7 @@ describe('traverseTags', () => {
     const collectedTags = [];
     const jsdocAST = jsdocUtils.parseComment(commentString);
     const collectTagTypes = (tag) => {
+      /** @type {string} */
       let name = tag.type;
       if (tag.type === 'NameExpression') {
         name = tag.name;
@@ -102,11 +107,18 @@ describe('traverseTags', () => {
 
 
 describe('isJSDocComment', () => {
-  const isJSDoc = (type, value) =>
-        jsdocUtils.isJSDocComment(
-            // Not strictly true but good enough to test.
-            /** @type {!AST.CommentToken} */ ({type, value})
-        );
+  /**
+   * @param {string} type
+   * @param {string} value
+   * @return {boolean}
+   */
+  function isJSDoc(type, value) {
+    return jsdocUtils.isJSDocComment(
+        // Not strictly true but good enough to test.
+        /** @type {!AST.CommentToken} */ ({type, value})
+    );
+  }
+
   it('should return true for JSDoc comments', () => {
     expect(isJSDoc('Block', '* foo')).to.equal(true);
     expect(isJSDoc('Block', '** bar')).to.equal(true);
@@ -124,8 +136,14 @@ describe('isJSDocComment', () => {
 });
 
 describe('hasTypeInformation', () => {
-  const hasTypes = (comment) => jsdocUtils.hasTypeInformation(
-      jsdocUtils.parseComment(comment));
+
+  /**
+   * @param {string} comment
+   * @return {boolean}
+   */
+  function hasTypes(comment) {
+    return jsdocUtils.hasTypeInformation(jsdocUtils.parseComment(comment));
+  }
 
   it('should return true for typed tags', () => {
     expect(hasTypes('/** @type {number} */')).to.eql(true);
@@ -150,10 +168,14 @@ describe('hasTypeInformation', () => {
 });
 
 describe('getJSDocComment', () => {
-  const getDoc = testUtils.eslintVerifier(
-      'VariableDeclaration',
-      (node) => googObject.get(
-          jsdocUtils.getJSDocComment(node), 'value', null));
+  /**
+   * @param {!AST.Node} node
+   * @return {?string}
+   */
+  function extractDoc(node) {
+    return googObject.get(jsdocUtils.getJSDocComment(node), 'value', null);
+  }
+  const getDoc = testUtils.eslintVerifier('VariableDeclaration', extractDoc);
 
   it('should return null if there are no JSDoc comments', () => {
     expect(getDoc('var a;')).to.equal(null);
