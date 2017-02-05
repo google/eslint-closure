@@ -1,4 +1,4 @@
-goog.module('googlejs.config');
+goog.module('googlejs.plugin');
 
 const camelcase = goog.require('googlejs.rules.camelcase');
 const indent = goog.require('googlejs.rules.indent');

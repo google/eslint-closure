@@ -19,8 +19,8 @@ closure_js_library(
 )
 
 closure_js_library(
-    name = "config",
-    srcs = ["config.js"],
+    name = "plugin",
+    srcs = ["plugin.js"],
     suppress = [
         "reportUnknownTypes",
     ],
