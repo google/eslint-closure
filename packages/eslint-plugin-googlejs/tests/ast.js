@@ -5,7 +5,6 @@
 /* global describe it */
 
 goog.module('googlejs.tests.ast');
-goog.setTestOnly('googlejs.tests.ast');
 
 const ast = goog.require('googlejs.ast');
 const testUtils = goog.require('googlejs.testUtils');

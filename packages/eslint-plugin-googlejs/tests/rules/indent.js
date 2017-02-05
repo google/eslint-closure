@@ -2,7 +2,6 @@
  * @fileoverview Test indents rule.
  */
 goog.module('googlejs.tests.rules.indent');
-goog.setTestOnly('googlejs.tests.rules.indent');
 
 const indentRule = goog.require('googlejs.rules.indent');
 

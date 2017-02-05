@@ -3,7 +3,6 @@
  */
 
 goog.module('googlejs.tests.rules.jsdoc');
-goog.setTestOnly('googlejs.tests.rules.jsdoc');
 
 const jsdocRule = goog.require('googlejs.rules.jsdoc');
 

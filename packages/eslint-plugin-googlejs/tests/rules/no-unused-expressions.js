@@ -4,7 +4,6 @@
  */
 
 goog.module('googlejs.tests.rules.noUnusedExpressions');
-goog.setTestOnly('googlejs.tests.rules.noUnusedExpressions');
 
 const noUnusedExpressionsRule = goog.require('googlejs.rules.noUnusedExpressions');
 

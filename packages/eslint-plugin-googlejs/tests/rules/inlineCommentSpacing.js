@@ -3,7 +3,6 @@
  */
 
 goog.module('googlejs.tests.rules.inlineCommentSpacing');
-goog.setTestOnly('googlejs.tests.rules.inlineCommentSpacing');
 
 const inlineCommentSpacing = goog.require('googlejs.rules.inlineCommentSpacing');
 

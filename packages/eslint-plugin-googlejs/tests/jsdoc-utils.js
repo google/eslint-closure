@@ -4,7 +4,6 @@
 
 /* global describe it */
 goog.module('googlejs.tests.jsdocUtils');
-goog.setTestOnly('googlejs.tests.jsdocUtils');
 
 const googObject = goog.require('goog.object');
 const jsdocUtils = goog.require('googlejs.jsdocUtils');

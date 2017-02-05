@@ -4,7 +4,6 @@
  */
 
 goog.module('googlejs.tests.rules.noUnusedVars');
-goog.setTestOnly('googlejs.tests.rules.noUnusedVars');
 
 const noUnusedVarsRule = goog.require('googlejs.rules.noUnusedVars');
 

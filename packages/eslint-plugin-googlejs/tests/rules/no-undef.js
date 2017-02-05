@@ -3,7 +3,6 @@
  */
 
 goog.module('googlejs.tests.rules.noUndef');
-goog.setTestOnly('googlejs.tests.rules.noUndef');
 
 const noUndefRule = goog.require('googlejs.rules.noUndef');
 

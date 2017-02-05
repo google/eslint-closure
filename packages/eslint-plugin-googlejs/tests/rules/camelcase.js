@@ -3,7 +3,6 @@
  */
 
 goog.module('googlejs.tests.rules.camelcase');
-goog.setTestOnly('googlejs.tests.rules.camelcase');
 
 const camelCaseRule = goog.require('googlejs.rules.camelcase');
 

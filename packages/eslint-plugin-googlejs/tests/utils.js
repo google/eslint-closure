@@ -4,7 +4,6 @@
 
 /* global describe it */
 goog.module('googlejs.tests.utils');
-goog.setTestOnly('googlejs.tests.utils');
 
 const utils = goog.require('googlejs.utils');
 const {UnderscoreForm} = goog.require('googlejs.types');

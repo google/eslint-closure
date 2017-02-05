@@ -5,7 +5,6 @@
 /* global describe it */
 
 goog.module('googlejs.tests.astMatcher');
-goog.setTestOnly('googlejs.tests.astMatcher');
 
 const astMatcher = goog.require('googlejs.astMatcher');
 
