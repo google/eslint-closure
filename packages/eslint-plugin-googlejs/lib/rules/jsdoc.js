@@ -78,8 +78,9 @@ function markTypeVariablesAsUsed(context, tag) {
   jsdocUtils.traverseTags(tag.type, (childTag) => {
     if (childTag.type === 'NameExpression') {
       const name = /** @type {!Doctrine.NameExpression} */ (childTag).name;
-      if (isbuiltInType(name)) return;
-      context.markVariableAsUsed(name);
+      if (!isbuiltInType(name)) {
+        context.markVariableAsUsed(name);
+      }
     }
   });
 }
