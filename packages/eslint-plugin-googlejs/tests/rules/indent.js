@@ -17,7 +17,7 @@ let IndentErrorInfo;
  * indentation type
  * @param {(string|!IndentErrorInfo)} indentType indent type of string or tab.
  * @param {!IndentErrorInfo=} opt_errors Error info.
- * @return {Object} The error messages collection.
+ * @return {!Object} The error messages collection.
  * @private
  */
 function expectedErrors(indentType, opt_errors) {
@@ -44,7 +44,7 @@ function expectedErrors(indentType, opt_errors) {
           `Expected indentation of ${err[1]} ${chars} but found ${err[2]}.`;
     }
     // Skip the empty line at the beginning of the template literal.
-    const lineNumber = err[0] + 1;
+    const lineNumber = /** @type {number} */ (err[0]) + 1;
     return {message, type: err[3], line: lineNumber};
   });
 }

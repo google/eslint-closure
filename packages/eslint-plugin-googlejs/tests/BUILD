@@ -5,7 +5,10 @@ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 
 closure_js_library(
     name = "all-tests",
-    srcs = glob(["*.js"]) + glob(["rules/*.js"]),
+    srcs = glob(["*.js"]),
+    suppress = [
+        "reportUnknownTypes",
+    ],
     deps = [
         "//lib:ast",
         "//lib:ast-matcher",
@@ -15,41 +18,31 @@ closure_js_library(
         "//lib:types",
         "//lib:utils",
         "//lib/externs:all-externs",
+        "//tests/rules:all-tests",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
 
 closure_js_binary(
-    name = "test-binary",
-    compilation_level = "WHITESPACE_ONLY",
+    name = "test-bundle",
+    compilation_level = "SIMPLE",
     defs = [
         "--new_type_inf",
     ],
-    entry_points = ["googlejs.tests.ast"],
+    entry_points = [
+        "googlejs.tests.ast",
+        "googlejs.tests.astMatcher",
+        "googlejs.tests.jsdocUtils",
+        "googlejs.tests.rules.camelcase",
+        "googlejs.tests.rules.indent",
+        "googlejs.tests.rules.inlineCommentSpacing",
+        "googlejs.tests.rules.jsdoc",
+        "googlejs.tests.rules.noUndef",
+        "googlejs.tests.rules.noUnusedExpressions",
+        "googlejs.tests.rules.noUnusedVars",
+        "googlejs.tests.utils",
+    ],
     deps = [
         ":all-tests",
-    ],
-)
-
-closure_js_library(
-    name = "ast",
-    srcs = ["ast.js"],
-    deps = [
-        "//lib:ast",
-        "//lib:test-utils",
-        "//lib/externs:all-externs",
-        "@io_bazel_rules_closure//closure/library",
-    ],
-)
-
-closure_js_binary(
-    name = "ast-test",
-    compilation_level = "WHITESPACE_ONLY",
-    defs = [
-        "--new_type_inf",
-    ],
-    entry_points = ["googlejs.tests.ast"],
-    deps = [
-        ":ast",
     ],
 )

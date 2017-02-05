@@ -39,9 +39,9 @@ Chai.Expect.prototype.deep;
 Chai.Expect.prototype.a;
 /** @type {(!Chai.TypeComparison|!Chai.TypeComparator)} */
 Chai.Expect.prototype.an;
-/** @type {(!Chai.Include|!Chai.IncludeComparator)} */
+/** @type {!Chai.Include} */
 Chai.Expect.prototype.include;
-/** @type {(!Chai.Include|!Chai.IncludeComparator)} */
+/** @type {!Chai.Include} */
 Chai.Expect.prototype.contain;
 /** @type {!Chai.Expect} */
 Chai.Expect.prototype.ok;
@@ -179,8 +179,13 @@ Chai.Deep.prototype.equal;
 /** @type {!Chai.Property} */
 Chai.Deep.prototype.property;
 
-/** @record */
-Chai.Include = function() {};
+/**
+ * @param {(!Object|string|number)} value
+ * @param {string=} message
+ * @return {!Chai.Expect}
+ * @constructor
+ */
+Chai.Include = function(value, message) {};
 
 /**
  * @param {...*} keys
@@ -194,15 +199,6 @@ Chai.Include.prototype.keys = (keys) => {};
  * @return {!Chai.Expect}
  */
 Chai.Include.prototype.members = (set, message) => {};
-
-/**
- * @param {(!Object|string|number)} value
- * @param {string=} message
- * @return {!Chai.Expect}
- * @constructor
- */
-Chai.IncludeComparator = function(value, message) {};
-
 
 /**
  * @param {string} name
@@ -246,8 +242,6 @@ Chai.InstanceOf = function(constructor, message) {};
 
 
 /**
- * @param {(string|RegExp|!Function)} constructor
- * @return {!Chai.Expect}
- * @constructor
+ * @typedef {function((string|!RegExp|!Function)):!Chai.Expect}
  */
-Chai.Throw = function(constructor) {};
+Chai.Throw;

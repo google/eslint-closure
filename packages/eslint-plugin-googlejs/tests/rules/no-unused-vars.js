@@ -14,6 +14,10 @@ const ruleTester = new RuleTester();
 
 ruleTester.defineRule('use-every-a', {
   meta: {schema: [], docs: {description: '', category: '', recommended: true}},
+  /**
+   * @param {!ESLint.RuleContext} context
+   * @return {!Object<!AST.NodeType, function(!AST.Node)>}
+   */
   create(context) {
     const useA = () => context.markVariableAsUsed('a');
     return {
