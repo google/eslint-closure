@@ -16,3 +16,4 @@ docs/Gemfile.lock
 **/bazel-testlogs
 /docs/js/app/googlejs-eslint-plugin.min.js
 /packages/eslint-plugin-googlejs/dist/test-bundle.js
+/packages/eslint-plugin-googlejs/dist/test-bundle.js.map

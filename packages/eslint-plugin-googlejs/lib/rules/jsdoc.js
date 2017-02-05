@@ -19,7 +19,7 @@ const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 function isValidReturnType_(tag) {
   return !goog.isDefAndNotNull(tag.type) ||
       jsdocUtils.isVoid(tag.type) ||
-      tag.type.typeId === 'UndefinedLiteral';
+      tag.type.type === 'UndefinedLiteral';
 }
 
 /**
@@ -76,7 +76,7 @@ function isbuiltInType(tagName) {
 function markTypeVariablesAsUsed(context, tag) {
   if (!tag.type) return;
   jsdocUtils.traverseTags(tag.type, (childTag) => {
-    if (childTag.typeId === 'NameExpression') {
+    if (childTag.type === 'NameExpression') {
       const name = /** @type {!Doctrine.NameExpression} */ (childTag).name;
       if (isbuiltInType(name)) return;
       context.markVariableAsUsed(name);
@@ -164,7 +164,7 @@ function create(context) {
    */
   function checkTypeNames(node, tagType) {
     jsdocUtils.traverseTags(tagType, (tag) => {
-      if (tag.typeId === 'NameExpression') {
+      if (tag.type === 'NameExpression') {
         checkTypeName(/** @type {!Doctrine.NameExpression} */ (tag), node);
       }
     });

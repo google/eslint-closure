@@ -14,13 +14,13 @@ const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
  * @return {boolean}
  */
 function isLiteral(tagType) {
-  return tagType.typeId === 'NullableLiteral' ||
-      tagType.typeId === 'AllLiteral' ||
-      tagType.typeId === 'NullLiteral' ||
-      tagType.typeId === 'UndefinedLiteral' ||
-      tagType.typeId === 'VoidLiteral' ||
-      tagType.typeId === 'StringLiteralType' ||
-      tagType.typeId === 'NumericLiteralType';
+  return tagType.type === 'NullableLiteral' ||
+      tagType.type === 'AllLiteral' ||
+      tagType.type === 'NullLiteral' ||
+      tagType.type === 'UndefinedLiteral' ||
+      tagType.type === 'VoidLiteral' ||
+      tagType.type === 'StringLiteralType' ||
+      tagType.type === 'NumericLiteralType';
 }
 
 /**
@@ -30,7 +30,7 @@ function isLiteral(tagType) {
  */
 function isTerminal(tagType) {
   return isLiteral(tagType) ||
-      tagType.typeId === 'NameExpression';
+      tagType.type === 'NameExpression';
 }
 
 /**
@@ -39,8 +39,8 @@ function isTerminal(tagType) {
  * @return {boolean}
  */
 function isVoid(tagType) {
-  const isVoidLiteral = tagType.typeId == 'VoidLiteral';
-  const isVoidNameExpression = tagType.typeId == 'NameExpression' &&
+  const isVoidLiteral = tagType.type == 'VoidLiteral';
+  const isVoidNameExpression = tagType.type == 'NameExpression' &&
         /** @type {!Doctrine.NameExpression} */ (tagType).name == 'void';
   return isVoidLiteral || isVoidNameExpression;
 }
@@ -91,7 +91,7 @@ function parseComment(jsdocString) {
 function traverseTags(tagType, visitor) {
   visitor(tagType);
   if (isTerminal(tagType)) return;
-  switch (tagType.typeId) {
+  switch (tagType.type) {
     case 'ArrayType':
       /** @type {!Doctrine.ArrayType} */ (tagType).elements
           .forEach(tag => traverseTags(tag, visitor));
@@ -133,7 +133,7 @@ function traverseTags(tagType, visitor) {
           .forEach(tag => traverseTags(tag, visitor));
       break;
     default:
-      throw new Error('Unrecoginized tag type.');
+      throw new Error(`Unrecoginized tag type: ${tagType}.`);
   }
 }
 

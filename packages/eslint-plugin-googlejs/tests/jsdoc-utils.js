@@ -1,5 +1,6 @@
 /**
  * @fileoverview Tests for jsdoc-utils.
+ * @suppress {checkDebuggerStatement}
  */
 
 /* global describe it */
@@ -66,6 +67,7 @@ describe('traverseTags', () => {
     return collectedTags;
   };
 
+  debugger;
   // TODO(jschaf): add the other non-closure JSDoc tags like [1, 2] and string
   // literals.
   it('should traverse all tags', () => {

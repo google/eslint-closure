@@ -124,80 +124,80 @@ Doctrine.TagType;
 Doctrine.UnaryTagType;
 
 /** @record */ Doctrine.NullableLiteral = function() {};
-/** @type {string} */ Doctrine.NullableLiteral.prototype.typeId;
+/** @type {string} */ Doctrine.NullableLiteral.prototype.type;
 
 /** @record */ Doctrine.AllLiteral = function() {};
-/** @type {string} */ Doctrine.AllLiteral.prototype.typeId;
+/** @type {string} */ Doctrine.AllLiteral.prototype.type;
 
 /** @record */ Doctrine.NullLiteral = function() {};
-/** @type {string} */ Doctrine.NullLiteral.prototype.typeId;
+/** @type {string} */ Doctrine.NullLiteral.prototype.type;
 
 /** @record */ Doctrine.UndefinedLiteral = function() {};
-/** @type {string} */ Doctrine.UndefinedLiteral.prototype.typeId;
+/** @type {string} */ Doctrine.UndefinedLiteral.prototype.type;
 
 /** @record */ Doctrine.VoidLiteral = function() {};
-/** @type {string} */ Doctrine.VoidLiteral.prototype.typeId;
+/** @type {string} */ Doctrine.VoidLiteral.prototype.type;
 
 /** @record */ Doctrine.StringLiteralType = function() {};
-/** @type {string} */ Doctrine.StringLiteralType.prototype.typeId;
+/** @type {string} */ Doctrine.StringLiteralType.prototype.type;
 /** @type {string} */ Doctrine.StringLiteralType.prototype.value;
 
 /** @record */ Doctrine.NumericLiteralType = function() {};
-/** @type {string} */ Doctrine.NumericLiteralType.prototype.typeId;
+/** @type {string} */ Doctrine.NumericLiteralType.prototype.type;
 /** @type {number} */ Doctrine.NumericLiteralType.prototype.value;
 
 /** @record */ Doctrine.NameExpression = function() {};
-/** @type {string} */ Doctrine.NameExpression.prototype.typeId;
+/** @type {string} */ Doctrine.NameExpression.prototype.type;
 /** @type {string} */ Doctrine.NameExpression.prototype.name;
 
 /** @record */ Doctrine.ArrayType = function() {};
-/** @type {string} */ Doctrine.ArrayType.prototype.typeId;
+/** @type {string} */ Doctrine.ArrayType.prototype.type;
 /** @type {!Array<!Doctrine.TagType>} */ Doctrine.ArrayType.prototype.elements;
 
 /** @record */ Doctrine.RecordType = function() {};
-/** @type {string} */ Doctrine.RecordType.prototype.typeId;
+/** @type {string} */ Doctrine.RecordType.prototype.type;
 /** @type {!Array<!Doctrine.FieldType>} */ Doctrine.RecordType.prototype.fields;
 
 /** @record */ Doctrine.FieldType = function() {};
-/** @type {string} */ Doctrine.FieldType.prototype.typeId;
+/** @type {string} */ Doctrine.FieldType.prototype.type;
 /** @type {string} */ Doctrine.FieldType.prototype.key;
 /** @type {?Doctrine.TagType} */ Doctrine.FieldType.prototype.value;
 
 /** @record */ Doctrine.FunctionType = function() {};
-/** @type {string} */ Doctrine.FunctionType.prototype.typeId;
+/** @type {string} */ Doctrine.FunctionType.prototype.type;
 /** @type {!Array<!Doctrine.ParameterType>} */ Doctrine.FunctionType.prototype.params;
 /** @type {!Doctrine.TagType} */ Doctrine.FunctionType.prototype.result;
 /** @type {(!Doctrine.TagType|undefined)} */ Doctrine.FunctionType.prototype.this;
 /** @type {(boolean|undefined)} */ Doctrine.FunctionType.prototype.new;
 
 /** @record */ Doctrine.ParameterType = function() {};
-/** @type {string} */ Doctrine.ParameterType.prototype.typeId;
+/** @type {string} */ Doctrine.ParameterType.prototype.type;
 /** @type {string} */ Doctrine.ParameterType.prototype.name;
 /** @type {!Doctrine.TagType} */ Doctrine.ParameterType.prototype.expression;
 
 /** @record */ Doctrine.RestType = function() {};
-/** @type {string} */ Doctrine.RestType.prototype.typeId;
+/** @type {string} */ Doctrine.RestType.prototype.type;
 /** @type {!Doctrine.TagType} */ Doctrine.RestType.prototype.expression;
 
 /** @record */ Doctrine.NonNullableType = function() {};
-/** @type {string} */ Doctrine.NonNullableType.prototype.typeId;
+/** @type {string} */ Doctrine.NonNullableType.prototype.type;
 /** @type {!Doctrine.TagType} */ Doctrine.NonNullableType.prototype.expression;
 /** @type {boolean} */ Doctrine.NonNullableType.prototype.prefix;
 
 /** @record */ Doctrine.OptionalType = function() {};
-/** @type {string} */ Doctrine.OptionalType.prototype.typeId;
+/** @type {string} */ Doctrine.OptionalType.prototype.type;
 /** @type {!Doctrine.TagType} */ Doctrine.OptionalType.prototype.expression;
 
 /** @record */ Doctrine.NullableType = function() {};
-/** @type {string} */ Doctrine.NullableType.prototype.typeId;
+/** @type {string} */ Doctrine.NullableType.prototype.type;
 /** @type {!Doctrine.TagType} */ Doctrine.NullableType.prototype.expression;
 /** @type {boolean} */ Doctrine.NullableType.prototype.prefix;
 
 /** @record */ Doctrine.TypeApplication = function() {};
-/** @type {string} */ Doctrine.TypeApplication.prototype.typeId;
+/** @type {string} */ Doctrine.TypeApplication.prototype.type;
 /** @type {!Array<!Doctrine.TagType>} */ Doctrine.TypeApplication.prototype.applications;
 /** @type {!Doctrine.TagType} */ Doctrine.TypeApplication.prototype.expression;
 
 /** @record */ Doctrine.UnionType = function() {};
-/** @type {string} */ Doctrine.UnionType.prototype.typeId;
+/** @type {string} */ Doctrine.UnionType.prototype.type;
 /** @type {!Array<!Doctrine.TagType>} */ Doctrine.UnionType.prototype.elements;
