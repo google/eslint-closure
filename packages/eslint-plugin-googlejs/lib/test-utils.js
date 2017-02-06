@@ -15,7 +15,7 @@ const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
  * @return {function(string):*}
  */
 function eslintVerifier(nodeType, nodeFunction) {
-  return (code) => eslintVerify(nodeType, nodeFunction, code);
+  return (/** string */ code) => eslintVerify(nodeType, nodeFunction, code);
 }
 
 /**

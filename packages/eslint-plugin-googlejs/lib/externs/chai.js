@@ -11,7 +11,7 @@ const Chai = {};
 
 /**
  * The overall Chai module.
- * @record
+ * @constructor
  */
 Chai.Module = function() {};
 

@@ -338,7 +338,7 @@ Foo.bar = function(p){var t = function(){function name(){}; return name;}};`,
 Foo.bar = function(p){return name;};`,
       options: [{requireReturnDescription: false}],
     },
-   `
+    `
 var obj = {
  /**
  * Getter
@@ -348,7 +348,7 @@ var obj = {
  return this._location;
  }
  }`,
-   `
+    `
 var obj = {
  /**
  * Setter
