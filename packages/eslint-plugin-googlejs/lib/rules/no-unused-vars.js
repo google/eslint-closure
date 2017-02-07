@@ -567,7 +567,7 @@ function create(context) {
     'Program:exit': (programNode) => {
       const unusedVars = collectUnusedVariables(context.getScope(), []);
 
-      for (const unusedVar of unusedVars) {
+      unusedVars.forEach((unusedVar) => {
 
         if (unusedVar.eslintExplicitGlobal) {
           context.report({
@@ -583,7 +583,7 @@ function create(context) {
             data: unusedVar,
           });
         }
-      }
+      });
     },
   };
 }

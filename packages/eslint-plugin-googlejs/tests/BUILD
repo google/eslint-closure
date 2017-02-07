@@ -2,6 +2,7 @@ package(default_visibility = ["//visibility:public"])
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
+load("//build_rules:mocha_closure_test.bzl", "mocha_closure_test")
 
 closure_js_library(
     name = "all-tests",
@@ -27,19 +28,62 @@ closure_js_binary(
         "--new_type_inf",
     ],
     entry_points = [
-        "googlejs.tests.ast",
-        "googlejs.tests.astMatcher",
-        "googlejs.tests.jsdocUtils",
-        "googlejs.tests.rules.camelcase",
-        "googlejs.tests.rules.indent",
-        "googlejs.tests.rules.inlineCommentSpacing",
-        "googlejs.tests.rules.jsdoc",
-        "googlejs.tests.rules.noUndef",
-        "googlejs.tests.rules.noUnusedExpressions",
+        # "googlejs.tests.ast",
+        # "googlejs.tests.astMatcher",
+        # "googlejs.tests.jsdocUtils",
+        # "googlejs.tests.rules.camelcase",
+        # "googlejs.tests.rules.indent",
+        # "googlejs.tests.rules.inlineCommentSpacing",
         "googlejs.tests.rules.noUnusedVars",
-        "googlejs.tests.utils",
+        "googlejs.tests.rules.jsdoc",
+        # "googlejs.tests.rules.noUndef",
+        # "googlejs.tests.rules.noUnusedExpressions",
+        # "googlejs.tests.utils",
     ],
     deps = [
         ":all-tests",
+    ],
+)
+
+mocha_closure_test(
+    name = "ast-test",
+    srcs = ["ast.js"],
+    entry_point = "googlejs.tests.ast",
+    deps = [
+        "//lib:ast",
+        "//lib:test-utils",
+        "//lib/externs:all-externs",
+    ],
+)
+
+mocha_closure_test(
+    name = "ast-matcher-test",
+    srcs = ["ast-matcher.js"],
+    entry_point = "googlejs.tests.astMatcher",
+    deps = [
+        "//lib:ast-matcher",
+        "//lib/externs:all-externs",
+    ],
+)
+
+mocha_closure_test(
+    name = "utils-test",
+    srcs = ["utils.js"],
+    entry_point = "googlejs.tests.utils",
+    deps = [
+        "//lib:types",
+        "//lib:utils",
+        "//lib/externs:all-externs",
+    ],
+)
+
+mocha_closure_test(
+    name = "jsdoc-utils-test",
+    srcs = ["jsdoc-utils.js"],
+    entry_point = "googlejs.tests.jsdocUtils",
+    deps = [
+        "//lib:jsdoc-utils",
+        "//lib:test-utils",
+        "//lib/externs:all-externs",
     ],
 )

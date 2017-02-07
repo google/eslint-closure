@@ -463,15 +463,6 @@ foo();`,
       options: [{argsIgnorePattern: '[cd]'}],
       parserOptions: {ecmaVersion: 6},
     },
-
-    // Allow JSDOC types to be unused.
-    {
-      code: `
-/** @typedef {number} */
-var Foo;
-`,
-    },
-
   ],
   invalid: [
     {
