@@ -1,10 +1,13 @@
-
 DIST_DIR := dist
 MOCHA := node_modules/mocha/bin/mocha
+
 all: compile
 
-compile:
-	bazel build //:plugin && cp -f bazel-bin/plugin.js bazel-bin/plugin.js.map dist
+compile: make-plugin
+	cp -f bazel-bin/plugin.js $(DIST_DIR)/googlejs-eslint-plugin.js
+
+make-plugin:
+	bazel build //:plugin
 
 test: test-utils test-rules
 test-utils: test-ast test-ast-matcher test-jsdoc-utils test-utils
