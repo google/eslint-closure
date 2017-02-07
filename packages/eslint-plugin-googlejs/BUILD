@@ -15,3 +15,17 @@ closure_js_binary(
         "//lib:plugin",
     ],
 )
+
+closure_js_binary(
+    name = "check-types",
+    defs = [
+        "--new_type_inf",
+        "--checks_only",
+        "--assume_function_wrapper",
+    ],
+    dependency_mode = "strict",
+    entry_points = ["googlejs.plugin"],
+    deps = [
+        "//lib:plugin",
+    ],
+)
