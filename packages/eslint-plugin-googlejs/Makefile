@@ -9,8 +9,8 @@ compile: make-plugin
 make-plugin:
 	bazel build //:plugin
 
-test: test-utils test-rules
-test-utils: test-ast test-ast-matcher test-jsdoc-utils test-utils
+test: test-helpers test-rules
+test-helpers: test-ast test-ast-matcher test-jsdoc-utils test-utils
 test-ast: dist/tests/ast.js
 test-ast-matcher: dist/tests/ast.js
 test-jsdoc-utils: dist/tests/jsdoc-utils.js
