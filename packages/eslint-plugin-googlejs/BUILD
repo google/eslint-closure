@@ -7,6 +7,7 @@ closure_js_binary(
     name = "plugin",
     defs = [
         "--new_type_inf",
+        "--assume_function_wrapper",
     ],
     dependency_mode = "strict",
     entry_points = ["googlejs.plugin"],
