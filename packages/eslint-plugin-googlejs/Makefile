@@ -1,5 +1,18 @@
 DIST_DIR := dist
-MOCHA := node_modules/mocha/bin/mocha
+MOCHA := node_modules/mocha/bin/mocha --no-colors
+
+# Converts a file path into its bazel rule:
+# /dist/tests/ast-test.js               => //test/rules:ast-test-bin
+# /dist/tests/rules/indent-rule-test.js => //test/rules:indent-rule-test-bin
+define convert_path_to_build_rule
+	echo $(1) | sed 's#dist/\(.*\)/\(.*-test\).js#//\1:\2-bin#'
+endef
+
+# Converts a file path to its bazel output
+# dist/tests/ast-test.js  => bazel-bin/tests/ast-test-bin.js
+define convert_path_to_bazel_output
+	echo $(1) | sed 's#dist/\(.*\)-test.js#bazel-bin/\1-test-bin.js#'
+endef
 
 all: compile
 
@@ -9,36 +22,52 @@ compile: make-plugin
 make-plugin:
 	bazel build //:plugin
 
-test: test-helpers test-rules
-test-helpers: test-ast test-ast-matcher test-jsdoc-utils test-utils
-test-ast: dist/tests/ast.js
-test-ast-matcher: dist/tests/ast.js
-test-jsdoc-utils: dist/tests/jsdoc-utils.js
-test-utils: dist/tests/utils.js
+test: test-build-helpers test-build-rules
+	$(MOCHA) --recursive ./dist/tests
 
-test-rules: test-rules-camelcase test-rules-indent test-rules-inline-comment-spacing test-rules-jsdoc test-rules-no-undef test-rules-no-unused-expressions test-rules-no-unused-vars
-test-rules-camelcase: dist/tests/rules/camelcase.js
-test-rules-indent: dist/tests/rules/indent.js
-test-rules-inline-comment-spacing: dist/tests/rules/inline-comment-spacing.js
-test-rules-jsdoc: dist/tests/rules/jsdoc.js
-test-rules-no-undef: dist/tests/rules/no-undef.js
-test-rules-no-unused-expressions: dist/tests/rules/no-unused-expressions.js
-test-rules-no-unused-vars: dist/tests/rules/no-unused-vars.js
+test-build-helpers: dist/tests/ast-test.js \
+		dist/tests/ast-test.js \
+		dist/tests/jsdoc-utils-test.js \
+		dist/tests/utils-test.js
+
+test-ast: dist/tests/ast-test.js
+	$(MOCHA) $<
+test-ast-matcher: dist/tests/ast-test.js
+	$(MOCHA) $<
+test-jsdoc-utils: dist/tests/jsdoc-utils-test.js
+	$(MOCHA) $<
+test-utils: dist/tests/utils-test.js
+	$(MOCHA) $<
+
+test-rules: test-build-rules
+	$(MOCHA) dist/tests/rules
+
+test-build-rules: dist/tests/rules/camelcase-test.js \
+		dist/tests/rules/indent-test.js \
+		dist/tests/rules/inline-comment-spacing-test.js \
+		dist/tests/rules/jsdoc-test.js \
+		dist/tests/rules/no-undef-test.js \
+		dist/tests/rules/no-unused-expressions-test.js \
+		dist/tests/rules/no-unused-vars-test.js
+
+test-rules-camelcase: dist/tests/rules/camelcase-test.js
+	$(MOCHA) $<
+test-rules-indent: dist/tests/rules/indent-test.js
+	$(MOCHA) $<
+test-rules-inline-comment-spacing: dist/tests/rules/inline-comment-spacing-test.js
+	$(MOCHA) $<
+test-rules-jsdoc: dist/tests/rules/jsdoc-test.js
+	$(MOCHA) $<
+test-rules-no-undef: dist/tests/rules/no-undef-test.js
+	$(MOCHA) $<
+test-rules-no-unused-expressions: dist/tests/rules/no-unused-expressions-test.js
+	$(MOCHA) $<
+test-rules-no-unused-vars: dist/tests/rules/no-unused-vars-test.js
+	$(MOCHA) $<
 
 dist/tests/%.js: dist-mkdir
-	bazel build "//tests:$(basename $(@F))-test" && \
-			cp -f bazel-bin/tests/$(basename $(@F))-test.js \
-						bazel-bin/tests/$(basename $(@F))-test.js.map \
-						$(DIST_DIR)/tests && \
-			$(MOCHA) --no-colors dist/tests/$(basename $(@F))-test.js
-
-
-dist/tests/rules/%.js: dist-mkdir
-	bazel build "//tests/rules:$(basename $(@F))-test" && \
-			cp -f bazel-bin/tests/rules/$(basename $(@F))-test.js \
-						bazel-bin/tests/rules/$(basename $(@F))-test.js.map \
-						$(DIST_DIR)/tests/rules && \
-			$(MOCHA) --no-colors dist/tests/rules/$(basename $(@F))-test.js
+	bazel build $(shell $(call convert_path_to_build_rule,$@))  && \
+			cp -f $(shell $(call convert_path_to_bazel_output,$@)) $@
 
 dist-mkdir:
 	mkdir -p $(DIST_DIR)/tests/rules

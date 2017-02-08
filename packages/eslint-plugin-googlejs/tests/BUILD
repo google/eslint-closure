@@ -4,50 +4,9 @@ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 load("//build_rules:mocha_closure_test.bzl", "mocha_closure_test")
 
-closure_js_library(
-    name = "all-tests",
-    srcs = glob(["*.js"]),
-    deps = [
-        "//lib:ast",
-        "//lib:ast-matcher",
-        "//lib:jsdoc-utils",
-        "//lib:plugin",
-        "//lib:test-utils",
-        "//lib:types",
-        "//lib:utils",
-        "//lib/externs:all-externs",
-        "//tests/rules:all-tests",
-        "@io_bazel_rules_closure//closure/library",
-    ],
-)
-
-closure_js_binary(
-    name = "test-bundle",
-    compilation_level = "SIMPLE",
-    defs = [
-        "--new_type_inf",
-    ],
-    entry_points = [
-        # "googlejs.tests.ast",
-        # "googlejs.tests.astMatcher",
-        # "googlejs.tests.jsdocUtils",
-        # "googlejs.tests.rules.camelcase",
-        # "googlejs.tests.rules.indent",
-        # "googlejs.tests.rules.inlineCommentSpacing",
-        "googlejs.tests.rules.noUnusedVars",
-        "googlejs.tests.rules.jsdoc",
-        # "googlejs.tests.rules.noUndef",
-        # "googlejs.tests.rules.noUnusedExpressions",
-        # "googlejs.tests.utils",
-    ],
-    deps = [
-        ":all-tests",
-    ],
-)
-
 mocha_closure_test(
-    name = "ast-test",
-    srcs = ["ast.js"],
+    name = "ast-test-bin",
+    srcs = ["ast-test.js"],
     entry_point = "googlejs.tests.ast",
     deps = [
         "//lib:ast",
@@ -57,8 +16,8 @@ mocha_closure_test(
 )
 
 mocha_closure_test(
-    name = "ast-matcher-test",
-    srcs = ["ast-matcher.js"],
+    name = "ast-matcher-test-bin",
+    srcs = ["ast-matcher-test.js"],
     entry_point = "googlejs.tests.astMatcher",
     deps = [
         "//lib:ast-matcher",
@@ -67,8 +26,8 @@ mocha_closure_test(
 )
 
 mocha_closure_test(
-    name = "utils-test",
-    srcs = ["utils.js"],
+    name = "utils-test-bin",
+    srcs = ["utils-test.js"],
     entry_point = "googlejs.tests.utils",
     deps = [
         "//lib:types",
@@ -78,8 +37,8 @@ mocha_closure_test(
 )
 
 mocha_closure_test(
-    name = "jsdoc-utils-test",
-    srcs = ["jsdoc-utils.js"],
+    name = "jsdoc-utils-test-bin",
+    srcs = ["jsdoc-utils-test.js"],
     entry_point = "googlejs.tests.jsdocUtils",
     deps = [
         "//lib:jsdoc-utils",

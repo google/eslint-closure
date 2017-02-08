@@ -4,7 +4,6 @@ Adds the closure library by default and uses new type inference by default."""
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 
-# _MOCHA_COMPILATION_LEVEL = "SIMPLE"
 _MOCHA_COMPILATION_LEVEL = "WHITESPACE_ONLY"
 
 def mocha_closure_test(name,
@@ -23,7 +22,7 @@ def mocha_closure_test(name,
   if len(srcs) == 1:
     work = [(name, srcs)]
   else:
-    work = [(name + _make_suffix(src), [src]) for src in srcs]
+    fail("mocha_closure_test rules only allow one srcs files")
   defs_addons = [
     "--new_type_inf",
     "--rewrite_polyfills=false",
@@ -37,9 +36,8 @@ def mocha_closure_test(name,
   new_deps = (closure_dep if deps == None else deps + closure_dep)
 
   for shard, sauce in work:
-
     closure_js_library(
-        name = "%s_lib" % shard,
+        name = "%s-lib" % shard,
         srcs = sauce,
         data = data,
         deps = new_deps,
@@ -49,8 +47,8 @@ def mocha_closure_test(name,
     )
 
   closure_js_binary(
-      name = name,
-      deps = [":%s_lib" % shard for shard, _ in work],
+      name = "%s" % name,
+      deps = [":%s-lib" % shard for shard, _ in work],
       compilation_level = _MOCHA_COMPILATION_LEVEL,
       debug = True,
       defs = new_defs,
@@ -59,14 +57,3 @@ def mocha_closure_test(name,
       visibility = visibility,
       testonly = True,
   )
-
-
-  if len(srcs) > 1:
-    native.test_suite(
-        name = name,
-        tests = [":" + shard for shard, _ in work],
-    )
-
-
-def _make_suffix(path):
-  return '_' + path.replace('_test.js', '').replace('-', '_').replace('/', '_')
