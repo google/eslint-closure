@@ -1,7 +1,8 @@
 DIST_DIR := dist
+# No colors because it doesn't work on the solarized color scheme.
 MOCHA := node_modules/mocha/bin/mocha --no-colors
 
-# Converts a file path into its bazel rule:
+# Converts a file path into its bazel rule.  For example:
 # /dist/tests/ast-test.js               => //test/rules:ast-test-bin
 # /dist/tests/rules/indent-rule-test.js => //test/rules:indent-rule-test-bin
 define convert_path_to_build_rule
@@ -25,6 +26,7 @@ make-plugin:
 test: test-build-helpers test-build-rules
 	$(MOCHA) --recursive ./dist/tests
 
+# Rule to build the tests in tests/*.js
 test-build-helpers: dist/tests/ast-test.js \
 		dist/tests/ast-test.js \
 		dist/tests/jsdoc-utils-test.js \
@@ -42,6 +44,7 @@ test-utils: dist/tests/utils-test.js
 test-rules: test-build-rules
 	$(MOCHA) dist/tests/rules
 
+# Rule to build the tests in tests/rules/*.js
 test-build-rules: dist/tests/rules/camelcase-test.js \
 		dist/tests/rules/indent-test.js \
 		dist/tests/rules/inline-comment-spacing-test.js \
@@ -54,7 +57,8 @@ test-rules-camelcase: dist/tests/rules/camelcase-test.js
 	$(MOCHA) $<
 test-rules-indent: dist/tests/rules/indent-test.js
 	$(MOCHA) $<
-test-rules-inline-comment-spacing: dist/tests/rules/inline-comment-spacing-test.js
+test-rules-inline-comment-spacing: \
+    dist/tests/rules/inline-comment-spacing-test.js
 	$(MOCHA) $<
 test-rules-jsdoc: dist/tests/rules/jsdoc-test.js
 	$(MOCHA) $<
