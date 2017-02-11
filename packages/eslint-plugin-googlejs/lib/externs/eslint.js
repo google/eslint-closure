@@ -777,7 +777,13 @@ ESLint.CLIEngine = function(options) {};
 /**
  * A linting warning or error.
  * @typedef {{
+ *   ruleId: string,
+ *   severity: number,
+ *   nodeType: string,
+ *   line: number,
+ *   column: number,
  *   message: string,
+ *   source: string,
  * }}
  */
 ESLint.LintMessage;
