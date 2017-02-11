@@ -58,49 +58,86 @@ ESLint.LintMessage;
 /**
  *
  * @param {!Array<!ESLint.LintResult} eslintResults
- * @param {!ExpectedErrors} expectedErrors
+ * @param {!Object<string, !ExpectedErrors>} expectedErrorsByFile
  */
-function compareEslintToExpected(eslintErrors, expectedErrors) {
+function compareEslintToExpected(eslintErrors, expectedErrorsByFile) {
   for (const eslintError of eslintErrors.results) {
-    compareErrorsForFile(eslintError, expectedErrors);
+    compareErrorsForFile(eslintError, expectedErrorsByFile);
   }
 }
 
-function compareErrorsForFile(eslintError, expectedErrors) {
+/**
+ * Compares errors between eslint and the expected errors.
+ * @param {!ESLint.LintResult} eslintError
+ * @param {!Object<string, !ExpectedErrors>} expectedErrorsByFile
+ */
+function compareErrorsForFile(eslintError, expectedErrorsByFile) {
   const eslintFile = eslintError.filePath;
-  if (!expectedErrors[eslintFile]) {
+  if (!expectedErrorsByFile[eslintFile]) {
     throw new Error(`No expected errors found for ${eslintFile}`);
   }
 
   const eslintMessages = eslintError.messages;
-  const expectedMessages = expectedErrors[eslintFile].messagesByLineNumber;
 
   for (const eslintMessage of eslintMessages) {
     // Patch the file path so we can print useful error messages.
     eslintMessage.filePath = eslintFile;
-    verifyEslintMessageExpected(eslintMessage, expectedMessages);
+    verifyEslintMessageExpected(
+        eslintMessage, expectedErrorsByFile[eslintFile]);
+    verifyExpectedErrorsUsed(expectedErrorsByFile[eslintFile]);
   }
 }
 
+/**
+ * Create an error string from an ESLint message.
+ * @param {!ESLint.LintMessage} message
+ * @param {string} explanation
+ * @return {string}
+ */
 function makeErrorMessage(message, explanation) {
   return `${message.filePath}:${message.line} (${message.ruleId}) - ` +
       `${explanation}`;
 }
 
 /**
- *
+ * Verifies that all ESLint messages match with an expected error message.
  * @param {!ESLint.LintMessage} eslintMessage
- * @param {!Object<number, !Array<string>} expectedMessages
+ * @param {!ExpectedErrors} expectedErrors
  */
-function verifyEslintMessageExpected(eslintMessage, expectedMessages) {
+function verifyEslintMessageExpected(eslintMessage, expectedErrors) {
   // Subtract 1 because the comment is above the error.
   const expectedLine = eslintMessage.line - 1;
+  const expectedRuleIds = expectedErrors.messagesByLineNumber[expectedLine];
+
   const eslintError = makeErrorMessage(eslintMessage, 'Missing expected error');
-  if (!expectedMessages[expectedLine]) {
+  if (!expectedRuleIds) {
     throw new Error(eslintError);
   }
-  if (!expectedMessages[expectedLine].includes(eslintMessage.ruleId)) {
+  if (!expectedRuleIds.includes(eslintMessage.ruleId)) {
     throw new Error(eslintError);
+  }
+
+  if (!expectedRuleIds.usedRuleIds) {
+    expectedRuleIds.usedRuleIds = new Set();
+  }
+  expectedRuleIds.usedRuleIds.add(eslintMessage.ruleId);
+}
+
+/**
+ * Verifies that each expected error was also found by ESLint.
+ * @param {!ExpectedErrors} expectedErrors
+ */
+function verifyExpectedErrorsUsed(expectedErrors) {
+  const filePath = expectedErrors.filePath;
+  for (const line of Object.keys(expectedErrors.messagesByLineNumber)) {
+    const expectedRuleIds = expectedErrors.messagesByLineNumber[line];
+    const usedRulesIds = expectedRuleIds.usedRuleIds || new Set();
+    const unusedRuleIds = expectedRuleIds
+          .filter(ruleId => !usedRulesIds.has(ruleId));
+    if (unusedRuleIds.length > 0) {
+      throw new Error(`${filePath}:${line} The following rules were unused ` +
+                      `by ESLint ${unusedRuleIds.join(', ')}`);
+    }
   }
 }
 
