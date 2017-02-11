@@ -25,14 +25,14 @@ closure_js_library(
         "reportUnknownTypes",
     ],
     deps = [
-        "//lib/externs:all-externs",
-        "//lib/rules:camelcase",
-        "//lib/rules:indent",
-        "//lib/rules:inline-comment-spacing",
-        "//lib/rules:jsdoc",
-        "//lib/rules:no-undef",
-        "//lib/rules:no-unused-expressions",
-        "//lib/rules:no-unused-vars",
+        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
+        "//packages/eslint-plugin-googlejs/lib/rules:camelcase",
+        "//packages/eslint-plugin-googlejs/lib/rules:indent",
+        "//packages/eslint-plugin-googlejs/lib/rules:inline-comment-spacing",
+        "//packages/eslint-plugin-googlejs/lib/rules:jsdoc",
+        "//packages/eslint-plugin-googlejs/lib/rules:no-undef",
+        "//packages/eslint-plugin-googlejs/lib/rules:no-unused-expressions",
+        "//packages/eslint-plugin-googlejs/lib/rules:no-unused-vars",
     ],
 )
 

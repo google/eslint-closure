@@ -6,8 +6,8 @@ closure_js_library(
     name = "camelcase",
     srcs = ["camelcase.js"],
     deps = [
-        "//lib:types",
-        "//lib:utils",
+        "//packages/eslint-plugin-googlejs/lib:types",
+        "//packages/eslint-plugin-googlejs/lib:utils",
     ],
 )
 
@@ -15,8 +15,8 @@ closure_js_library(
     name = "indent",
     srcs = ["indent.js"],
     deps = [
-        "//lib:ast",
-        "//lib:utils",
+        "//packages/eslint-plugin-googlejs/lib:ast",
+        "//packages/eslint-plugin-googlejs/lib:utils",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -25,7 +25,7 @@ closure_js_library(
     name = "inline-comment-spacing",
     srcs = ["inline-comment-spacing.js"],
     deps = [
-        "//lib:utils",
+        "//packages/eslint-plugin-googlejs/lib:utils",
     ],
 )
 
@@ -36,8 +36,8 @@ closure_js_library(
         "reportUnknownTypes",
     ],
     deps = [
-        "//lib:jsdoc-utils",
-        "//lib:utils",
+        "//packages/eslint-plugin-googlejs/lib:jsdoc-utils",
+        "//packages/eslint-plugin-googlejs/lib:utils",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -49,8 +49,8 @@ closure_js_library(
         "reportUnknownTypes",
     ],
     deps = [
-        "//lib:ast",
-        "//lib:utils",
+        "//packages/eslint-plugin-googlejs/lib:ast",
+        "//packages/eslint-plugin-googlejs/lib:utils",
     ],
 )
 
@@ -58,8 +58,8 @@ closure_js_library(
     name = "no-unused-expressions",
     srcs = ["no-unused-expressions.js"],
     deps = [
-        "//lib:ast",
-        "//lib:jsdoc-utils",
+        "//packages/eslint-plugin-googlejs/lib:ast",
+        "//packages/eslint-plugin-googlejs/lib:jsdoc-utils",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -71,7 +71,7 @@ closure_js_library(
         "reportUnknownTypes",
     ],
     deps = [
-        "//lib:ast",
-        "//lib:utils",
+        "//packages/eslint-plugin-googlejs/lib:ast",
+        "//packages/eslint-plugin-googlejs/lib:utils",
     ],
 )

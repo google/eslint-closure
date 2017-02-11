@@ -9,9 +9,9 @@ mocha_closure_test(
     srcs = ["ast-test.js"],
     entry_point = "googlejs.tests.ast",
     deps = [
-        "//lib:ast",
-        "//lib:test-utils",
-        "//lib/externs:all-externs",
+        "//packages/eslint-plugin-googlejs/lib:ast",
+        "//packages/eslint-plugin-googlejs/lib:test-utils",
+        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
     ],
 )
 
@@ -20,8 +20,8 @@ mocha_closure_test(
     srcs = ["ast-matcher-test.js"],
     entry_point = "googlejs.tests.astMatcher",
     deps = [
-        "//lib:ast-matcher",
-        "//lib/externs:all-externs",
+        "//packages/eslint-plugin-googlejs/lib:ast-matcher",
+        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
     ],
 )
 
@@ -30,9 +30,9 @@ mocha_closure_test(
     srcs = ["utils-test.js"],
     entry_point = "googlejs.tests.utils",
     deps = [
-        "//lib:types",
-        "//lib:utils",
-        "//lib/externs:all-externs",
+        "//packages/eslint-plugin-googlejs/lib:types",
+        "//packages/eslint-plugin-googlejs/lib:utils",
+        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
     ],
 )
 
@@ -41,8 +41,8 @@ mocha_closure_test(
     srcs = ["jsdoc-utils-test.js"],
     entry_point = "googlejs.tests.jsdocUtils",
     deps = [
-        "//lib:jsdoc-utils",
-        "//lib:test-utils",
-        "//lib/externs:all-externs",
+        "//packages/eslint-plugin-googlejs/lib:jsdoc-utils",
+        "//packages/eslint-plugin-googlejs/lib:test-utils",
+        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
     ],
 )

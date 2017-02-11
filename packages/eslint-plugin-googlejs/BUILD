@@ -12,7 +12,7 @@ closure_js_binary(
     dependency_mode = "strict",
     entry_points = ["googlejs.plugin"],
     deps = [
-        "//lib:plugin",
+        "//packages/eslint-plugin-googlejs/lib:plugin",
     ],
 )
 
@@ -26,6 +26,6 @@ closure_js_binary(
     dependency_mode = "strict",
     entry_points = ["googlejs.plugin"],
     deps = [
-        "//lib:plugin",
+        "//packages/eslint-plugin-googlejs/lib:plugin",
     ],
 )
