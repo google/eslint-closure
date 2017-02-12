@@ -6,6 +6,8 @@
 goog.module('googlejs.configTester.tests.errorCompareTest');
 goog.setTestOnly();
 
+const types = goog.require('googlejs.configTester.types');
+
 /* global describe it */
 
 const errorCompare = goog.require('googlejs.configTester.errorCompare');
@@ -22,12 +24,15 @@ describe('errorCompare.compareEslintToExpected', () => {
 
 
 describe('errorCompare.verifyExpectedErrorsUsed', () => {
-  function verify(messagesByLineNumber, usedRules) {
-    const usedRuleIds = new Set(usedRules);
-    messagesByLineNumber.usedRuleIds = usedRuleIds;
+
+  /**
+   * @param {!Object<number, !types.LineErrors>} errorsByLineNumber
+   * @return {function():void}
+   */
+  function verify(errorsByLineNumber) {
     const expectedErrors = {
       filePath: '/FAKE_PATH',
-      messagesByLineNumber,
+      errorsByLineNumber,
     };
     return () => errorCompare.verifyExpectedErrorsUsed(expectedErrors);
   }
