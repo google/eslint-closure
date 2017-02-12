@@ -1,0 +1,41 @@
+{
+  "name": "eslint-config-tester",
+  "version": "0.0.1",
+  "author": "Joe Schafer <joe@jschaf.com>",
+  "license": "Apache-2.0",
+  "description": "A Mocha compatible tester for ESLint configs.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "google",
+    "lint",
+    "linter"
+  ],
+  "files": [
+    "lib/*.js",
+    "index.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "bugs": {
+    "url": "https://github.com/jschaf/googlejs"
+  },
+  "homepage": "https://github.com/jschaf/googlejs",
+  "devDependencies": {
+    "chai": "~3.5.0",
+    "mocha": "~3.1.2"
+  },
+  "peerDependencies": {},
+  "engines": {
+    "node": ">= 4"
+  },
+  "scripts": {
+  },
+  "dependencies": {
+  }
+}

@@ -5,6 +5,7 @@ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 
 _MOCHA_COMPILATION_LEVEL = "WHITESPACE_ONLY"
+_MOCHA_LANGUAGE = "ECMASCRIPT6_STRICT"
 
 def mocha_closure_test(name,
                srcs,
@@ -52,6 +53,7 @@ def mocha_closure_test(name,
       compilation_level = _MOCHA_COMPILATION_LEVEL,
       debug = True,
       defs = new_defs,
+      language=_MOCHA_LANGUAGE,
       entry_points = [entry_point],
       formatting = "PRETTY_PRINT",
       visibility = visibility,
