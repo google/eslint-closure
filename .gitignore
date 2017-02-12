@@ -14,5 +14,7 @@ docs/Gemfile.lock
 **/bazel-genfiles
 **/bazel-out
 **/bazel-testlogs
+**/bazel-googlejs
+**/dist/tests
 /docs/js/app/googlejs-eslint-plugin.min.js
 /packages/eslint-plugin-googlejs/dist
