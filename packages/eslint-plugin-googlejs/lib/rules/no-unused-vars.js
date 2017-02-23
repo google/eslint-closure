@@ -522,8 +522,10 @@ function create(context) {
    * @private
    */
   function getColumnInComment(variable, comment) {
+    // TODO(jschaf): Closure removes escaped backslashes in template literals.
     const namePattern = new RegExp(
-        `[\\s,]${utils.escapeRegexp(variable.name)}(?:$|[\\s,:])`, 'g');
+        // eslint-disable-next-line prefer-template
+        '[\\s,]' + utils.escapeRegexp(variable.name) + '(?:$|[\\s,:])', 'g');
 
     // To ignore the first text "global".
     namePattern.lastIndex = comment.value.indexOf('global') + 6;
