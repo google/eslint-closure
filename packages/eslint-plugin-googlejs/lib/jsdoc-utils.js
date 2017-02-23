@@ -101,16 +101,16 @@ function traverseTags(tagType, visitor) {
           .forEach(tag => traverseTags(tag, visitor));
       break;
     case 'FunctionType': {
-      const t = /** @type {!Doctrine.FunctionType} */ (tagType);
-      if (t.this) traverseTags(t.this, visitor);
-      t.params.forEach(tag => traverseTags(tag, visitor));
-      if (t.result) traverseTags(t.result, visitor);
+      const functionType = /** @type {!Doctrine.FunctionType} */ (tagType);
+      if (functionType.this) traverseTags(functionType.this, visitor);
+      functionType.params.forEach(tag => traverseTags(tag, visitor));
+      if (functionType.result) traverseTags(functionType.result, visitor);
       break;
     }
     case 'FieldType': {
-      const t = /** @type {!Doctrine.FieldType} */ (tagType);
-      if (t.value) {
-        traverseTags(t.value, visitor);
+      const fieldType = /** @type {!Doctrine.FieldType} */ (tagType);
+      if (fieldType.value) {
+        traverseTags(fieldType.value, visitor);
       }
       break;
     }
