@@ -783,16 +783,11 @@ ESLint.CLIEngine = function(options) {};
 /** @type {string} */ ESLint.LintMessage.prototype.message;
 /** @type {string} */ ESLint.LintMessage.prototype.source;
 
-/**
- * A linting result.
- * @typedef {{
- *   filePath: string,
- *   messages: !Array<!ESLint.LintMessage>,
- *   errorCount: number,
- *   warningCount: number,
- * }}
- */
-ESLint.LintResult;
+/** @record */ ESLint.LintResult;
+/** @type {string} */ ESLint.LintResult.prototype.filePath;
+/** @type {!Array<!ESLint.LintMessage>} */ ESLint.LintResult.prototype.messages;
+/** @type {number} */ ESLint.LintResult.prototype.errorCount;
+/** @type {number} */ ESLint.LintResult.prototype.warningCount;
 
 /**
  * An ESLint formatting function, e.g. stylish, or unix.
