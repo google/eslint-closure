@@ -1,5 +1,8 @@
 goog.module('googlejs.configTester.types');
 
+/** @record @extends {ESLint.LintMessage} */ const ESLintError = function() {};
+/** @type {string} */ ESLintError.prototype.filePath;
+
 /**
  * The errors on a given line of a source file.
  * @record
@@ -18,10 +21,16 @@ LineErrors.prototype.expectedRules;
 
 /**
  * The expected errors annotated in a source file.
- * @type {record}
+ * @record
  */
 const ExpectedErrors = function() {};
 /** @type {string} */
 ExpectedErrors.prototype.filePath;
 /** @type {!Object<number, !LineErrors>} */
 ExpectedErrors.prototype.errorsByLineNumber;
+
+exports = {
+  ESLintError,
+  ExpectedErrors,
+  LineErrors,
+};

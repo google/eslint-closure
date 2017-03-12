@@ -1,6 +1,10 @@
+/**
+ * @fileoverview Compare expected errors with those from ESLint.
+ * @suppress {reportUnknownTypes}
+ */
+
 goog.module('googlejs.configTester.errorCompare');
 
-const asserts = goog.require('goog.asserts');
 const types = goog.require('googlejs.configTester.types');
 
 /**
@@ -19,7 +23,7 @@ function compareEslintToExpected(eslintResults, expectedErrorsByFile) {
 /**
  * Compares errors between ESLint and the expected errors for one file.
  * @param {!ESLint.LintResult} eslintError ESLint errors for one file.
- * @param {!Object<string, !ExpectedErrors>} expectedErrorsByFile A map of an
+ * @param {!Object<string, !types.ExpectedErrors>} expectedErrorsByFile A map of an
  *     absolute filepath to the expected errors for the file.
  */
 function compareErrorsForFile(eslintError, expectedErrorsByFile) {
@@ -40,7 +44,7 @@ function compareErrorsForFile(eslintError, expectedErrorsByFile) {
 
 /**
  * Create an error string from an ESLint message.
- * @param {!ESLint.LintMessage} message
+ * @param {!types.ESLintError} message
  * @param {string} explanation
  * @return {string}
  */
@@ -55,36 +59,37 @@ function makeErrorMessage(message, explanation) {
  * This function also modifies expectedErrors.usedRules to include the ESLint
  * ruleId.  We need to modify usedRules so we can check that all expected errors
  * match an ESLint error in usedRules.
- * @param {!ESLint.LintMessage} eslintMessage
- * @param {!ExpectedErrors} expectedErrors
+ * @param {!types.ESLintError} eslintMessage
+ * @param {!types.ExpectedErrors} expectedErrors
  */
 function verifyEslintErrorsUsed(eslintMessage, expectedErrors) {
   // Subtract 1 because the comment is above the error.
   const expectedLine = eslintMessage.line - 1;
-  const {usedRules, expectedRules} =
-        expectedErrors.errorsByLineNumber[expectedLine];
 
+  const lineErrors = expectedErrors.errorsByLineNumber[expectedLine];
   const eslintError = makeErrorMessage(eslintMessage, 'Missing expected error');
-  if (!expectedRules) {
+  if (!lineErrors || !lineErrors.expectedRules ||
+      !lineErrors.expectedRules.includes(eslintMessage.ruleId)) {
     throw new Error(eslintError);
   }
-  if (!expectedRules.includes(eslintMessage.ruleId)) {
-    throw new Error(eslintError);
-  }
-
-  asserts.assert(goog.isDefAndNotNull(usedRules));
-  usedRules.add(eslintMessage.ruleId);
+  lineErrors.usedRules.add(eslintMessage.ruleId);
 }
 
 /**
  * Verifies that each expected error was also found by ESLint.
- * @param {!ExpectedErrors} expectedErrors
+ * @param {!types.ExpectedErrors} expectedErrors
  */
 function verifyExpectedErrorsUsed(expectedErrors) {
   const filePath = expectedErrors.filePath;
   for (const line of Object.keys(expectedErrors.errorsByLineNumber)) {
-    const {usedRules, expectedRules} = expectedErrors.errorsByLineNumber[line];
-    const unusedRules = expectedRules.filter(rule => !usedRules.has(rule));
+    let lineErrors = expectedErrors.errorsByLineNumber[line];
+
+    if (!lineErrors) {
+      return;
+    }
+
+    const unusedRules = lineErrors.expectedRules
+          .filter(rule => !lineErrors.usedRules.has(rule));
     if (unusedRules.length > 0) {
       throw new Error(`${filePath}:${line} The following rules were unused ` +
                       `by ESLint: ${unusedRules.join(', ')}`);

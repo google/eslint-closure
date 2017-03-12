@@ -29,8 +29,8 @@ endef
 all: compile
 
 compile: make-config-tester
-	cp -f $(ROOT_DIR)/bazel-bin/$(CONFIG_TESTER_PREFIX)/plugin.js \
-      $(DIST_DIR)/googlejs-eslint-plugin.js
+	cp -f $(ROOT_DIR)/bazel-bin/$(CONFIG_TESTER_PREFIX)/eslint-config-tester.js \
+      $(DIST_DIR)/eslint-config-tester.js
 
 make-config-tester:
 	bazel build //packages/eslint-config-tester

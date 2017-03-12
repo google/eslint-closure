@@ -17,7 +17,7 @@ ESLint.Module = function() {};
 /** @type {!ESLint.Linter} */
 ESLint.Module.prototype.linter;
 
-/** @type {!Object} */
+/** @type {function(new:ESLint.CLIEngine, !ESLint.CLIEngineOptions=)} */
 ESLint.Module.prototype.CLIEngine;
 
 /** @type {function(new:ESLint.RuleTester)} */
@@ -774,19 +774,14 @@ ESLint.CLIEngineOptions;
  */
 ESLint.CLIEngine = function(options) {};
 
-/**
- * A linting warning or error.
- * @typedef {{
- *   ruleId: string,
- *   severity: number,
- *   nodeType: string,
- *   line: number,
- *   column: number,
- *   message: string,
- *   source: string,
- * }}
- */
-ESLint.LintMessage;
+/** @record */ ESLint.LintMessage = function() {};
+/** @type {string} */ ESLint.LintMessage.prototype.ruleId;
+/** @type {number} */ ESLint.LintMessage.prototype.severity;
+/** @type {string} */ ESLint.LintMessage.prototype.nodeType;
+/** @type {number} */ ESLint.LintMessage.prototype.line;
+/** @type {number} */ ESLint.LintMessage.prototype.column;
+/** @type {string} */ ESLint.LintMessage.prototype.message;
+/** @type {string} */ ESLint.LintMessage.prototype.source;
 
 /**
  * A linting result.
@@ -827,7 +822,7 @@ ESLint.CLIEngine.prototype.resolveFileGlobPatterns = function(patterns) {};
 /**
  * Executes the current configuration on an array of file and directory names.
  * @param {!Array<string>} patterns An array of file and directory names.
- * @return {!ESLint.LintResult} The results for all files that were linted.
+ * @return {{results: !Array<!ESLint.LintResult>}} The results for all files that were linted.
  */
 ESLint.CLIEngine.prototype.executeOnFiles = function(patterns) {};
 

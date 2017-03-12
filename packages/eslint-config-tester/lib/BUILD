@@ -1,5 +1,6 @@
 package(default_visibility = ["//visibility:public"])
 
+load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 
 closure_js_library(
@@ -12,9 +13,9 @@ closure_js_library(
     name = "config-tester",
     srcs = ["config-tester.js"],
     deps = [
+        ":error-compare",
         ":types",
         "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "@io_bazel_rules_closure//closure/library",
     ],
 )
 
