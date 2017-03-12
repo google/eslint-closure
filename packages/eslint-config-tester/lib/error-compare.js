@@ -11,7 +11,7 @@ const types = goog.require('googlejs.configTester.types');
  *     an absolute filepath to the expected errors for the file.
  */
 function compareEslintToExpected(eslintResults, expectedErrorsByFile) {
-  for (const eslintError of eslintResults.results) {
+  for (const eslintError of eslintResults) {
     compareErrorsForFile(eslintError, expectedErrorsByFile);
   }
 }
@@ -24,14 +24,15 @@ function compareEslintToExpected(eslintResults, expectedErrorsByFile) {
  */
 function compareErrorsForFile(eslintError, expectedErrorsByFile) {
   const eslintFile = eslintError.filePath;
-  if (!expectedErrorsByFile[eslintFile]) {
-    throw new Error(`No expected errors found for ${eslintFile}`);
+  if (eslintError.messages.length > 0 && !expectedErrorsByFile[eslintFile]) {
+    throw new Error(`No expected errors found for ${eslintFile} but found ` +
+                   `ESLint errors.`);
   }
 
   for (const eslintMessage of eslintError.messages) {
     // Patch the file path so we can print useful error messages.
     eslintMessage.filePath = eslintFile;
-    verifyEslintMessageExpected(
+    verifyEslintErrorsUsed(
         eslintMessage, expectedErrorsByFile[eslintFile]);
     verifyExpectedErrorsUsed(expectedErrorsByFile[eslintFile]);
   }
@@ -50,10 +51,14 @@ function makeErrorMessage(message, explanation) {
 
 /**
  * Verifies that all ESLint messages match with an expected error message.
+ *
+ * This function also modifies expectedErrors.usedRules to include the ESLint
+ * ruleId.  We need to modify usedRules so we can check that all expected errors
+ * match an ESLint error in usedRules.
  * @param {!ESLint.LintMessage} eslintMessage
  * @param {!ExpectedErrors} expectedErrors
  */
-function verifyEslintMessageExpected(eslintMessage, expectedErrors) {
+function verifyEslintErrorsUsed(eslintMessage, expectedErrors) {
   // Subtract 1 because the comment is above the error.
   const expectedLine = eslintMessage.line - 1;
   const {usedRules, expectedRules} =
@@ -67,7 +72,7 @@ function verifyEslintMessageExpected(eslintMessage, expectedErrors) {
     throw new Error(eslintError);
   }
 
-  asserts.assert(goog.isDefAnNotNull(usedRules));
+  asserts.assert(goog.isDefAndNotNull(usedRules));
   usedRules.add(eslintMessage.ruleId);
 }
 
@@ -91,6 +96,6 @@ exports = {
   compareEslintToExpected,
   compareErrorsForFile,
   makeErrorMessage,
-  verifyEslintMessageExpected,
+  verifyEslintErrorsUsed,
   verifyExpectedErrorsUsed,
 };
