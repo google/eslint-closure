@@ -7,6 +7,7 @@ closure_js_binary(
     defs = [
         "--new_type_inf",
         "--assume_function_wrapper",
+        "--rewrite_polyfills=false",
     ],
     dependency_mode = "strict",
     entry_points = ["googlejs.configTester.runner"],

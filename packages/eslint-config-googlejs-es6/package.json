@@ -28,10 +28,7 @@
     "eslint-plugin-googlejs": "^0.0.1"
   },
   "devDependencies": {
-    "bluebird": "^3.4.7",
-    "eslint": "^3.15.0",
-    "glob": "^7.1.1",
-    "minimatch": "^3.0.3"
+    "eslint-plugin-config-tester": "^0.0.1"
   },
   "peerDependencies": {},
   "engines": {

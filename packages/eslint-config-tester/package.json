@@ -36,6 +36,8 @@
   },
   "scripts": {},
   "dependencies": {
-    "eslint": "^3.17.1"
+    "bluebird": "^3.5.0",
+    "eslint": "^3.17.1",
+    "glob": "^7.1.1"
   }
 }
