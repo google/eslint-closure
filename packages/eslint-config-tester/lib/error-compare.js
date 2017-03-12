@@ -9,24 +9,23 @@ const types = goog.require('googlejs.configTester.types');
 
 /* global describe, it */
 
-const MochaShim = {};
-
 function defaultTestHandler(text, method) {
   method.apply(null);
 }
 
-Object.defineProperties(MochaShim, {
-  describe: {
-    get() {
-      return typeof describe === 'function' ? describe : defaultTestHandler;
-    },
-  },
-  it: {
-    get() {
-      return typeof it === 'function' ? it : defaultTestHandler;
-    },
-  },
-});
+class MochaShim {
+  constructor() {}
+
+  get describe() {
+    return typeof describe === 'function' ? describe : defaultTestHandler;
+  }
+
+  get it() {
+    return typeof it === 'function' ? it : defaultTestHandler;
+  }
+}
+
+const mochaShim = new MochaShim();
 
 /**
  * Compares all ESLint results to the expected results for a list of files.
@@ -36,9 +35,9 @@ Object.defineProperties(MochaShim, {
  *     an absolute filepath to the expected errors for the file.
  */
 function compareEslintToExpected(eslintResults, expectedErrorsByFile) {
-  for (const eslintError of eslintResults) {
-    compareErrorsForFile(eslintError, expectedErrorsByFile);
-  }
+  eslintResults.forEach(/** !ESLint.LintResult */ eslintResult => {
+    compareErrorsForFile(eslintResult, expectedErrorsByFile);
+  });
 }
 
 /**
@@ -48,21 +47,22 @@ function compareEslintToExpected(eslintResults, expectedErrorsByFile) {
  *     an absolute filepath to the expected errors for the file.
  */
 function compareErrorsForFile(eslintError, expectedErrorsByFile) {
+  /** @const {string} */
   const eslintFile = eslintError.filePath;
   if (eslintError.messages.length > 0 && !expectedErrorsByFile[eslintFile]) {
     throw new Error(`No expected errors found for ${eslintFile} but found ` +
                    `ESLint errors.`);
   }
 
-  for (const eslintMessage of eslintError.messages) {
+  eslintError.messages.forEach(eslintMessage => {
     // Patch the file path so we can print useful error messages.
     eslintMessage.filePath = eslintFile;
-    MochaShim.describe(eslintFile, () => {
+    mochaShim.describe(eslintFile, () => {
       verifyEslintErrorsUsed(
           eslintMessage, expectedErrorsByFile[eslintFile]);
       verifyExpectedErrorsUsed(expectedErrorsByFile[eslintFile]);
     });
-  }
+  });
 }
 
 /**
@@ -89,15 +89,16 @@ function verifyEslintErrorsUsed(eslintMessage, expectedErrors) {
   // Subtract 1 because the comment is above the error.
   const expectedLine = eslintMessage.line - 1;
 
+  /** @const {(!types.LineErrors|undefined)} */
   const lineErrors = expectedErrors.errorsByLineNumber[expectedLine];
   const eslintError = makeErrorMessage(eslintMessage, 'Missing expected error');
-  MochaShim.it(`Line ${expectedLine}`, () => {
+  mochaShim.it(`Line ${expectedLine}`, () => {
     if (!lineErrors || !lineErrors.expectedRules ||
         !lineErrors.expectedRules.includes(eslintMessage.ruleId)) {
       throw new Error(eslintError);
     }
+    lineErrors.usedRules.add(eslintMessage.ruleId);
   });
-  lineErrors.usedRules.add(eslintMessage.ruleId);
 }
 
 /**
@@ -106,23 +107,24 @@ function verifyEslintErrorsUsed(eslintMessage, expectedErrors) {
  */
 function verifyExpectedErrorsUsed(expectedErrors) {
   const filePath = expectedErrors.filePath;
-  for (const line of Object.keys(expectedErrors.errorsByLineNumber)) {
+  Object.keys(expectedErrors.errorsByLineNumber).forEach(line => {
     let lineErrors = expectedErrors.errorsByLineNumber[line];
 
     if (!lineErrors) {
       return;
     }
 
-    const unusedRules = lineErrors.expectedRules
-          .filter(rule => !lineErrors.usedRules.has(rule));
+    /** @type {!Array<string>} */
+    let unusedRules = lineErrors.expectedRules
+        .filter(rule => !lineErrors.usedRules.has(rule));
 
-    MochaShim.it(`Line ${line}`, () => {
+    mochaShim.it(`Line ${line}`, () => {
       if (unusedRules.length > 0) {
         throw new Error(`${filePath}:${line} The following rules were unused ` +
                         `by ESLint: ${unusedRules.join(', ')}`);
       }
     });
-  }
+  });
 }
 
 exports = {
