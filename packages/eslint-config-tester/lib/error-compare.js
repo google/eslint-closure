@@ -44,8 +44,8 @@ function compareEslintToExpected(eslintResults, expectedErrorsByFile) {
 /**
  * Compares errors between ESLint and the expected errors for one file.
  * @param {!ESLint.LintResult} eslintError ESLint errors for one file.
- * @param {!Object<string, !types.ExpectedErrors>} expectedErrorsByFile A map of an
- *     absolute filepath to the expected errors for the file.
+ * @param {!Object<string, !types.ExpectedErrors>} expectedErrorsByFile A map of
+ *     an absolute filepath to the expected errors for the file.
  */
 function compareErrorsForFile(eslintError, expectedErrorsByFile) {
   const eslintFile = eslintError.filePath;
