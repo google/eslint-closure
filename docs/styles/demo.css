@@ -24,3 +24,11 @@
 .rules .radio+.radio, .rules .checkbox+.checkbox {
     margin-top: inherit;
 }
+
+.editor-warning {
+  background-color: yellow;
+}
+
+.editor-error {
+  background-color: red;
+}
