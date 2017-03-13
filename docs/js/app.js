@@ -10,7 +10,8 @@ console.log('googlejsBase', googlejsBase);
 
 const EDITOR_TEXT_AREA_ELEMENT = document.getElementById('editor');
 const EDITOR = CodeMirror.fromTextArea(EDITOR_TEXT_AREA_ELEMENT, {
-  mode: 'javascript'
+  mode: 'javascript',
+  lineNumbers: true,
 });
 
 const CSS_CLASS_WARNING = 'editor-warning';

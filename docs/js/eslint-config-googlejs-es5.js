@@ -65,17 +65,13 @@ const GOOGLE_PLUGIN_RULES = {
     checkObjectProperties: false,
   }],
 
+  // TODO(jschaf): Is this still valid?
   // The JS style guide 'follows the C++ style guide in spirit'.  The C++ style
   // guide mandates two spaces before line-end comments.  See the 'Line
   // Comments' section under
   // https://git.io/v6Mp3#Implementation_Comments
   'googlejs/inline-comment-spacing': [ERROR, 2],
 };
-
-
-// JSDoc Plugin Rules
-// https://github.com/gajus/eslint-plugin-jsdoc
-const JSDOC_PLUGIN_RULES = {};
 
 
 const GOOGLE_ES5_RULES = {
@@ -105,7 +101,6 @@ const GOOGLE_ES5_RULES = {
 
       // Custom plugin rules.
       GOOGLE_PLUGIN_RULES,
-      JSDOC_PLUGIN_RULES
       ),
 };
 

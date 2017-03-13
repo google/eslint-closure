@@ -17,6 +17,25 @@ closure_js_binary(
 )
 
 closure_js_binary(
+    name = "plugin-debug",
+    compilation_level = "WHITESPACE_ONLY",
+    defs = [
+        "--new_type_inf",
+        "--assume_function_wrapper",
+        "--rewrite_polyfills=false",
+        ("--output_wrapper=" +
+         "global.goog={};" +
+         "(function(goog){%output%}).call(global, global.goog);"),
+    ],
+    dependency_mode = "strict",
+    entry_points = ["googlejs.plugin"],
+    formatting = "PRETTY_PRINT",
+    deps = [
+        "//packages/eslint-plugin-googlejs/lib:plugin",
+    ],
+)
+
+closure_js_binary(
     name = "check-types",
     defs = [
         "--new_type_inf",

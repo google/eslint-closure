@@ -1,5 +1,6 @@
 /**
  * @fileoverview Rule to check JSDoc comments.
+ * @suppress {checkDebuggerStatement}
  */
 
 goog.module('googlejs.rules.jsdoc');
@@ -106,7 +107,8 @@ function create(context) {
   const prefer = new googMap(options.prefer);
 
   // these both default to true; so you have to explicitly make them false
-  const requireReturn = options.requireReturn !== false;
+  debugger;
+  const requireReturn = !!options.requireReturn;
   const requireParamDescription = options.requireParamDescription !== false;
   const requireReturnDescription = options.requireReturnDescription !== false;
   const requireReturnType = options.requireReturnType !== false;
@@ -371,7 +373,7 @@ function create(context) {
         if (requireReturn || functionData.returnPresent) {
           context.report({
             node: jsdocNode,
-            message: 'Missing JSDoc @{{returns}} for function.',
+            message: 'Missing JSDoc @{return} for function.',
             data: {
               returns: prefer.get('returns', 'returns'),
             },

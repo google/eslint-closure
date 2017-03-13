@@ -32,3 +32,8 @@
 .editor-error {
   background-color: red;
 }
+
+.CodeMirror {
+  height: auto !important;
+  border: 1px solid #aaa;
+}

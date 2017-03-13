@@ -35,6 +35,13 @@ compile: make-plugin
 make-plugin:
 	bazel build //packages/eslint-plugin-googlejs:plugin
 
+debug: make-debug
+	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin-debug.js \
+      $(DIST_DIR)/googlejs-eslint-plugin.js
+
+make-debug:
+	bazel build //packages/eslint-plugin-googlejs:plugin-debug
+
 test: test-build-helpers test-build-rules
 	$(MOCHA) --recursive ./dist/tests
 
