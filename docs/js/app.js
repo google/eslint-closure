@@ -2,8 +2,10 @@ const eslint = require('eslint');
 const googlejsPlugin = require('./googlejs-eslint-plugin');
 const googlejsBase = require('./eslint-config-googlejs-base');
 const googlejsEs5 = require('./eslint-config-googlejs-es5.js');
-const googlejsEs6 = require('./eslint-config-googlejs-es5.js');
+const googlejsEs6 = require('./eslint-config-googlejs-es6.js');
+const merge = require('lodash.merge');
 
+// TODO(jschaf): Clean this up into proper Closure-style code.
 console.log('googlejsES6', googlejsEs6);
 console.log('googlejsES5', googlejsEs5);
 console.log('googlejsBase', googlejsBase);
@@ -24,7 +26,39 @@ window.EDITOR = EDITOR;
 // TODO: Manually merge es5 and es6 configs with base.  ESLint only seems to do
 // it for files.
 
-const OPTIONS = googlejsBase;
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+const BASE_OPTIONS = googlejsBase;
+const ES5_OPTIONS = merge(clone(BASE_OPTIONS), googlejsEs5);
+const ES6_OPTIONS = merge(clone(BASE_OPTIONS), googlejsEs6);
+let OPTIONS = ES6_OPTIONS;
+
+function switchConfig(configKey) {
+  const es5Button = document.getElementById('es5Button');
+  const es6Button = document.getElementById('es6Button');
+  const buttonHighlight = 'mdl-button--accent';
+  switch (configKey) {
+    case 'es5':
+      OPTIONS = ES5_OPTIONS;
+      es5Button.classList.add(buttonHighlight);
+      es6Button.classList.remove(buttonHighlight);
+      break;
+
+    case 'es6':
+      OPTIONS = ES6_OPTIONS;
+      es6Button.classList.add(buttonHighlight);
+      es5Button.classList.remove(buttonHighlight);
+      break;
+
+    default:
+      throw new Error('Unrecoginized config key, use es5 or es6.');
+  }
+  verify();
+}
+
+window.switchConfig = switchConfig;
 
 window.eslint = eslint;
 

@@ -948,7 +948,7 @@ const GOOGLE_PLUGIN_RULES = {
 const ESLINT_CONFIG = {
 
   parserOptions: {
-    ecmaVersion: 5,
+    ecmaVersion: 6,
     sourceType: 'script',
   },
 
@@ -957,6 +957,7 @@ const ESLINT_CONFIG = {
   // An environment defines global variables that are predefined.
   env: {
     browser: true,
+    es6: true,
   },
 
   globals: {

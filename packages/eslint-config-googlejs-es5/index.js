@@ -100,7 +100,7 @@ const GOOGLE_ES5_RULES = {
       ES6_RULES,
 
       // Custom plugin rules.
-      GOOGLE_PLUGIN_RULES,
+      GOOGLE_PLUGIN_RULES
       ),
 };
 

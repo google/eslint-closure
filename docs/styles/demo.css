@@ -37,3 +37,7 @@
   height: auto !important;
   border: 1px solid #aaa;
 }
+
+.active {
+  background-color: green;
+}

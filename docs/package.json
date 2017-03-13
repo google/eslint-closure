@@ -47,6 +47,7 @@
     "eslint": "~3.9.0",
     "espree": "^3.3.2",
     "json-loader": "^0.5.4",
-    "lodash.ismatchwith": "~4.4.0"
+    "lodash.ismatchwith": "~4.4.0",
+    "lodash.merge": "^4.6.0"
   }
 }

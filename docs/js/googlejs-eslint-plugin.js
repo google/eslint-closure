@@ -4496,7 +4496,6 @@ goog.loadModule(function(exports) {
     var sourceCode = context.getSourceCode();
     var options = (context.options[0]) || {};
     var prefer = new googMap(options.prefer);
-    debugger;
     var requireReturn = !!options.requireReturn;
     var requireParamDescription = options.requireParamDescription !== false;
     var requireReturnDescription = options.requireReturnDescription !== false;

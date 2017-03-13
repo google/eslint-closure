@@ -107,7 +107,6 @@ function create(context) {
   const prefer = new googMap(options.prefer);
 
   // these both default to true; so you have to explicitly make them false
-  debugger;
   const requireReturn = !!options.requireReturn;
   const requireParamDescription = options.requireParamDescription !== false;
   const requireReturnDescription = options.requireReturnDescription !== false;
