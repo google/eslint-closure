@@ -1,4 +1,4 @@
-goog.require('module.name');
+goog.require('module.name')
 
 
 // goog.scope recoginized as an IIFE.
@@ -15,7 +15,7 @@ let unusedVar = 2;
 
 /**
  * @param {Bar} arg1
- * @return {Bar}
+ * @returns {Bar}
  * BAD: unused function.
  */
 function foo(arg1) {
@@ -27,9 +27,11 @@ function foo(arg1) {
 return myString;
 }
 
-// OKAY: ES6 features.
+// OKAY: ES6 features with either the ES5 or ES6 config.
 const myMap = new Map();
 myMap.set(2, 'foo');
+// BAD: undeclared variable and trailing space
+undeclaredVar.foo();
 
 // OKAY: module.name is goog.provide'd
 module.name.fooBar();
