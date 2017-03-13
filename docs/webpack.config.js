@@ -58,9 +58,11 @@ module.exports = {
         exclude: /node_modules|googlejs-eslint-plugin/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015']
-        }
-      }
-    ]
+          presets: ['es2015'].map(function(name) {
+            return require.resolve('babel-preset-' + name);
+          }),
+        },
+      },
+    ],
   },
 };

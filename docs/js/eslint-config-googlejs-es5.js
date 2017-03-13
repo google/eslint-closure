@@ -81,7 +81,7 @@ const JSDOC_PLUGIN_RULES = {};
 const GOOGLE_ES5_RULES = {
 
   extends: [
-    require('./eslint-config-googlejs-base'),
+    require.resolve('eslint-config-googlejs-base'),
   ],
 
   parserOptions: {

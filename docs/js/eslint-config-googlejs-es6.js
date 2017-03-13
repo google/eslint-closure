@@ -184,12 +184,6 @@ const GOOGLE_PLUGIN_RULES = {
   }],
 };
 
-
-// JSDoc Plugin Rules
-// https://github.com/gajus/eslint-plugin-jsdoc
-const JSDOC_PLUGIN_RULES = {};
-
-
 const ECMA_FEATURES = {
   // Enable arrow functions.
   arrowFunctions: true,
@@ -260,7 +254,7 @@ const ECMA_FEATURES = {
 const GOOGLE_ES6_RULES = {
 
   extends: [
-    require('./eslint-config-googlejs-base'),
+    require.resolve('eslint-config-googlejs-base'),
   ],
 
   parserOptions: {
@@ -271,7 +265,6 @@ const GOOGLE_ES6_RULES = {
 
   plugins: [
     'googlejs',
-    'jsdoc',
   ],
 
 
@@ -290,8 +283,7 @@ const GOOGLE_ES6_RULES = {
     ES6_RULES,
 
     // Custom plugin rules.
-    GOOGLE_PLUGIN_RULES,
-    JSDOC_PLUGIN_RULES
+    GOOGLE_PLUGIN_RULES
   ),
 };
 

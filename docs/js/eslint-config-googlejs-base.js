@@ -943,54 +943,6 @@ const GOOGLE_PLUGIN_RULES = {
   'googlejs/no-unused-expressions': ERROR,
 };
 
-
-// JSDoc Plugin Rules
-// https://github.com/gajus/eslint-plugin-jsdoc
-const JSDOC_PLUGIN_RULES = {
-  // Ensures that parameter names in JSDoc match those in the function
-  // declaration.
-  'jsdoc/check-param-names': ERROR,
-
-  // Reports invalid block tag names.
-  // Disabled because it doesn't support custom tags.
-  'jsdoc/check-tag-names': OFF,
-
-  // Disallows object wrapper types.
-  'jsdoc/check-types': ERROR,
-
-  // Enforces a consistent padding of the block description.  Not required by
-  // the style guide.
-  'jsdoc/newline-after-description': OFF,
-
-  // Requires that block description and tag description are written in complete
-  // sentences.
-  // TODO(jschaf): too many spurious warnings.  It doesn't detect HTML tags.
-  'jsdoc/require-description-complete-sentence': OFF,
-
-  // Requires a hyphen before the @param description.  This doesn't match Google
-  // style.
-  'jsdoc/require-hyphen-before-param-description': OFF,
-
-  // Requires that all function parameters are documented.
-  'jsdoc/require-param': ERROR,
-
-  // Requires that @param tag has description value.
-  // Google ES6 Section 7.8 - descriptions may be omitted.
-  'jsdoc/require-param-description': OFF,
-
-  // Requires that @param tag has type value.
-  // Google ES6 Section 7.8 - types must be included.
-  'jsdoc/require-param-type': ERROR,
-
-  // Requires that @returns tag has description value.
-  // Google ES6 Section 7.8 - descriptions may be omitted.
-  'jsdoc/require-returns-description': OFF,
-
-  // Requires that @returns tag has type value.
-  'jsdoc/require-returns-type': ERROR,
-};
-
-
 // ESLint configuration object.  Options are described at
 // http://eslint.org/docs/user-guide/configuring.
 const ESLINT_CONFIG = {
@@ -1012,8 +964,6 @@ const ESLINT_CONFIG = {
   },
 
   plugins: [
-    // https://github.com/gajus/eslint-plugin-jsdoc
-    'jsdoc',
     // https://github.com/jschaf/eslint-config-google
     'googlejs',
   ],
