@@ -1,51 +1,38 @@
-# eslint-plugin-google
-
-Linting Rules for the Google Style Guide
-
-## Installation
-
-You'll first need to install [ESLint](http://eslint.org):
-
-```
-$ npm i eslint --save-dev
-```
-
-Next, install `eslint-plugin-google`:
-
-```
-$ npm install eslint-plugin-google --save-dev
-```
-
-**Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-google` globally.
-
-## Usage
-
-Add `google` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
-
-```json
-{
-    "plugins": [
-        "google"
-    ]
-}
-```
+# GoogleJS - ESLint Plugin and Config for the Google JavaScript Style Guide
 
 
-Then configure the rules you want to use under the rules section.
+A heavily customized ESLint config and plugin for JavaScript following
+the
+[Google JavaScript style guide](https://google.github.io/styleguide/jsguide.html).
+Check out the [**demo**](https://jschaf.github.io/googlejs/).
 
-```json
-{
-    "rules": {
-        "google/rule-name": 2
-    }
-}
-```
+## Google Style Guide Specific Features
 
-## Supported Rules
+- Recognizes `goog.scope` as an immediately invoked function expression (IIFE).
 
-* Fill in provided rules here
+  ```javascript
+  goog.scope(function() {
+  var noIndent = 2;
+  });
+  ```
+  
+- Recognizes `goog.provide` and `goog.require`.
 
+  ```javascript
+  goog.provide('my.module');
+  goog.require('other.module');
+  
+  my.module.Foo = other.module.Bar;
+  ```
 
+- Marks `typedef`, `export` and other tags as being used to avoid spurious
+  warnings.
 
-
-
+  ```javascript
+  /** @export {number} */
+  my.module.foo = 2;
+  ```
+  
+See the
+[Google JavaScript style guide](https://google.github.io/styleguide/jsguide.html) for
+the rest of the rules.
