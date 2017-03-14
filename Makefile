@@ -12,6 +12,7 @@ compile:
 
 test:
 	$(MAKE) -C $(PLUGIN_DIR) test
+	$(MAKE) -C $(CONFIG_TESTER_DIR) test
 	$(MAKE) -C $(ES5_DIR) test
 	$(MAKE) -C $(ES6_DIR) test
 
