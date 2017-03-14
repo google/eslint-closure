@@ -6,7 +6,7 @@ PLUGIN_DIR := ../packages/eslint-plugin-googlejs
 
 all: compile
 
-compile: update-dependencies webpack
+site: update-dependencies webpack
 
 update-dependencies:
 	cp -f $(BASE_DIR)/index.js js/eslint-config-googlejs-base.js
@@ -17,5 +17,5 @@ update-dependencies:
 webpack:
 	npm run webpack
 
-site:
+serve:
 	bundle exec jekyll serve
