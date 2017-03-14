@@ -43,7 +43,7 @@ make-debug:
 	bazel build //packages/eslint-plugin-googlejs:plugin-debug
 
 test: test-build-helpers test-build-rules
-	$(MOCHA) --recursive ./dist/tests
+	$(MOCHA) --recursive ./dist/tests --reporter dot
 
 # Rule to build the tests in tests/*.js
 test-build-helpers: dist/tests/ast-test.js \
