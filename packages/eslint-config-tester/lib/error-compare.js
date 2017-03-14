@@ -57,9 +57,9 @@ function makeErrorMessage(message, explanation) {
 /**
  * Verifies that all ESLint messages match with an expected error message.
  *
- * This function also modifies expectedErrors.usedRules to include the ESLint
- * ruleId.  We need to modify usedRules so we can check that all expected errors
- * match an ESLint error in usedRules.
+ * This function also modifies expectedErrors.eslintRules to include the ESLint
+ * ruleId.  We need to modify eslintRules so we can check that all expected errors
+ * match an ESLint error in eslintRules.
  * @param {!types.ESLintError} eslintMessage
  * @param {!types.ExpectedErrors} expectedErrors
  */
@@ -71,10 +71,20 @@ function verifyEslintErrorsUsed(eslintMessage, expectedErrors) {
   const lineErrors = expectedErrors.errorsByLineNumber[expectedLine];
   const eslintError = makeErrorMessage(eslintMessage, 'Missing expected error');
   if (!lineErrors || !lineErrors.expectedRules ||
-      !lineErrors.expectedRules.includes(eslintMessage.ruleId)) {
+      !lineErrors.expectedRules.has(eslintMessage.ruleId)) {
     throw new Error(eslintError);
   }
-  lineErrors.usedRules.add(eslintMessage.ruleId);
+  lineErrors.eslintRules.add(eslintMessage.ruleId);
+}
+
+/**
+ *
+ * @param {!Set<string>} set1
+ * @param {!Set<string>} set2
+ * @return {!Set<string>}
+ */
+function setDifference(set1, set2) {
+  return new Set([...set1].filter(x => !set2.has(x)));
 }
 
 /**
@@ -91,12 +101,12 @@ function verifyExpectedErrorsUsed(expectedErrors) {
       return;
     }
 
-    /** @type {!Array<string>} */
-    const unusedRules = lineErrors.expectedRules
-          .filter(rule => !lineErrors.usedRules.has(rule));
-    if (unusedRules.length > 0) {
+    /** @type {!Set<string>} */
+    const unusedRules = setDifference(
+        lineErrors.expectedRules, lineErrors.eslintRules);
+    if (unusedRules.size > 0) {
       throw new Error(`${filePath}:${line} The following rules were unused ` +
-                      `by ESLint: ${unusedRules.join(', ')}`);
+                      `by ESLint: ${[...unusedRules.keys()].join(', ')}`);
     }
   });
 }

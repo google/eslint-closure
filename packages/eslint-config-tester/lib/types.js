@@ -12,10 +12,10 @@ const LineErrors = function() {};
  * Rules found by ESLint.
  * @type {!Set<string>}
  */
-LineErrors.prototype.usedRules;
+LineErrors.prototype.eslintRules;
 /**
  * Expected rules annotated in the source file.
- * @type {!Array<string>}
+ * @type {!Set<string>}
  */
 LineErrors.prototype.expectedRules;
 

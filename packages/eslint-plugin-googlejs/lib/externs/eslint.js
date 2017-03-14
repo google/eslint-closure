@@ -817,7 +817,8 @@ ESLint.CLIEngine.prototype.resolveFileGlobPatterns = function(patterns) {};
 /**
  * Executes the current configuration on an array of file and directory names.
  * @param {!Array<string>} patterns An array of file and directory names.
- * @return {{results: !Array<!ESLint.LintResult>}} The results for all files that were linted.
+ * @return {{results: !Array<!ESLint.LintResult>}} The results for all files
+ *     that were linted.
  */
 ESLint.CLIEngine.prototype.executeOnFiles = function(patterns) {};
 

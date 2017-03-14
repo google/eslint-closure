@@ -35,9 +35,9 @@ function makeEslintResult(filePath, messages) {
   };
 }
 
-function makeLineErrors(usedRules, expectedRules) {
+function makeLineErrors(eslintRules, expectedRules) {
   return {
-    usedRules: new Set(usedRules),
+    eslintRules: new Set(eslintRules),
     expectedRules,
   };
 }
@@ -171,7 +171,7 @@ describe('errorCompare.verifyEslintErrorsUsed', () => {
   function verifyEslintSingleLine(ruleId, expectedRules) {
     const line = 1;
     return verifyEslintAll(ruleId, line + 1, {
-      [line]: {usedRules: new Set(), expectedRules},
+      [line]: {eslintRules: new Set(), expectedRules},
     });
   }
 
@@ -193,7 +193,7 @@ describe('errorCompare.verifyEslintErrorsUsed', () => {
 
   it('should throw when matching expected error is on a different line', () => {
     expect(verifyEslintAll('foo', 2, {
-      5: {usedRules: new Set(), expectedRules: ['foo']},
+      5: {eslintRules: new Set(), expectedRules: ['foo']},
     }));
   });
 });
@@ -215,13 +215,13 @@ describe('errorCompare.verifyExpectedErrorsUsed', () => {
   }
 
   /**
-   * @param {!Set<string>} usedRules
-   * @param {!Array<string>} expectedRules
+   * @param {!Set<string>} eslintRules
+   * @param {!Set<string>} expectedRules
    * @return {function():void}
    */
-  function verifyExpectedSingleLine(usedRules, expectedRules) {
+  function verifyExpectedSingleLine(eslintRules, expectedRules) {
     return verifyExpectedAll({
-      1: {usedRules: new Set(usedRules), expectedRules},
+      1: {eslintRules: new Set(eslintRules), expectedRules},
     });
   }
 
@@ -249,8 +249,8 @@ describe('errorCompare.verifyExpectedErrorsUsed', () => {
 
   it('should throw for one unused expected error on 2nd line', () => {
     expect(verifyExpectedAll({
-      1: {usedRules: new Set(['foo']), expectedRules: ['foo']},
-      2: {usedRules: new Set([]), expectedRules: ['bar']},
+      1: {eslintRules: new Set(['foo']), expectedRules: ['foo']},
+      2: {eslintRules: new Set([]), expectedRules: ['bar']},
     })).to.throw(Error, 'bar');
   });
 });

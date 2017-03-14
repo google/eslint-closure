@@ -1,6 +1,5 @@
 /**
  * @fileoverview Test ESLint config against expected errors.
- * @suppress {reportUnknownTypes}
  */
 
 goog.module('googlejs.configTester.runner');
@@ -39,6 +38,19 @@ function testConfig(glob, options) {
 }
 
 /**
+ * Collects all expected and ESLint errors from the given files.
+ * @param {!Array<string>} filePaths
+ * @param {!ESLint.CLIEngine} eslintEngine
+ * @return {!Promise<!Object<string, !types.ExpectedErrors>>} A map from the
+ *     absolute file path to all errors.
+ */
+function collectAllErrors(filePaths, eslintEngine) {
+  collectExpectedErrorsInFiles(filePaths).then(errorsByFile => {
+    return collectEslintErrors(errorsByFile, filePaths, eslintEngine);
+  });
+}
+
+/**
  * Collects all expected errors in test files.
  * @param {!Array<string>} filePaths
  * @return {!Promise<!Object<string, !types.ExpectedErrors>>} A map from the
@@ -53,6 +65,22 @@ function collectExpectedErrorsInFiles(filePaths) {
     }
     return errorsByFile;
   });
+}
+
+/**
+ * Collects all ESLint errors from filePaths and adds them to errorsByFile.
+ * @param {!Object<string, !types.ExpectedErrors>} errorsByFile
+ * @param {!Array<string>} filePaths
+ * @param {!ESLint.CLIEngine} eslintEngine
+ * @return {!Object<string, !types.ExpectedErrors>}
+ */
+function collectEslintErrors(errorsByFile, filePaths, eslintEngine) {
+  const eslintResults = /** @type {{results: !Array<!ESLint.LintResult>}} */ (
+      eslintEngine.executeOnFiles(filePaths)).results;
+  for (const message of eslintResults.messages) {
+
+  }
+  return errorsByFile;
 }
 
 /**
@@ -82,9 +110,10 @@ function parseExpectedErrorsInBuffer(buffer) {
   for (const line of lines) {
     const match = line.match(errorLineRegExp);
     if (match) {
-      const usedRules = new Set();
-      const expectedRules = match[1].split(',').map(s => s.trim());
-      errorsByLineNumber[lineNumber] = {usedRules, expectedRules};
+      // To be filled by ESLint.
+      const eslintRules = new Set();
+      const expectedRules = new Set(match[1].split(',').map(s => s.trim()));
+      errorsByLineNumber[lineNumber] = {eslintRules, expectedRules};
     }
     lineNumber++;
   }
