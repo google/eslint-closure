@@ -3,29 +3,6 @@ package(default_visibility = ["//visibility:public"])
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
 load("//build_rules:mocha_closure_test.bzl", "mocha_closure_test")
 
-closure_js_library(
-    name = "all-tests-bin",
-    srcs = glob(["*-test.js"]),
-    deps = [
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "//packages/eslint-plugin-googlejs/lib/rules:camelcase",
-        "//packages/eslint-plugin-googlejs/lib/rules:indent",
-        "//packages/eslint-plugin-googlejs/lib/rules:inline-comment-spacing",
-        "//packages/eslint-plugin-googlejs/lib/rules:jsdoc",
-        "//packages/eslint-plugin-googlejs/lib/rules:no-undef",
-        "//packages/eslint-plugin-googlejs/lib/rules:no-unused-expressions",
-        "//packages/eslint-plugin-googlejs/lib/rules:no-unused-vars",
-        "@io_bazel_rules_closure//closure/library",
-    ],
-)
-
-test_suite(
-    name = "rules_suite-bin",
-    tests = [
-        ":camelcase",
-    ],
-)
-
 mocha_closure_test(
     name = "camelcase-test-bin",
     srcs = ["camelcase-test.js"],
