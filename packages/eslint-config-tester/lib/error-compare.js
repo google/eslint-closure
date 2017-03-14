@@ -7,26 +7,6 @@ goog.module('googlejs.configTester.errorCompare');
 
 const types = goog.require('googlejs.configTester.types');
 
-/* global describe, it */
-
-function defaultTestHandler(text, method) {
-  method.apply(null);
-}
-
-class MochaShim {
-  constructor() {}
-
-  get describe() {
-    return typeof describe === 'function' ? describe : defaultTestHandler;
-  }
-
-  get it() {
-    return typeof it === 'function' ? it : defaultTestHandler;
-  }
-}
-
-const mochaShim = new MochaShim();
-
 /**
  * Compares all ESLint results to the expected results for a list of files.
  * @param {!Array<!ESLint.LintResult>} eslintResults A list of ESLint errors,
@@ -57,11 +37,9 @@ function compareErrorsForFile(eslintError, expectedErrorsByFile) {
   eslintError.messages.forEach(eslintMessage => {
     // Patch the file path so we can print useful error messages.
     eslintMessage.filePath = eslintFile;
-    mochaShim.describe(eslintFile, () => {
-      verifyEslintErrorsUsed(
-          eslintMessage, expectedErrorsByFile[eslintFile]);
-      verifyExpectedErrorsUsed(expectedErrorsByFile[eslintFile]);
-    });
+    verifyEslintErrorsUsed(
+        eslintMessage, expectedErrorsByFile[eslintFile]);
+    verifyExpectedErrorsUsed(expectedErrorsByFile[eslintFile]);
   });
 }
 
@@ -92,13 +70,11 @@ function verifyEslintErrorsUsed(eslintMessage, expectedErrors) {
   /** @const {(!types.LineErrors|undefined)} */
   const lineErrors = expectedErrors.errorsByLineNumber[expectedLine];
   const eslintError = makeErrorMessage(eslintMessage, 'Missing expected error');
-  mochaShim.it(`Line ${expectedLine}`, () => {
-    if (!lineErrors || !lineErrors.expectedRules ||
-        !lineErrors.expectedRules.includes(eslintMessage.ruleId)) {
-      throw new Error(eslintError);
-    }
-    lineErrors.usedRules.add(eslintMessage.ruleId);
-  });
+  if (!lineErrors || !lineErrors.expectedRules ||
+      !lineErrors.expectedRules.includes(eslintMessage.ruleId)) {
+    throw new Error(eslintError);
+  }
+  lineErrors.usedRules.add(eslintMessage.ruleId);
 }
 
 /**
@@ -108,22 +84,20 @@ function verifyEslintErrorsUsed(eslintMessage, expectedErrors) {
 function verifyExpectedErrorsUsed(expectedErrors) {
   const filePath = expectedErrors.filePath;
   Object.keys(expectedErrors.errorsByLineNumber).forEach(line => {
-    let lineErrors = expectedErrors.errorsByLineNumber[line];
+    /** @type {!types.LineErrors} */
+    const lineErrors = expectedErrors.errorsByLineNumber[line];
 
     if (!lineErrors) {
       return;
     }
 
     /** @type {!Array<string>} */
-    let unusedRules = lineErrors.expectedRules
-        .filter(rule => !lineErrors.usedRules.has(rule));
-
-    mochaShim.it(`Line ${line}`, () => {
-      if (unusedRules.length > 0) {
-        throw new Error(`${filePath}:${line} The following rules were unused ` +
-                        `by ESLint: ${unusedRules.join(', ')}`);
-      }
-    });
+    const unusedRules = lineErrors.expectedRules
+          .filter(rule => !lineErrors.usedRules.has(rule));
+    if (unusedRules.length > 0) {
+      throw new Error(`${filePath}:${line} The following rules were unused ` +
+                      `by ESLint: ${unusedRules.join(', ')}`);
+    }
   });
 }
 
