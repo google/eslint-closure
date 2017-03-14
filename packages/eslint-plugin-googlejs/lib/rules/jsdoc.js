@@ -106,8 +106,9 @@ function create(context) {
   /** @const {!googMap<string, string>} */
   const prefer = new googMap(options.prefer);
 
-  // these both default to true; so you have to explicitly make them false
-  const requireReturn = !!options.requireReturn;
+  // Options default to true, so to avoid undefined coercing to false we
+  // explicitly check against false.
+  const requireReturn = options.requireReturn !== false;
   const requireParamDescription = options.requireParamDescription !== false;
   const requireReturnDescription = options.requireReturnDescription !== false;
   const requireReturnType = options.requireReturnType !== false;
@@ -372,10 +373,7 @@ function create(context) {
         if (requireReturn || functionData.returnPresent) {
           context.report({
             node: jsdocNode,
-            message: 'Missing JSDoc @{return} for function.',
-            data: {
-              returns: prefer.get('returns', 'returns'),
-            },
+            message: 'Missing JSDoc @return for function.',
           });
         }
       }
