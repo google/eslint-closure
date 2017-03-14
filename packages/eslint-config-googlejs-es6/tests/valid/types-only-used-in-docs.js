@@ -7,8 +7,9 @@ const types = goog.require('types');
 let Baz;
 
 /**
- * @param {!types.Fake} arg1
+ * @param {!types} arg1
  * @param {!Baz} arg2
+ * @return {void}
  */
 function foo(arg1, arg2) {
   arg1.fakeMethod();
