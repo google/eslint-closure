@@ -51,7 +51,7 @@ function verifyEslintErrors(lineErrors) {
   }
   const unmatched = eslintRules.difference(expectedRules);
   const ruleList = unmatched.getValues();
-  const message = `These ESLint errors (${ruleList.join(', ')}) ` +
+  const message = `The following ESLint errors (${ruleList.join(', ')}) ` +
         `did not have a corresponding expected error.`;
   throw new Error(makeErrorMessage(lineErrors, message));
 }
@@ -67,7 +67,7 @@ function verifyExpectedErrors(lineErrors) {
   }
   const unmatched = expectedRules.difference(eslintRules);
   const ruleList = unmatched.getValues();
-  const message = `These expected errors (${ruleList.join(', ')}) ` +
+  const message = `The following expected errors (${ruleList.join(', ')}) ` +
         `were not found by ESLint.`;
   throw new Error(makeErrorMessage(lineErrors, message));
 }
