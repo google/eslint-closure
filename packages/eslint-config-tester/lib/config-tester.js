@@ -5,7 +5,6 @@
 
 goog.module('googlejs.configTester.runner');
 
-const asserts = goog.require('goog.asserts');
 const errorCompare = goog.require('googlejs.configTester.errorCompare');
 const googObject = goog.require('goog.object');
 const googSet = goog.require('goog.structs.Set');
@@ -96,7 +95,7 @@ function parseExpectedErrorsInString(content, filePath) {
       errorsByLineNumber[lineNumber] = {
         eslintRules,
         expectedRules,
-        line,
+        line: lineNumber,
         filePath,
       };
     }
@@ -104,7 +103,6 @@ function parseExpectedErrorsInString(content, filePath) {
   }
   return errorsByLineNumber;
 }
-
 
 /**
  * Runs ESLint on each file in filePaths and returns all ESLint findings.
@@ -126,20 +124,21 @@ function addAllEslintErrors(errorsByFile, eslintResults) {
   eslintResults.forEach(result => {
     googObject.setIfUndefined(errorsByFile, result.filePath, {
       filePath: result.filePath,
+      errorsByLineNumber: {},
     });
     /** @type {!types.ExpectedErrors} */
     const expectedErrors = errorsByFile[result.filePath];
     result.messages.forEach(message => {
       // Subtract 1 because the comment is above the error.
       const line = message.line - 1;
-      googObject.setIfUndefined(expectedErrors, line.toString(), {
-        eslintRules: new googSet(),
-        expectedRules: new googSet(),
-        line,
-        filePath: result.filePath,
-      });
-      asserts.assertObject(expectedErrors[line]);
-      expectedErrors[line].eslintRules.add(message.ruleId);
+      googObject.setIfUndefined(
+          expectedErrors.errorsByLineNumber, line.toString(), {
+            eslintRules: new googSet(),
+            expectedRules: new googSet(),
+            line,
+            filePath: result.filePath,
+          });
+      expectedErrors.errorsByLineNumber[line].eslintRules.add(message.ruleId);
     });
   });
   return errorsByFile;
@@ -160,8 +159,13 @@ function checkFiles(filePaths, eslintEngine) {
   errorCompare.compareEslintToExpected(errorsByFile);
 }
 
+
 exports = {
   testConfig,
+  addAllExpectedErrors,
+  parseExpectedErrorsInString,
+  addAllEslintErrors,
 };
 
-module.exports = exports;
+module.exports = {};
+goog.exportProperty(module.exports, 'testConfig', testConfig);

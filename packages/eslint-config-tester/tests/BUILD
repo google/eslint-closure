@@ -12,3 +12,15 @@ mocha_closure_test(
         "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
     ],
 )
+
+mocha_closure_test(
+    name = "config-tester-test-bin",
+    srcs = ["config-tester-test.js"],
+    entry_point = "googlejs.configTester.tests.configTesterTest",
+    deps = [
+        "//packages/eslint-config-tester/lib:config-tester",
+        "//packages/eslint-config-tester/lib:error-compare",
+        "//packages/eslint-config-tester/lib:types",
+        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
+    ],
+)
