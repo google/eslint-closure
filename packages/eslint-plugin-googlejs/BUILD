@@ -36,6 +36,22 @@ closure_js_binary(
 )
 
 closure_js_binary(
+    name = "plugin-simple",
+    compilation_level = "SIMPLE",
+    defs = [
+        "--new_type_inf",
+        "--assume_function_wrapper",
+        "--rewrite_polyfills=false",
+    ],
+    dependency_mode = "strict",
+    entry_points = ["googlejs.plugin"],
+    formatting = "PRETTY_PRINT",
+    deps = [
+        "//packages/eslint-plugin-googlejs/lib:plugin",
+    ],
+)
+
+closure_js_binary(
     name = "check-types",
     defs = [
         "--new_type_inf",

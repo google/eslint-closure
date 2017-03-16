@@ -12,6 +12,11 @@ compile:
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin.js \
       dist/googlejs-eslint-plugin.js
 
+compile-simple:
+	bazel build //packages/eslint-plugin-googlejs:plugin-simple
+	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin-simple.js \
+      dist/googlejs-eslint-plugin.js
+
 compile-debug:
 	bazel build //packages/eslint-plugin-googlejs:plugin-debug
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin-debug.js \
