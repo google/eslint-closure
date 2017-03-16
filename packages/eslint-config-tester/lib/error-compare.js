@@ -24,7 +24,7 @@ function compareEslintToExpected(expectedErrorsByFile) {
  *     to the expected errors for the file.
  */
 function compareErrorsForFile(expectedErrors) {
-  googObject.forEach(expectedErrors, (lineErrors, line) => {
+  googObject.forEach(expectedErrors.errorsByLineNumber, (lineErrors, line) => {
     verifyExpectedErrors(lineErrors);
     verifyEslintErrors(lineErrors);
   });
@@ -67,7 +67,7 @@ function verifyExpectedErrors(lineErrors) {
   }
   const unmatched = expectedRules.difference(eslintRules);
   const ruleList = unmatched.getValues();
-  const message = `These ESLint errors (${ruleList.join(', ')}) ` +
+  const message = `These expected errors (${ruleList.join(', ')}) ` +
         `were not found by ESLint.`;
   throw new Error(makeErrorMessage(lineErrors, message));
 }

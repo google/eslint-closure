@@ -7,6 +7,7 @@ goog.module('googlejs.configTester.tests.errorCompareTest');
 goog.setTestOnly();
 
 const errorCompare = goog.require('googlejs.configTester.errorCompare');
+const googSet = goog.require('goog.structs.Set');
 const types = goog.require('googlejs.configTester.types');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
@@ -14,244 +15,166 @@ const chai = /** @type {!Chai.Module} */ (require('chai'));
 /* global describe it */
 const expect = chai.expect;
 
-
-/**
- * Creates an !ESLint.LintMessage.
- * @param {string} ruleId
- * @param {number} line
- * @param {string=} source
- * @return {!ESLint.LintMessage}
- */
-function makeEslintMessage(ruleId, line, source = '<ESLINT_SOURCE>') {
+function makeLineErrors(eslintRules, expectedRules, filePath = 'fake/file/path',
+                        line = 3) {
   return {
-    ruleId, line, severity: 1, nodeType: 'Identifier', column: 1,
-    message: '$ESLINT_MESSAGE', source,
+    eslintRules: new googSet(eslintRules),
+    expectedRules: new googSet(expectedRules),
+    filePath,
+    line,
   };
 }
 
-function makeEslintResult(filePath, messages) {
+function makeExpectedErrors(errorsByLineNumber, filePath = '/fake/file') {
   return {
-    filePath, messages, errorCount: 1, warningCount: 1,
-  };
-}
-
-function makeLineErrors(eslintRules, expectedRules) {
-  return {
-    eslintRules: new Set(eslintRules),
-    expectedRules,
+    filePath,
+    errorsByLineNumber,
   };
 }
 
 describe('errorCompare.compareEslintToExpected', () => {
-  function compareEslint(results, expected) {
+  function compareEslint(expectedErrorsByFile) {
     return function compareEslintWrapper() {
-      return errorCompare.compareEslintToExpected(results, expected);
+      return errorCompare.compareEslintToExpected(expectedErrorsByFile);
     };
   }
 
   it('should not throw for no files', () => {
-    expect(compareEslint([], {})).not.to.throw(Error);
-  });
-
-
-  it('should throw for missing expected file', () => {
-    const eslintResults = [
-      makeEslintResult('/PATH', [makeEslintMessage('foo', 3, '/PATH')]),
-    ];
-    expect(compareEslint(eslintResults, {})).to.throw(Error, '/PATH');
+    expect(compareEslint({})).not.to.throw(Error);
   });
 
 
   it('should not throw for matching errors', () => {
-    const eslintResults = [
-      makeEslintResult('/PATH', [makeEslintMessage('foo', 3, '/PATH')]),
-    ];
-    const expected = {'/PATH': {
-      filePath: '/PATH',
-      errorsByLineNumber: {2: makeLineErrors([], ['foo'])},
-    }};
-    expect(compareEslint(eslintResults, expected)).not.to.throw(Error);
+    const errors = {
+      'path/foo': makeExpectedErrors({
+        2: makeLineErrors(['bar', 'baz'], ['bar', 'baz']),
+      }),
+    };
+    expect(compareEslint(errors)).not.to.throw(Error, '/PATH');
   });
+
+  it('should not throw for matching errors multiple files', () => {
+    const errors = {
+      'path/foo': makeExpectedErrors({
+        2: makeLineErrors(['bar', 'baz'], ['bar', 'baz']),
+      }),
+      'path/bar': makeExpectedErrors({
+        2: makeLineErrors(['bar', 'baz'], ['bar', 'baz']),
+        4: makeLineErrors(['bar', 'baz'], ['bar', 'baz']),
+      }),
+    };
+    expect(compareEslint(errors)).not.to.throw(Error, '/PATH');
+  });
+
+  it('should throw for unmatched errors', () => {
+    const errors = {
+      'fake/file/path': makeExpectedErrors({
+        2: makeLineErrors(['baz'], ['bar', 'baz']),
+      }),
+    };
+    expect(compareEslint(errors)).to.throw(Error, 'fake/file/path');
+  });
+
 });
 
 describe('errorCompare.compareErrorsForFile', () => {
-
-  function compareFiles(eslintResult, expectedErrorsByFile) {
+  function compareFiles(errorsByLineNumber) {
     return function compareFilesWrapper() {
       return errorCompare.compareErrorsForFile(
-          eslintResult, expectedErrorsByFile);
+          makeExpectedErrors(errorsByLineNumber));
     };
   }
 
   it('should not throw for no files', () => {
-    const lintResult = makeEslintResult('/PATH', []);
-    expect(compareFiles(lintResult, {})).not.to.throw(Error);
-  });
-
-  it('should throw when no expected errors are found for the same file', () => {
-    const lintResult = makeEslintResult('/PATH', [
-      makeEslintMessage('foo', 2, '/PATH'),
-    ]);
-    const expectedErrorsByFile = {
-      '/OTHERPATH': {
-        filePath: '/OTHERPATH',
-        errorsByLineNumber: {},
-      },
-    };
-    expect(compareFiles(lintResult, expectedErrorsByFile)).to.throw(Error);
+    expect(compareFiles({})).not.to.throw(Error);
   });
 
   it('should not throw when expected errors match', () => {
-    const lintResult = makeEslintResult('/PATH', [
-      makeEslintMessage('foo', 2, '/PATH'),
-    ]);
-    const expectedErrorsByFile = {
-      '/PATH': {
-        filePath: '/PATH',
-        errorsByLineNumber: {1: makeLineErrors([], ['foo'])},
-      },
+    const errorsByLine = {1: makeLineErrors(['foo'], ['foo'])};
+    expect(compareFiles(errorsByLine)).not.to.throw(Error);
+  });
+
+  it('should not throw when expected errors match on 2 lines', () => {
+    const errorsByLine = {
+      1: makeLineErrors(['foo'], ['foo']),
+      3: makeLineErrors(['bar', 'baz'], ['bar', 'baz']),
     };
-    expect(compareFiles(lintResult, expectedErrorsByFile)).not.to.throw(Error);
+    expect(compareFiles(errorsByLine)).not.to.throw(Error);
   });
 
   it("should throw when there's an unused expected error", () => {
-    const lintResult = makeEslintResult('/PATH', [
-      makeEslintMessage('foo', 2, '/PATH'),
-    ]);
-    const expectedErrorsByFile = {
-      '/PATH': {
-        filePath: '/PATH',
-        errorsByLineNumber: {1: makeLineErrors([], ['foo', 'bar'])},
-      },
-    };
-    expect(compareFiles(lintResult, expectedErrorsByFile))
-        .to.throw(Error, 'bar');
+    const errorsByLine = {1: makeLineErrors([], ['bar'])};
+    expect(compareFiles(errorsByLine)).to.throw(Error, 'bar');
   });
 
   it("should throw when there's an unused eslint error", () => {
-    const lintResult = makeEslintResult('/PATH', [
-      makeEslintMessage('foo', 2, '/PATH'),
-      makeEslintMessage('bar', 2, '/PATH'),
-    ]);
-    const expectedErrorsByFile = {
-      '/PATH': {
-        filePath: '/PATH',
-        errorsByLineNumber: {1: makeLineErrors([], ['foo'])},
-      },
-    };
-    expect(compareFiles(lintResult, expectedErrorsByFile))
-        .to.throw(Error, 'bar');
+    const errorsByLine = {1: makeLineErrors(['bar'], [])};
+    expect(compareFiles(errorsByLine)).to.throw(Error, 'bar');
   });
+  it('should throw when errors don\'t match on multiple lines', () => {
+    const errorsByLine = {
+      1: makeLineErrors(['foo'], ['foo']),
+      3: makeLineErrors(['bar', 'baz'], ['bar']),
+    };
+    expect(compareFiles(errorsByLine)).to.throw(Error);
+  });
+
 });
 
 describe('errorCompare.verifyEslintErrorsUsed', () => {
-
-  /**
-   * @param {string} ruleId
-   * @param {line} line
-   * @param {!Object<number, !types.LineErrors>} errorsByLineNumber
-   * @return {function():void}
-   */
-  function verifyEslintAll(ruleId, line, errorsByLineNumber) {
-    const eslintMessage = makeEslintMessage(ruleId, line);
-    const expectedErrors = {
-      filePath: '/FAKE_PATH',
-      errorsByLineNumber,
-    };
+  function verifyEslint(eslintRules, expectedRules) {
+    const lineErrors = makeLineErrors(eslintRules, expectedRules);
     return function verifyEslintAllWrapper() {
-      return errorCompare.verifyEslintErrorsUsed(eslintMessage, expectedErrors);
+      return errorCompare.verifyEslintErrors(lineErrors);
     };
   }
 
-  /**
-   * @param {string} ruleId
-   * @param {!Array<string>} expectedRules
-   * @return {function():void}
-   */
-  function verifyEslintSingleLine(ruleId, expectedRules) {
-    const line = 1;
-    return verifyEslintAll(ruleId, line + 1, {
-      [line]: {eslintRules: new Set(), expectedRules},
-    });
-  }
-
   it('should not throw when a matching expected error is found', () => {
-    expect(verifyEslintSingleLine('foo', ['foo'])).not.to.throw(Error);
+    expect(verifyEslint(['foo'], ['foo'])).not.to.throw(Error);
   });
 
   it('should not throw when a matching expected error is found', () => {
-    expect(verifyEslintSingleLine('foo', ['bar', 'foo'])).not.to.throw(Error);
+    expect(verifyEslint(['foo'], ['bar', 'foo'])).not.to.throw(Error);
   });
 
   it('should throw when no matching expected error is found', () => {
-    expect(verifyEslintSingleLine('foo', [])).to.throw(Error, 'foo');
+    expect(verifyEslint(['foo'], [])).to.throw(Error, 'foo');
   });
 
   it('should throw when no matching expected error is found', () => {
-    expect(verifyEslintSingleLine('foo', ['bar'])).to.throw(Error, 'foo');
-  });
-
-  it('should throw when matching expected error is on a different line', () => {
-    expect(verifyEslintAll('foo', 2, {
-      5: {eslintRules: new Set(), expectedRules: ['foo']},
-    }));
+    expect(verifyEslint(['foo'], ['bar'])).to.throw(Error, 'foo');
   });
 });
 
 
-describe('errorCompare.verifyExpectedErrorsUsed', () => {
-  /**
-   * @param {!Object<number, !types.LineErrors>} errorsByLineNumber
-   * @return {function():void}
-   */
-  function verifyExpectedAll(errorsByLineNumber) {
-    const expectedErrors = {
-      filePath: '/FAKE_PATH',
-      errorsByLineNumber,
-    };
+describe('errorCompare.verifyExpectedErrors', () => {
+  function verifyExpected(eslintRules, expectedRules) {
+    const lineErrors = makeLineErrors(eslintRules, expectedRules);
     return function verifyExpectedAllWrapper() {
-      return errorCompare.verifyExpectedErrorsUsed(expectedErrors);
+      return errorCompare.verifyExpectedErrors(lineErrors);
     };
-  }
-
-  /**
-   * @param {!Set<string>} eslintRules
-   * @param {!Set<string>} expectedRules
-   * @return {function():void}
-   */
-  function verifyExpectedSingleLine(eslintRules, expectedRules) {
-    return verifyExpectedAll({
-      1: {eslintRules: new Set(eslintRules), expectedRules},
-    });
   }
 
   it('should not throw for no errors', () => {
-    expect(verifyExpectedSingleLine([], [])).not.to.throw(Error);
+    expect(verifyExpected([], [])).not.to.throw(Error);
   });
 
   it('should throw for one unused expected error', () => {
-    expect(verifyExpectedSingleLine([], ['fooRule']))
+    expect(verifyExpected([], ['fooRule']))
         .to.throw(Error, 'fooRule');
   });
 
   it('should throw for two missing expected errors', () => {
-    expect(verifyExpectedSingleLine([], ['foo', 'bar']))
+    expect(verifyExpected([], ['foo', 'bar']))
         .to.throw(Error, 'foo, bar');
   });
 
   it('should not throw one used expected error', () => {
-    expect(verifyExpectedSingleLine(['foo'], ['foo'])).not.to.throw(Error);
+    expect(verifyExpected(['foo'], ['foo'])).not.to.throw(Error);
   });
 
   it('should throw one used expected error', () => {
-    expect(verifyExpectedSingleLine(['foo'], ['foo'])).not.to.throw(Error);
-  });
-
-  it('should throw for one unused expected error on 2nd line', () => {
-    expect(verifyExpectedAll({
-      1: {eslintRules: new Set(['foo']), expectedRules: ['foo']},
-      2: {eslintRules: new Set([]), expectedRules: ['bar']},
-    })).to.throw(Error, 'bar');
+    expect(verifyExpected(['foo'], ['foo'])).not.to.throw(Error);
   });
 });
 
@@ -265,6 +188,6 @@ describe('errorCompare.makeErrorMessage', () => {
       ruleId: 'RULE',
     };
     expect(makeMessage(message, 'EXPLANATION'))
-        .to.eql('/foo:2 (RULE) - EXPLANATION');
+        .to.eql('/foo:2 - EXPLANATION');
   });
 });
