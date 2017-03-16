@@ -1,24 +1,21 @@
 /**
  * @fileoverview Test ESLint config against expected errors.
+ * @suppress {reportUnknownTypes}
  */
 
 goog.module('googlejs.configTester.runner');
 
+const asserts = goog.require('goog.asserts');
 const errorCompare = goog.require('googlejs.configTester.errorCompare');
+const googObject = goog.require('goog.object');
+const googSet = goog.require('goog.structs.Set');
 const types = goog.require('googlejs.configTester.types');
 
-const Promise = /** @type {!Bluebird} */ (require('bluebird'));
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 const fs = /** @type {!NodeJS.fs} */ (require('fs'));
 const glob = /** @type {!NodeJS.glob} */ (require('glob'));
 const path = /** @type {!NodeJS.path} */ (require('path'));
 
-
-/** @const {function(string): !Promise<!Uint8Array>} */
-const readFile = Promise.promisify(fs.readFile);
-
-/** @const {function(string): !Promise<!Array<string>>} */
-const globPromise = Promise.promisify(glob);
 
 /**
  * @typedef {{
@@ -29,118 +26,142 @@ let ConfigOptions;
 
 /**
  * Checks that ESLint errors match expected errors for all files in the glob.
- * @param {string} glob
+ * @param {string} pattern
  * @param {!ConfigOptions} options
  */
-function testConfig(glob, options) {
+function testConfig(pattern, options) {
   const cliEngine = new eslint.CLIEngine(options.eslintOptions);
-  checkGlob(glob, cliEngine);
+  checkGlob(pattern, cliEngine);
 }
 
 /**
  * Collects all expected and ESLint errors from the given files.
  * @param {!Array<string>} filePaths
  * @param {!ESLint.CLIEngine} eslintEngine
- * @return {!Promise<!Object<string, !types.ExpectedErrors>>} A map from the
+ * @return {!Object<string, !types.ExpectedErrors>} A map from the
  *     absolute file path to all errors.
  */
 function collectAllErrors(filePaths, eslintEngine) {
-  collectExpectedErrorsInFiles(filePaths).then(errorsByFile => {
-    return collectEslintErrors(errorsByFile, filePaths, eslintEngine);
-  });
-}
-
-/**
- * Collects all expected errors in test files.
- * @param {!Array<string>} filePaths
- * @return {!Promise<!Object<string, !types.ExpectedErrors>>} A map from the
- *     absolute file path to its expected errors.
- */
-function collectExpectedErrorsInFiles(filePaths) {
   const errorsByFile = {};
-  const fileErrors = filePaths.map(parseExpectedErrors);
-  return Promise.all(fileErrors).then((expectedErrors) => {
-    for (const expectedError of expectedErrors) {
-      errorsByFile[expectedError.filePath] = expectedError;
-    }
-    return errorsByFile;
-  });
-}
 
-/**
- * Collects all ESLint errors from filePaths and adds them to errorsByFile.
- * @param {!Object<string, !types.ExpectedErrors>} errorsByFile
- * @param {!Array<string>} filePaths
- * @param {!ESLint.CLIEngine} eslintEngine
- * @return {!Object<string, !types.ExpectedErrors>}
- */
-function collectEslintErrors(errorsByFile, filePaths, eslintEngine) {
-  const eslintResults = /** @type {{results: !Array<!ESLint.LintResult>}} */ (
-      eslintEngine.executeOnFiles(filePaths)).results;
-  for (const message of eslintResults.messages) {
+  const allExpectedErrors = filePaths.map(parseExpectedErrors);
+  addAllExpectedErrors(errorsByFile, allExpectedErrors);
 
-  }
-  return errorsByFile;
+  const eslintErrors = parseAllEslintErrors(filePaths, eslintEngine);
+  return addAllEslintErrors(errorsByFile, eslintErrors);
 }
 
 /**
  * Parses all known errors within a JavaScript file by examining comments.
  * @param {string} filePath
- * @return {!Promise<!types.ExpectedErrors>}
+ * @return {!types.ExpectedErrors}
  */
 function parseExpectedErrors(filePath) {
-  return readFile(filePath).then(buffer => {
-    return {
-      filePath: path.resolve(filePath),
-      errorsByLineNumber: parseExpectedErrorsInBuffer(buffer),
-    };
-  });
+  const content = fs.readFileSync(filePath, {encoding: 'utf-8'});
+  return {
+    filePath: path.resolve(filePath),
+    errorsByLineNumber: parseExpectedErrorsInString(content, filePath),
+  };
+}
+
+/**
+ * Modifies errorsByFile to include allExpectedErrors.
+ * @param {!Object<string, !types.ExpectedErrors>} errorsByFile
+ * @param {!Array<!types.ExpectedErrors>} allExpectedErrors
+ * @return {!Object<string, !types.ExpectedErrors>}
+ */
+function addAllExpectedErrors(errorsByFile, allExpectedErrors) {
+  for (const expectedErrors of allExpectedErrors) {
+    errorsByFile[expectedErrors.filePath] = expectedErrors;
+  }
+  return errorsByFile;
 }
 
 /**
  * Parses expected errors within a string.
- * @param {!Uint8Array} buffer
+ * @param {string} content
+ * @param {string} filePath
  * @return {!Object<number, !types.LineErrors>}
  */
-function parseExpectedErrorsInBuffer(buffer) {
-  const lines = buffer.toString().split(/\r?\n/);
+function parseExpectedErrorsInString(content, filePath) {
+  const lines = content.split(/\r?\n/);
   const errorsByLineNumber = {};
   const errorLineRegExp = new RegExp('// ERROR: (.*)');
   let lineNumber = 1;
   for (const line of lines) {
     const match = line.match(errorLineRegExp);
     if (match) {
-      // To be filled by ESLint.
-      const eslintRules = new Set();
-      const expectedRules = new Set(match[1].split(',').map(s => s.trim()));
-      errorsByLineNumber[lineNumber] = {eslintRules, expectedRules};
+      const eslintRules = new googSet();
+      const expectedRules = new googSet(match[1].split(',').map(s => s.trim()));
+      errorsByLineNumber[lineNumber] = {
+        eslintRules,
+        expectedRules,
+        line,
+        filePath,
+      };
     }
     lineNumber++;
   }
   return errorsByLineNumber;
 }
 
+
+/**
+ * Runs ESLint on each file in filePaths and returns all ESLint findings.
+ * @param {!Array<string>} filePaths
+ * @param {!ESLint.CLIEngine} eslintEngine
+ * @return {!Array<!ESLint.LintResult>}
+ */
+function parseAllEslintErrors(filePaths, eslintEngine) {
+  return eslintEngine.executeOnFiles(filePaths).results;
+}
+
+/**
+ * Collects all ESLint errors from filePaths and adds them to errorsByFile.
+ * @param {!Object<string, !types.ExpectedErrors>} errorsByFile
+ * @param {!Array<!ESLint.LintResult>} eslintResults
+ * @return {!Object<string, !types.ExpectedErrors>}
+ */
+function addAllEslintErrors(errorsByFile, eslintResults) {
+  eslintResults.forEach(result => {
+    googObject.setIfUndefined(errorsByFile, result.filePath, {
+      filePath: result.filePath,
+    });
+    /** @type {!types.ExpectedErrors} */
+    const expectedErrors = errorsByFile[result.filePath];
+    result.messages.forEach(message => {
+      // Subtract 1 because the comment is above the error.
+      const line = message.line - 1;
+      googObject.setIfUndefined(expectedErrors, line.toString(), {
+        eslintRules: new googSet(),
+        expectedRules: new googSet(),
+        line,
+        filePath: result.filePath,
+      });
+      asserts.assertObject(expectedErrors[line]);
+      expectedErrors[line].eslintRules.add(message.ruleId);
+    });
+  });
+  return errorsByFile;
+}
+
 /**
  * Checks that ESLint errors match expected errors for all files in the glob.
- * @param {string} glob
+ * @param {string} pattern
  * @param {!ESLint.CLIEngine} eslintEngine
  */
-function checkGlob(glob, eslintEngine) {
-  globPromise(glob).then(filePaths => {
-    checkFiles(filePaths, eslintEngine);
-  });
+function checkGlob(pattern, eslintEngine) {
+  const filePaths = glob.sync(pattern);
+  checkFiles(filePaths, eslintEngine);
 }
 
 function checkFiles(filePaths, eslintEngine) {
-  collectExpectedErrorsInFiles(filePaths).then(errorsByFile => {
-    const eslintResults = eslintEngine.executeOnFiles(filePaths).results;
-    errorCompare.compareEslintToExpected(eslintResults, errorsByFile);
-  });
+  const errorsByFile = collectAllErrors(filePaths, eslintEngine);
+  errorCompare.compareEslintToExpected(errorsByFile);
 }
 
 exports = {
   testConfig,
 };
 
-module.exports = {};
-module.exports['testConfig'] = testConfig;
+module.exports = exports;

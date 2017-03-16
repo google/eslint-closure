@@ -10,14 +10,24 @@ goog.module('googlejs.configTester.types');
 const LineErrors = function() {};
 /**
  * Rules found by ESLint.
- * @type {!Set<string>}
+ * @type {!goog.structs.Set<string>}
  */
 LineErrors.prototype.eslintRules;
 /**
  * Expected rules annotated in the source file.
- * @type {!Set<string>}
+ * @type {!goog.structs.Set<string>}
  */
 LineErrors.prototype.expectedRules;
+/**
+ * The file path for these errors.
+ * @type {string}
+ */
+LineErrors.prototype.filePath;
+/**
+ * The line number for these errors.
+ * @type {number}
+ */
+LineErrors.prototype.line;
 
 /**
  * The expected errors annotated in a source file.

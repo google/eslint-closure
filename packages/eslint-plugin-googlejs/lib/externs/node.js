@@ -17,11 +17,17 @@ const NodeJS = {};
  */
 NodeJS.fs.prototype.readFile = function(filename, callback) {};
 
-
 /**
- * @typedef {function(string, function(?Error, !Array<string>))}
+ * @param {string} file
+ * @param {({encoding:string}|undefined)} options
+ * @this {undefined}
+ * @return {string}
  */
-NodeJS.glob;
+NodeJS.fs.prototype.readFileSync = function(file, options) {};
+
+/** @record */ NodeJS.glob = function() {};
+/** @type {function(string):!Array<string>} */
+NodeJS.glob.prototype.sync = function(pattern) {};
 
 
 /** @record */ NodeJS.path = function() {};

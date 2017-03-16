@@ -16,6 +16,7 @@ closure_js_library(
         ":error-compare",
         ":types",
         "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
+        "@io_bazel_rules_closure//closure/library",
     ],
 )
 
