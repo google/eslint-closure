@@ -1,36 +1,42 @@
 /**
- * @fileoverview An extern file for Mocha.
+ * @fileoverview An extern file for Mocha. Uses MochaJS to not conflict with the
+ * common import pattern.
+ *    const Mocha = require('mocha');
  * @externs
  */
 
 /* eslint no-unused-vars: "off" */
 
+
+const MochaJS = {}
+/**
+ * @type {(!MochaJS|function(new:MochaJS))}
+ */
+MochaJS.Module;
+
+/** @type {!MochaJS.Suite} */
+MochaJS.prototype.Suite;
+
 /**
  * @final @struct @constructor
  */
-const MochaJS = function() {};
+MochaJS.Suite = function() {};
 
+/** @type {function(!MochaJS.Suite, string)} */
+MochaJS.Suite.prototype.create = function(suite, description) {};
 
-/**
- * @final @struct @constructor
- */
-Mocha.Suite = function() {};
+/** @type {function(!MochaJS.Suite):!MochaJS.Suite} */
+MochaJS.Suite.prototype.addSuite = function(suite) {};
 
-/** @type {function(!Mocha.Suite, string)} */
-Mocha.prototype.Suite.prototype.create = function(suite, description) {};
-
-/** @type {function(!Mocha.Suite):!Mocha.Suite} */
-Mocha.prototype.Suite.prototype.addSuite = function(suite, description) {};
-
-/** @type {function(!Mocha.Test):!Mocha.Suite} */
-Mocha.prototype.Suite.prototype.addTest = function(Test) {};
+/** @type {function(!MochaJS.Test):!MochaJS.Suite} */
+MochaJS.Suite.prototype.addTest = function(Test) {};
 
 /**
  * @param {string} title
  * @param {function():void} fn
  * @final @struct @constructor
  */
-Mocha.prototype.Test = function(title, fn) {};
+MochaJS.Test = function(title, fn) {};
 /**
  * @param {string} description
  * @param {function()} spec
@@ -42,117 +48,117 @@ let describe = function(description, spec) {};
 /**
  * @param {string} description
  * @param {function()} spec
- * @return {!Mocha.ContextDefinition}
+ * @return {!MochaJS.ContextDefinition}
  * @constructor
  */
 let xdescribe = function(description, spec) {};
 
 /**
  * @param {string} description
- * @param {!Mocha.ActionFunction} spec
- * @return {!Mocha.TestDefinition}
+ * @param {!MochaJS.ActionFunction} spec
+ * @return {!MochaJS.TestDefinition}
  * @constructor
  */
 let it = function(description, spec) {};
 
 /**
  * @param {string} description
- * @param {!Mocha.ActionFunction} spec
- * @return {!Mocha.TestDefinition}
+ * @param {!MochaJS.ActionFunction} spec
+ * @return {!MochaJS.TestDefinition}
  * @constructor
  */
 let xit = function(description, spec) {};
 
 /** @record */
-Mocha.ContextDefinition = function() {};
+MochaJS.ContextDefinition = function() {};
 /**
  * @param {string} description
  * @param {function()} spec
  * @return {void}
  */
-Mocha.ContextDefinition.prototype.only = (description, spec) => {};
+MochaJS.ContextDefinition.prototype.only = (description, spec) => {};
 /**
  * @param {string} description
  * @param {function()} spec
  * @return {void}
  */
-Mocha.ContextDefinition.prototype.skip = (description, spec) => {};
+MochaJS.ContextDefinition.prototype.skip = (description, spec) => {};
 /**
  * @param {number} ms
  * @return {void}
  */
-Mocha.ContextDefinition.prototype.timeout = (ms) => {};
+MochaJS.ContextDefinition.prototype.timeout = (ms) => {};
 
 /** @record */
-Mocha.TestDefinition = function() {};
+MochaJS.TestDefinition = function() {};
 
 /**
  * @param {string} expectation
- * @param {!Mocha.ActionFunction=} assertion
+ * @param {!MochaJS.ActionFunction=} assertion
  * @return {void}
  */
-Mocha.TestDefinition.prototype.only = (expectation, assertion) => {};
+MochaJS.TestDefinition.prototype.only = (expectation, assertion) => {};
 
 /**
  * @param {string} expectation
- * @param {!Mocha.ActionFunction=} assertion
+ * @param {!MochaJS.ActionFunction=} assertion
  * @return {void}
  */
-Mocha.TestDefinition.prototype.skip = (expectation, assertion) => {};
+MochaJS.TestDefinition.prototype.skip = (expectation, assertion) => {};
 
 /**
  * @param {number} ms
  * @return {void}
  */
-Mocha.TestDefinition.prototype.timeout = (ms) => {};
+MochaJS.TestDefinition.prototype.timeout = (ms) => {};
 
 /** @type {string} */
-Mocha.TestDefinition.prototype.state;
+MochaJS.TestDefinition.prototype.state;
 
 /**
- * @param {!Mocha.ActionFunction} action
+ * @param {!MochaJS.ActionFunction} action
  * @return {void}
  */
 const setup = (action) => {};
 
 /**
- * @param {!Mocha.ActionFunction} action
+ * @param {!MochaJS.ActionFunction} action
  * @return {void}
  */
 const teardown = (action) => {};
 /**
- * @param {!Mocha.ActionFunction} action
+ * @param {!MochaJS.ActionFunction} action
  * @return {void}
  */
 const suiteSetup = (action) => {};
 /**
- * @param {!Mocha.ActionFunction} action
+ * @param {!MochaJS.ActionFunction} action
  * @return {void}
  */
 const suiteTeardown = (action) => {};
 /**
- * @param {!Mocha.ActionFunction} action
+ * @param {!MochaJS.ActionFunction} action
  * @param {string=} description
  * @return {void}
  */
 const before = (action, description) => {};
 
 /**
- * @param {!Mocha.ActionFunction} action
+ * @param {!MochaJS.ActionFunction} action
  * @param {string=} description
  * @return {void}
  */
 const after = (action, description) => {};
 
 /**
- * @param {!Mocha.ActionFunction} action
+ * @param {!MochaJS.ActionFunction} action
  * @param {string=} description
  * @return {void}
  */
 const beforeEach = (action, description) => {};
 
 /**
- * @param {!Mocha.ActionFunction} action
+ * @param {!MochaJS.ActionFunction} action
  * @param {string=} description
  * @return {void}
  */
@@ -163,7 +169,7 @@ const afterEach = (action, description) => {};
  * @return {*}
  * @constructor
  */
-Mocha.Done = function(error) {};
+MochaJS.Done = function(error) {};
 
-/** @typedef {function(!Mocha.Done):*} */
-Mocha.ActionFunction;
+/** @typedef {function(!MochaJS.Done):*} */
+MochaJS.ActionFunction;

@@ -13,7 +13,8 @@ const types = goog.require('googlejs.configTester.types');
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 const fs = /** @type {!NodeJS.fs} */ (require('fs'));
 const glob = /** @type {!NodeJS.glob} */ (require('glob'));
-const Mocha = /** @type {!Mocha} */ (require('mocha'));
+/** @type {!MochaJS.Module} */
+const Mocha = /** @type {!MochaJS.Module} */ (require('mocha'));
 const path = /** @type {!NodeJS.path} */ (require('path'));
 
 
@@ -31,7 +32,7 @@ let ConfigOptions;
  */
 function testConfig(pattern, options) {
   const cliEngine = new eslint.CLIEngine(options.eslintOptions);
-  const mochaInstance = new Mocha();
+  const mochaInstance = /** @type {!MochaJS} */ (new Mocha());
   const testSuite = Mocha.Suite.create(mochaInstance, 'Configuration tests');
   checkGlob(pattern, cliEngine, testSuite);
 }
@@ -151,7 +152,7 @@ function addAllEslintErrors(errorsByFile, eslintResults) {
  * Checks that ESLint errors match expected errors for all files in the glob.
  * @param {string} pattern
  * @param {!ESLint.CLIEngine} eslintEngine
- * @param {!Mocha.Suite} testSuite
+ * @param {!MochaJS.Suite} testSuite
  */
 function checkGlob(pattern, eslintEngine, testSuite) {
   const filePaths = glob.sync(pattern);
@@ -162,7 +163,7 @@ function checkGlob(pattern, eslintEngine, testSuite) {
  * Checks that ESLint errors match expected errors for all files.
  * @param {string} filePaths
  * @param {!ESLint.CLIEngine} eslintEngine
- * @param {!Mocha.Suite} testSuite
+ * @param {!MochaJS.Suite} testSuite
  */
 function checkFiles(filePaths, eslintEngine, testSuite) {
   const errorsByFile = collectAllErrors(filePaths, eslintEngine);
