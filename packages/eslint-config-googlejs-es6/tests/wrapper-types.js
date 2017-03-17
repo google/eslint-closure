@@ -1,4 +1,3 @@
-
 // ERROR: no-new-wrappers
 let a = new Boolean();
 

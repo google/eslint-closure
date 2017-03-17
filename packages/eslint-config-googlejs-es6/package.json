@@ -28,7 +28,7 @@
     "eslint-plugin-googlejs": "^0.0.1"
   },
   "devDependencies": {
-    "eslint-plugin-config-tester": "^0.0.1",
+    "eslint-config-tester": "^0.0.1",
     "mocha": "^3.2.0"
   },
   "peerDependencies": {},

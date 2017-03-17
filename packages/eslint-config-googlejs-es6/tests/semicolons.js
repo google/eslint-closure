@@ -1,4 +1,4 @@
 const a = () => 2;
 
-// Error: semi
+// ERROR: semi
 a()
