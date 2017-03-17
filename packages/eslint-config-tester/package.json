@@ -38,6 +38,7 @@
   "dependencies": {
     "bluebird": "^3.5.0",
     "eslint": "^3.17.1",
-    "glob": "^7.1.1"
+    "glob": "^7.1.1",
+    "mocha": "^3.2.0"
   }
 }

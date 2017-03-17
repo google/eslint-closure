@@ -7,7 +7,7 @@ CONFIG_TESTER_DIR := packages/eslint-config-tester
 all: compile
 
 compile:
-	$(MAKE) -C $(PLUGIN_DIR) compile
+	$(MAKE) -C $(PLUGIN_DIR) compile-simple
 	$(MAKE) -C $(CONFIG_TESTER_DIR) compile
 
 test:
