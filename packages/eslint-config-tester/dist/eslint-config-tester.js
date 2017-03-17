@@ -2950,12 +2950,10 @@ var p = require("mocha");
 function q(a, c) {
   m.object.forEach(a.errorsByLineNumber, function(a) {
     if (c) {
-      var d = "line " + a.line, f = new p.Test(d + ", ESLint", function() {
-        return r(a);
-      }), d = new p.Test(d + ", Expected", function() {
-        return t(a);
+      var d = new p.Test(" line " + a.line, function() {
+        r(a);
+        t(a);
       });
-      c.addTest(f);
       c.addTest(d);
     } else {
       r(a), t(a);

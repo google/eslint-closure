@@ -48,14 +48,11 @@ function shortenFilePath(filePath) {
 function compareErrorsForFile(expectedErrors, fileSuite) {
   googObject.forEach(expectedErrors.errorsByLineNumber, (lineErrors, line) => {
     if (fileSuite) {
-      const lineDescription = `line ${lineErrors.line}`;
-      const eslintTest = new Mocha.Test(
-          `${lineDescription}, ESLint`, () => verifyEslintErrors(lineErrors));
-      const expectedTest = new Mocha.Test(
-          `${lineDescription}, Expected`,
-          () => verifyExpectedErrors(lineErrors));
-      fileSuite.addTest(eslintTest);
-      fileSuite.addTest(expectedTest);
+      const lineTest = new Mocha.Test(` line ${lineErrors.line}`, () => {
+        verifyEslintErrors(lineErrors);
+        verifyExpectedErrors(lineErrors);
+      });
+      fileSuite.addTest(lineTest);
     } else {
       verifyEslintErrors(lineErrors);
       verifyExpectedErrors(lineErrors);
