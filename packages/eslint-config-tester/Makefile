@@ -12,6 +12,16 @@ compile: dist-mkdir
 	cp -f $(BAZEL_BIN_DIR)/eslint-config-tester.js \
       dist/eslint-config-tester.js
 
+compile-simple: dist-mkdir
+	bazel build //packages/eslint-config-tester:eslint-config-tester-simple
+	cp -f $(BAZEL_BIN_DIR)/eslint-config-tester-simple.js \
+      dist/eslint-config-tester.js
+
+compile-debug: dist-mkdir
+	bazel build //packages/eslint-config-tester:eslint-config-tester-debug
+	cp -f $(BAZEL_BIN_DIR)/eslint-config-tester-debug.js \
+      dist/eslint-config-tester.js
+
 clean:
 	rm -rf dist/tests
 

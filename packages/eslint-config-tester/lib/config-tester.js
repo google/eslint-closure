@@ -20,7 +20,8 @@ const path = /** @type {!NodeJS.path} */ (require('path'));
 
 /**
  * @typedef {{
- *   eslintOptions: (!ESLint.CLIEngineOptions|undefined)
+ *   eslintOptions: (!ESLint.CLIEngineOptions|undefined),
+ *   mochaOptions: (!MochaJS.Options|undefined),
  * }}
  */
 let ConfigOptions;
@@ -32,9 +33,9 @@ let ConfigOptions;
  */
 function testConfig(pattern, options) {
   const cliEngine = new eslint.CLIEngine(options.eslintOptions);
-  const mochaInstance = /** @type {!MochaJS} */ (new Mocha());
-  const testSuite = Mocha.Suite.create(mochaInstance, 'Configuration tests');
-  checkGlob(pattern, cliEngine, testSuite);
+  const mochaInstance = new Mocha(options.mochaOptions);
+  checkGlob(pattern, cliEngine, mochaInstance.suite);
+  mochaInstance.run();
 }
 
 /**
@@ -161,13 +162,13 @@ function checkGlob(pattern, eslintEngine, testSuite) {
 
 /**
  * Checks that ESLint errors match expected errors for all files.
- * @param {string} filePaths
+ * @param {!Array<string>} filePaths
  * @param {!ESLint.CLIEngine} eslintEngine
  * @param {!MochaJS.Suite} testSuite
  */
 function checkFiles(filePaths, eslintEngine, testSuite) {
   const errorsByFile = collectAllErrors(filePaths, eslintEngine);
-  errorCompare.compareEslintToExpectedMocha(errorsByFile, testSuite);
+  errorCompare.compareEslintToExpected(errorsByFile, testSuite);
 }
 
 

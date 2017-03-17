@@ -8,28 +8,32 @@
 /* eslint no-unused-vars: "off" */
 
 
-const MochaJS = {}
-/**
- * @type {(!MochaJS|function(new:MochaJS))}
- */
-MochaJS.Module;
+const MochaJS = {};
 
+/**
+ * @type {function(new:MochaJS.Instance)}
+ */
+MochaJS.Module = function() {};
 /** @type {!MochaJS.Suite} */
-MochaJS.prototype.Suite;
+MochaJS.Module.prototype.Suite;
+/** @type {!MochaJS.Test} */
+MochaJS.Module.prototype.Test;
 
-/**
- * @final @struct @constructor
- */
+/** @final @struct @constructor */
 MochaJS.Suite = function() {};
-
 /** @type {function(!MochaJS.Suite, string)} */
 MochaJS.Suite.prototype.create = function(suite, description) {};
-
 /** @type {function(!MochaJS.Suite):!MochaJS.Suite} */
 MochaJS.Suite.prototype.addSuite = function(suite) {};
-
 /** @type {function(!MochaJS.Test):!MochaJS.Suite} */
 MochaJS.Suite.prototype.addTest = function(Test) {};
+/** @type {function()} */
+MochaJS.Suite.prototype.run = function() {};
+
+/** @record */
+MochaJS.Instance = function() {};
+/** @type {!MochaJS.Suite} */
+MochaJS.Instance.prototype.suite;
 
 /**
  * @param {string} title
@@ -37,6 +41,15 @@ MochaJS.Suite.prototype.addTest = function(Test) {};
  * @final @struct @constructor
  */
 MochaJS.Test = function(title, fn) {};
+
+/**
+ * @typedef {{
+ *   ui: (string|undefined),
+ *   reporter: (string|undefined),
+ * }}
+ */
+MochaJS.Options;
+
 /**
  * @param {string} description
  * @param {function()} spec

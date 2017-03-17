@@ -1,5 +1,6 @@
 /**
  * @fileoverview Compare expected errors with those from ESLint.
+ * @suppress {reportUnknownTypes}
  */
 
 goog.module('googlejs.configTester.errorCompare');
@@ -18,11 +19,24 @@ const Mocha = /** @type {!MochaJS.Module} */ (require('mocha'));
  */
 function compareEslintToExpected(expectedErrorsByFile, testSuite) {
   googObject.forEach(expectedErrorsByFile, (expectedErrors, filePath) => {
+    const suiteDescription = shortenFilePath(expectedErrors.filePath);
     const fileSuite = testSuite ?
-        Mocha.Suite.create(testSuite, expectedErrors.filePath) :
+        Mocha.Suite.create(testSuite, suiteDescription) :
         undefined;
     compareErrorsForFile(expectedErrors, fileSuite);
   });
+}
+
+/**
+ * Shorten a file path of a test file.
+ * @param {string} filePath
+ * @return {string}
+ */
+function shortenFilePath(filePath) {
+  if (filePath.includes('tests/')) {
+    return filePath.split('tests/', 2)[1];
+  }
+  return filePath;
 }
 
 /**
@@ -34,8 +48,11 @@ function compareEslintToExpected(expectedErrorsByFile, testSuite) {
 function compareErrorsForFile(expectedErrors, fileSuite) {
   googObject.forEach(expectedErrors.errorsByLineNumber, (lineErrors, line) => {
     if (fileSuite) {
-      const eslintTest = new Mocha.Test(() => verifyEslintErrors(lineErrors));
+      const lineDescription = `line ${lineErrors.line}`;
+      const eslintTest = new Mocha.Test(
+          `${lineDescription}, ESLint`, () => verifyEslintErrors(lineErrors));
       const expectedTest = new Mocha.Test(
+          `${lineDescription}, Expected`,
           () => verifyExpectedErrors(lineErrors));
       fileSuite.addTest(eslintTest);
       fileSuite.addTest(expectedTest);

@@ -5,4 +5,8 @@ configTester.testConfig('./tests/**/*.js', {
     configFile: './index.js',
     useEslintrc: false,
   },
+  mochaOptions: {
+    reporter: 'list',
+    useColors: false,
+  },
 });
