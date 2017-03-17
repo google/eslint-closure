@@ -5,13 +5,36 @@
 
 /* eslint no-unused-vars: "off" */
 
-/** @const */
-const Mocha = {};
+/**
+ * @final @struct @constructor
+ */
+const MochaJS = function() {};
 
+
+/**
+ * @final @struct @constructor
+ */
+Mocha.Suite = function() {};
+
+/** @type {function(!Mocha.Suite, string)} */
+Mocha.prototype.Suite.prototype.create = function(suite, description) {};
+
+/** @type {function(!Mocha.Suite):!Mocha.Suite} */
+Mocha.prototype.Suite.prototype.addSuite = function(suite, description) {};
+
+/** @type {function(!Mocha.Test):!Mocha.Suite} */
+Mocha.prototype.Suite.prototype.addTest = function(Test) {};
+
+/**
+ * @param {string} title
+ * @param {function():void} fn
+ * @final @struct @constructor
+ */
+Mocha.prototype.Test = function(title, fn) {};
 /**
  * @param {string} description
  * @param {function()} spec
- * @return {!Mocha.ContextDefinition}
+ * @return {!MochaJS.ContextDefinition}
  * @constructor
  */
 let describe = function(description, spec) {};
