@@ -3,12 +3,12 @@
  * @author Michael Ficarra
  */
 
-goog.module('googlejs.rules.noUnusedExpressions');
+goog.module('closureLint.rules.noUnusedExpressions');
 
 const array = goog.require('goog.array');
 
-const ast = goog.require('googlejs.ast');
-const jsdocUtils = goog.require('googlejs.jsdocUtils');
+const ast = goog.require('closureLint.ast');
+const jsdocUtils = goog.require('closureLint.jsdocUtils');
 
 /**
   * @param {!AST.Node} node - any node

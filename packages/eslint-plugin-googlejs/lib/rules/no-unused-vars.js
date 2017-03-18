@@ -3,10 +3,10 @@
  * @author Ilya Volodin
  */
 
-goog.module('googlejs.rules.noUnusedVars');
+goog.module('closureLint.rules.noUnusedVars');
 
-const ast = goog.require('googlejs.ast');
-const utils = goog.require('googlejs.utils');
+const ast = goog.require('closureLint.ast');
+const utils = goog.require('closureLint.utils');
 
 /**
  * Valid options for the no-unused-vars rule.

@@ -2,10 +2,10 @@
  * @fileoverview Rule to flag references to undeclared variables.
  */
 
-goog.module('googlejs.rules.noUndef');
+goog.module('closureLint.rules.noUndef');
 
-const ast = goog.require('googlejs.ast');
-const utils = goog.require('googlejs.utils');
+const ast = goog.require('closureLint.ast');
+const utils = goog.require('closureLint.utils');
 
 /**
  * Checks if the given node is the argument of a typeof operator.

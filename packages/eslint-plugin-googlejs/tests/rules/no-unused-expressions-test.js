@@ -3,9 +3,9 @@
  * @author Michael Ficarra
  */
 
-goog.module('googlejs.tests.rules.noUnusedExpressions');
+goog.module('closureLint.tests.rules.noUnusedExpressions');
 
-const noUnusedExpressionsRule = goog.require('googlejs.rules.noUnusedExpressions');
+const noUnusedExpressionsRule = goog.require('closureLint.rules.noUnusedExpressions');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 

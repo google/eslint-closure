@@ -2,7 +2,7 @@
  * @fileoverview Common utils for the AST.
  */
 
-goog.module('googlejs.astMatcher');
+goog.module('closureLint.astMatcher');
 
 const googObject = goog.require('goog.object');
 

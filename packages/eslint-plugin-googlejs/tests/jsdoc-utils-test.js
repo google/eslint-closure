@@ -4,11 +4,11 @@
  */
 
 /* global describe it */
-goog.module('googlejs.tests.jsdocUtils');
+goog.module('closureLint.tests.jsdocUtils');
 
 const googObject = goog.require('goog.object');
-const jsdocUtils = goog.require('googlejs.jsdocUtils');
-const testUtils = goog.require('googlejs.testUtils');
+const jsdocUtils = goog.require('closureLint.jsdocUtils');
+const testUtils = goog.require('closureLint.testUtils');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
 

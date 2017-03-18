@@ -2,9 +2,9 @@
  * @fileoverview Matchers for the AST.
  */
 
-goog.module('googlejs.ast');
+goog.module('closureLint.ast');
 
-const astMatcher = goog.require('googlejs.astMatcher');
+const astMatcher = goog.require('closureLint.astMatcher');
 
 /**
  * Returns an ancestor node of the given node that matches the testFunction.  If

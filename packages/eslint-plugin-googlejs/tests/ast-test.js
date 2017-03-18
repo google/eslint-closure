@@ -4,10 +4,10 @@
 
 /* global describe it */
 
-goog.module('googlejs.tests.ast');
+goog.module('closureLint.tests.ast');
 
-const ast = goog.require('googlejs.ast');
-const testUtils = goog.require('googlejs.testUtils');
+const ast = goog.require('closureLint.ast');
+const testUtils = goog.require('closureLint.testUtils');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
 

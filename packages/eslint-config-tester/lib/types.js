@@ -1,4 +1,4 @@
-goog.module('googlejs.configTester.types');
+goog.module('closureLint.configTester.types');
 
 /** @record @extends {ESLint.LintMessage} */ const ESLintError = function() {};
 /** @type {string} */ ESLintError.prototype.filePath;

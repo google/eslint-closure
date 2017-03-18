@@ -3,11 +3,11 @@
  * @suppress {checkDebuggerStatement}
  */
 
-goog.module('googlejs.rules.jsdoc');
+goog.module('closureLint.rules.jsdoc');
 
 const googMap = goog.require('goog.structs.Map');
-const jsdocUtils = goog.require('googlejs.jsdocUtils');
-const utils = goog.require('googlejs.utils');
+const jsdocUtils = goog.require('closureLint.jsdocUtils');
+const utils = goog.require('closureLint.utils');
 
 const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 

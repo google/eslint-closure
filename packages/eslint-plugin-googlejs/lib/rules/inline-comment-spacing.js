@@ -3,9 +3,9 @@
  * @author Joe Schafer
  */
 
-goog.module('googlejs.rules.inlineCommentSpacing');
+goog.module('closureLint.rules.inlineCommentSpacing');
 
-const utils = goog.require('googlejs.utils');
+const utils = goog.require('closureLint.utils');
 
 /** @const {number} */
 const DEFAULT_PRECEDING_SPACES = 1;

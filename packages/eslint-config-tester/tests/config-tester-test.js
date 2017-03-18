@@ -3,12 +3,12 @@
  * @suppress {reportUnknownTypes}
  */
 
-goog.module('googlejs.configTester.tests.configTesterTest');
+goog.module('closureLint.configTester.tests.configTesterTest');
 goog.setTestOnly();
 
-const configTester = goog.require('googlejs.configTester.runner');
+const configTester = goog.require('closureLint.configTester.runner');
 const googSet = goog.require('goog.structs.Set');
-const types = goog.require('googlejs.configTester.types');
+const types = goog.require('closureLint.configTester.types');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
 

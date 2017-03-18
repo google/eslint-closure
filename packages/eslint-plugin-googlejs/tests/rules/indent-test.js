@@ -1,9 +1,9 @@
 /**
  * @fileoverview Test indents rule.
  */
-goog.module('googlejs.tests.rules.indent');
+goog.module('closureLint.tests.rules.indent');
 
-const indentRule = goog.require('googlejs.rules.indent');
+const indentRule = goog.require('closureLint.rules.indent');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 

@@ -2,9 +2,9 @@
  * @fileoverview Tests for camelcase rule.
  */
 
-goog.module('googlejs.tests.rules.camelcase');
+goog.module('closureLint.tests.rules.camelcase');
 
-const camelCaseRule = goog.require('googlejs.rules.camelcase');
+const camelCaseRule = goog.require('closureLint.rules.camelcase');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 

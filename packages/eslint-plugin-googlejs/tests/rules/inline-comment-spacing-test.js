@@ -2,9 +2,9 @@
  * @fileoverview Test for inlineCommentSpacing.
  */
 
-goog.module('googlejs.tests.rules.inlineCommentSpacing');
+goog.module('closureLint.tests.rules.inlineCommentSpacing');
 
-const inlineCommentSpacing = goog.require('googlejs.rules.inlineCommentSpacing');
+const inlineCommentSpacing = goog.require('closureLint.rules.inlineCommentSpacing');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 

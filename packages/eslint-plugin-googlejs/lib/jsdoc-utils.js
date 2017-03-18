@@ -1,10 +1,10 @@
 /**
  * @fileoverview Utilities for working with Doctrine tags and types.
  */
-goog.module('googlejs.jsdocUtils');
+goog.module('closureLint.jsdocUtils');
 
 const array = goog.require('goog.array');
-const astMatcher = goog.require('googlejs.astMatcher');
+const astMatcher = goog.require('closureLint.astMatcher');
 
 const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 

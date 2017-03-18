@@ -1,4 +1,4 @@
-goog.module('googlejs.types');
+goog.module('closureLint.types');
 
 /**
  * The type of underscore in an identifier.

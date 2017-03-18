@@ -3,9 +3,9 @@
  * @author Ilya Volodin
  */
 
-goog.module('googlejs.tests.rules.noUnusedVars');
+goog.module('closureLint.tests.rules.noUnusedVars');
 
-const noUnusedVarsRule = goog.require('googlejs.rules.noUnusedVars');
+const noUnusedVarsRule = goog.require('closureLint.rules.noUnusedVars');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 

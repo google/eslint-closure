@@ -2,9 +2,9 @@
  * @fileoverview Tests for no-undef rule.
  */
 
-goog.module('googlejs.tests.rules.noUndef');
+goog.module('closureLint.tests.rules.noUndef');
 
-const noUndefRule = goog.require('googlejs.rules.noUndef');
+const noUndefRule = goog.require('closureLint.rules.noUndef');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 
