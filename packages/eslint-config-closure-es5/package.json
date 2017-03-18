@@ -1,13 +1,13 @@
 {
   "name": "eslint-config-closure-es5",
   "version": "0.0.1",
-  "author": "Joe Schafer <joe@jschaf.com>",
+  "author": "Joe Schafer <jschaf@google.com>",
   "license": "Apache-2.0",
-  "description": "Google's JS ESLint config for ES5, following our styleguide.",
+  "description": "ESLint config for Closure code following the Google styleguide.",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eslint-closure"
+    "url": "https://github.com/google/eslint-closure"
   },
   "keywords": [
     "eslint",
@@ -20,9 +20,9 @@
     "linter"
   ],
   "bugs": {
-    "url": "https://github.com/eslint-closure"
+    "url": "https://github.com/google/eslint-closure"
   },
-  "homepage": "https://github.com/eslint-closure",
+  "homepage": "https://github.com/google/eslint-closure",
   "dependencies": {
     "eslint-config-closure-base": "^0.0.1",
     "eslint-plugin-closure": "^0.0.1"
