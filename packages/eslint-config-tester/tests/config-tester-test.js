@@ -97,7 +97,25 @@ describe('configTester.parseExpectedErrorsInString', () => {
     const content = `// ERROR: foo`;
     const filePath = 'myFile';
     expect(parse(content, filePath)).to.eql({
+      2: makeLineErrors([], ['foo'], filePath, 2),
+    });
+  });
+
+  it('should parse an error at the end of the line', () => {
+    const content = `var a = 1; // ERROR: foo`;
+    const filePath = 'myFile';
+    expect(parse(content, filePath)).to.eql({
       1: makeLineErrors([], ['foo'], filePath, 1),
+    });
+  });
+
+  it('should parse an error within JSDOC', () => {
+    const content = `/**
+ * @param {number} foo ERROR: foo
+ */`;
+    const filePath = 'myFile';
+    expect(parse(content, filePath)).to.eql({
+      2: makeLineErrors([], ['foo'], filePath, 2),
     });
   });
 
@@ -105,7 +123,7 @@ describe('configTester.parseExpectedErrorsInString', () => {
     const content = `\n   // ERROR:   foo`;
     const filePath = 'myFile';
     expect(parse(content, filePath)).to.eql({
-      2: makeLineErrors([], ['foo'], filePath, 2),
+      3: makeLineErrors([], ['foo'], filePath, 3),
     });
   });
 
@@ -113,7 +131,7 @@ describe('configTester.parseExpectedErrorsInString', () => {
     const content = `// ERROR: foo, bar, baz`;
     const filePath = 'myFile';
     expect(parse(content, filePath)).to.eql({
-      1: makeLineErrors([], ['foo', 'bar', 'baz'], filePath, 1),
+      2: makeLineErrors([], ['foo', 'bar', 'baz'], filePath, 2),
     });
   });
 
@@ -128,9 +146,9 @@ function() {
 `;
     const filePath = 'myFile';
     expect(parse(content, filePath)).to.eql({
-      1: makeLineErrors([], ['foo', 'bar', 'baz'], filePath, 1),
-      3: makeLineErrors([], ['qux'], filePath, 3),
-      7: makeLineErrors([], ['bat', 'baz'], filePath, 7),
+      2: makeLineErrors([], ['foo', 'bar', 'baz'], filePath, 2),
+      4: makeLineErrors([], ['qux'], filePath, 4),
+      8: makeLineErrors([], ['bat', 'baz'], filePath, 8),
     });
   });
 });
@@ -148,7 +166,7 @@ describe('configTester.addAllEslintErrors', () => {
     const eslintResults = [error1];
     expect(addEslint(errorsByFilename, eslintResults)).to.eql({
       '/PATH': makeExpectedErrors({
-        1: makeLineErrors(['foo'], [], '/PATH', 1),
+        2: makeLineErrors(['foo'], [], '/PATH', 2),
       }, '/PATH'),
     });
   });
@@ -163,10 +181,10 @@ describe('configTester.addAllEslintErrors', () => {
     const eslintResults = [error1, error2];
     expect(addEslint(errorsByFilename, eslintResults)).to.eql({
       '/PATH': makeExpectedErrors({
-        1: makeLineErrors(['foo'], [], '/PATH', 1),
+        2: makeLineErrors(['foo'], [], '/PATH', 2),
       }, '/PATH'),
       '/FOO': makeExpectedErrors({
-        3: makeLineErrors(['qux', 'bar'], [], '/FOO', 3),
+        4: makeLineErrors(['qux', 'bar'], [], '/FOO', 4),
       }, '/FOO'),
     });
   });
@@ -174,7 +192,7 @@ describe('configTester.addAllEslintErrors', () => {
   it('should add many errors to the existing object', () => {
     const errorsByFilename = {
       '/PATH': makeExpectedErrors({
-        1: makeLineErrors([], ['foo'], '/PATH', 1),
+        2: makeLineErrors([], ['foo'], '/PATH', 2),
       }, '/PATH'),
     };
     const error1 = makeEslintResult([makeEslintMessage('foo', 2)]);
@@ -185,10 +203,10 @@ describe('configTester.addAllEslintErrors', () => {
     const eslintResults = [error1, error2];
     expect(addEslint(errorsByFilename, eslintResults)).to.eql({
       '/PATH': makeExpectedErrors({
-        1: makeLineErrors(['foo'], ['foo'], '/PATH', 1),
+        2: makeLineErrors(['foo'], ['foo'], '/PATH', 2),
       }, '/PATH'),
       '/FOO': makeExpectedErrors({
-        3: makeLineErrors(['qux', 'bar'], [], '/FOO', 3),
+        4: makeLineErrors(['qux', 'bar'], [], '/FOO', 4),
       }, '/FOO'),
     });
   });

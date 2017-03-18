@@ -22,13 +22,19 @@ compile-debug: dist-mkdir
 	cp -f $(BAZEL_BIN_DIR)/eslint-config-tester-debug.js \
       dist/eslint-config-tester.js
 
+debug: build-tests
+	$(MOCHA) --recursive ./dist/tests --inspect --debug-brk
+
 clean:
 	rm -rf dist/tests
 
-test: clean dist-mkdir
+test: build-tests
+	$(MOCHA) --recursive ./dist/tests --reporter dot
+
+build-tests: clean dist-mkdir
 	bazel build //packages/eslint-config-tester/tests/...:all
 	find $(BAZEL_BIN_DIR)/tests -name "*.js" | xargs -i cp -f {} dist/tests
-	$(MOCHA) --recursive ./dist/tests --reporter dot
+
 
 test-error-compare:
 	bazel build $(TEST_PKG):error-compare-test-bin

@@ -8,6 +8,7 @@ goog.module('googlejs.configTester.runner');
 const errorCompare = goog.require('googlejs.configTester.errorCompare');
 const googObject = goog.require('goog.object');
 const googSet = goog.require('goog.structs.Set');
+const googString = goog.require('goog.string');
 const types = goog.require('googlejs.configTester.types');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
@@ -90,23 +91,50 @@ function addAllExpectedErrors(errorsByFile, allExpectedErrors) {
 function parseExpectedErrorsInString(content, filePath) {
   const lines = content.split(/\r?\n/);
   const errorsByLineNumber = {};
-  const errorLineRegExp = new RegExp('// ERROR: (.*)');
-  let lineNumber = 1;
-  for (const line of lines) {
-    const match = line.match(errorLineRegExp);
-    if (match) {
-      const eslintRules = new googSet();
-      const expectedRules = new googSet(match[1].split(',').map(s => s.trim()));
-      errorsByLineNumber[lineNumber] = {
-        eslintRules,
-        expectedRules,
-        line: lineNumber,
-        filePath,
-      };
+  lines.forEach((lineContent, index) => {
+    const lineNumber = index + 1;
+    const lineError = parseExpectedLine(lineContent, lineNumber, filePath);
+    if (lineError) {
+      // Use the lineError.line because it might have been adjusted from
+      // lineNumber.
+      errorsByLineNumber[lineError.line] = lineError;
     }
-    lineNumber++;
-  }
+  });
   return errorsByLineNumber;
+}
+
+/**
+ * Parses expected errors on a single line.
+ * @param {string} content
+ * @param {number} lineNumber
+ * @param {string} filePath
+ * @return {?types.LineErrors} The line errors or null if no expected errors
+ *     were found.
+ */
+function parseExpectedLine(content, lineNumber, filePath) {
+  const expectedRegExp = new RegExp('(.*?)(//)? ERROR: (.*)');
+  const match = content.match(expectedRegExp);
+  if (!match) {
+    return null;
+  }
+  let actualLineNumber = lineNumber;
+  const precedingText = match[1];
+  const commentToken = match[2];
+  const expectedRules = new googSet(match[3].split(',').map(s => s.trim()));
+  if (commentToken) {
+    if (!precedingText || googString.isEmptyOrWhitespace(precedingText)) {
+      // Otherwise, we don't have preceeding text or there's code before the
+      // line comment so the error is for the next line.
+      actualLineNumber = lineNumber + 1;
+    }
+  }
+
+  return {
+    eslintRules: new googSet(),
+    expectedRules,
+    line: actualLineNumber,
+    filePath,
+  };
 }
 
 /**
@@ -134,16 +162,15 @@ function addAllEslintErrors(errorsByFile, eslintResults) {
     /** @type {!types.ExpectedErrors} */
     const expectedErrors = errorsByFile[result.filePath];
     result.messages.forEach(message => {
-      // Subtract 1 because the comment is above the error.
-      const line = message.line - 1;
       googObject.setIfUndefined(
-          expectedErrors.errorsByLineNumber, line.toString(), {
+          expectedErrors.errorsByLineNumber, message.line.toString(), {
             eslintRules: new googSet(),
             expectedRules: new googSet(),
-            line,
+            line: message.line,
             filePath: result.filePath,
           });
-      expectedErrors.errorsByLineNumber[line].eslintRules.add(message.ruleId);
+      expectedErrors.errorsByLineNumber[message.line]
+          .eslintRules.add(message.ruleId);
     });
   });
   return errorsByFile;

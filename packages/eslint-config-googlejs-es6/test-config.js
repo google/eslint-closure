@@ -6,7 +6,7 @@ configTester.testConfig('./tests/**/*.js', {
     useEslintrc: false,
   },
   mochaOptions: {
-    reporter: 'dot',
+    reporter: 'list',
     useColors: false,
   },
 });
