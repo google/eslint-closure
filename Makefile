@@ -29,3 +29,4 @@ develop:
 	$(MAKE) -C $(BASE_DIR) develop
 	$(MAKE) -C $(ES5_DIR) develop
 	$(MAKE) -C $(ES6_DIR) develop
+	$(MAKE) -C $(DOCS_DIR) develop

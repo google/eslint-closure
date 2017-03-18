@@ -1,8 +1,8 @@
 const eslint = require('eslint');
-const closureLintPlugin = require('./closure-eslint-plugin');
-const closureConfigBase = require('./eslint-config-closure-base');
-const closureConfigEs5 = require('./eslint-config-closure-es5.js');
-const closureConfigEs6 = require('./eslint-config-closure-es6.js');
+const closureLintPlugin = require('eslint-plugin-closure');
+const closureConfigBase = require('eslint-config-closure-base');
+const closureConfigEs5 = require('eslint-config-closure-es5');
+const closureConfigEs6 = require('eslint-config-closure-es6');
 const merge = require('lodash.merge');
 
 // TODO(jschaf): Clean this up into proper Closure-style code.

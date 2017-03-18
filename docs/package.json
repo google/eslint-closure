@@ -43,7 +43,6 @@
     "jekyll": "jekyll build -w"
   },
   "dependencies": {
-    "doctrine": "^2.0.0",
     "eslint": "~3.9.0",
     "espree": "^3.3.2",
     "json-loader": "^0.5.4",

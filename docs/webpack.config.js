@@ -32,7 +32,6 @@ module.exports = {
 
   devtool: 'source-map',
 
-
   module: {
     // Disable handling of unknown requires
     unknownContextRegExp: /$^/,
@@ -43,7 +42,10 @@ module.exports = {
     exprContextCritical: false,
 
     preLoaders: [
-      {test: /\.json$/, loader: 'json'},
+      {
+        test: /\.json$/,
+        loader: 'json-loader',
+      },
       {test: /eslint\.js$/, loader: StringReplacePlugin.replace({
         replacements: [
           {
@@ -53,17 +55,25 @@ module.exports = {
         ]
       })}
     ],
-    loaders: [
-      {
-        test: /.js$/,
-        exclude: /node_modules|closure-eslint-plugin/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['es2015'].map(function(name) {
-            return require.resolve('babel-preset-' + name);
-          }),
-        },
+    resolve: {
+      alias: {
+        'json-loader': 'json-loader/index.js'
       },
+    },
+    resolveLoader: {
+      packageMains: ['json-loader']
+    },
+    loaders: [
+      // {
+      //   test: /.js$/,
+      //   exclude: /node_modules|closure-eslint-.*/,
+      //   loader: 'babel-loader',
+      //   query: {
+      //     presets: ['es2015'].map(function(name) {
+      //       return require.resolve('babel-preset-' + name);
+      //     }),
+      //   },
+      // },
     ],
   },
 };

@@ -19,3 +19,7 @@ webpack:
 
 serve:
 	bundle exec jekyll serve
+
+develop:
+	yarn link eslint-plugin-closure eslint-config-closure-base eslint-config-closure-es5 eslint-config-closure-es6
+	yarn install
