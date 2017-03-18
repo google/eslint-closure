@@ -8,7 +8,7 @@ function foo(arg1, arg2) {
   arg2.call(null);
 }
 
-// ERROR: googlejs/jsdoc
+// ERROR: closure/jsdoc
 /**
  * @param {!types} arg
  * @return {void}
@@ -17,7 +17,7 @@ function bar(arg1) {
   arg1.fakeMethod();
 }
 
-// ERROR: googlejs/jsdoc
+// ERROR: closure/jsdoc
 /**
  * @param {} arg1
  * @return {void}
