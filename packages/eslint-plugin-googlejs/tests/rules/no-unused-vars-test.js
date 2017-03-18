@@ -191,11 +191,11 @@ function bar(foobar = foo) { foobar.replace(/ !$ /, " world!"); }
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: 'const x = 1; let y; ({z: [y = x]}) = {}; foo(y);',
+      code: 'const x = 1; let y; ({z: [y = x]} = {}); foo(y);',
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: 'const x = []; let y; ({z: [y] = x}) = {}; foo(y);',
+      code: 'const x = []; let y; ({z: [y] = x} = {}); foo(y);',
       parserOptions: {ecmaVersion: 6},
     },
     {
@@ -241,11 +241,11 @@ foo();`,
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: 'var x = 1, y; ({z: [y = x]}) = {}; foo(y);',
+      code: 'var x = 1, y; ({z: [y = x]} = {}); foo(y);',
       parserOptions: {ecmaVersion: 6},
     },
     {
-      code: 'var x = [], y; ({z: [y] = x}) = {}; foo(y);',
+      code: 'var x = [], y; ({z: [y] = x} = {}); foo(y);',
       parserOptions: {ecmaVersion: 6},
     },
     {
