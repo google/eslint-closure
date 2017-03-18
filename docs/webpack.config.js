@@ -19,7 +19,8 @@ module.exports = {
         path.resolve(__dirname, 'js/empty.js')
     ),
 
-    // An easy to parse version or load-rules for webpack.
+    // An easy to parse version of load-rules for webpack.  Webpack chokes on
+    // ESLint's version.
     new webpack.NormalModuleReplacementPlugin(
         /eslint\/lib\/load-rules\.js/,
         path.resolve(__dirname, 'js/eslint-load-rules.js')

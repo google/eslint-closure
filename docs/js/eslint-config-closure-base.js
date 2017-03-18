@@ -965,7 +965,7 @@ const ESLINT_CONFIG = {
   },
 
   plugins: [
-    // https://github.com/google/eslint-config-google
+    // https://github.com/google/eslint-closure
     'closure',
   ],
 

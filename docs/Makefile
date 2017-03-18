@@ -4,7 +4,7 @@ ES6_DIR := ../packages/eslint-config-closure-es6
 PLUGIN_DIR := ../packages/eslint-plugin-closure
 
 
-all: compile
+all: site
 
 site: update-dependencies webpack
 
