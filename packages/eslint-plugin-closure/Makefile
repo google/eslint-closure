@@ -12,17 +12,17 @@ all: compile
 compile:
 	bazel build //packages/eslint-plugin-closure:plugin-simple
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin-simple.js \
-      dist/googlejs-eslint-plugin.js
+      dist/closure-eslint-plugin.js
 
 compile-advanced:
 	bazel build //packages/eslint-plugin-closure:plugin
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin.js \
-      dist/googlejs-eslint-plugin.js
+      dist/closure-eslint-plugin.js
 
 compile-debug:
 	bazel build //packages/eslint-plugin-closure:plugin-debug
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin-debug.js \
-      dist/googlejs-eslint-plugin.js
+      dist/closure-eslint-plugin.js
 
 clean:
 	rm -rf dist/tests

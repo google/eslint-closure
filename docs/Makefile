@@ -9,10 +9,10 @@ all: compile
 site: update-dependencies webpack
 
 update-dependencies:
-	cp -f $(BASE_DIR)/index.js js/eslint-config-googlejs-base.js
-	cp -f $(ES5_DIR)/index.js js/eslint-config-googlejs-es5.js
-	cp -f $(ES6_DIR)/index.js js/eslint-config-googlejs-es6.js
-	cp -f $(PLUGIN_DIR)/dist/googlejs-eslint-plugin.js js/googlejs-eslint-plugin.js
+	cp -f $(BASE_DIR)/index.js js/eslint-config-closure-base.js
+	cp -f $(ES5_DIR)/index.js js/eslint-config-closure-es5.js
+	cp -f $(ES6_DIR)/index.js js/eslint-config-closure-es6.js
+	cp -f $(PLUGIN_DIR)/dist/closure-eslint-plugin.js js/closure-eslint-plugin.js
 
 webpack:
 	npm run webpack

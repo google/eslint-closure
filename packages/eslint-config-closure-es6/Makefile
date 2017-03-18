@@ -7,8 +7,8 @@ test-summary:
 	npm test -- dot
 
 develop:
-	npm link eslint-plugin-googlejs
+	npm link eslint-plugin-closure
 	npm link eslint-config-tester
-	npm link eslint-config-googlejs-base
+	npm link eslint-config-closure-base
 	npm link
 	npm install
