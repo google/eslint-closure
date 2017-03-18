@@ -451,7 +451,7 @@ const VARIABLE_DECLARATION_RULES = {
 
   // Disallow the use of undeclared variables unless mentioned in /*global */
   // comments.  #eslint
-  // Disabled for googlejs rule.
+  // Disabled for closure rule.
   // 'no-undef': ERROR,
 
   // Disallow the use of undefined as an identifier.
@@ -560,7 +560,7 @@ const STYLISTIC_RULES = {
   'id-match': OFF,
 
   // Enforce consistent indentation.
-  // Disabled because the googlejs/indent supports goog.scope.
+  // Disabled because the closure/indent supports goog.scope.
   'indent': OFF,
 
   // Enforce the consistent use of either double or single quotes in JSX
@@ -912,7 +912,7 @@ const ES6_RULES = {
 // These rules are specific to Google code.  See
 // https://github.com/jschaf/closure/packages/eslint-plugin-closure
 const GOOGLE_PLUGIN_RULES = {
-  'googlejs/indent': [WARNING, 2, {
+  'closure/indent': [WARNING, 2, {
     // Google ES6 Section 4.2.5
     SwitchCase: 1,
     // Google ES6 Section 4.5.1
@@ -920,7 +920,7 @@ const GOOGLE_PLUGIN_RULES = {
     // Google ES5: Aliasing with goog.scope
     outerIIFEBody: 0,
   }],
-  'googlejs/jsdoc': [WARNING, {
+  'closure/jsdoc': [WARNING, {
     prefer: {
       returns: 'return',
       arg: 'param',
@@ -939,8 +939,8 @@ const GOOGLE_PLUGIN_RULES = {
     requireParamDescription: false,
     requireReturnDescription: false,
   }],
-  'googlejs/no-undef': ERROR,
-  'googlejs/no-unused-expressions': ERROR,
+  'closure/no-undef': ERROR,
+  'closure/no-unused-expressions': ERROR,
 };
 
 // ESLint configuration object.  Options are described at
@@ -966,7 +966,7 @@ const ESLINT_CONFIG = {
 
   plugins: [
     // https://github.com/jschaf/eslint-config-google
-    'googlejs',
+    'closure',
   ],
 
   // The list of rules and options are available at

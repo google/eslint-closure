@@ -175,7 +175,7 @@ const ES6_RULES = {
 // https://github.com/jschaf/closure/packages/eslint-plugin-closure
 const GOOGLE_PLUGIN_RULES = {
   // Disallow opt_ prefix and var_args as identifiers.
-  'googlejs/camelcase': [ERROR, {
+  'closure/camelcase': [ERROR, {
     allowVarArgs: false,
     allowOptPrefix: false,
     allowLeadingUnderscore: true,
@@ -254,7 +254,7 @@ const ECMA_FEATURES = {
 const GOOGLE_ES6_RULES = {
 
   extends: [
-    require.resolve('eslint-config-googlejs-base'),
+    require.resolve('eslint-config-closure-base'),
   ],
 
   parserOptions: {
@@ -264,7 +264,7 @@ const GOOGLE_ES6_RULES = {
   },
 
   plugins: [
-    'googlejs',
+    'closure',
   ],
 
 

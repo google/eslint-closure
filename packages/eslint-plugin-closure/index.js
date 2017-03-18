@@ -1,1 +1,1 @@
-module.exports = require('./dist/googlejs-eslint-plugin');
+module.exports = require('./dist/closure-eslint-plugin');
