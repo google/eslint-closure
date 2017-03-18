@@ -1,5 +1,5 @@
 
-// ERROR: googlejs/camelcase
+// ERROR: closure/camelcase
 function bad_name() {
   return 2;
 }

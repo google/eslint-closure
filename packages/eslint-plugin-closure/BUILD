@@ -12,7 +12,7 @@ closure_js_binary(
     dependency_mode = "strict",
     entry_points = ["googlejs.plugin"],
     deps = [
-        "//packages/eslint-plugin-googlejs/lib:plugin",
+        "//packages/eslint-plugin-closure/lib:plugin",
     ],
 )
 
@@ -31,7 +31,7 @@ closure_js_binary(
     entry_points = ["googlejs.plugin"],
     formatting = "PRETTY_PRINT",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib:plugin",
+        "//packages/eslint-plugin-closure/lib:plugin",
     ],
 )
 
@@ -47,7 +47,7 @@ closure_js_binary(
     entry_points = ["googlejs.plugin"],
     formatting = "PRETTY_PRINT",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib:plugin",
+        "//packages/eslint-plugin-closure/lib:plugin",
     ],
 )
 
@@ -61,6 +61,6 @@ closure_js_binary(
     dependency_mode = "strict",
     entry_points = ["googlejs.plugin"],
     deps = [
-        "//packages/eslint-plugin-googlejs/lib:plugin",
+        "//packages/eslint-plugin-closure/lib:plugin",
     ],
 )

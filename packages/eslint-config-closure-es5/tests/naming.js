@@ -1,4 +1,4 @@
-function qux(foo_bar) { // ERROR: googlejs/camelcase
+function qux(foo_bar) { // ERROR: closure/camelcase
   foo_bar();
 }
 

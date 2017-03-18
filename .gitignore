@@ -2,7 +2,8 @@ node_modules/
 .projectile
 .cache/
 coverage/
-/packages/eslint-plugin-googlejs/dist/tests/
+/packages/eslint-plugin-closure/dist/tests/
+/packages/eslint-config-tester/dist/tests/
 .agignore
 npm-debug.log
 docs/_site
@@ -10,11 +11,11 @@ docs/.sass-cache
 docs/.jekyll-metadata
 docs/vendor/
 docs/Gemfile.lock
-**/bazel-bin
-**/bazel-genfiles
-**/bazel-out
-**/bazel-testlogs
-**/bazel-googlejs
-**/dist/tests
+/bazel-bin
+/bazel-genfiles
+/bazel-out
+/bazel-testlogs
+/bazel-googlejs
+/dist/tests
 /docs/js/app/googlejs-eslint-plugin.min.js
 /packages/eslint-plugin-googlejs/dist

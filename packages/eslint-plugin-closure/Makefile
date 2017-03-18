@@ -1,5 +1,5 @@
 ROOT_DIR := ../..
-PLUGIN_PREFIX := packages/eslint-plugin-googlejs
+PLUGIN_PREFIX := packages/eslint-plugin-closure
 BAZEL_BIN_DIR := $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)
 BAZEL_PKG := //$(PLUGIN_PREFIX)/tests
 # No colors because it doesn't work on the solarized color scheme.
@@ -10,17 +10,17 @@ all: compile
 # TODO(jschaf): JSDoc and the indent tests (goog.scope) fail if we compile the
 # plugin in ADVANCED mode.  As a workaround, default to SIMPLE.
 compile:
-	bazel build //packages/eslint-plugin-googlejs:plugin-simple
+	bazel build //packages/eslint-plugin-closure:plugin-simple
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin-simple.js \
       dist/googlejs-eslint-plugin.js
 
 compile-advanced:
-	bazel build //packages/eslint-plugin-googlejs:plugin
+	bazel build //packages/eslint-plugin-closure:plugin
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin.js \
       dist/googlejs-eslint-plugin.js
 
 compile-debug:
-	bazel build //packages/eslint-plugin-googlejs:plugin-debug
+	bazel build //packages/eslint-plugin-closure:plugin-debug
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin-debug.js \
       dist/googlejs-eslint-plugin.js
 
@@ -32,7 +32,7 @@ develop:
 	npm install
 
 build-tests: clean dist-mkdir
-	bazel build //packages/eslint-plugin-googlejs/tests/...:all
+	bazel build //packages/eslint-plugin-closure/tests/...:all
 	find $(BAZEL_BIN_DIR)/tests -name "*.js" | xargs -i cp -f {} dist/tests
 
 test: build-tests

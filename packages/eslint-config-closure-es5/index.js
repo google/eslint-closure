@@ -52,7 +52,7 @@ const ES6_RULES = {};
 
 // Google Plugin Rules
 // These rules are specific to Google code.  See
-// https://github.com/jschaf/googlejs/packages/eslint-plugin-googlejs
+// https://github.com/jschaf/closure/packages/eslint-plugin-closure
 const GOOGLE_PLUGIN_RULES = {
   // Allow opt_ prefix and var_args in identifiers.  From
   // https://git.io/vured#Naming

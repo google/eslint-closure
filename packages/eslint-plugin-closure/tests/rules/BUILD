@@ -8,8 +8,8 @@ mocha_closure_test(
     srcs = ["camelcase-test.js"],
     entry_point = "googlejs.tests.rules.camelcase",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "//packages/eslint-plugin-googlejs/lib/rules:camelcase",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/rules:camelcase",
     ],
 )
 
@@ -18,8 +18,8 @@ mocha_closure_test(
     srcs = ["indent-test.js"],
     entry_point = "googlejs.tests.rules.indent",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "//packages/eslint-plugin-googlejs/lib/rules:indent",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/rules:indent",
     ],
 )
 
@@ -28,8 +28,8 @@ mocha_closure_test(
     srcs = ["inline-comment-spacing-test.js"],
     entry_point = "googlejs.tests.rules.inlineCommentSpacing",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "//packages/eslint-plugin-googlejs/lib/rules:inline-comment-spacing",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/rules:inline-comment-spacing",
     ],
 )
 
@@ -38,8 +38,8 @@ mocha_closure_test(
     srcs = ["jsdoc-test.js"],
     entry_point = "googlejs.tests.rules.jsdoc",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "//packages/eslint-plugin-googlejs/lib/rules:jsdoc",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/rules:jsdoc",
     ],
 )
 
@@ -48,8 +48,8 @@ mocha_closure_test(
     srcs = ["no-undef-test.js"],
     entry_point = "googlejs.tests.rules.noUndef",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "//packages/eslint-plugin-googlejs/lib/rules:no-undef",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/rules:no-undef",
     ],
 )
 
@@ -58,8 +58,8 @@ mocha_closure_test(
     srcs = ["no-unused-expressions-test.js"],
     entry_point = "googlejs.tests.rules.noUnusedExpressions",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "//packages/eslint-plugin-googlejs/lib/rules:no-unused-expressions",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/rules:no-unused-expressions",
     ],
 )
 
@@ -68,7 +68,7 @@ mocha_closure_test(
     srcs = ["no-unused-vars-test.js"],
     entry_point = "googlejs.tests.rules.noUnusedVars",
     deps = [
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
-        "//packages/eslint-plugin-googlejs/lib/rules:no-unused-vars",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/rules:no-unused-vars",
     ],
 )

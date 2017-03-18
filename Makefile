@@ -1,8 +1,8 @@
 DOCS_DIR := docs
-PLUGIN_DIR := packages/eslint-plugin-googlejs
-BASE_DIR := packages/eslint-config-googlejs-base
-ES5_DIR := packages/eslint-config-googlejs-es5
-ES6_DIR := packages/eslint-config-googlejs-es6
+PLUGIN_DIR := packages/eslint-plugin-closure
+BASE_DIR := packages/eslint-config-closure-base
+ES5_DIR := packages/eslint-config-closure-es5
+ES6_DIR := packages/eslint-config-closure-es6
 CONFIG_TESTER_DIR := packages/eslint-config-tester
 
 all: compile

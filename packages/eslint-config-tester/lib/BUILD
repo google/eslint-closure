@@ -15,7 +15,7 @@ closure_js_library(
     deps = [
         ":error-compare",
         ":types",
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
         "@io_bazel_rules_closure//closure/library",
     ],
 )
@@ -25,7 +25,7 @@ closure_js_library(
     srcs = ["error-compare.js"],
     deps = [
         ":types",
-        "//packages/eslint-plugin-googlejs/lib/externs:all-externs",
+        "//packages/eslint-plugin-closure/lib/externs:all-externs",
         "@io_bazel_rules_closure//closure/library",
     ],
 )

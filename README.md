@@ -1,4 +1,4 @@
-# GoogleJS - ESLint Plugin and Config for the Google JavaScript Style Guide
+# Closure Linter - ESLint Plugin and Config for the Google JavaScript Style Guide
 
 
 A heavily customized ESLint config and plugin for JavaScript following
