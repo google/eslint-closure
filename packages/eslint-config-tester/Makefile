@@ -33,6 +33,9 @@ clean:
 	rm -rf dist/tests
 
 test: build-tests
+	$(MOCHA) --recursive ./dist/tests
+
+test-summary: build-tests
 	$(MOCHA) --recursive ./dist/tests --reporter dot
 
 build-tests: clean dist-mkdir

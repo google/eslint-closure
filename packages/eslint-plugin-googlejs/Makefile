@@ -31,9 +31,14 @@ develop:
 	npm link
 	npm install
 
-test: clean dist-mkdir
+build-tests: clean dist-mkdir
 	bazel build //packages/eslint-plugin-googlejs/tests/...:all
 	find $(BAZEL_BIN_DIR)/tests -name "*.js" | xargs -i cp -f {} dist/tests
+
+test: build-tests
+	$(MOCHA) --recursive ./dist/tests
+
+test-summary: build-tests
 	$(MOCHA) --recursive ./dist/tests --reporter dot
 
 test-rules-camelcase:
