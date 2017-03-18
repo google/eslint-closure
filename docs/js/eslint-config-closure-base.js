@@ -910,7 +910,7 @@ const ES6_RULES = {
 
 // Google Plugin Rules
 // These rules are specific to Google code.  See
-// https://github.com/jschaf/closure/packages/eslint-plugin-closure
+// https://github.com/google/eslint-closure/packages/eslint-plugin-closure
 const GOOGLE_PLUGIN_RULES = {
   'closure/indent': [WARNING, 2, {
     // Google ES6 Section 4.2.5
@@ -965,7 +965,7 @@ const ESLINT_CONFIG = {
   },
 
   plugins: [
-    // https://github.com/jschaf/eslint-config-google
+    // https://github.com/google/eslint-config-google
     'closure',
   ],
 
