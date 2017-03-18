@@ -1,15 +1,11 @@
 const eslint = require('eslint');
-const googlejsPlugin = require('./googlejs-eslint-plugin');
-const googlejsBase = require('./eslint-config-googlejs-base');
-const googlejsEs5 = require('./eslint-config-googlejs-es5.js');
-const googlejsEs6 = require('./eslint-config-googlejs-es6.js');
+const closureLintPlugin = require('./closure-eslint-plugin');
+const closureConfigBase = require('./eslint-config-closure-base');
+const closureConfigEs5 = require('./eslint-config-closure-es5.js');
+const closureConfigEs6 = require('./eslint-config-closure-es6.js');
 const merge = require('lodash.merge');
 
 // TODO(jschaf): Clean this up into proper Closure-style code.
-console.log('googlejsES6', googlejsEs6);
-console.log('googlejsES5', googlejsEs5);
-console.log('googlejsBase', googlejsBase);
-
 const EDITOR_TEXT_AREA_ELEMENT = document.getElementById('editor');
 const EDITOR = CodeMirror.fromTextArea(EDITOR_TEXT_AREA_ELEMENT, {
   mode: 'javascript',
@@ -30,9 +26,9 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-const BASE_OPTIONS = googlejsBase;
-const ES5_OPTIONS = merge(clone(BASE_OPTIONS), googlejsEs5);
-const ES6_OPTIONS = merge(clone(BASE_OPTIONS), googlejsEs6);
+const BASE_OPTIONS = closureConfigBase;
+const ES5_OPTIONS = merge(clone(BASE_OPTIONS), closureConfigEs5);
+const ES6_OPTIONS = merge(clone(BASE_OPTIONS), closureConfigEs6);
 let OPTIONS = ES6_OPTIONS;
 
 function switchConfig(configKey) {
@@ -322,11 +318,11 @@ OPTIONS.ecmaFeatures.modules = OPTIONS.ecmaFeatures.module || false;
 
 populateConfiguration(OPTIONS.rules, OPTIONS.env, OPTIONS.ecmaFeatures);
 
-console.log(googlejsPlugin.rules);
-const prefixedKeys = Object.keys(googlejsPlugin.rules)
+console.log(closureLintPlugin.rules);
+const prefixedKeys = Object.keys(closureLintPlugin.rules)
       .reduce((newObj, key) => {
-        const prefixedKey = 'googlejs/' + key;
-        newObj[prefixedKey] = googlejsPlugin.rules[key];
+        const prefixedKey = 'closure/' + key;
+        newObj[prefixedKey] = closureLintPlugin.rules[key];
         return newObj;
       }, {});
 eslint.linter.defineRules(prefixedKeys);

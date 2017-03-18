@@ -1,12 +1,12 @@
 {
-  "name": "googlejs",
+  "name": "eslint-closure",
   "version": "0.0.1",
-  "author": "Joe Schafer",
+  "author": "Joe Schafer <jschaf@google.com>",
   "license": "Apache-2.0",
   "description": "Linting Rules for the Google Style Guide",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jschaf/googlejs"
+    "url": "https://github.com/eslint-closure"
   },
   "keywords": [
     "eslint",

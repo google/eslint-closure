@@ -1,13 +1,13 @@
 {
-  "name": "googlejs-site",
+  "name": "eslint-closure-docs",
   "version": "0.0.1",
-  "author": "Joe Schafer <joe@jschaf.com>",
+  "author": "Joe Schafer <jschaf@google.com>",
   "license": "Apache-2.0",
-  "description": "A demo site for the Google JS ESLint plugin.",
+  "description": "A demo site for the ESLint plugin and config for Closure.",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jschaf/googlejs-site"
+    "url": "https://github.com/eslint-closure"
   },
   "keywords": [
     "eslint",
@@ -23,9 +23,9 @@
     "README.md"
   ],
   "bugs": {
-    "url": "https://github.com/jschaf/googlejs-site/issues"
+    "url": "https://github.com/eslint-closure/issues"
   },
-  "homepage": "https://github.com/jschaf/googlejs-site",
+  "homepage": "https://github.com/eslint-closure",
   "devDependencies": {
     "babel-core": "^6.23.1",
     "babel-loader": "^6.4.0",

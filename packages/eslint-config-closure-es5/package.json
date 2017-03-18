@@ -1,5 +1,5 @@
 {
-  "name": "eslint-config-googlejs-es5",
+  "name": "eslint-config-closure-es5",
   "version": "0.0.1",
   "author": "Joe Schafer <joe@jschaf.com>",
   "license": "Apache-2.0",
@@ -7,7 +7,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jschaf/googlejs"
+    "url": "https://github.com/eslint-closure"
   },
   "keywords": [
     "eslint",
@@ -20,12 +20,12 @@
     "linter"
   ],
   "bugs": {
-    "url": "https://github.com/jschaf/googlejs"
+    "url": "https://github.com/eslint-closure"
   },
-  "homepage": "https://github.com/jschaf/googlejs",
+  "homepage": "https://github.com/eslint-closure",
   "dependencies": {
-    "eslint-config-googlejs-base": "^0.0.1",
-    "eslint-plugin-googlejs": "^0.0.1"
+    "eslint-config-closure-base": "^0.0.1",
+    "eslint-plugin-closure": "^0.0.1"
   },
   "devDependencies": {
     "eslint-config-tester": "^0.0.1",

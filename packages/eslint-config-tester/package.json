@@ -7,7 +7,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jschaf/googlejs"
+    "url": "https://github.com/eslint-closure"
   },
   "keywords": [
     "eslint",
@@ -23,9 +23,9 @@
     "README.md"
   ],
   "bugs": {
-    "url": "https://github.com/jschaf/googlejs"
+    "url": "https://github.com/eslint-closure"
   },
-  "homepage": "https://github.com/jschaf/googlejs",
+  "homepage": "https://github.com/eslint-closure",
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.1.2"

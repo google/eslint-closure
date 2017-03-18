@@ -52,11 +52,11 @@ const ES6_RULES = {};
 
 // Google Plugin Rules
 // These rules are specific to Google code.  See
-// https://github.com/jschaf/googlejs/packages/eslint-plugin-googlejs
+// https://github.com/jschaf/closure/packages/eslint-plugin-closure
 const GOOGLE_PLUGIN_RULES = {
   // Allow opt_ prefix and var_args in identifiers.  From
   // https://git.io/vured#Naming
-  'googlejs/camelcase': [ERROR, {
+  'closure/camelcase': [ERROR, {
     allowVarArgs: true,
     allowOptPrefix: true,
     allowLeadingUnderscore: true,
@@ -70,14 +70,14 @@ const GOOGLE_PLUGIN_RULES = {
   // guide mandates two spaces before line-end comments.  See the 'Line
   // Comments' section under
   // https://git.io/v6Mp3#Implementation_Comments
-  'googlejs/inline-comment-spacing': [ERROR, 2],
+  'closure/inline-comment-spacing': [ERROR, 2],
 };
 
 
 const GOOGLE_ES5_RULES = {
 
   extends: [
-    require.resolve('eslint-config-googlejs-base'),
+    require.resolve('eslint-config-closure-base'),
   ],
 
   parserOptions: {

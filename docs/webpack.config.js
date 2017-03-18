@@ -55,7 +55,7 @@ module.exports = {
     loaders: [
       {
         test: /.js$/,
-        exclude: /node_modules|googlejs-eslint-plugin/,
+        exclude: /node_modules|closure-eslint-plugin/,
         loader: 'babel-loader',
         query: {
           presets: ['es2015'].map(function(name) {
