@@ -25,6 +25,10 @@ compile-debug: dist-mkdir
 debug: build-tests
 	$(MOCHA) --recursive ./dist/tests --inspect --debug-brk
 
+develop:
+	npm link
+	npm install
+
 clean:
 	rm -rf dist/tests
 

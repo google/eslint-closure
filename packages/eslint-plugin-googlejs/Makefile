@@ -7,14 +7,16 @@ MOCHA := node_modules/mocha/bin/mocha --no-colors
 
 all: compile
 
+# TODO(jschaf): JSDoc and the indent tests (goog.scope) fail if we compile the
+# plugin in ADVANCED mode.  As a workaround, default to SIMPLE.
 compile:
-	bazel build //packages/eslint-plugin-googlejs:plugin
-	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin.js \
-      dist/googlejs-eslint-plugin.js
-
-compile-simple:
 	bazel build //packages/eslint-plugin-googlejs:plugin-simple
 	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin-simple.js \
+      dist/googlejs-eslint-plugin.js
+
+compile-advanced:
+	bazel build //packages/eslint-plugin-googlejs:plugin
+	cp -f $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)/plugin.js \
       dist/googlejs-eslint-plugin.js
 
 compile-debug:
@@ -24,6 +26,10 @@ compile-debug:
 
 clean:
 	rm -rf dist/tests
+
+develop:
+	npm link
+	npm install
 
 test: clean dist-mkdir
 	bazel build //packages/eslint-plugin-googlejs/tests/...:all

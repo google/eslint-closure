@@ -1,5 +1,11 @@
 MOCHA := node_modules/mocha/bin/mocha --no-colors
 
-# TODO(jschaf): Get test to work with the mocha interface.
 test:
 	npm test
+
+develop:
+	npm link eslint-plugin-googlejs
+	npm link eslint-config-tester
+	npm link eslint-config-googlejs-base
+	npm link
+	npm install
