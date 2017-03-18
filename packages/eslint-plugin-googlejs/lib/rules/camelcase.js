@@ -205,7 +205,7 @@ function isCorrectlyUnderscored_(effectiveNodeName, node, options) {
         // TODO: this block will error twice on code like: var {foo_bar} =
         // require(); because it's checking foo_bar twice.  Once as a key and
         // once as a value.  The node for key and value is the same node, so
-        // there's now way to figure out which node we're supposed to be in this
+        // there's no way to figure out which node we're supposed to be in this
         // code.  To reduce the error count to 1 would involve processing the
         // messages outside this function.
 

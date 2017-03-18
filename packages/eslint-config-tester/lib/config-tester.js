@@ -33,8 +33,8 @@ let ConfigOptions;
  * @param {!ConfigOptions} options
  */
 function testConfig(pattern, options) {
-  const cliEngine = new eslint.CLIEngine(options.eslintOptions);
-  const mochaInstance = new Mocha(options.mochaOptions);
+  const cliEngine = new eslint.CLIEngine(options['eslintOptions']);
+  const mochaInstance = new Mocha(options['mochaOptions']);
   checkGlob(pattern, cliEngine, mochaInstance.suite);
   mochaInstance.run();
 }
