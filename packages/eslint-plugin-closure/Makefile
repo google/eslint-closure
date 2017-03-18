@@ -28,8 +28,8 @@ clean:
 	rm -rf dist/tests
 
 develop:
-	npm link
-	npm install
+	yarn link
+	yarn install
 
 build-tests: clean dist-mkdir
 	bazel build //packages/eslint-plugin-closure/tests/...:all

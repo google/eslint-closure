@@ -7,8 +7,8 @@ test-summary:
 	npm test -- dot
 
 develop:
-	npm link eslint-plugin-closure
-	npm link eslint-config-tester
-	npm link eslint-config-closure-base
-	npm link
-	npm install
+	yarn link eslint-plugin-closure
+	yarn link eslint-config-tester
+	yarn link eslint-config-closure-base
+	yarn link
+	yarn install

@@ -1,4 +1,4 @@
 develop:
-	npm link eslint-plugin-closure
-	npm link
-	npm install
+	yarn link eslint-plugin-closure
+	yarn link
+	yarn install
