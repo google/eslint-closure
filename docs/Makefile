@@ -4,14 +4,20 @@ ES6_DIR := ../packages/eslint-config-closure-es6
 PLUGIN_DIR := ../packages/eslint-plugin-closure
 ESLINT_REPO := eslint-repo
 OUTPUT_DIR := output
+BAZEL_BIN := ../bazel-bin
 
 
 all: site
 
 site: webpack
+	cp -f dist/app.bundle.js dist/app.min.js
 
 webpack:
 	npm run webpack
+
+js-prod: webpack
+	bazel build //docs:app-min
+	cp -f $(BAZEL_BIN)/docs/app-min.js dist/app.min.js
 
 serve:
 	bundle exec jekyll serve
