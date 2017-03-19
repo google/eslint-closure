@@ -1,9 +1,15 @@
-const eslint = require('eslint');
 const closureLintPlugin = require('eslint-plugin-closure');
 const closureConfigBase = require('eslint-config-closure-base');
 const closureConfigEs5 = require('eslint-config-closure-es5');
 const closureConfigEs6 = require('eslint-config-closure-es6');
 const merge = require('lodash.merge');
+
+// ESLint is added manually by using their browserify config in the Makefile.
+// It's difficult to use Webpack to bundle ESLint ourselves because of the use
+// of fs module and because the way that rules are exposed confuses Webpack.
+const eslint = /** @type {!ESLint.Linter} */ (window['eslint']);
+
+const CodeMirror = window.CodeMirror;
 
 // TODO(jschaf): Clean this up into proper Closure-style code.
 const EDITOR_TEXT_AREA_ELEMENT = document.getElementById('editor');
@@ -17,10 +23,6 @@ const CSS_CLASS_ERROR = 'editor-error';
 
 // Expose the EDITOR for easy access.
 window.EDITOR = EDITOR;
-
-
-// TODO: Manually merge es5 and es6 configs with base.  ESLint only seems to do
-// it for files.
 
 function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
@@ -55,8 +57,6 @@ function switchConfig(configKey) {
 }
 
 window.switchConfig = switchConfig;
-
-window.eslint = eslint;
 
 function debounce(func, wait, immediate) {
   let timeout;
@@ -325,7 +325,7 @@ const prefixedKeys = Object.keys(closureLintPlugin.rules)
         newObj[prefixedKey] = closureLintPlugin.rules[key];
         return newObj;
       }, {});
-eslint.linter.defineRules(prefixedKeys);
+eslint.defineRules(prefixedKeys);
 console.log(prefixedKeys);
 
 console.log('OPTIONS', OPTIONS);
@@ -334,7 +334,7 @@ const verify = debounce(function() {
   const content = EDITOR.getValue();
   removeWarningsErrors();
   console.log('verifying', content);
-  const results = eslint.linter.verify(content, OPTIONS);
+  const results = eslint.verify(content, OPTIONS);
   console.log(results);
   displayResults(results);
 }, 500);
