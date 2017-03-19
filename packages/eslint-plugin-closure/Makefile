@@ -43,6 +43,7 @@ clean:
 develop:
 	yarn link
 	yarn install
+	npm link # Also need NPM to link globally, so ESLint can find the plugin.
 
 build-tests: clean dist-mkdir
 	bazel build //packages/eslint-plugin-closure/tests/...:all
