@@ -27,3 +27,4 @@ docs/Gemfile.lock
 /bazel-out
 /bazel-testlogs
 /bazel-eslint-closure
+/docs/eslint-repo/

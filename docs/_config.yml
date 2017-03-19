@@ -2,10 +2,10 @@ name: "Closure Linter - ESLint Plugin and Config"
 repository: "google/eslint-closure"
 exclude: [
   'node_modules',
-  'bower_components',
+  'eslint-repo',
   'vendor'
 ]
-description: "A pluggable and configurable linter tool for identifying and reporting on patterns in JavaScript. Maintain your code quality with ease."
+description: "An ESLint plugin and config for Closure JavaScript following Google's style guide."
 url: https://google.github.io/eslint-closure
 kramdown:
   input: GFM
