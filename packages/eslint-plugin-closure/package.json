@@ -34,16 +34,7 @@
   "engines": {
     "node": ">= 4"
   },
-  "scripts": {
-    "build": "node Makefile.js buildSimple",
-    "buildAdvanced": "node Makefile.js buildAdvanced",
-    "make": "node Makefile.js",
-    "lint": "node Makefile.js lint",
-    "test": "node Makefile.js test",
-    "testRule": "node Makefile.js testRule -- ",
-    "testFile": "node Makefile.js testFile -- ",
-    "checkTypes": "node Makefile.js checkTypes"
-  },
+  "scripts": {},
   "dependencies": {
     "doctrine": "^2.0.0",
     "eslint": "~3.9.0",
