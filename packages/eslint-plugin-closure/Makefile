@@ -2,8 +2,21 @@ ROOT_DIR := ../..
 PLUGIN_PREFIX := packages/eslint-plugin-closure
 BAZEL_BIN_DIR := $(ROOT_DIR)/bazel-bin/$(PLUGIN_PREFIX)
 BAZEL_PKG := //$(PLUGIN_PREFIX)/tests
+TEST_PKG := $(PLUGIN_PREFIX)/tests
 # No colors because it doesn't work on the solarized color scheme.
 MOCHA := node_modules/mocha/bin/mocha --no-colors
+
+# Build a package target relative to the root dir.
+#
+# The first arg is the bazel build package without the leading //.  The second
+# arg is the bazel build target.  For example:
+# $(1): packages/eslint-plugin-closure/tests/rules
+# $(2): no-undef-test-bin
+define build_run_test
+	bazel build //$(1):$(2)
+  cp -f $(ROOT_DIR)/bazel-bin/$(1)/$(2).js dist/tests
+  $(MOCHA) dist/tests/$(2).js
+endef
 
 all: compile
 
@@ -33,7 +46,7 @@ develop:
 
 build-tests: clean dist-mkdir
 	bazel build //packages/eslint-plugin-closure/tests/...:all
-	find $(BAZEL_BIN_DIR)/tests -name "*.js" | xargs -i cp -f {} dist/tests
+	find $(BAZEL_BIN_DIR)/tests -name "*.js" | xargs -I '{}' cp -f {} dist/tests
 
 test: build-tests
 	$(MOCHA) --recursive ./dist/tests
@@ -41,60 +54,38 @@ test: build-tests
 test-summary: build-tests
 	$(MOCHA) --recursive ./dist/tests --reporter dot
 
-test-rules-camelcase:
-	bazel build $(BAZEL_PKG)/rules:camelcase-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/rules/camelcase-test-bin.js dist/tests
-	$(MOCHA) dist/tests/camelcase-test-bin.js
-
 test-ast:
-	bazel build $(BAZEL_PKG):ast-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/ast-test-bin.js dist/tests
-	$(MOCHA) dist/tests/ast-test-bin.js
+	$(call build_run_test,$(TEST_PKG),ast-test-bin)
 
 test-ast-matcher:
-	bazel build $(BAZEL_PKG):ast-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/ast-test-bin.js dist/tests
-	$(MOCHA) dist/tests/ast-test-bin.js
+	$(call build_run_test,$(TEST_PKG),ast-test-bin)
 
 test-jsdoc-utils:
-	bazel build $(BAZEL_PKG):jsdoc-utils-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/jsdoc-utils-test-bin.js dist/tests
-	$(MOCHA) dist/tests/jsdoc-utils-test-bin.js
+	$(call build_run_test,$(TEST_PKG),jsdoc-utils-test-bin)
 
 test-utils:
-	bazel build $(BAZEL_PKG):utils-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/utils-test-bin.js dist/tests
-	$(MOCHA) dist/tests/utils-test-bin.js
+	$(call build_run_test,$(TEST_PKG),utils-test-bin)
+
+test-rules-camelcase:
+	$(call build_run_test,$(TEST_PKG)/rules,camelcase-test-bin)
 
 test-rules-indent:
-	bazel build $(BAZEL_PKG)/rules:indent-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/rules/indent-test-bin.js dist/tests
-	$(MOCHA) dist/tests/rules/indent-test-bin.js
+	$(call build_run_test,$(TEST_PKG)/rules,indent-test-bin)
 
 test-rules-inline-comment-spacing:
-	bazel build $(BAZEL_PKG)/rules:inline-comment-spacing-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/rules/inline-comment-spacing-test-bin.js dist/tests
-	$(MOCHA) dist/tests/inline-comment-spacing-test-bin.js
+	$(call build_run_test,$(TEST_PKG)/rules,inline-comment-spacing-test-bin)
 
 test-rules-jsdoc:
-	bazel build $(BAZEL_PKG)/rules:jsdoc-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/rules/jsdoc-test-bin.js dist/tests
-	$(MOCHA) dist/tests/jsdoc-test-bin.js
+	$(call build_run_test,$(TEST_PKG)/rules,jsdoc-test-bin)
 
 test-rules-no-undef:
-	bazel build $(BAZEL_PKG)/rules:no-undef-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/rules/no-undef-test-bin.js dist/tests
-	$(MOCHA) dist/tests/no-undef-test-bin.js
+	$(call build_run_test,$(TEST_PKG)/rules,no-undef-test-bin)
 
 test-rules-no-unused-expressions:
-	bazel build $(BAZEL_PKG)/rules:no-unused-expressions-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/rules/no-unused-expressions-test-bin.js dist/tests
-	$(MOCHA) dist/tests/no-unused-expressions-test-bin.js
+	$(call build_run_test,$(TEST_PKG)/rules,no-unused-expressions-test-bin)
 
 test-rules-no-unused-vars:
-	bazel build $(BAZEL_PKG)/rules:no-unused-vars-test-bin
-	cp -f $(BAZEL_BIN_DIR)/tests/rules/no-unused-vars-test-bin.js dist/tests
-	$(MOCHA) dist/tests/no-unused-vars-test-bin.js
+	$(call build_run_test,$(TEST_PKG)/rules,no-unused-vars-test-bin)
 
 dist-mkdir:
 	mkdir -p dist/tests/rules
