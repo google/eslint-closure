@@ -5,6 +5,7 @@ PLUGIN_DIR := ../packages/eslint-plugin-closure
 ESLINT_REPO := eslint-repo
 OUTPUT_DIR := output
 BAZEL_BIN := ../bazel-bin
+NODE_BIN := ./node_modules/.bin
 
 
 all: site
@@ -21,7 +22,7 @@ js-prod: webpack
 	cp -f $(BAZEL_BIN)/docs/app-min.js.map dist/app.min.js.map
 
 serve:
-	./node_modules/.bin/http-server -p 7777 .
+	$(NODE_BIN)/webpack-dev-server --port 7777
 
 develop:
 	yarn link eslint-plugin-closure eslint-config-closure-base eslint-config-closure-es5 eslint-config-closure-es6
