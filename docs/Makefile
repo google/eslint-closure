@@ -27,7 +27,7 @@ develop:
 	yarn install
 
 update-eslint:
-	sh bin/update-eslint.sh
+	sh scripts/update-eslint.sh
 
 copy-eslint:
 	cp -f $(ESLINT_REPO)/build/eslint.js js/eslint.js

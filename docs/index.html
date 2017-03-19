@@ -1,8 +1,21 @@
----
-title: ESLint Demo
-layout: default
----
-<link rel="stylesheet" property="stylesheet" href="{{ site.baseurl }}/styles/demo.css"/>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <meta name="keywords" content="JavaScript, Linter, Linting, Pluggable, Configurable, Code Quality">
+        <meta name="description" content="An ESLint plugin and config for Closure JavaScript following Google's style guide.">
+
+        <title>Closure Linter - ESLint Plugin and Config</title>
+        <link href="/index.html" rel="canonical" />
+        <link rel="stylesheet" href="/styles/main.css"/>
+    </head>
+    <body>
+
+        <link rel="stylesheet" property="stylesheet" type="text/css" href="https://eclipse.org/orion/editor/releases/current/built-editor.css" />
+        <main class="container">
+            <link rel="stylesheet" property="stylesheet" href="/styles/demo.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.21.0/codemirror.css" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
@@ -24,7 +37,47 @@ layout: default
 <div class="container editorRow">
   <div class="row">
     <div class="col-md-7">
-      <textarea id="editor" rows="200">{% include demo-example.js %}</textarea>
+      <textarea id="editor" rows="200">goog.require('module.name')
+
+
+// goog.scope recoginized as an IIFE.
+goog.scope(function() {
+
+/**
+ * Typedefs are marked as used.
+ * @typedef {number}
+ */
+let Bar;
+
+// BAD: unused variable.
+let unusedVar = 2;
+
+/**
+ * @param {Bar} arg1
+ * @returns {Bar}
+ * BAD: unused function.
+ */
+function foo(arg1) {
+  // BAD(es6): prefer const for unchanging variables
+  let result = arg1 + 2;
+  // BAD(es6): use template strings.
+  const myString = 'string' + result;
+// BAD: incorrect indentation.
+return myString;
+}
+
+// OKAY: ES6 features with either the ES5 or ES6 config.
+const myMap = new Map();
+myMap.set(2, 'foo');
+// BAD: undeclared variable and trailing space
+undeclaredVar.foo();
+
+// OKAY: module.name is goog.provide'd
+module.name.fooBar();
+// BAD: module.wrongName is not goog.provide'd.
+module.wrongName();
+});
+</textarea>
     </div>
     <div class="col-md-5">
       <div id="results">
@@ -92,5 +145,11 @@ layout: default
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK" crossorigin="anonymous"></script>
-<script src="{{ site.baseurl }}/dist/eslint.js"></script>
-<script src="{{ site.baseurl }}/dist/app.min.js"></script>
+<script src="/dist/eslint.js"></script>
+<script src="/dist/app.min.js"></script>
+
+        </main>
+
+        <hr>
+    </body>
+</html>
