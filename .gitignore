@@ -1,21 +1,29 @@
+# Node and NPM
 node_modules/
+npm-debug.log
+
+# Misc
 .projectile
 .cache/
-coverage/
+.agignore
+
+# Generated Tests
 /packages/eslint-plugin-closure/dist/tests/
 /packages/eslint-config-tester/dist/tests/
-.agignore
-npm-debug.log
+/packages/eslint-config-closure-base/dist/tests/
+/packages/eslint-config-closure-es5/dist/tests/
+/packages/eslint-config-closure-es6/dist/tests/
+
+# Docs
 docs/_site
 docs/.sass-cache
 docs/.jekyll-metadata
 docs/vendor/
 docs/Gemfile.lock
+
+# Bazel
 /bazel-bin
 /bazel-genfiles
 /bazel-out
 /bazel-testlogs
-/bazel-googlejs
-/dist/tests
-/docs/js/app/googlejs-eslint-plugin.min.js
-/packages/eslint-plugin-googlejs/dist
+/bazel-eslint-closure
