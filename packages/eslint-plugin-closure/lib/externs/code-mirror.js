@@ -10,6 +10,7 @@ const CM = {};
  *
  * @param {!HTMLTextAreaElement} textArea
  * @param {(!CM.DocOptions|undefined)} config
+ * @return {!CM.Doc}
  */
 CM.Object.prototype.fromTextArea = function(textArea, config) {};
 
@@ -33,19 +34,26 @@ CM.Doc.prototype.setBookmark = function(pos, options) {};
  * @param {!CM.Position} to
  * @return {!Array<CM.TextMarker>}
  */
-CM.Doc.prototype.doc.findMarks = function(from, to) {};
+CM.Doc.prototype.findMarks = function(from, to) {};
 /**
  * @param {!CM.Position} pos
  * @return {!Array<CM.TextMarker>}
  */
-CM.Doc.prototype.doc.findMarksAt = function(pos) {};
+CM.Doc.prototype.findMarksAt = function(pos) {};
 /**
  * @return {!Array<CM.TextMarker>}
  */
-CM.Doc.prototype.doc.getAllMarks = function() {};
+CM.Doc.prototype.getAllMarks = function() {};
+/**
+ * @param {string} event
+ * @param {function()} fn
+ * @return {void}
+ */
+CM.Doc.prototype.on = function(event, fn) {};
 
 /**
  * @param {string=} separator
+ * @return {string}
  */
 CM.Doc.prototype.getValue = function(separator) {};
 
@@ -59,8 +67,8 @@ CM.TextAreaDoc.prototype.getTextArea = function() {};
 
 
 /** @record */ CM.TextMarker = function() {};
-/** @type {function()} */ CM.TexMarker.prototype.clear;
-/** @type {function()} */ CM.TexMarker.prototype.changed;
+/** @return {void} */ CM.TexMarker.prototype.clear = function() {};
+/** @return {void} */ CM.TexMarker.prototype.changed = function() {};
 /** @return {{from: !CM.Position, to: !CM.Position}} */
 CM.TexMarker.prototype.find = function() {};
 

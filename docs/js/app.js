@@ -1,18 +1,15 @@
-goog.module('closureLint.docs.app');
-
-const TagName = goog.require('goog.dom.TagName');
-const asserts = goog.require('goog.asserts');
-
-const closureLintPlugin = require('eslint-plugin-closure');
-const closureConfigBase = require('eslint-config-closure-base');
-const closureConfigEs5 = require('eslint-config-closure-es5');
-const closureConfigEs6 = require('eslint-config-closure-es6');
-const merge = /** @type {function(!Object, ...!Object):!Object} */ (require('lodash.merge'));
-
-// ESLint is added manually by using their browserify config in the Makefile.
-// It's difficult to use Webpack to bundle ESLint ourselves because of the use
-// of fs module and because the way that rules are exposed confuses Webpack.
-const eslint = /** @type {!ESLint.Linter} */ (window['eslint']);
+/**
+ * @fileoverview
+ * @suppress {reportUnknownTypes}
+ */
+const closureLintPlugin = /** @const {!ESLint.Config} */ (
+    require('eslint-plugin-closure'));
+const closureConfigBase = /** @const {!ESLint.Config} */ (
+    require('eslint-config-closure-base'));
+const closureConfigEs5 = /** @const {!ESLint.Config} */ (
+    require('eslint-config-closure-es5'));
+const closureConfigEs6 = /** @const {!ESLint.Config} */ (
+    require('eslint-config-closure-es6'));
 
 /** @type {!CM.Doc} */
 let EDITOR;
@@ -20,20 +17,39 @@ const CSS_CLASS_WARNING = 'editor-warning';
 const CSS_CLASS_ERROR = 'editor-error';
 
 /**
- * Clones an Object by round-tripping through JSON.
- * @param {!Object<T>} obj
- * @return {!Object<T>}
- * @template T
+ * Creates a new ESLint config by merging a and b.  b overwrites a.
+ * @param {!ESLint.Config} a
+ * @param {!ESLint.Config} b
+ * @return {!ESLint.Config}
  */
-function clone(obj) {
-  return /** @type {!Object<T>} */ (JSON.parse(JSON.stringify(obj)));
+function mergeRules(a, b) {
+  const combinedRule = {
+    rules: {},
+    parserOptions: {},
+    settings: {},
+    env: {},
+    global: {},
+  };
+  Object.assign(combinedRule.rules,
+                a.rules || {}, b.rules || {});
+  Object.assign(combinedRule.parserOptions,
+                a.parserOptions || {}, b.parserOptions || {});
+  Object.assign(combinedRule.settings,
+                a.settings || {}, b.settings || {});
+  Object.assign(combinedRule.env,
+                a.env || {}, b.env || {});
+  Object.assign(combinedRule.global,
+                a.global || {}, b.global || {});
+  combinedRule.parser = b.parser || a.parser;
+  return combinedRule;
 }
 
-const BASE_OPTIONS = /** @type {!ESLint.Config} */ (closureConfigBase);
-const ES5_OPTIONS = /** @type {!ESLint.Config} */ (
-    merge(clone(BASE_OPTIONS), closureConfigEs5));
-const ES6_OPTIONS = /** @type {!ESLint.Config} */ (
-    merge(clone(BASE_OPTIONS), closureConfigEs6));
+/** @const {!ESLint.Config} */
+const BASE_OPTIONS = closureConfigBase;
+/** @const {!ESLint.Config} */
+const ES5_OPTIONS = mergeRules(BASE_OPTIONS, closureConfigEs5);
+/** @const {!ESLint.Config} */
+const ES6_OPTIONS = mergeRules(BASE_OPTIONS, closureConfigEs6);
 /** @type {!ESLint.Config} */
 let OPTIONS = ES6_OPTIONS;
 
@@ -45,8 +61,9 @@ let OPTIONS = ES6_OPTIONS;
 function switchConfig(configKey) {
   const es5Button = document.getElementById('es5Button');
   const es6Button = document.getElementById('es6Button');
-  asserts.assertInstanceOf(es5Button, TagName.BUTTON);
-  asserts.assertInstanceOf(es6Button, TagName.BUTTON);
+  if (!es5Button || !es6Button) {
+    throw new Error('Can\'t find buttons');
+  }
 
   const buttonHighlight = 'mdl-button--accent';
   switch (configKey) {
@@ -67,16 +84,15 @@ function switchConfig(configKey) {
   }
   // verify();
 }
-
 window['switchConfig'] = switchConfig;
 
 /**
  * Debounces a function.
  * @param {!Function} func
  * @param {number} wait
- * @param {boolean} immediate
+ * @param {boolean=} immediate
  * @return {!Function}
- * @suppress {newCheckTypes}
+ * @suppress {newCheckTypes,reportUnknownTypes}
  */
 function debounce(func, wait, immediate) {
   let timeout;
@@ -100,7 +116,7 @@ function debounce(func, wait, immediate) {
  * @return {!HTMLDivElement}
  */
 function makeResultNode(options) {
-  const result = document.createElement('div');
+  const result = /** @type {!HTMLDivElement} */ (document.createElement('div'));
   const classList = result.classList;
 
   classList.add('alert');
@@ -109,45 +125,37 @@ function makeResultNode(options) {
     classList.add('alert-danger');
   }
 
-  if (options.hasOwnProperty('severity')) {
-    if (options.severity === 1) {
+
+  switch (options.severity) {
+    case 1:
       classList.add('alert-warning');
-    } else if (options.severity === 2) {
+      break;
+    case 2:
       classList.add('alert-danger');
-    }
-  } else {
-    classList.add('alert-success');
+      break;
+    default:
+      classList.add('alert-success');
   }
 
-  if (options.hasOwnProperty('column') &&
-      options.hasOwnProperty('line') &&
-      options.hasOwnProperty('message')) {
+  // result.onclick = null;
+  // (function(EDITOR, options) {
+  //   EDITOR.onGotoLine(
+  //       options.line - 1, options.column - 1, options.column - 1);
+  // }).bind(null, EDITOR, options);
 
-    // TODO: Add goto error
-    result.onclick = null;
-        // (function(EDITOR, options) {
-        //   EDITOR.onGotoLine(
-        //       options.line - 1, options.column - 1, options.column - 1);
-        // }).bind(null, EDITOR, options);
-
-    result.innerHTML = options.line + ':' + options.column + ' - ' +
-        options.message + ' (<a href="http://eslint.org/docs/rules/' +
-        options.ruleId + '">' + options.ruleId + '</a>)';
-    result.setAttribute('title', options.message);
-  } else if (options.hasOwnProperty('message')) {
-    result.textContent = 'Lint-free!';
-  }
+  result.innerHTML = `${options.line}:${options.column} - ${options.message} ` +
+      `(${options.ruleId})`;
+  result.setAttribute('title', options.message);
 
   return result;
 }
 
 /**
  * Removes all warning and error marks from the editor.
+ * @suppress {newCheckTypes,reportUnknownTypes}
  */
 function removeWarningsErrors() {
-  EDITOR.getAllMarks().forEach((mark) => {
-    mark.clear();
-  });
+  EDITOR.getAllMarks().forEach(mark => mark.clear());
 }
 
 /**
@@ -156,7 +164,7 @@ function removeWarningsErrors() {
  * @return {string}
  */
 function messageSeverityCssClass(eslintMessage) {
-  if (eslintMessage.severty == 2) {
+  if (eslintMessage.severity == 2) {
     return CSS_CLASS_ERROR;
   } else {
     return CSS_CLASS_WARNING;
@@ -191,13 +199,20 @@ function addWarningsErrors(eslintMessages) {
  * @param {!Array<!ESLint.LintMessage>} results
  */
 function displayResults(results) {
-  const resultsNode = document.getElementById('results');
+  const resultsNode = /** @type {!HTMLDivElement} */ (
+      document.getElementById('results'));
+  if (!resultsNode) {
+    throw new Error('Can\'t find div#results.');
+  }
 
   const nodes = Array.from(resultsNode.childNodes);
   nodes.forEach(resultsNode.removeChild.bind(resultsNode));
 
   if (results.length === 0) {
-    const resultNode = makeResultNode({message: 'Lint-free!'});
+    const resultNode = makeResultNode({
+      message: 'Lint-free!', severity: -1, line: -1, column: -1,
+      source: 'HOORAY', ruleId: 'lint-free', nodeType: 'lint-free',
+    });
     resultsNode.appendChild(resultNode);
   } else {
     results.forEach(function(result) {
@@ -215,30 +230,37 @@ function displayResults(results) {
  */
 function setupEslint() {
 
+  // ESLint is added manually by using their browserify config in the Makefile.
+  // It's difficult to use Webpack to bundle ESLint ourselves because of the use
+  // of fs module and because the way that rules are exposed confuses Webpack.
+
+  /** @const {!ESLint.Linter} */
+  const linter = /** @type {!ESLint.Linter} */ (window['eslint']);
+
+  /** @const {!CM.Object} */
   const CodeMirror = /** @type {!CM.Object} */ (window['CodeMirror']);
 
-  const EDITOR_TEXT_AREA_ELEMENT = /** @type {!HTMLTextAreaElement} */ (
+  const editorTextArea = /** @type {!HTMLTextAreaElement} */ (
       document.getElementById('editor'));
 
-  EDITOR = CodeMirror.fromTextArea(EDITOR_TEXT_AREA_ELEMENT, {
+
+  EDITOR = /** @type {!CM.Doc} */ (CodeMirror.fromTextArea(editorTextArea, {
     mode: 'javascript',
     lineNumbers: true,
+  }));
+
+  const prefixedClosureRules = {};
+  Object.keys(closureLintPlugin.rules).forEach(ruleId => {
+    const prefixedRuleId = 'closure/' + ruleId;
+    prefixedClosureRules[prefixedRuleId ] = closureLintPlugin.rules[ruleId];
   });
 
-  const prefixedKeys = Object.keys(closureLintPlugin.rules)
-        .reduce((newObj, key) => {
-          const prefixedKey = 'closure/' + key;
-          newObj[prefixedKey] = closureLintPlugin.rules[key];
-          return newObj;
-        }, {});
-  eslint.defineRules(prefixedKeys);
+  linter.defineRules(prefixedClosureRules);
 
   const verify = debounce(function() {
     const content = EDITOR.getValue();
     removeWarningsErrors();
-    console.log('verifying', content);
-    const results = eslint.verify(content, OPTIONS);
-    console.log(results);
+    const results = linter.verify(content, OPTIONS);
     displayResults(results);
   }, 500);
 

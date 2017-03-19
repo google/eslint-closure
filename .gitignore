@@ -28,3 +28,4 @@ docs/Gemfile.lock
 /bazel-testlogs
 /bazel-eslint-closure
 /docs/eslint-repo/
+/docs/dist/app.min.js.map

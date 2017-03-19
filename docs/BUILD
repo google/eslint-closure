@@ -7,6 +7,7 @@ closure_js_library(
     name = "app-lib",
     srcs = ["js/app.js"],
     deps = [
+        "//packages/eslint-plugin-closure/lib:plugin",
         "//packages/eslint-plugin-closure/lib/externs:all-externs",
         "@io_bazel_rules_closure//closure/library",
     ],

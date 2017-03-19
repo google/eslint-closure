@@ -71,7 +71,7 @@ ESLint.Linter.prototype.once = function(eventName, listener) {};
  *     "saveState", and "allowInlineConfig" properties.
  * @param {boolean=} saveState Indicates if the state from the last run should
  *     be saved.  Mostly useful for testing purposes.
- * @return {!Array<!Object>} The results as an array of messages.
+ * @return {!Array<!ESLint.LintMessage>} The results as an array of messages.
  */
 ESLint.Linter.prototype.verify = function(
     textOrSourceCode, config, filenameOrOptions, saveState) {};
@@ -154,24 +154,12 @@ ESLint.RuleTester.prototype.run = function(ruleName, rule, test) {};
  * @record
  */
 ESLint.Config = function() {};
-
-/** @type {!Object} */
-ESLint.Config.prototype.rules;
-
-/** @type {(string|undefined)} */
-ESLint.Config.prototype.parser;
-
-/** @type {(!Object|undefined)} */
-ESLint.Config.prototype.parserOptions;
-
-/** @type {(!Object|undefined)} */
-ESLint.Config.prototype.settings;
-
-/** @type {(!Object|undefined)} */
-ESLint.Config.prototype.env;
-
-/** @type {(!Object|undefined)} */
-ESLint.Config.prototype.global;
+/** @type {!Object} */ ESLint.Config.prototype.rules;
+/** @type {(string|undefined)} */ ESLint.Config.prototype.parser;
+/** @type {(!Object|undefined)} */ ESLint.Config.prototype.parserOptions;
+/** @type {(!Object|undefined)} */ ESLint.Config.prototype.settings;
+/** @type {(!Object|undefined)} */ ESLint.Config.prototype.env;
+/** @type {(!Object|undefined)} */ ESLint.Config.prototype.global;
 
 /**
  * An ESLint rule.
@@ -782,6 +770,7 @@ ESLint.CLIEngine = function(options) {};
 /** @type {number} */ ESLint.LintMessage.prototype.column;
 /** @type {string} */ ESLint.LintMessage.prototype.message;
 /** @type {string} */ ESLint.LintMessage.prototype.source;
+/** @type {(string|undefined)} */ ESLint.LintMessage.prototype.fatal;
 
 /** @record */ ESLint.LintResult;
 /** @type {string} */ ESLint.LintResult.prototype.filePath;
