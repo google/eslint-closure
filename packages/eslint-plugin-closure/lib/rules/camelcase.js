@@ -2,10 +2,10 @@
  * @fileoverview Rule to flag non-camelcased identifiers except for the "opt_"
  * prefix
  */
-goog.module('closureLint.rules.camelcase');
+goog.module('eslintClosure.rules.camelcase');
 
-const types = goog.require('closureLint.types');
-const utils = goog.require('closureLint.utils');
+const types = goog.require('eslintClosure.types');
+const utils = goog.require('eslintClosure.utils');
 
 /**
  * Valid options for the camelcase rule.

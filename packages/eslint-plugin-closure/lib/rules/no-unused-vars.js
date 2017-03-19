@@ -3,10 +3,10 @@
  * @author Ilya Volodin
  */
 
-goog.module('closureLint.rules.noUnusedVars');
+goog.module('eslintClosure.rules.noUnusedVars');
 
-const ast = goog.require('closureLint.ast');
-const utils = goog.require('closureLint.utils');
+const ast = goog.require('eslintClosure.ast');
+const utils = goog.require('eslintClosure.utils');
 
 /**
  * Valid options for the no-unused-vars rule.

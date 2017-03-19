@@ -2,9 +2,9 @@
  * @fileoverview Matchers for the AST.
  */
 
-goog.module('closureLint.ast');
+goog.module('eslintClosure.ast');
 
-const astMatcher = goog.require('closureLint.astMatcher');
+const astMatcher = goog.require('eslintClosure.astMatcher');
 
 /**
  * Returns an ancestor node of the given node that matches the testFunction.  If

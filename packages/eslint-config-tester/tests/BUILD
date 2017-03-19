@@ -5,7 +5,7 @@ load("//build_rules:mocha_closure_test.bzl", "mocha_closure_test")
 mocha_closure_test(
     name = "error-compare-test-bin",
     srcs = ["error-compare-test.js"],
-    entry_point = "closureLint.configTester.tests.errorCompareTest",
+    entry_point = "eslintClosure.configTester.tests.errorCompareTest",
     deps = [
         "//packages/eslint-config-tester/lib:error-compare",
         "//packages/eslint-config-tester/lib:types",
@@ -16,7 +16,7 @@ mocha_closure_test(
 mocha_closure_test(
     name = "config-tester-test-bin",
     srcs = ["config-tester-test.js"],
-    entry_point = "closureLint.configTester.tests.configTesterTest",
+    entry_point = "eslintClosure.configTester.tests.configTesterTest",
     deps = [
         "//packages/eslint-config-tester/lib:config-tester",
         "//packages/eslint-config-tester/lib:error-compare",

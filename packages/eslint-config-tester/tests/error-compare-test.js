@@ -3,12 +3,12 @@
  * @suppress {reportUnknownTypes}
  */
 
-goog.module('closureLint.configTester.tests.errorCompareTest');
+goog.module('eslintClosure.configTester.tests.errorCompareTest');
 goog.setTestOnly();
 
-const errorCompare = goog.require('closureLint.configTester.errorCompare');
+const errorCompare = goog.require('eslintClosure.configTester.errorCompare');
 const googSet = goog.require('goog.structs.Set');
-const types = goog.require('closureLint.configTester.types');
+const types = goog.require('eslintClosure.configTester.types');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
 

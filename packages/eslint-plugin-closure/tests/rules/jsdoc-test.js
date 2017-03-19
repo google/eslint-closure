@@ -2,9 +2,9 @@
  * @fileoverview Tests for JSDoc rule.
  */
 
-goog.module('closureLint.tests.rules.jsdoc');
+goog.module('eslintClosure.tests.rules.jsdoc');
 
-const jsdocRule = goog.require('closureLint.rules.jsdoc');
+const jsdocRule = goog.require('eslintClosure.rules.jsdoc');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 const noUnusedVarsRule = /** @type {!ESLint.RuleDefinition} */ (require('eslint/lib/rules/no-unused-vars'));

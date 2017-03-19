@@ -1,10 +1,10 @@
 /**
  * @fileoverview Utilities for working with Doctrine tags and types.
  */
-goog.module('closureLint.jsdocUtils');
+goog.module('eslintClosure.jsdocUtils');
 
 const array = goog.require('goog.array');
-const astMatcher = goog.require('closureLint.astMatcher');
+const astMatcher = goog.require('eslintClosure.astMatcher');
 
 const doctrine = /** @type {!Doctrine.Module} */ (require('doctrine'));
 

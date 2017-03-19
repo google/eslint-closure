@@ -3,12 +3,12 @@
  * @author Michael Ficarra
  */
 
-goog.module('closureLint.rules.noUnusedExpressions');
+goog.module('eslintClosure.rules.noUnusedExpressions');
 
 const array = goog.require('goog.array');
 
-const ast = goog.require('closureLint.ast');
-const jsdocUtils = goog.require('closureLint.jsdocUtils');
+const ast = goog.require('eslintClosure.ast');
+const jsdocUtils = goog.require('eslintClosure.jsdocUtils');
 
 /**
   * @param {!AST.Node} node - any node

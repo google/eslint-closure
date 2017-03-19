@@ -3,10 +3,10 @@
  */
 
 /* global describe it */
-goog.module('closureLint.tests.utils');
+goog.module('eslintClosure.tests.utils');
 
-const utils = goog.require('closureLint.utils');
-const {UnderscoreForm} = goog.require('closureLint.types');
+const utils = goog.require('eslintClosure.utils');
+const {UnderscoreForm} = goog.require('eslintClosure.types');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
 const expect = chai.expect;

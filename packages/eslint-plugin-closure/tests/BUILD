@@ -7,7 +7,7 @@ load("//build_rules:mocha_closure_test.bzl", "mocha_closure_test")
 mocha_closure_test(
     name = "ast-test-bin",
     srcs = ["ast-test.js"],
-    entry_point = "closureLint.tests.ast",
+    entry_point = "eslintClosure.tests.ast",
     deps = [
         "//packages/eslint-plugin-closure/lib:ast",
         "//packages/eslint-plugin-closure/lib:test-utils",
@@ -18,7 +18,7 @@ mocha_closure_test(
 mocha_closure_test(
     name = "ast-matcher-test-bin",
     srcs = ["ast-matcher-test.js"],
-    entry_point = "closureLint.tests.astMatcher",
+    entry_point = "eslintClosure.tests.astMatcher",
     deps = [
         "//packages/eslint-plugin-closure/lib:ast-matcher",
         "//packages/eslint-plugin-closure/lib/externs:all-externs",
@@ -28,7 +28,7 @@ mocha_closure_test(
 mocha_closure_test(
     name = "utils-test-bin",
     srcs = ["utils-test.js"],
-    entry_point = "closureLint.tests.utils",
+    entry_point = "eslintClosure.tests.utils",
     deps = [
         "//packages/eslint-plugin-closure/lib:types",
         "//packages/eslint-plugin-closure/lib:utils",
@@ -39,7 +39,7 @@ mocha_closure_test(
 mocha_closure_test(
     name = "jsdoc-utils-test-bin",
     srcs = ["jsdoc-utils-test.js"],
-    entry_point = "closureLint.tests.jsdocUtils",
+    entry_point = "eslintClosure.tests.jsdocUtils",
     deps = [
         "//packages/eslint-plugin-closure/lib:jsdoc-utils",
         "//packages/eslint-plugin-closure/lib:test-utils",

@@ -50,7 +50,7 @@ closure_js_binary(
         "--checks_only",
     ],
     dependency_mode = "strict",
-    entry_points = ["closureLint.docs.app"],
+    entry_points = ["eslintClosure.docs.app"],
     deps = [
         ":app-lib",
     ],

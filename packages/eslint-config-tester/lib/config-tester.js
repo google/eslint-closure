@@ -3,13 +3,13 @@
  * @suppress {reportUnknownTypes}
  */
 
-goog.module('closureLint.configTester.runner');
+goog.module('eslintClosure.configTester.runner');
 
-const errorCompare = goog.require('closureLint.configTester.errorCompare');
+const errorCompare = goog.require('eslintClosure.configTester.errorCompare');
 const googObject = goog.require('goog.object');
 const googSet = goog.require('goog.structs.Set');
 const googString = goog.require('goog.string');
-const types = goog.require('closureLint.configTester.types');
+const types = goog.require('eslintClosure.configTester.types');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 const fs = /** @type {!NodeJS.fs} */ (require('fs'));

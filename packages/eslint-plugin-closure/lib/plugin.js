@@ -1,12 +1,12 @@
-goog.module('closureLint.plugin');
+goog.module('eslintClosure.plugin');
 
-const camelcase = goog.require('closureLint.rules.camelcase');
-const indent = goog.require('closureLint.rules.indent');
-const inlineCommentSpacing = goog.require('closureLint.rules.inlineCommentSpacing');
-const jsdoc = goog.require('closureLint.rules.jsdoc');
-const noUndef = goog.require('closureLint.rules.noUndef');
-const noUnusedExpressions = goog.require('closureLint.rules.noUnusedExpressions');
-const noUnusedVars = goog.require('closureLint.rules.noUnusedVars');
+const camelcase = goog.require('eslintClosure.rules.camelcase');
+const indent = goog.require('eslintClosure.rules.indent');
+const inlineCommentSpacing = goog.require('eslintClosure.rules.inlineCommentSpacing');
+const jsdoc = goog.require('eslintClosure.rules.jsdoc');
+const noUndef = goog.require('eslintClosure.rules.noUndef');
+const noUnusedExpressions = goog.require('eslintClosure.rules.noUnusedExpressions');
+const noUnusedVars = goog.require('eslintClosure.rules.noUnusedVars');
 
 /**
  * @const {!ESLint.Config}

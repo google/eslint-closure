@@ -10,7 +10,7 @@ closure_js_binary(
         "--assume_function_wrapper",
     ],
     dependency_mode = "strict",
-    entry_points = ["closureLint.plugin"],
+    entry_points = ["eslintClosure.plugin"],
     deps = [
         "//packages/eslint-plugin-closure/lib:plugin",
     ],
@@ -28,7 +28,7 @@ closure_js_binary(
          "(function(goog){%output%}).call(global, global.goog);"),
     ],
     dependency_mode = "strict",
-    entry_points = ["closureLint.plugin"],
+    entry_points = ["eslintClosure.plugin"],
     formatting = "PRETTY_PRINT",
     deps = [
         "//packages/eslint-plugin-closure/lib:plugin",
@@ -44,7 +44,7 @@ closure_js_binary(
         "--rewrite_polyfills=false",
     ],
     dependency_mode = "strict",
-    entry_points = ["closureLint.plugin"],
+    entry_points = ["eslintClosure.plugin"],
     formatting = "PRETTY_PRINT",
     deps = [
         "//packages/eslint-plugin-closure/lib:plugin",
@@ -59,7 +59,7 @@ closure_js_binary(
         "--assume_function_wrapper",
     ],
     dependency_mode = "strict",
-    entry_points = ["closureLint.plugin"],
+    entry_points = ["eslintClosure.plugin"],
     deps = [
         "//packages/eslint-plugin-closure/lib:plugin",
     ],

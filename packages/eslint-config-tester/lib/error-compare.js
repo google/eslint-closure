@@ -3,10 +3,10 @@
  * @suppress {reportUnknownTypes}
  */
 
-goog.module('closureLint.configTester.errorCompare');
+goog.module('eslintClosure.configTester.errorCompare');
 
 const googObject = goog.require('goog.object');
-const types = goog.require('closureLint.configTester.types');
+const types = goog.require('eslintClosure.configTester.types');
 
 /** @type {!MochaJS.Module} */
 const Mocha = /** @type {!MochaJS.Module} */ (require('mocha'));

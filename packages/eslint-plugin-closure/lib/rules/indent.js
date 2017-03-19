@@ -4,15 +4,15 @@
  * This rule has been ported and modified from ESLint.
  */
 
-goog.module('closureLint.rules.indent');
+goog.module('eslintClosure.rules.indent');
 
 // TODO(jschaf): Why won't this build?
 // const {assert} = goog.require('goog.asserts');
 
-const ast = goog.require('closureLint.ast');
+const ast = goog.require('eslintClosure.ast');
 const functions = goog.require('goog.functions');
 const googString = goog.require('goog.string');
-const utils = goog.require('closureLint.utils');
+const utils = goog.require('eslintClosure.utils');
 
 /**
  * Information about the indentation preceeding an AST.Node.

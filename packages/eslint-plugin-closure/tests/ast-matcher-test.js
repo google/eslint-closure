@@ -5,9 +5,9 @@
 
 /* global describe it */
 
-goog.module('closureLint.tests.astMatcher');
+goog.module('eslintClosure.tests.astMatcher');
 
-const astMatcher = goog.require('closureLint.astMatcher');
+const astMatcher = goog.require('eslintClosure.astMatcher');
 
 const chai = /** @type {!Chai.Module} */ (require('chai'));
 

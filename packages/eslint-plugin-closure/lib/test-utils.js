@@ -2,7 +2,7 @@
  * @fileoverview Test utilities.
  */
 
-goog.module('closureLint.testUtils');
+goog.module('eslintClosure.testUtils');
 
 const eslint = /** @type {!ESLint.Module} */ (require('eslint'));
 

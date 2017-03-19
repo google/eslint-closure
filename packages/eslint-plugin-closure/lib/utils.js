@@ -1,9 +1,9 @@
 /**
  * @fileoverview Utilities for working with ESLint AST nodes and tokens.
  */
-goog.module('closureLint.utils');
+goog.module('eslintClosure.utils');
 
-const types = goog.require('closureLint.types');
+const types = goog.require('eslintClosure.types');
 
 /**
  * Returns true if the end of the left node is the same as the start of the

@@ -1,4 +1,4 @@
-goog.module('closureLint.types');
+goog.module('eslintClosure.types');
 
 /**
  * The type of underscore in an identifier.

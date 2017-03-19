@@ -10,7 +10,7 @@ closure_js_binary(
         "--rewrite_polyfills=false",
     ],
     dependency_mode = "strict",
-    entry_points = ["closureLint.configTester.runner"],
+    entry_points = ["eslintClosure.configTester.runner"],
     deps = [
         "//packages/eslint-config-tester/lib:config-tester",
     ],
@@ -25,7 +25,7 @@ closure_js_binary(
         "--rewrite_polyfills=false",
     ],
     dependency_mode = "strict",
-    entry_points = ["closureLint.configTester.runner"],
+    entry_points = ["eslintClosure.configTester.runner"],
     formatting = "PRETTY_PRINT",
     deps = [
         "//packages/eslint-config-tester/lib:config-tester",
@@ -44,7 +44,7 @@ closure_js_binary(
          "(function(goog){%output%}).call(global, global.goog);"),
     ],
     dependency_mode = "strict",
-    entry_points = ["closureLint.configTester.runner"],
+    entry_points = ["eslintClosure.configTester.runner"],
     formatting = "PRETTY_PRINT",
     deps = [
         "//packages/eslint-config-tester/lib:config-tester",
