@@ -55,12 +55,12 @@
 	// of fs module and because the way that rules are exposed confuses Webpack.
 	const eslint = /** @type {!ESLint.Linter} */ (window['eslint']);
 	
-	const CodeMirror = /** @type {!CodeMirrorJS.Object} */ (window.CodeMirror);
+	const CodeMirror = /** @type {!CM.Object} */ (window['CodeMirror']);
 	
 	const EDITOR_TEXT_AREA_ELEMENT = /** @type {!HTMLTextAreaElement} */ (
 	    document.getElementById('editor'));
 	
-	/** @const {!CodeMirrorJS.Doc} */
+	/** @const {!CM.Doc} */
 	const EDITOR = CodeMirror.fromTextArea(EDITOR_TEXT_AREA_ELEMENT, {
 	  mode: 'javascript',
 	  lineNumbers: true,

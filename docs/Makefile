@@ -18,9 +18,10 @@ webpack:
 js-prod: webpack
 	bazel build //docs:app-min
 	cp -f $(BAZEL_BIN)/docs/app-min.js dist/app.min.js
+	cp -f $(BAZEL_BIN)/docs/app-min.js.map dist/app.min.js.map
 
 serve:
-	bundle exec jekyll serve
+	./node_modules/.bin/http-server -p 7777 .
 
 develop:
 	yarn link eslint-plugin-closure eslint-config-closure-base eslint-config-closure-es5 eslint-config-closure-es6
@@ -31,3 +32,6 @@ update-eslint:
 
 copy-eslint:
 	cp -f $(ESLINT_REPO)/build/eslint.js js/eslint.js
+
+check-types:
+	bazel build //docs:app-check-types

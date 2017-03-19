@@ -1,25 +1,21 @@
+goog.module('closureLint.docs.app');
+
+const TagName = goog.require('goog.dom.TagName');
+const asserts = goog.require('goog.asserts');
+
 const closureLintPlugin = require('eslint-plugin-closure');
 const closureConfigBase = require('eslint-config-closure-base');
 const closureConfigEs5 = require('eslint-config-closure-es5');
 const closureConfigEs6 = require('eslint-config-closure-es6');
-const merge = require('lodash.merge');
+const merge = /** @type {function(!Object, ...!Object):!Object} */ (require('lodash.merge'));
 
 // ESLint is added manually by using their browserify config in the Makefile.
 // It's difficult to use Webpack to bundle ESLint ourselves because of the use
 // of fs module and because the way that rules are exposed confuses Webpack.
 const eslint = /** @type {!ESLint.Linter} */ (window['eslint']);
 
-const CodeMirror = /** @type {!CodeMirrorJS.Object} */ (window.CodeMirror);
-
-const EDITOR_TEXT_AREA_ELEMENT = /** @type {!HTMLTextAreaElement} */ (
-    document.getElementById('editor'));
-
-/** @const {!CodeMirrorJS.Doc} */
-const EDITOR = CodeMirror.fromTextArea(EDITOR_TEXT_AREA_ELEMENT, {
-  mode: 'javascript',
-  lineNumbers: true,
-});
-
+/** @type {!CM.Doc} */
+let EDITOR;
 const CSS_CLASS_WARNING = 'editor-warning';
 const CSS_CLASS_ERROR = 'editor-error';
 
@@ -30,7 +26,7 @@ const CSS_CLASS_ERROR = 'editor-error';
  * @template T
  */
 function clone(obj) {
-  return JSON.parse(JSON.stringify(obj));
+  return /** @type {!Object<T>} */ (JSON.parse(JSON.stringify(obj)));
 }
 
 const BASE_OPTIONS = /** @type {!ESLint.Config} */ (closureConfigBase);
@@ -38,6 +34,7 @@ const ES5_OPTIONS = /** @type {!ESLint.Config} */ (
     merge(clone(BASE_OPTIONS), closureConfigEs5));
 const ES6_OPTIONS = /** @type {!ESLint.Config} */ (
     merge(clone(BASE_OPTIONS), closureConfigEs6));
+/** @type {!ESLint.Config} */
 let OPTIONS = ES6_OPTIONS;
 
 /**
@@ -48,6 +45,9 @@ let OPTIONS = ES6_OPTIONS;
 function switchConfig(configKey) {
   const es5Button = document.getElementById('es5Button');
   const es6Button = document.getElementById('es6Button');
+  asserts.assertInstanceOf(es5Button, TagName.BUTTON);
+  asserts.assertInstanceOf(es6Button, TagName.BUTTON);
+
   const buttonHighlight = 'mdl-button--accent';
   switch (configKey) {
     case 'es5':
@@ -65,7 +65,7 @@ function switchConfig(configKey) {
     default:
       throw new Error('Unrecoginized config key, use es5 or es6.');
   }
-  verify();
+  // verify();
 }
 
 window['switchConfig'] = switchConfig;
@@ -76,6 +76,7 @@ window['switchConfig'] = switchConfig;
  * @param {number} wait
  * @param {boolean} immediate
  * @return {!Function}
+ * @suppress {newCheckTypes}
  */
 function debounce(func, wait, immediate) {
   let timeout;
@@ -209,28 +210,41 @@ function displayResults(results) {
   addWarningsErrors(results);
 }
 
+/**
+ * Initializes ESLint.
+ */
+function setupEslint() {
 
-console.log(closureLintPlugin.rules);
-const prefixedKeys = Object.keys(closureLintPlugin.rules)
-      .reduce((newObj, key) => {
-        const prefixedKey = 'closure/' + key;
-        newObj[prefixedKey] = closureLintPlugin.rules[key];
-        return newObj;
-      }, {});
-eslint.defineRules(prefixedKeys);
-console.log(prefixedKeys);
+  const CodeMirror = /** @type {!CM.Object} */ (window['CodeMirror']);
 
-console.log('OPTIONS', OPTIONS);
+  const EDITOR_TEXT_AREA_ELEMENT = /** @type {!HTMLTextAreaElement} */ (
+      document.getElementById('editor'));
 
-const verify = debounce(function() {
-  const content = EDITOR.getValue();
-  removeWarningsErrors();
-  console.log('verifying', content);
-  const results = eslint.verify(content, OPTIONS);
-  console.log(results);
-  displayResults(results);
-}, 500);
+  EDITOR = CodeMirror.fromTextArea(EDITOR_TEXT_AREA_ELEMENT, {
+    mode: 'javascript',
+    lineNumbers: true,
+  });
 
-verify();
+  const prefixedKeys = Object.keys(closureLintPlugin.rules)
+        .reduce((newObj, key) => {
+          const prefixedKey = 'closure/' + key;
+          newObj[prefixedKey] = closureLintPlugin.rules[key];
+          return newObj;
+        }, {});
+  eslint.defineRules(prefixedKeys);
 
-EDITOR.on('change', verify);
+  const verify = debounce(function() {
+    const content = EDITOR.getValue();
+    removeWarningsErrors();
+    console.log('verifying', content);
+    const results = eslint.verify(content, OPTIONS);
+    console.log(results);
+    displayResults(results);
+  }, 500);
+
+  verify();
+
+  EDITOR.on('change', verify);
+}
+
+document.addEventListener('DOMContentLoaded', setupEslint);

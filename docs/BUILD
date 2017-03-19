@@ -37,7 +37,7 @@ closure_js_library(
         "lintChecks",
         "nonStandardJsDocs",
         "misplacedTypeAnnotation",
-    ]
+    ],
 )
 
 closure_js_binary(
@@ -48,7 +48,8 @@ closure_js_binary(
         "--rewrite_polyfills=false",
         "--checks_only",
     ],
-    # entry_points = ["closureLint.configTester.runner"],
+    dependency_mode = "strict",
+    entry_points = ["closureLint.docs.app"],
     deps = [
         ":app-lib",
     ],
@@ -60,10 +61,10 @@ closure_js_binary(
         "--new_type_inf",
         "--assume_function_wrapper",
         "--rewrite_polyfills=false",
-        "--warning_level=QUIET"
+        "--warning_level=QUIET",
     ],
     deps = [
         ":app-webpack-bundle",
-        ":eslint-browserified"
+        ":eslint-browserified",
     ],
 )

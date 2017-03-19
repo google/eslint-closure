@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "description": "A demo site for the ESLint plugin and config for Closure.",
   "main": "index.js",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/google/eslint-closure"
@@ -45,6 +46,7 @@
   "dependencies": {
     "eslint": "~3.9.0",
     "espree": "^3.3.2",
+    "http-server": "^0.9.0",
     "json-loader": "^0.5.4",
     "lodash.ismatchwith": "~4.4.0",
     "lodash.merge": "^4.6.0"

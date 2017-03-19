@@ -3,147 +3,182 @@
  * @externs
  */
 
-const CodeMirrorJS = {};
+const CM = {};
 
-/** @record */ CodeMirrorJS.Object = function() {};
+/** @record */ CM.Object = function() {};
 /**
  *
  * @param {!HTMLTextAreaElement} textArea
- * @param {(!CodeMirrorJS.DocOptions|undefined)} config
+ * @param {(!CM.DocOptions|undefined)} config
  */
-CodeMirrorJS.Object.prototype.fromTextArea = function(textArea, config) {};
+CM.Object.prototype.fromTextArea = function(textArea, config) {};
 
-/** @record */ CodeMirrorJS.Doc = function() {};
+/** @record */ CM.Doc = function() {};
 
 /**
- * @param {!CodeMirrorJS.Position} start
- * @param {!CodeMirrorJS.Position} end
- * @param {!CodeMirrorJS.MarkOptions=} options
+ * @param {!CM.Position} start
+ * @param {!CM.Position} end
+ * @param {!CM.MarkOptions=} options
  */
-CodeMirrorJS.Doc.prototype.markText = function(start, end, options) {};
+CM.Doc.prototype.markText = function(start, end, options) {};
+
+/**
+ * @param {!CM.Position} pos
+ * @param {!CM.BookmarkOptions} options
+ * @return {!CM.TextMarker}
+ */
+CM.Doc.prototype.setBookmark = function(pos, options) {};
+/**
+ * @param {!CM.Position} from
+ * @param {!CM.Position} to
+ * @return {!Array<CM.TextMarker>}
+ */
+CM.Doc.prototype.doc.findMarks = function(from, to) {};
+/**
+ * @param {!CM.Position} pos
+ * @return {!Array<CM.TextMarker>}
+ */
+CM.Doc.prototype.doc.findMarksAt = function(pos) {};
+/**
+ * @return {!Array<CM.TextMarker>}
+ */
+CM.Doc.prototype.doc.getAllMarks = function() {};
 
 /**
  * @param {string=} separator
  */
-CodeMirrorJS.Doc.prototype.getValue = function(separator) {};
+CM.Doc.prototype.getValue = function(separator) {};
 
-/** @record @extends {CodeMirrorJS.Doc} */
-CodeMirrorJS.TextAreaDoc = function() {};
-CodeMirrorJS.TextAreaDoc.prototype.save = function() {};
-CodeMirrorJS.TextAreaDoc.prototype.toTextArea = function() {};
+/** @record @extends {CM.Doc} */ CM.TextAreaDoc = function() {};
+/** @type {function()} */ CM.TextAreaDoc.prototype.save;
+/** @type {function()} */ CM.TextAreaDoc.prototype.toTextArea;
 /**
  * @return {!HTMLTextAreaElement}
  */
-CodeMirrorJS.TextAreaDoc.prototype.getTextArea = function() {};
+CM.TextAreaDoc.prototype.getTextArea = function() {};
 
 
-/** @record */ CodeMirrorJS.Position = function() {};
-/** @type {number} */ CodeMirrorJS.Position.prototype.line;
-/** @type {number} */ CodeMirrorJS.Position.prototype.ch;
+/** @record */ CM.TextMarker = function() {};
+/** @type {function()} */ CM.TexMarker.prototype.clear;
+/** @type {function()} */ CM.TexMarker.prototype.changed;
+/** @return {{from: !CM.Position, to: !CM.Position}} */
+CM.TexMarker.prototype.find = function() {};
 
 
-/** @record */ CodeMirrorJS.MarkOptions = function() {};
-/** @type {(string|undefined)} */ CodeMirrorJS.MarkOptions.prototype.className;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.inclusiveLeft;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.inclusiveRight;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.atomic;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.collapsed;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.clearOnEnter;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.clearWhenEmpty;
-/** @type {(!Element|undefined)} */ CodeMirrorJS.MarkOptions.prototype.replacedWith;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.handleMouseEvents;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.readOnly;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.addToHistory;
-/** @type {(string|undefined)} */ CodeMirrorJS.MarkOptions.prototype.startStyle;
-/** @type {(string|undefined)} */ CodeMirrorJS.MarkOptions.prototype.endStyle;
-/** @type {(string|undefined)} */ CodeMirrorJS.MarkOptions.prototype.css;
-/** @type {(string|undefined)} */ CodeMirrorJS.MarkOptions.prototype.title;
-/** @type {(boolean|undefined)} */ CodeMirrorJS.MarkOptions.prototype.shared;
+/** @record */ CM.Position = function() {};
+/** @type {number} */ CM.Position.prototype.line;
+/** @type {number} */ CM.Position.prototype.ch;
 
-/** @record */ CodeMirrorJS.DocOptions = function() {};
-/** @type {(string|CodeMirrorJS.Doc|undefined)} */
-CodeMirrorJS.DocOptions.prototype.value;
+
+/** @record */ CM.MarkOptions = function() {};
+/** @type {(string|undefined)} */ CM.MarkOptions.prototype.className;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.inclusiveLeft;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.inclusiveRight;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.atomic;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.collapsed;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.clearOnEnter;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.clearWhenEmpty;
+/** @type {(!Element|undefined)} */ CM.MarkOptions.prototype.replacedWith;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.handleMouseEvents;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.readOnly;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.addToHistory;
+/** @type {(string|undefined)} */ CM.MarkOptions.prototype.startStyle;
+/** @type {(string|undefined)} */ CM.MarkOptions.prototype.endStyle;
+/** @type {(string|undefined)} */ CM.MarkOptions.prototype.css;
+/** @type {(string|undefined)} */ CM.MarkOptions.prototype.title;
+/** @type {(boolean|undefined)} */ CM.MarkOptions.prototype.shared;
+
+
+/** @record */ CM.BookmarkOptions = function() {};
+/** @type {(!Element|undefined)} */ CM.BookmarkOptions.prototype.widget;
+/** @type {(boolean|undefined)} */ CM.BookmarkOptions.prototype.insertLeft;
+/** @type {(boolean|undefined)} */ CM.BookmarkOptions.prototype.shared;
+/** @type {(boolean|undefined)} */ CM.BookmarkOptions.prototype.handleMouseEvents;
+
+/** @record */ CM.DocOptions = function() {};
+/** @type {(string|CM.Doc|undefined)} */
+CM.DocOptions.prototype.value;
 /** @type {(string|!Object|undefined)} */
-CodeMirrorJS.DocOptions.prototype.mode;
+CM.DocOptions.prototype.mode;
 /** @type {(?string|undefined)} */
-CodeMirrorJS.DocOptions.prototype.lineSeparator;
+CM.DocOptions.prototype.lineSeparator;
 /** @type {(string|undefined)} */
-CodeMirrorJS.DocOptions.prototype.theme;
+CM.DocOptions.prototype.theme;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.indentUnit;
+CM.DocOptions.prototype.indentUnit;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.smartIndent;
+CM.DocOptions.prototype.smartIndent;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.tabSize;
+CM.DocOptions.prototype.tabSize;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.indentWithTabs;
+CM.DocOptions.prototype.indentWithTabs;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.electricChars;
+CM.DocOptions.prototype.electricChars;
 /** @type {(RegExp|undefined)} */
-CodeMirrorJS.DocOptions.prototype.specialChars;
+CM.DocOptions.prototype.specialChars;
 /** @type {(function(string):!Element|undefined)} */
-CodeMirrorJS.DocOptions.prototype.specialCharPlaceholder;
+CM.DocOptions.prototype.specialCharPlaceholder;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.rtlMoveVisually;
+CM.DocOptions.prototype.rtlMoveVisually;
 /** @type {(string|undefined)} */
-CodeMirrorJS.DocOptions.prototype.keyMap;
+CM.DocOptions.prototype.keyMap;
 /** @type {(!Object|undefined)} */
-CodeMirrorJS.DocOptions.prototype.extraKeys;
+CM.DocOptions.prototype.extraKeys;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.lineWrapping;
+CM.DocOptions.prototype.lineWrapping;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.lineNumbers;
+CM.DocOptions.prototype.lineNumbers;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.firstLineNumber;
+CM.DocOptions.prototype.firstLineNumber;
 /** @type {(function(number):string|undefined)} */
-CodeMirrorJS.DocOptions.prototype.lineNumberFormatter;
+CM.DocOptions.prototype.lineNumberFormatter;
 /** @type {(!Array<string>|undefined)} */
-CodeMirrorJS.DocOptions.prototype.gutters;
+CM.DocOptions.prototype.gutters;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.fixedGutter;
+CM.DocOptions.prototype.fixedGutter;
 /** @type {(string|undefined)} */
-CodeMirrorJS.DocOptions.prototype.scrollbarStyle;
+CM.DocOptions.prototype.scrollbarStyle;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.coverGutterNextToScrollbar;
+CM.DocOptions.prototype.coverGutterNextToScrollbar;
 /** @type {(string|undefined)} */
-CodeMirrorJS.DocOptions.prototype.inputStyle;
+CM.DocOptions.prototype.inputStyle;
 /** @type {(boolean|string|undefined)} */
-CodeMirrorJS.DocOptions.prototype.readOnly;
+CM.DocOptions.prototype.readOnly;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.showCursorWhenSelecting;
+CM.DocOptions.prototype.showCursorWhenSelecting;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.lineWiseCopyCut;
+CM.DocOptions.prototype.lineWiseCopyCut;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.undoDepth;
+CM.DocOptions.prototype.undoDepth;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.historyEventDelay;
+CM.DocOptions.prototype.historyEventDelay;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.tabindex;
+CM.DocOptions.prototype.tabindex;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.autofocus;
+CM.DocOptions.prototype.autofocus;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.dragDrop;
+CM.DocOptions.prototype.dragDrop;
 /** @type {(!Array<string>|undefined)} */
-CodeMirrorJS.DocOptions.prototype.allowDropFileTypes;
+CM.DocOptions.prototype.allowDropFileTypes;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.cursorBlinkRate;
+CM.DocOptions.prototype.cursorBlinkRate;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.cursorScrollMargin;
+CM.DocOptions.prototype.cursorScrollMargin;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.cursorHeight;
+CM.DocOptions.prototype.cursorHeight;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.resetSelectionOnContextMenu;
+CM.DocOptions.prototype.resetSelectionOnContextMenu;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.workTime;
+CM.DocOptions.prototype.workTime;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.workDelay;
+CM.DocOptions.prototype.workDelay;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.pollInterval;
+CM.DocOptions.prototype.pollInterval;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.flattenSpans;
+CM.DocOptions.prototype.flattenSpans;
 /** @type {(boolean|undefined)} */
-CodeMirrorJS.DocOptions.prototype.addModeClass;
+CM.DocOptions.prototype.addModeClass;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.maxHighlightLength;
+CM.DocOptions.prototype.maxHighlightLength;
 /** @type {(number|undefined)} */
-CodeMirrorJS.DocOptions.prototype.viewportMargin;
+CM.DocOptions.prototype.viewportMargin;
