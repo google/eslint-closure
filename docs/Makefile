@@ -6,13 +6,7 @@ PLUGIN_DIR := ../packages/eslint-plugin-closure
 
 all: site
 
-site: update-dependencies webpack
-
-update-dependencies:
-	cp -f $(BASE_DIR)/index.js js/eslint-config-closure-base.js
-	cp -f $(ES5_DIR)/index.js js/eslint-config-closure-es5.js
-	cp -f $(ES6_DIR)/index.js js/eslint-config-closure-es6.js
-	cp -f $(PLUGIN_DIR)/dist/closure-eslint-plugin.js js/closure-eslint-plugin.js
+site: webpack
 
 webpack:
 	npm run webpack
