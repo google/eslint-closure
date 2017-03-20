@@ -24,13 +24,65 @@
 .rules .radio+.radio, .rules .checkbox+.checkbox {
     margin-top: inherit;
 }
+.err {
+  border-bottom:2px dotted red;
+  display: inline-block;
+  position: relative;
 
-.editor-warning {
-  background-color: yellow;
 }
 
-.editor-error {
-  background-color: red;
+.err:after {
+  content: '';
+  width: 100%;
+  border-bottom:2px dotted red;
+  position: absolute;
+  font-size: 16px;
+  top: 15px; /* Must be font-size minus one (16px - 1px) */
+  left: -2px;
+  display: block;
+  height: 4px;
+
+
+}
+
+.cm__lint-warning {
+  background-image:
+  linear-gradient(45deg, transparent 65%, #EE7600 80%, transparent 90%),
+  linear-gradient(135deg, transparent 5%, #EE7600 15%, transparent 25%),
+  linear-gradient(135deg, transparent 45%, #EE7600 55%, transparent 65%),
+  linear-gradient(45deg, transparent 25%, #EE7600 35%, transparent 50%);
+  background-repeat:repeat-x;
+  background-size: 8px 2px;
+  background-position:0 100%;
+}
+
+.cm__lint-error {
+  background-image:
+    linear-gradient(45deg, transparent 65%, red 80%, transparent 90%),
+    linear-gradient(135deg, transparent 5%, red 15%, transparent 25%),
+    linear-gradient(135deg, transparent 45%, red 55%, transparent 65%),
+    linear-gradient(45deg, transparent 25%, red 35%, transparent 50%);
+  background-repeat:repeat-x;
+  background-size: 8px 2px;
+  background-position:0 100%;
+}
+
+.cm-gutter-container__error {
+  width: 10px;
+}
+
+.cm-gutter-container__warning {
+  width: 10px;
+}
+
+.cm-gutter__error {
+  color: red;
+  font-size: 150%;
+}
+
+.cm-gutter__warning {
+  color: orange;
+  font-size: 150%;
 }
 
 .CodeMirror {

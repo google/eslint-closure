@@ -17,8 +17,8 @@ if (process.env.NODE_ENV === 'development') {
 
 /** @type {!CM.Doc} */
 let EDITOR;
-const CSS_CLASS_WARNING = 'editor-warning';
-const CSS_CLASS_ERROR = 'editor-error';
+const CSS_CLASS_WARNING = 'cm__lint-warning';
+const CSS_CLASS_ERROR = 'cm__lint-error';
 
 /**
  * Creates a new ESLint config by merging a and b.  b overwrites a.
@@ -141,9 +141,7 @@ function makeResultNode(msg) {
   }
 
   const lintMessage = `<span class="mdl-list__item-primary-content">
-${msg.line}:${msg.column} - ${msg.message}</span>
-<span class="mdl-list__item-secondary-content>${msg.ruleId}</span>`
-
+${msg.line}:${msg.column} - ${msg.message} (${msg.ruleId})</span>`
   result.innerHTML = lintMessage;
   return result;
 }
@@ -154,6 +152,8 @@ ${msg.line}:${msg.column} - ${msg.message}</span>
  */
 function removeWarningsErrors() {
   EDITOR.getAllMarks().forEach(mark => mark.clear());
+  EDITOR.clearGutter('cm-gutter-container__error');
+  EDITOR.clearGutter('cm-gutter-container__warning');
 }
 
 /**
@@ -175,20 +175,32 @@ function messageSeverityCssClass(eslintMessage) {
  */
 function addWarningsErrors(eslintMessages) {
   eslintMessages.forEach((msg) => {
-    // ESLint is 1 based, CodeMirror is 0 based.
-    // TODO: handle cases wh
-    const line = msg.line - 1;
+    // NOTE: ESLint is 1 based, CodeMirror is 0 based.
+    const startLine = msg.line - 1;
     const startColumn = msg.column - 1;
-    const endColumn = startColumn + 1;
+    const endLine = msg.endLine || startLine;
+    const endColumn = msg.endColumn || startColumn + 1;
+
     const className = messageSeverityCssClass(msg);
+
     // TODO: add description on hover
     const description = `${msg.msg} (${msg.ruleId})`;
 
-    const markStart = {line, ch: startColumn};
-    const markEnd = {line, ch: endColumn};
+    const markStart = {line: startLine, ch: startColumn};
+    const markEnd = {line: endLine, ch: endColumn};
     const markOptions = {className};
 
     EDITOR.markText(markStart, markEnd, markOptions);
+
+    const gutterContainerName = msg.severity == 2 ?
+          'cm-gutter-container__error' :
+          'cm-gutter-container__warning';
+    const gutterClassName = msg.severity == 2 ? 'cm-gutter__error' :
+          'cm-gutter__warning';
+    const gutterLineElem =  document.createElement('span');
+    gutterLineElem.textContent = '●';
+    gutterLineElem.classList.add(gutterClassName);
+    EDITOR.setGutterMarker(startLine, gutterContainerName, gutterLineElem);
   });
 }
 
@@ -261,6 +273,7 @@ function setupEslint() {
   EDITOR = /** @type {!CM.Doc} */ (CodeMirror.fromTextArea(editorTextArea, {
     mode: 'javascript',
     lineNumbers: true,
+    gutters: ['cm-gutter-container__error', 'cm-gutter-container__warning'],
   }));
   console.log('Setting up editor');
 
