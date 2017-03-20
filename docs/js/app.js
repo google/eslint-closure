@@ -11,6 +11,10 @@ const closureConfigEs5 = /** @const {!ESLint.Config} */ (
 const closureConfigEs6 = /** @const {!ESLint.Config} */ (
     require('eslint-config-closure-es6'));
 
+if (process.env.NODE_ENV === 'development') {
+  require('../index.html')
+}
+
 /** @type {!CM.Doc} */
 let EDITOR;
 const CSS_CLASS_WARNING = 'editor-warning';
@@ -112,41 +116,35 @@ function debounce(func, wait, immediate) {
 
 /**
  * Makes a div container for ESLint results.
- * @param {!ESLint.LintMessage} options
+ * @param {!ESLint.LintMessage} msg
  * @return {!HTMLDivElement}
  */
-function makeResultNode(options) {
-  const result = /** @type {!HTMLDivElement} */ (document.createElement('div'));
+function makeResultNode(msg) {
+  const result = /** @type {!HTMLDivElement} */ (document.createElement('li'));
   const classList = result.classList;
 
-  classList.add('alert');
+  classList.add('mdl-list__item');
 
-  if (options.fatal) {
-    classList.add('alert-danger');
+  if (msg.fatal) {
+    classList.add('lint-result__fatal');
   }
 
-
-  switch (options.severity) {
+  switch (msg.severity) {
     case 1:
-      classList.add('alert-warning');
+      classList.add('list-result__warning');
       break;
     case 2:
-      classList.add('alert-danger');
+      classList.add('lint-result__error');
       break;
     default:
-      classList.add('alert-success');
+      classList.add('lint-result__unknown');
   }
 
-  // result.onclick = null;
-  // (function(EDITOR, options) {
-  //   EDITOR.onGotoLine(
-  //       options.line - 1, options.column - 1, options.column - 1);
-  // }).bind(null, EDITOR, options);
+  const lintMessage = `<span class="mdl-list__item-primary-content">
+${msg.line}:${msg.column} - ${msg.message}</span>
+<span class="mdl-list__item-secondary-content>${msg.ruleId}</span>`
 
-  result.innerHTML = `${options.line}:${options.column} - ${options.message} ` +
-      `(${options.ruleId})`;
-  result.setAttribute('title', options.message);
-
+  result.innerHTML = lintMessage;
   return result;
 }
 
@@ -176,15 +174,15 @@ function messageSeverityCssClass(eslintMessage) {
  * @param {!Array<!ESLint.LintMessage>} eslintMessages
  */
 function addWarningsErrors(eslintMessages) {
-  eslintMessages.forEach((message) => {
+  eslintMessages.forEach((msg) => {
     // ESLint is 1 based, CodeMirror is 0 based.
     // TODO: handle cases wh
-    const line = message.line - 1;
-    const startColumn = message.column - 1;
+    const line = msg.line - 1;
+    const startColumn = msg.column - 1;
     const endColumn = startColumn + 1;
-    const className = messageSeverityCssClass(message);
+    const className = messageSeverityCssClass(msg);
     // TODO: add description on hover
-    const description = `${message.message} (${message.ruleId})`;
+    const description = `${msg.msg} (${msg.ruleId})`;
 
     const markStart = {line, ch: startColumn};
     const markEnd = {line, ch: endColumn};
@@ -199,10 +197,10 @@ function addWarningsErrors(eslintMessages) {
  * @param {!Array<!ESLint.LintMessage>} results
  */
 function displayResults(results) {
-  const resultsNode = /** @type {!HTMLDivElement} */ (
+  const resultsNode = /** @type {!HTMLUlElement} */ (
       document.getElementById('results'));
   if (!resultsNode) {
-    throw new Error('Can\'t find div#results.');
+    throw new Error('Can\'t find #results element.');
   }
 
   const nodes = Array.from(resultsNode.childNodes);
@@ -210,7 +208,7 @@ function displayResults(results) {
 
   if (results.length === 0) {
     const resultNode = makeResultNode({
-      message: 'Lint-free!', severity: -1, line: -1, column: -1,
+      msg: 'Lint-free!', severity: -1, line: -1, column: -1,
       source: 'HOORAY', ruleId: 'lint-free', nodeType: 'lint-free',
     });
     resultsNode.appendChild(resultNode);
@@ -223,6 +221,22 @@ function displayResults(results) {
 
   removeWarningsErrors();
   addWarningsErrors(results);
+}
+
+
+/**
+ * Returns a function that verifies the content in code mirror with linter.
+ * @param {!ESLint.Linter} linter
+ * @param {!CM.Doc} codeMirrorDoc
+ * @return {function()}
+ */
+function makeVerifier(linter, codeMirrorDoc) {
+  return debounce(() => {
+    removeWarningsErrors();
+    const content = codeMirrorDoc.getValue();
+    const results = linter.verify(content, OPTIONS);
+    displayResults(results);
+  }, 500);
 }
 
 /**
@@ -248,6 +262,7 @@ function setupEslint() {
     mode: 'javascript',
     lineNumbers: true,
   }));
+  console.log('Setting up editor');
 
   const prefixedClosureRules = {};
   Object.keys(closureLintPlugin.rules).forEach(ruleId => {
@@ -257,16 +272,11 @@ function setupEslint() {
 
   linter.defineRules(prefixedClosureRules);
 
-  const verify = debounce(function() {
-    const content = EDITOR.getValue();
-    removeWarningsErrors();
-    const results = linter.verify(content, OPTIONS);
-    displayResults(results);
-  }, 500);
+  const verifyCodeMirror = makeVerifier(linter, EDITOR);
 
-  verify();
-
-  EDITOR.on('change', verify);
+  verifyCodeMirror();
+  EDITOR.on('change', verifyCodeMirror);
 }
+
 
 document.addEventListener('DOMContentLoaded', setupEslint);
