@@ -74,6 +74,12 @@ class Editor {
     this.codeMirrorDoc.on('change', debouncedVerifyCode);
   }
 
+  fixAll() {
+    const {messages, output} = applyFixes(this.getValue(), this.eslintMessages);
+    this.codeMirrorDoc.setValue(output);
+    this.displayLintResults(messages);
+  }
+
   /**
    *
    * @return {!Array<!ESLint.LintMessage>}
@@ -102,9 +108,6 @@ class Editor {
     msg.endColumn = this.findEndColumn(msg);
     return msg;
   }
-
-
-
 
   /**
    * Figures out where message should end, exclusive.
@@ -349,53 +352,42 @@ function compareMessagesByFixRange(a, b) {
  * @returns {Object} An object containing the fixed text and any unfixed messages.
  */
 function applyFixes(text, messages) {
-  // clone the array
   const remainingMessages = [];
-  const fixes = [];
+  const fixableMessages = [];
 
   let lastPos = Number.NEGATIVE_INFINITY;
   let output = "";
 
-  messages.forEach(problem => {
-    if (problem.hasOwnProperty("fix")) {
-      fixes.push(problem);
+  messages.forEach(message => {
+    if (message.hasOwnProperty("fix")) {
+      fixableMessages.push(message);
     } else {
-      remainingMessages.push(problem);
+      remainingMessages.push(message);
     }
   });
+  fixableMessages.sort(compareMessagesByFixRange);
+  for (const fixableMessage of fixableMessages) {
+    const fix = fixableMessage.fix;
+    const start = fix.range[0];
+    const end = fix.range[1];
 
-  if (fixes.length) {
-
-    for (const problem of fixes.sort(compareMessagesByFixRange)) {
-      const fix = problem.fix;
-      const start = fix.range[0];
-      const end = fix.range[1];
-
-      // Remain it as a problem if it's overlapped or it's a negative range
-      if (lastPos >= start || start > end) {
-        remainingMessages.push(problem);
-        continue;
-      }
-
-      // Make output to this fix.
-      output += text.slice(Math.max(0, lastPos), Math.max(0, start));
-      output += fix.text;
-      lastPos = end;
+    // Keep this message if it overlaps or has a negative range.
+    if (lastPos >= start || start > end) {
+      remainingMessages.push(fixableMessage);
+      continue;
     }
-    output += text.slice(Math.max(0, lastPos));
 
-    return {
-      fixed: true,
-      messages: remainingMessages.sort(compareMessagesByLocation),
-      output
-    };
+    output += text.slice(Math.max(0, lastPos), Math.max(0, start));
+    output += fix.text;
+    lastPos = end;
   }
+  output += text.slice(Math.max(0, lastPos));
 
-  debug("No fixes to apply");
+  const anyFixes = fixableMessages.length > 0;
   return {
-    fixed: false,
-    messages,
-    output: text,
+    fixed: anyFixes,
+    messages: remainingMessages,
+    output,
   };
 
 };
@@ -411,6 +403,7 @@ function setupEditor() {
       document.getElementById('editor'));
 
   const editor = new Editor(linter, CodeMirror, editorTextArea);
+  window['EDITOR'] = editor;
 }
 
 document.addEventListener('DOMContentLoaded', setupEditor);
