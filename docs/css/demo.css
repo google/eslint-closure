@@ -66,22 +66,17 @@
   background-size: 8px 2px;
   background-position:0 100%;
 }
-
-.cm-gutter-container__error {
+.cm-gutter-container {
   width: 10px;
-}
-
-.cm-gutter-container__warning {
-  width: 10px;
-}
-
-.cm-gutter__error {
-  color: red;
-  font-size: 150%;
 }
 
 .cm-gutter__warning {
   color: orange;
+  font-size: 150%;
+}
+
+.cm-gutter__error {
+  color: red;
   font-size: 150%;
 }
 

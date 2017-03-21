@@ -12,13 +12,58 @@ const closureConfigEs6 = /** @const {!ESLint.Config} */ (
     require('eslint-config-closure-es6'));
 
 if (process.env.NODE_ENV === 'development') {
-  require('../index.html')
+  require('../index.html');
 }
 
 /** @type {!CM.Doc} */
 let EDITOR;
 const CSS_CLASS_WARNING = 'cm__lint-warning';
 const CSS_CLASS_ERROR = 'cm__lint-error';
+const GUTTER_NAME = 'cm-gutter-container';
+const SINGLE_COLUMN_RULES = {
+  'closure/indent': true,
+  'dot-location': true,
+  'dot-notation': true,
+  'eol-last': true,
+  'no-empty': true,
+  'no-extra-parens': true,
+  'no-extra-semi': true,
+  'no-irregular-whitespace': true,
+  'no-regex-spaces': true,
+  'semi': true,
+}
+
+class Editor {
+  /**
+   *
+   * @param {!ESLint.Linter} linter
+   * @param {!HTMLTextAreaElement} textArea
+   */
+  constructor(linter, textArea) {
+    this.cmEditor = CodeMirror.fromTextArea(textArea, {
+      mode: 'javascript',
+      lineNumbers: true,
+      gutters: [GUTTER_NAME],
+    });
+
+    window["EDITOR"] = EDITOR;
+    console.log('Setting up editor');
+
+    const prefixedClosureRules = {};
+    Object.keys(closureLintPlugin.rules).forEach(ruleId => {
+      const prefixedRuleId = 'closure/' + ruleId;
+      prefixedClosureRules[prefixedRuleId ] = closureLintPlugin.rules[ruleId];
+    });
+
+    linter.defineRules(prefixedClosureRules);
+
+    const verifyCodeMirror = makeVerifier(linter, EDITOR);
+
+    verifyCodeMirror();
+    EDITOR.on('change', verifyCodeMirror);
+  }
+}
+
 
 /**
  * Creates a new ESLint config by merging a and b.  b overwrites a.
@@ -152,8 +197,7 @@ ${msg.line}:${msg.column} - ${msg.message} (${msg.ruleId})</span>`
  */
 function removeWarningsErrors() {
   EDITOR.getAllMarks().forEach(mark => mark.clear());
-  EDITOR.clearGutter('cm-gutter-container__error');
-  EDITOR.clearGutter('cm-gutter-container__warning');
+  EDITOR.clearGutter(GUTTER_NAME);
 }
 
 /**
@@ -169,38 +213,99 @@ function messageSeverityCssClass(eslintMessage) {
   }
 }
 
+
+/**
+ * Figures out where message should end, exclusive.
+ * Most ESLint rules don't return a range, so we only highlight one character.
+ * For most rules, we should highlight at least the next word.
+ * @param {!ESLint.LintMessage} msg
+ */
+function findEndColumn(msg) {
+  const line = msg.line;
+  const column = msg.column;
+  if (SINGLE_COLUMN_RULES[msg.ruleId]) {
+    return column + 1;
+  }
+
+  const content = EDITOR.getLine(line);
+  const nextContent = content.slice(column + 1);
+  let spanLength = 1;
+  matches = nextContent.match(/\w+/);
+  if (matches) {
+    spanLength = matches[0].length;
+  }
+  return column + 1 + spanLength;
+}
+
+/**
+ * Marks the code specified by the lint message.
+ * @param {!ESLint.LintMessage} msg
+ */
+function markLintMessage(msg) {
+  const className = messageSeverityCssClass(msg);
+
+  // TODO: add description on hover
+  const description = `${msg.msg} (${msg.ruleId})`;
+
+  const markStart = {line: msg.line, ch: msg.column};
+  const markEnd = {line: msg.endLine, ch: msg.endColumn};
+  const markOptions = {className};
+
+  EDITOR.markText(markStart, markEnd, markOptions);
+}
+
+/**
+ * Marks the line containing message with warning or error.
+ * @param {!ESLint.LintMessage} msg
+ * @param {!Element} gutterLineElem
+ */
+function markLineGutter(msg, gutterLineElem) {
+  const gutterClassName = msg.severity == 2 ? 'cm-gutter__error' :
+        'cm-gutter__warning';
+  gutterLineElem.classList.add(gutterClassName);
+}
+
+/**
+ * Modifies an ESLint message into code mirror friendly conventions:
+ * - 0-based indexing
+ * - computes a reasonable end-column and end-line.
+ * @param {!ESLint.LintMessage} msg
+ * @return {!ESLint.LintMessage}
+ */
+function codeMirrorifyEslintMessage(msg) {
+  msg.line--;
+  const lineContent = EDITOR.getLine(msg.line);
+  msg.column = Math.min(lineContent.length - 1, msg.column - 1);
+  msg.endLine = msg.endLine ? message.endLine - 1 : msg.line;
+  msg.endColumn = findEndColumn(msg);
+  return msg;
+}
+
 /**
  * Add all ESLint warnings and errors to editor.
  * @param {!Array<!ESLint.LintMessage>} eslintMessages
  */
 function addWarningsErrors(eslintMessages) {
-  eslintMessages.forEach((msg) => {
-    // NOTE: ESLint is 1 based, CodeMirror is 0 based.
-    const startLine = msg.line - 1;
-    const startColumn = msg.column - 1;
-    const endLine = msg.endLine || startLine;
-    const endColumn = msg.endColumn || startColumn + 1;
+  // group errors by line
+  const msgByLine = {};
+  messages = eslintMessages.map(codeMirrorifyEslintMessage);
+  messages.forEach(msg => {
+    const line = msg.line;
+    if (!msgByLine[line]) {
+      msgByLine[line] = [];
+    }
+    msgByLine[line].push(msg);
+  });
 
-    const className = messageSeverityCssClass(msg);
-
-    // TODO: add description on hover
-    const description = `${msg.msg} (${msg.ruleId})`;
-
-    const markStart = {line: startLine, ch: startColumn};
-    const markEnd = {line: endLine, ch: endColumn};
-    const markOptions = {className};
-
-    EDITOR.markText(markStart, markEnd, markOptions);
-
-    const gutterContainerName = msg.severity == 2 ?
-          'cm-gutter-container__error' :
-          'cm-gutter-container__warning';
-    const gutterClassName = msg.severity == 2 ? 'cm-gutter__error' :
-          'cm-gutter__warning';
-    const gutterLineElem =  document.createElement('span');
+  Object.keys(msgByLine).forEach(line => {
+    const messages = msgByLine[line];
+    const gutterLineElem = document.createElement('span');
     gutterLineElem.textContent = '●';
-    gutterLineElem.classList.add(gutterClassName);
-    EDITOR.setGutterMarker(startLine, gutterContainerName, gutterLineElem);
+    messages.forEach(msg => {
+      markLintMessage(msg);
+      markLineGutter(msg, gutterLineElem);
+    });
+    EDITOR.setGutterMarker(Number(line), GUTTER_NAME, gutterLineElem);
   });
 }
 
@@ -252,6 +357,76 @@ function makeVerifier(linter, codeMirrorDoc) {
 }
 
 /**
+ * Compares items in a messages array by range.
+ * @param {!ESLint.LintMessage} a The first message.
+ * @param {!ESLint.LintMessage} b The second message.
+ * @returns {number} -1 if a comes before b, 1 if a comes after b, 0 if equal.
+ */
+function compareMessagesByFixRange(a, b) {
+  return a.fix.range[0] - b.fix.range[0] || a.fix.range[1] - b.fix.range[1];
+}
+
+/**
+ * Applies the fixes specified by the messages to the given text. Tries to be
+ * smart about the fixes and won't apply fixes over the same area in the text.
+ * @param {text} text
+ * @param {!Array<!ESLint.LintMessage>} messages
+ * @returns {Object} An object containing the fixed text and any unfixed messages.
+ */
+function applyFixes(text, messages) {
+  // clone the array
+  const remainingMessages = [];
+  const fixes = [];
+
+  let lastPos = Number.NEGATIVE_INFINITY;
+  let output = "";
+
+  messages.forEach(problem => {
+    if (problem.hasOwnProperty("fix")) {
+      fixes.push(problem);
+    } else {
+      remainingMessages.push(problem);
+    }
+  });
+
+  if (fixes.length) {
+
+    for (const problem of fixes.sort(compareMessagesByFixRange)) {
+      const fix = problem.fix;
+      const start = fix.range[0];
+      const end = fix.range[1];
+
+      // Remain it as a problem if it's overlapped or it's a negative range
+      if (lastPos >= start || start > end) {
+        remainingMessages.push(problem);
+        continue;
+      }
+
+      // Make output to this fix.
+      output += text.slice(Math.max(0, lastPos), Math.max(0, start));
+      output += fix.text;
+      lastPos = end;
+    }
+    output += text.slice(Math.max(0, lastPos));
+
+    return {
+      fixed: true,
+      messages: remainingMessages.sort(compareMessagesByLocation),
+      output
+    };
+  }
+
+  debug("No fixes to apply");
+  return {
+    fixed: false,
+    messages,
+    output: text,
+  };
+
+};
+
+
+/**
  * Initializes ESLint.
  */
 function setupEslint() {
@@ -273,8 +448,10 @@ function setupEslint() {
   EDITOR = /** @type {!CM.Doc} */ (CodeMirror.fromTextArea(editorTextArea, {
     mode: 'javascript',
     lineNumbers: true,
-    gutters: ['cm-gutter-container__error', 'cm-gutter-container__warning'],
+    gutters: [GUTTER_NAME],
   }));
+
+  window["EDITOR"] = EDITOR;
   console.log('Setting up editor');
 
   const prefixedClosureRules = {};

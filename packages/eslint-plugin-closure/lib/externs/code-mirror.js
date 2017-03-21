@@ -57,6 +57,12 @@ CM.Doc.prototype.on = function(event, fn) {};
  */
 CM.Doc.prototype.getValue = function(separator) {};
 
+/**
+ * @param {number} n
+ * @return {string}
+ */
+CM.Doc.prototype.getLine = function(n) {};
+
 /** @record @extends {CM.Doc} */ CM.TextAreaDoc = function() {};
 /** @type {function()} */ CM.TextAreaDoc.prototype.save;
 /** @type {function()} */ CM.TextAreaDoc.prototype.toTextArea;
