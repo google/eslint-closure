@@ -37,17 +37,24 @@ class Editor {
   /**
    *
    * @param {!ESLint.Linter} linter
+   * @param {!CM.Object} CodeMirror
    * @param {!HTMLTextAreaElement} textArea
    */
-  constructor(linter, textArea) {
-    this.cmEditor = CodeMirror.fromTextArea(textArea, {
+  constructor(linter, CodeMirror, textArea) {
+    this.codeMirrorDoc = CodeMirror.fromTextArea(textArea, {
       mode: 'javascript',
       lineNumbers: true,
       gutters: [GUTTER_NAME],
     });
+    this.linter = linter;
 
-    window["EDITOR"] = EDITOR;
-    console.log('Setting up editor');
+    this.eslintMessages = [];
+
+    this.resultsNode = /** @type {!HTMLUlElement} */ (
+        document.getElementById('results'));
+    if (!this.resultsNode) {
+      throw new Error('Can\'t find #results element.');
+    }
 
     const prefixedClosureRules = {};
     Object.keys(closureLintPlugin.rules).forEach(ruleId => {
@@ -55,15 +62,180 @@ class Editor {
       prefixedClosureRules[prefixedRuleId ] = closureLintPlugin.rules[ruleId];
     });
 
-    linter.defineRules(prefixedClosureRules);
+    this.linter.defineRules(prefixedClosureRules);
 
-    const verifyCodeMirror = makeVerifier(linter, EDITOR);
+    const debouncedVerifyCode = debounce(() => {
+      this.clearAllErrors();
+      const results = this.verifyCode();
+      this.displayLintResults(results);
+    }, 500);
 
-    verifyCodeMirror();
-    EDITOR.on('change', verifyCodeMirror);
+    debouncedVerifyCode();
+    this.codeMirrorDoc.on('change', debouncedVerifyCode);
   }
+
+  /**
+   *
+   * @return {!Array<!ESLint.LintMessage>}
+   */
+  verifyCode() {
+    const content = this.codeMirrorDoc.getValue();
+    const messages = this.linter.verify(content, OPTIONS);
+    this.eslintMessages = messages.map(
+        msg => this.codeMirrorifyEslintMessage(msg));
+    this.eslintMessagesByLine = this.groupMessagesByLine(this.eslintMessages);
+    return this.eslintMessages;
+  }
+
+  /**
+   * Modifies an ESLint message into code mirror friendly conventions:
+   * - 0-based indexing
+   * - computes a reasonable end-column and end-line.
+   * @param {!ESLint.LintMessage} msg
+   * @return {!ESLint.LintMessage}
+   */
+  codeMirrorifyEslintMessage(msg) {
+    msg.line--;
+    const sourceLine = this.codeMirrorDoc.getLine(msg.line);
+    msg.column = Math.min(sourceLine.length - 1, msg.column - 1);
+    msg.endLine = msg.endLine ? message.endLine - 1 : msg.line;
+    msg.endColumn = this.findEndColumn(msg);
+    return msg;
+  }
+
+
+
+
+  /**
+   * Figures out where message should end, exclusive.
+   * Most ESLint rules don't return a range, so we only highlight one character.
+   * For most rules, we should highlight at least the next word.
+   * @param {!ESLint.LintMessage} msg
+   */
+  findEndColumn(msg) {
+    const line = msg.line;
+    const column = msg.column;
+    if (SINGLE_COLUMN_RULES[msg.ruleId]) {
+      return column + 1;
+    }
+
+    const content = this.codeMirrorDoc.getLine(line);
+    const nextContent = content.slice(column + 1);
+    let spanLength = 1;
+    const matches = nextContent.match(/\w+/);
+    if (matches) {
+      spanLength = matches[0].length;
+    }
+    return column + 1 + spanLength;
+  }
+
+  groupMessagesByLine(messages) {
+    const msgByLine = {};
+    messages.forEach(msg => {
+      const line = msg.line;
+      msgByLine[line] = msgByLine[line] || [];
+      msgByLine[line].push(msg);
+    });
+    return msgByLine;
+  }
+
+  getValue() {
+    return this.codeMirrorDoc.getValue();
+  }
+
+  /**
+   * Creates list of HTML lint results.
+   * @param {!Array<!ESLint.LintMessage>} results
+   */
+  displayLintResults(messages) {
+    this.resultsNode.innerHTML = "";
+
+    if (messages.length === 0) {
+      this.resultsNode.innerHTML("<li>Lint Free!</li>");
+      return;
+    }
+
+    messages.forEach(message => {
+      this.resultsNode.appendChild(this.makeResultNode(message));
+    });
+
+    this.markAllErrors(messages);
+    this.markAllGutters(messages);
+  }
+
+  /**
+   * Transform an individual ESLint message to an HTML node.
+   * @param {!ESLint.LintMessage} message
+   * @return {!HTMLDivElement}
+   */
+  makeResultNode(message) {
+    const elem = /** @type {!HTMLLiElement} */ (document.createElement('li'));
+
+    elem.classList.add('mdl-list__item');
+
+    if (message.fatal) {
+      elem.classList.add('lint-result__fatal');
+    }
+    if (message.severity == 1) {
+      elem.classList.add('list-result__warning');
+    } else {
+      elem.classList.add('lint-result__error');
+    }
+
+    const lintMessage = `<span class="mdl-list__item-primary-content">
+${message.line}:${message.column} - ${message.message} (${message.ruleId})</span>`
+    elem.innerHTML = lintMessage;
+    return elem;
+  }
+
+  clearAllErrors() {
+    this.codeMirrorDoc.getAllMarks().forEach(mark => mark.clear());
+    this.codeMirrorDoc.clearGutter(GUTTER_NAME);
+  }
+
+  markError(lintMessage) {
+    const markStart = {line: lintMessage.line, ch: lintMessage.column};
+    const markEnd = {line: lintMessage.endLine, ch: lintMessage.endColumn};
+    const markOptions = {className: messageSeverityCssClass(lintMessage)};
+    this.codeMirrorDoc.markText(markStart, markEnd, markOptions);
+  }
+
+  markAllErrors(lintMessages) {
+    this.clearAllErrors();
+    lintMessages.forEach(msg => this.markError(msg));
+  }
+
+  markAllGutters(messages) {
+    this.codeMirrorDoc.clearGutter(GUTTER_NAME);
+    const msgByLine = this.groupMessagesByLine(messages);
+    Object.keys(msgByLine).forEach(line => {
+      const messages = msgByLine[line];
+      const gutterLineElem = document.createElement('span');
+      gutterLineElem.textContent = '●';
+      messages.forEach(msg => {
+        const gutterClassName = msg.severity == 2 ? 'cm-gutter__error' :
+              'cm-gutter__warning';
+        gutterLineElem.classList.add(gutterClassName);
+      });
+      this.codeMirrorDoc.setGutterMarker(
+          Number(line), GUTTER_NAME, gutterLineElem);
+    });
+  }
+
 }
 
+/**
+ * Returns the CSS class for eslintMessage's severity
+ * @param {!ESLint.LintMessage} eslintMessage
+ * @return {string}
+ */
+function messageSeverityCssClass(eslintMessage) {
+  if (eslintMessage.severity == 2) {
+    return CSS_CLASS_ERROR;
+  } else {
+    return CSS_CLASS_WARNING;
+  }
+}
 
 /**
  * Creates a new ESLint config by merging a and b.  b overwrites a.
@@ -160,203 +332,6 @@ function debounce(func, wait, immediate) {
 }
 
 /**
- * Makes a div container for ESLint results.
- * @param {!ESLint.LintMessage} msg
- * @return {!HTMLDivElement}
- */
-function makeResultNode(msg) {
-  const result = /** @type {!HTMLDivElement} */ (document.createElement('li'));
-  const classList = result.classList;
-
-  classList.add('mdl-list__item');
-
-  if (msg.fatal) {
-    classList.add('lint-result__fatal');
-  }
-
-  switch (msg.severity) {
-    case 1:
-      classList.add('list-result__warning');
-      break;
-    case 2:
-      classList.add('lint-result__error');
-      break;
-    default:
-      classList.add('lint-result__unknown');
-  }
-
-  const lintMessage = `<span class="mdl-list__item-primary-content">
-${msg.line}:${msg.column} - ${msg.message} (${msg.ruleId})</span>`
-  result.innerHTML = lintMessage;
-  return result;
-}
-
-/**
- * Removes all warning and error marks from the editor.
- * @suppress {newCheckTypes,reportUnknownTypes}
- */
-function removeWarningsErrors() {
-  EDITOR.getAllMarks().forEach(mark => mark.clear());
-  EDITOR.clearGutter(GUTTER_NAME);
-}
-
-/**
- * Returns the CSS class for eslintMessage's severity
- * @param {!ESLint.LintMessage} eslintMessage
- * @return {string}
- */
-function messageSeverityCssClass(eslintMessage) {
-  if (eslintMessage.severity == 2) {
-    return CSS_CLASS_ERROR;
-  } else {
-    return CSS_CLASS_WARNING;
-  }
-}
-
-
-/**
- * Figures out where message should end, exclusive.
- * Most ESLint rules don't return a range, so we only highlight one character.
- * For most rules, we should highlight at least the next word.
- * @param {!ESLint.LintMessage} msg
- */
-function findEndColumn(msg) {
-  const line = msg.line;
-  const column = msg.column;
-  if (SINGLE_COLUMN_RULES[msg.ruleId]) {
-    return column + 1;
-  }
-
-  const content = EDITOR.getLine(line);
-  const nextContent = content.slice(column + 1);
-  let spanLength = 1;
-  matches = nextContent.match(/\w+/);
-  if (matches) {
-    spanLength = matches[0].length;
-  }
-  return column + 1 + spanLength;
-}
-
-/**
- * Marks the code specified by the lint message.
- * @param {!ESLint.LintMessage} msg
- */
-function markLintMessage(msg) {
-  const className = messageSeverityCssClass(msg);
-
-  // TODO: add description on hover
-  const description = `${msg.msg} (${msg.ruleId})`;
-
-  const markStart = {line: msg.line, ch: msg.column};
-  const markEnd = {line: msg.endLine, ch: msg.endColumn};
-  const markOptions = {className};
-
-  EDITOR.markText(markStart, markEnd, markOptions);
-}
-
-/**
- * Marks the line containing message with warning or error.
- * @param {!ESLint.LintMessage} msg
- * @param {!Element} gutterLineElem
- */
-function markLineGutter(msg, gutterLineElem) {
-  const gutterClassName = msg.severity == 2 ? 'cm-gutter__error' :
-        'cm-gutter__warning';
-  gutterLineElem.classList.add(gutterClassName);
-}
-
-/**
- * Modifies an ESLint message into code mirror friendly conventions:
- * - 0-based indexing
- * - computes a reasonable end-column and end-line.
- * @param {!ESLint.LintMessage} msg
- * @return {!ESLint.LintMessage}
- */
-function codeMirrorifyEslintMessage(msg) {
-  msg.line--;
-  const lineContent = EDITOR.getLine(msg.line);
-  msg.column = Math.min(lineContent.length - 1, msg.column - 1);
-  msg.endLine = msg.endLine ? message.endLine - 1 : msg.line;
-  msg.endColumn = findEndColumn(msg);
-  return msg;
-}
-
-/**
- * Add all ESLint warnings and errors to editor.
- * @param {!Array<!ESLint.LintMessage>} eslintMessages
- */
-function addWarningsErrors(eslintMessages) {
-  // group errors by line
-  const msgByLine = {};
-  messages = eslintMessages.map(codeMirrorifyEslintMessage);
-  messages.forEach(msg => {
-    const line = msg.line;
-    if (!msgByLine[line]) {
-      msgByLine[line] = [];
-    }
-    msgByLine[line].push(msg);
-  });
-
-  Object.keys(msgByLine).forEach(line => {
-    const messages = msgByLine[line];
-    const gutterLineElem = document.createElement('span');
-    gutterLineElem.textContent = '●';
-    messages.forEach(msg => {
-      markLintMessage(msg);
-      markLineGutter(msg, gutterLineElem);
-    });
-    EDITOR.setGutterMarker(Number(line), GUTTER_NAME, gutterLineElem);
-  });
-}
-
-/**
- * Adds all ESLint warnings and errors as divs next to the editor.
- * @param {!Array<!ESLint.LintMessage>} results
- */
-function displayResults(results) {
-  const resultsNode = /** @type {!HTMLUlElement} */ (
-      document.getElementById('results'));
-  if (!resultsNode) {
-    throw new Error('Can\'t find #results element.');
-  }
-
-  const nodes = Array.from(resultsNode.childNodes);
-  nodes.forEach(resultsNode.removeChild.bind(resultsNode));
-
-  if (results.length === 0) {
-    const resultNode = makeResultNode({
-      msg: 'Lint-free!', severity: -1, line: -1, column: -1,
-      source: 'HOORAY', ruleId: 'lint-free', nodeType: 'lint-free',
-    });
-    resultsNode.appendChild(resultNode);
-  } else {
-    results.forEach(function(result) {
-      const resultNode = makeResultNode(result);
-      resultsNode.appendChild(resultNode);
-    });
-  }
-
-  removeWarningsErrors();
-  addWarningsErrors(results);
-}
-
-
-/**
- * Returns a function that verifies the content in code mirror with linter.
- * @param {!ESLint.Linter} linter
- * @param {!CM.Doc} codeMirrorDoc
- * @return {function()}
- */
-function makeVerifier(linter, codeMirrorDoc) {
-  return debounce(() => {
-    removeWarningsErrors();
-    const content = codeMirrorDoc.getValue();
-    const results = linter.verify(content, OPTIONS);
-    displayResults(results);
-  }, 500);
-}
-
-/**
  * Compares items in a messages array by range.
  * @param {!ESLint.LintMessage} a The first message.
  * @param {!ESLint.LintMessage} b The second message.
@@ -425,16 +400,7 @@ function applyFixes(text, messages) {
 
 };
 
-
-/**
- * Initializes ESLint.
- */
-function setupEslint() {
-
-  // ESLint is added manually by using their browserify config in the Makefile.
-  // It's difficult to use Webpack to bundle ESLint ourselves because of the use
-  // of fs module and because the way that rules are exposed confuses Webpack.
-
+function setupEditor() {
   /** @const {!ESLint.Linter} */
   const linter = /** @type {!ESLint.Linter} */ (window['eslint']);
 
@@ -444,29 +410,7 @@ function setupEslint() {
   const editorTextArea = /** @type {!HTMLTextAreaElement} */ (
       document.getElementById('editor'));
 
-
-  EDITOR = /** @type {!CM.Doc} */ (CodeMirror.fromTextArea(editorTextArea, {
-    mode: 'javascript',
-    lineNumbers: true,
-    gutters: [GUTTER_NAME],
-  }));
-
-  window["EDITOR"] = EDITOR;
-  console.log('Setting up editor');
-
-  const prefixedClosureRules = {};
-  Object.keys(closureLintPlugin.rules).forEach(ruleId => {
-    const prefixedRuleId = 'closure/' + ruleId;
-    prefixedClosureRules[prefixedRuleId ] = closureLintPlugin.rules[ruleId];
-  });
-
-  linter.defineRules(prefixedClosureRules);
-
-  const verifyCodeMirror = makeVerifier(linter, EDITOR);
-
-  verifyCodeMirror();
-  EDITOR.on('change', verifyCodeMirror);
+  const editor = new Editor(linter, CodeMirror, editorTextArea);
 }
 
-
-document.addEventListener('DOMContentLoaded', setupEslint);
+document.addEventListener('DOMContentLoaded', setupEditor);
