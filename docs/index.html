@@ -46,7 +46,8 @@ goog.require('module.name')
 goog.scope(function() {
   /** @typedef {number} */
   let Bar;
-  let unusedVar = 2;
+  var unusedVar = 2;
+    const wrongIndent = 4;
   const myMap = new Map();
   myMap.set(2, 'foo');
   undeclaredVar.foo();
@@ -55,12 +56,12 @@ goog.scope(function() {
 });
             </textarea>
             <button id="es6Button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
-                    onclick="switchConfig('es6')">
+                    onclick="EDITOR.setConfig('es6')">
               Use ES6 Config
             </button>
             <button id="es5Button"
                     class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="switchConfig('es5')">
+                    onclick="EDITOR.setConfig('es5')">
               Use ES5 Config
             </button>
             <button id="fixAllButton"

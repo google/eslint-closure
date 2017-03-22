@@ -1,50 +1,3 @@
-.editorRow {
-    padding-top: 30px;
-}
-
-@media(min-width: 992px) {
-    .results {
-        max-height: 350px;
-        overflow-y: auto;
-    }
-}
-
-.list label {
-    font-weight: 400;
-}
-
-.rules .popover {
-    min-width: 250px;
-}
-
-.rules .popover-content {
-    font-size: 12px;
-}
-
-.rules .radio+.radio, .rules .checkbox+.checkbox {
-    margin-top: inherit;
-}
-.err {
-  border-bottom:2px dotted red;
-  display: inline-block;
-  position: relative;
-
-}
-
-.err:after {
-  content: '';
-  width: 100%;
-  border-bottom:2px dotted red;
-  position: absolute;
-  font-size: 16px;
-  top: 15px; /* Must be font-size minus one (16px - 1px) */
-  left: -2px;
-  display: block;
-  height: 4px;
-
-
-}
-
 .cm__lint-warning {
   background-image:
   linear-gradient(45deg, transparent 65%, #EE7600 80%, transparent 90%),
@@ -85,6 +38,28 @@
   border: 1px solid #aaa;
 }
 
+#es6Button, #es5Button, #fixAllButton {
+  margin-right: 20px;
+}
+
 .active {
   background-color: green;
+}
+
+#results {
+  padding-left: 0;
+  margin-top: 8px;
+}
+
+#results li {
+  padding: 8px;
+  min-height: auto
+}
+
+#results li:first-child {
+  padding-top: 20px;
+}
+
+#results li:first-child {
+  padding-top: 0px;
 }

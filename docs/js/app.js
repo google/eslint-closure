@@ -32,6 +32,13 @@ const SINGLE_COLUMN_RULES = {
   'no-regex-spaces': true,
   'semi': true,
 }
+/** @typedef {{
+ *    base: !ESLint.Config,
+ *    es5: !ESLint.Config,
+ *    es6: !ESLint.Config,
+ * }}
+ */
+let ConfigMap;
 
 class Editor {
   /**
@@ -39,8 +46,9 @@ class Editor {
    * @param {!ESLint.Linter} linter
    * @param {!CM.Object} CodeMirror
    * @param {!HTMLTextAreaElement} textArea
+   * @param {!ConfigMap} configs
    */
-  constructor(linter, CodeMirror, textArea) {
+  constructor(linter, CodeMirror, textArea, configs) {
     this.codeMirrorDoc = CodeMirror.fromTextArea(textArea, {
       mode: 'javascript',
       lineNumbers: true,
@@ -65,13 +73,18 @@ class Editor {
     this.linter.defineRules(prefixedClosureRules);
 
     const debouncedVerifyCode = debounce(() => {
-      this.clearAllErrors();
-      const results = this.verifyCode();
-      this.displayLintResults(results);
+      this.verifyAndDisplayCode();
     }, 500);
+
+    this.configMap = {
+      es5: mergeRules(configs.base, configs.es5),
+      es6: mergeRules(configs.base, configs.es6),
+    }
+    this.setConfig('es6');
 
     debouncedVerifyCode();
     this.codeMirrorDoc.on('change', debouncedVerifyCode);
+
   }
 
   fixAll() {
@@ -81,16 +94,50 @@ class Editor {
   }
 
   /**
-   *
    * @return {!Array<!ESLint.LintMessage>}
    */
   verifyCode() {
     const content = this.codeMirrorDoc.getValue();
-    const messages = this.linter.verify(content, OPTIONS);
+    const messages = this.linter.verify(content, this.eslintConfig);
     this.eslintMessages = messages.map(
         msg => this.codeMirrorifyEslintMessage(msg));
     this.eslintMessagesByLine = this.groupMessagesByLine(this.eslintMessages);
     return this.eslintMessages;
+  }
+
+  verifyAndDisplayCode() {
+    this.clearAllErrors();
+    const results = this.verifyCode();
+    this.displayLintResults(results);
+  }
+
+  setConfig(configKey) {
+    this.eslintConfig = this.configMap[configKey];
+    this.toggleConfigButton(configKey);
+    this.verifyAndDisplayCode();
+  }
+
+  toggleConfigButton(configKey) {
+    const es5Button = document.getElementById('es5Button');
+    const es6Button = document.getElementById('es6Button');
+    if (!es5Button || !es6Button) {
+      throw new Error('Can\'t find buttons');
+    }
+    const buttonHighlight = 'mdl-button--accent';
+    switch (configKey) {
+      case 'es5':
+        es5Button.classList.add(buttonHighlight);
+        es6Button.classList.remove(buttonHighlight);
+        break;
+
+      case 'es6':
+        es6Button.classList.add(buttonHighlight);
+        es5Button.classList.remove(buttonHighlight);
+        break;
+
+      default:
+        throw new Error('Unrecoginized config key, use es5 or es6.');
+    }
   }
 
   /**
@@ -186,7 +233,7 @@ class Editor {
     }
 
     const lintMessage = `<span class="mdl-list__item-primary-content">
-${message.line}:${message.column} - ${message.message} (${message.ruleId})</span>`
+${message.line + 1}:${message.column + 1} - ${message.message} (${message.ruleId})</span>`
     elem.innerHTML = lintMessage;
     return elem;
   }
@@ -252,7 +299,7 @@ function mergeRules(a, b) {
     parserOptions: {},
     settings: {},
     env: {},
-    global: {},
+    globals: {},
   };
   Object.assign(combinedRule.rules,
                 a.rules || {}, b.rules || {});
@@ -262,53 +309,11 @@ function mergeRules(a, b) {
                 a.settings || {}, b.settings || {});
   Object.assign(combinedRule.env,
                 a.env || {}, b.env || {});
-  Object.assign(combinedRule.global,
-                a.global || {}, b.global || {});
+  Object.assign(combinedRule.globals,
+                a.globals || {}, b.globals || {});
   combinedRule.parser = b.parser || a.parser;
   return combinedRule;
 }
-
-/** @const {!ESLint.Config} */
-const BASE_OPTIONS = closureConfigBase;
-/** @const {!ESLint.Config} */
-const ES5_OPTIONS = mergeRules(BASE_OPTIONS, closureConfigEs5);
-/** @const {!ESLint.Config} */
-const ES6_OPTIONS = mergeRules(BASE_OPTIONS, closureConfigEs6);
-/** @type {!ESLint.Config} */
-let OPTIONS = ES6_OPTIONS;
-
-/**
- * Switches between ES5 and ES6 ESLint configs.
- * @param {string} configKey
- * @throws {Error}
- */
-function switchConfig(configKey) {
-  const es5Button = document.getElementById('es5Button');
-  const es6Button = document.getElementById('es6Button');
-  if (!es5Button || !es6Button) {
-    throw new Error('Can\'t find buttons');
-  }
-
-  const buttonHighlight = 'mdl-button--accent';
-  switch (configKey) {
-    case 'es5':
-      OPTIONS = ES5_OPTIONS;
-      es5Button.classList.add(buttonHighlight);
-      es6Button.classList.remove(buttonHighlight);
-      break;
-
-    case 'es6':
-      OPTIONS = ES6_OPTIONS;
-      es6Button.classList.add(buttonHighlight);
-      es5Button.classList.remove(buttonHighlight);
-      break;
-
-    default:
-      throw new Error('Unrecoginized config key, use es5 or es6.');
-  }
-  // verify();
-}
-window['switchConfig'] = switchConfig;
 
 /**
  * Debounces a function.
@@ -402,7 +407,12 @@ function setupEditor() {
   const editorTextArea = /** @type {!HTMLTextAreaElement} */ (
       document.getElementById('editor'));
 
-  const editor = new Editor(linter, CodeMirror, editorTextArea);
+  const configs = {
+    base: closureConfigBase,
+    es5: closureConfigEs5,
+    es6: closureConfigEs6,
+  }
+  const editor = new Editor(linter, CodeMirror, editorTextArea, configs);
   window['EDITOR'] = editor;
 }
 
