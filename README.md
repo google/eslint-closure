@@ -4,7 +4,8 @@
 A heavily customized ESLint config and plugin for JavaScript following
 the
 [Google JavaScript style guide](https://google.github.io/styleguide/jsguide.html).
-Check out the [**demo**](https://google.github.io/eslint-closure/).
+
+Check out the [**demo page**](https://google.github.io/eslint-closure/).
 
 ## Google Style Guide Specific Features
 
