@@ -8,7 +8,8 @@ Check out the [**demo**](https://google.github.io/eslint-closure/).
 
 ## Google Style Guide Specific Features
 
-- Recognizes `goog.scope` as an immediately invoked function expression (IIFE).
+- Recognizes `goog.scope` as an immediately invoked function expression (IIFE)
+  that doesn't increase the indent.
 
   ```javascript
   goog.scope(function() {
@@ -25,8 +26,7 @@ Check out the [**demo**](https://google.github.io/eslint-closure/).
   my.module.Foo = other.module.Bar;
   ```
 
-- Marks `typedef`, `export` and other tags as being used to avoid spurious
-  warnings.
+- Avoids flagging `typedef`, `export` and other type-related tags as unused.
 
   ```javascript
   /** @export {number} */
@@ -36,3 +36,19 @@ Check out the [**demo**](https://google.github.io/eslint-closure/).
 See the
 [Google JavaScript style guide](https://google.github.io/styleguide/jsguide.html) for
 the rest of the rules.
+
+## Developing
+
+Pull requests are always welcome.  To get started,
+install [Bazel](https://bazel.build/), Google's open-source build system,
+and [Yarn](https://yarnpkg.com/en/), an NPM replacement.
+
+A typical development flow looks like this:
+
+0. `make develop` to download dependencies from NPM and to link the projects together.
+1. `make test` to ensure everything works first.
+2. Add a feature or fix a bug.
+3. `make test`
+4. `git commit`
+5. `git push`
+
