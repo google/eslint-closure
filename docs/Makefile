@@ -18,8 +18,9 @@ webpack:
 
 js-prod: webpack
 	bazel build //docs:app-min
-	cp -f $(BAZEL_BIN)/docs/app-min.js dist/app.min.js
-	cp -f $(BAZEL_BIN)/docs/app-min.js.map dist/app.min.js.map
+  # TODO(jschaf): Closure compilation isn't currently working with eslint.js
+	cp -f $(BAZEL_BIN)/docs/app-min.js dist/app.closure.min.js
+	cp -f $(BAZEL_BIN)/docs/app-min.js.map dist/app.closure.min.js.map
 
 serve:
 	$(NODE_BIN)/webpack-dev-server --port 7777

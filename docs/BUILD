@@ -15,7 +15,7 @@ closure_js_library(
 
 closure_js_library(
     name = "app-webpack-bundle",
-    srcs = ["dist/app.bundle.js"],
+    srcs = ["dist/app.min.js"],
     suppress = [
         "checkTypes",
         "checkVars",
@@ -66,6 +66,20 @@ closure_js_binary(
     ],
     deps = [
         ":app-webpack-bundle",
+        ":eslint-browserified",
+    ],
+)
+
+
+closure_js_binary(
+    name = "eslint-min",
+    defs = [
+        "--new_type_inf",
+        "--assume_function_wrapper",
+        "--rewrite_polyfills=false",
+        "--warning_level=QUIET",
+    ],
+    deps = [
         ":eslint-browserified",
     ],
 )
