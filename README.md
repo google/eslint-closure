@@ -1,6 +1,7 @@
 # Closure Linter - ESLint Plugin and Config for the Google JavaScript Style Guide
 
 
+
 A heavily customized ESLint config and plugin for JavaScript following
 the
 [Google JavaScript style guide](https://google.github.io/styleguide/jsguide.html).
@@ -37,6 +38,11 @@ Check out the [**demo page**](https://google.github.io/eslint-closure/).
 See the
 [Google JavaScript style guide](https://google.github.io/styleguide/jsguide.html) for
 the rest of the rules.
+
+## Disclaimer
+
+This is not an official Google product (experimental or otherwise), it is just
+code that happens to be owned by Google.
 
 ## Developing
 
