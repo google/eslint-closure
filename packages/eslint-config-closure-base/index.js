@@ -31,7 +31,7 @@ const WARNING = 1;
 const ERROR = 2;
 
 
-// Private Google JSDoc tags.  #google3
+// Google specific JSDoc tags.  Also available in the rhino compiler.
 const GOOGLE_CUSTOM_JSDOC_TAGS = [
   'abstract',
   'copyright',

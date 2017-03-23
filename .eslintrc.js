@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @fileoverview ESLint config for googlejs plugin.
+ * @fileoverview ESLint config following the Google style guide.
  */
 
 /* eslint-env node */

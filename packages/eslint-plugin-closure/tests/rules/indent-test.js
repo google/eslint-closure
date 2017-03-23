@@ -1524,7 +1524,7 @@ function foo(aaa, bbb)
 {
       bar();
 }`,
-      // FIXME: what is the default for `parameters`?
+      // TODO: what is the default for `parameters`?
       options: [2, {FunctionDeclaration: {body: 3}}],
     },
     {
@@ -1534,7 +1534,7 @@ function foo(
   bbb) {
     bar();
 }`,
-      // FIXME: make sure this is correct
+      // TODO: make sure this is correct
       options: [2, {FunctionDeclaration: {parameters: 'first', body: 2}}],
     },
     {
@@ -1572,7 +1572,7 @@ var foo = function(
   ddd, eee) {
       bar();
 }`,
-      // FIXME: make sure this is correct
+      // TODO: make sure this is correct
       options: [2, {FunctionExpression: {parameters: 'first', body: 3}}],
     },
     {
