@@ -16,7 +16,8 @@
  * @fileoverview Custom ESLint configuration to adhere to the Google style guide
  * for ES6.
  *
- * Short link to the Google JS Style Guide: https://git.io/vured
+ * The base config allows most ES6 features.  The only difference is that this
+ * config requires certain ES6 features, namely template strings and let/const.
  */
 
 
@@ -184,10 +185,8 @@ const ES6_RULES = {
   // 'yield-star-spacing': [WARNING, 'after'],
 };
 
-// Google Plugin Rules
-// These rules are specific to Google code.  See
-// https://github.com/google/eslint-closure/packages/eslint-plugin-closure
-const GOOGLE_PLUGIN_RULES = {
+// Closure Plugin Rules
+const CLOSURE_PLUGIN_RULES = {
   // Disallow opt_ prefix and var_args as identifiers.
   'closure/camelcase': [ERROR, {
     allowVarArgs: false,
@@ -265,7 +264,7 @@ const ECMA_FEATURES = {
 };
 
 
-const GOOGLE_ES6_RULES = {
+const CLOSURE_ES6_RULES = {
 
   extends: [
     require.resolve('eslint-config-closure-base'),
@@ -297,8 +296,8 @@ const GOOGLE_ES6_RULES = {
     ES6_RULES,
 
     // Custom plugin rules.
-    GOOGLE_PLUGIN_RULES
+    CLOSURE_PLUGIN_RULES
   ),
 };
 
-module.exports = GOOGLE_ES6_RULES;
+module.exports = CLOSURE_ES6_RULES;

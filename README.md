@@ -46,10 +46,10 @@ and [Yarn](https://yarnpkg.com/en/), an NPM replacement.
 
 A typical development flow looks like this:
 
-0. `make develop` to download dependencies from NPM and to link the projects together.
-1. `make test` to ensure everything works first.
-2. Add a feature or fix a bug.
-3. `make test`
-4. `git commit`
-5. `git push`
+1.  `make develop` to download dependencies from NPM and to link the projects together.
+2.  `make test` to ensure everything works first.
+3.  Add a feature or fix a bug.
+4.  `make test`
+5.  `git commit`
+6.  `git push`
 

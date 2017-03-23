@@ -1,7 +1,6 @@
-
+# ESLint Closure Plugin
 
 ## Useful Links
-
 
 http://btmills.github.io/parserapi/ - Consolidated, navigable reference to the SpiderMoneky Parser API.
 

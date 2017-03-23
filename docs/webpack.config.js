@@ -47,8 +47,8 @@ module.exports = {
   },
   module: {
     rules: [
-      {test: /\.json$/, use: [{loader: "json-loader"}]},
-      {test: /\.html$/, use: [{loader: "raw-loader"}]},
+      {test: /\.json$/, use: [{loader: 'json-loader'}]},
+      {test: /\.html$/, use: [{loader: 'raw-loader'}]},
     ]
   },
 };

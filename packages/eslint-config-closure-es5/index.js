@@ -15,9 +15,6 @@
 /**
  * @fileoverview Custom ESLint configuration to adhere to the Google style guide
  * at https://google.github.io/styleguide/javascriptguide.xml.
- *
- * Short link to the Google JS Style Guide: https://git.io/vured
- * Short link to the Google C++ Style Guide: https://git.io/v6Mp3
  */
 
 
@@ -64,10 +61,10 @@ const STYLISTIC_RULES = {
 const ES6_RULES = {};
 
 
-// Google Plugin Rules
-// These rules are specific to Google code.  See
+// Closure Plugin Rules
+// These rules are specific to Closure code.  See
 // https://github.com/google/eslint-closure/packages/eslint-plugin-closure
-const GOOGLE_PLUGIN_RULES = {
+const CLOSURE_PLUGIN_RULES = {
   // Allow opt_ prefix and var_args in identifiers.  From
   // https://git.io/vured#Naming
   'closure/camelcase': [ERROR, {
@@ -78,17 +75,10 @@ const GOOGLE_PLUGIN_RULES = {
     // Too many warnings, often required for interop with protobufs.
     checkObjectProperties: false,
   }],
-
-  // TODO(jschaf): Is this still valid?
-  // The JS style guide 'follows the C++ style guide in spirit'.  The C++ style
-  // guide mandates two spaces before line-end comments.  See the 'Line
-  // Comments' section under
-  // https://git.io/v6Mp3#Implementation_Comments
-  'closure/inline-comment-spacing': [ERROR, 2],
 };
 
 
-const GOOGLE_ES5_RULES = {
+const CLOSURE_ES5_RULES = {
 
   extends: [
     require.resolve('eslint-config-closure-base'),
@@ -114,8 +104,8 @@ const GOOGLE_ES5_RULES = {
       ES6_RULES,
 
       // Custom plugin rules.
-      GOOGLE_PLUGIN_RULES
+      CLOSURE_PLUGIN_RULES
       ),
 };
 
-module.exports = GOOGLE_ES5_RULES;
+module.exports = CLOSURE_ES5_RULES;

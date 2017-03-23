@@ -20,9 +20,6 @@
 
 goog.module('eslintClosure.rules.indent');
 
-// TODO(jschaf): Why won't this build?
-// const {assert} = goog.require('goog.asserts');
-
 const ast = goog.require('eslintClosure.ast');
 const functions = goog.require('goog.functions');
 const googString = goog.require('goog.string');

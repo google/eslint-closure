@@ -13,15 +13,11 @@
 // limitations under the License.
 
 /**
- * @fileoverview Custom ESLint configuration to adhere to the Google style guide
- * at https://google.github.io/styleguide/javascriptguide.xml.
+ * @fileoverview Custom ESLint configuration to adhere to the Google JavaScript
+ * style guide at https://google.github.io/styleguide/javascriptguide.xml.
  *
  * All ESLint rules are listed below.  ESLint recommended rules have an #eslint
- * tag.  Google JS style guide required rules have a #google tag.  Internal
- * Google guidelines have a #google3 tag.
- *
- * Short link to the Google JS Style Guide: https://git.io/vured
- * Short link to the Google C++ Style Guide: https://git.io/v6Mp3
+ * tag.
  */
 
 
@@ -31,8 +27,8 @@ const WARNING = 1;
 const ERROR = 2;
 
 
-// Google specific JSDoc tags.  Also available in the rhino compiler.
-const GOOGLE_CUSTOM_JSDOC_TAGS = [
+// Closure JavaScript extra Tags.  Also present in the rhino compiler.
+const CLOSURE_CUSTOM_JSDOC_TAGS = [
   'abstract',
   'copyright',
   'disposes',
@@ -62,7 +58,7 @@ const GOOGLE_CUSTOM_JSDOC_TAGS = [
 
 
 // Pubically released closure JSDoc tags from
-// https://developers.google.com/closure/compiler/docs/js-for-compiler.  #google
+// https://developers.google.com/closure/compiler/docs/js-for-compiler.
 const CLOSURE_JSDOC_TAGS = [
   'abstract',
   'const',
@@ -922,10 +918,11 @@ const ES6_RULES = {
 };
 
 
-// Google Plugin Rules
-// These rules are specific to Google code.  See
-// https://github.com/google/eslint-closure/packages/eslint-plugin-closure
-const GOOGLE_PLUGIN_RULES = {
+// Closure Plugin Rules
+
+// These rules are specific to Closure-style Javascript following the Google
+// style guide.  See https://github.com/google/eslint-closure.
+const CLOSURE_PLUGIN_RULES = {
   'closure/indent': [WARNING, 2, {
     // Google ES6 Section 4.2.5
     SwitchCase: 1,
@@ -998,7 +995,7 @@ const ESLINT_CONFIG = {
     ES6_RULES,
 
     // Custom plugin rules.
-    GOOGLE_PLUGIN_RULES
+    CLOSURE_PLUGIN_RULES
   ),
 
   // ESLint supports adding shared settings into configuration file.  The
@@ -1006,7 +1003,7 @@ const ESLINT_CONFIG = {
   settings: {
     jsdoc: {
       additionalTagNames: {
-        customTags: GOOGLE_CUSTOM_JSDOC_TAGS.concat(CLOSURE_JSDOC_TAGS),
+        customTags: CLOSURE_CUSTOM_JSDOC_TAGS.concat(CLOSURE_JSDOC_TAGS),
       },
       tagNamePreference: {
         returns: 'return',
