@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/google/eslint-closure",
   "devDependencies": {
+    "html-webpack-plugin": "^2.28.0",
     "eslint": "~3.9.0",
     "json-loader": "^0.5.4",
     "raw-loader": "^0.5.1",
@@ -42,6 +43,5 @@
     "node": ">= 4"
   },
   "dependencies": {
-    "html-webpack-plugin": "^2.28.0"
   }
 }
