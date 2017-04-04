@@ -25,7 +25,6 @@ NODE_BIN := ./node_modules/.bin
 all: site
 
 site: webpack
-	cp -f dist/app.bundle.js dist/app.min.js
 
 webpack:
 	npm run webpack
