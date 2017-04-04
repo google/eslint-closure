@@ -52,6 +52,7 @@ debug: build-tests
 	$(MOCHA) --recursive ./dist/tests --inspect --debug-brk
 
 develop:
+	yarn link eslint-plugin-closure
 	yarn link
 	yarn install
 
