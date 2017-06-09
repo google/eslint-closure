@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-closure",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Joe Schafer <jschaf@google.com>",
   "license": "Apache-2.0",
   "description": "An ESLint plugin for Google style guide rules.",
