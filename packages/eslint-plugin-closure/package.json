@@ -18,6 +18,7 @@
   ],
   "files": [
     "lib/*.js",
+    "dist/*.js",
     "index.js",
     "LICENSE",
     "README.md"
