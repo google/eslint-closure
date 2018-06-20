@@ -127,7 +127,7 @@ const NO_UNDEF_RULE = {
 
           context.report({
             node: identifier,
-            message: `'${identifier.name}' is not defined.`,
+            message: `'${identifier.name}' is not defined (can't evaluate ${fullName}).`,
           });
         });
       },
