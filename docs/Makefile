@@ -38,10 +38,6 @@ js-prod: webpack
 serve:
 	$(NODE_BIN)/webpack-dev-server --port 7777
 
-develop:
-	yarn link eslint-plugin-closure eslint-config-closure-base eslint-config-closure-es5 eslint-config-closure-es6
-	yarn install
-
 update-eslint:
 	sh scripts/update-eslint.sh
 

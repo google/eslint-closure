@@ -2,7 +2,7 @@
   "name": "eslint-closure",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": ["packages/*", "docs"],
   "author": "Joe Schafer <jschaf@google.com>",
   "license": "Apache-2.0",
   "description": "ESLint Plugin and Config for the Google Style Guide",
