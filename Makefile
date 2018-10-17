@@ -38,9 +38,4 @@ serve: site
 	$(MAKE) -C $(DOCS_DIR) serve
 
 develop:
-	$(MAKE) -C $(PLUGIN_DIR) develop
-	$(MAKE) -C $(CONFIG_TESTER_DIR) develop
-	$(MAKE) -C $(BASE_DIR) develop
-	$(MAKE) -C $(ES5_DIR) develop
-	$(MAKE) -C $(ES6_DIR) develop
-	$(MAKE) -C $(DOCS_DIR) develop
+	yarn install

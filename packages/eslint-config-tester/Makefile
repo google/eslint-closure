@@ -51,11 +51,6 @@ compile-debug: dist-mkdir
 debug: build-tests
 	$(MOCHA) --recursive ./dist/tests --inspect --debug-brk
 
-develop:
-	yarn link eslint-plugin-closure
-	yarn link
-	yarn install
-
 clean:
 	rm -rf dist/tests
 
